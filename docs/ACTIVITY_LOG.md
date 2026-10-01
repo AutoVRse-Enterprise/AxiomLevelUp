@@ -1068,3 +1068,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Both modes resolve through lazy primitive components; completion remains
   player-owned through interaction keys or checkpoint submission.
 - **Follow-ups:** Implement slice-aware region identification.
+
+### [2026-10-02 04:21] P6-T09 - Implement DICOM region identification
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added tap-versus-drag region selection, resumable marker state, slice-aware submission,
+  retry-safe review and reveal-policy-controlled target overlays.
+- **Files changed:** `DicomIdentifyRegionPrimitive.tsx`, component registry and phase
+  documentation.
+- **Commands run:** Prettier, typecheck and lint.
+- **Result/verification:** Region responses include both selected slice and normalized image point;
+  pure evaluation can award partial credit for slice or location.
+- **Follow-ups:** Implement calibrated length measurement.

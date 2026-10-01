@@ -120,6 +120,11 @@ const DicomGuidedPrimitive = lazy(async () => {
   return { default: module.DicomGuidedPrimitive }
 })
 
+const DicomIdentifyRegionPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/DicomIdentifyRegionPrimitive')
+  return { default: module.DicomIdentifyRegionPrimitive }
+})
+
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
@@ -144,6 +149,6 @@ export const primitiveComponents = {
   scenario: ScenarioPrimitive,
   dicom_explore: DicomExplorePrimitive,
   dicom_guided: DicomGuidedPrimitive,
-  dicom_identify_region: DicomPrimitivePending,
+  dicom_identify_region: DicomIdentifyRegionPrimitive,
   dicom_measure: DicomPrimitivePending,
 } as const
