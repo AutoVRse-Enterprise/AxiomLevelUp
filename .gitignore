@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.env
+.env.*
+!.env.example
+*.local
+*.log
+.DS_Store
+Thumbs.db
+public/assets/dicom/**/*.dcm
+public/assets/dicom/**/*.dicom
+public/assets/dicom/**/*.zip
+test-results/
+playwright-report/
