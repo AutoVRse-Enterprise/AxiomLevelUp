@@ -11,6 +11,16 @@ import { replaceWithSeed, type SeedProfile } from '@/state/seed'
 const tools = [
   { to: '/dev/tokens', title: 'Design tokens', description: 'Palette, type and base components' },
   {
+    to: '/dev/primitives',
+    title: 'Primitive gallery',
+    description: 'Every standard primitive with local-only controls',
+  },
+  {
+    to: '/learn/courses/runtime-showcase/lessons/primitive-showcase',
+    title: 'Runtime showcase lesson',
+    description: 'Exercise all standard primitives through the real lesson route',
+  },
+  {
     to: '/dev/dicom-spike',
     title: 'DICOM/PWA spike',
     description: 'Lazy Cornerstone3D feasibility route',

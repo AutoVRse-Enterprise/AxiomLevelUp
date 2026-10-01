@@ -26,7 +26,7 @@ import {
 } from '@/state/selectors'
 
 export function HomePage() {
-  const { appConfig, courses, lessonById, courseById } = useContent()
+  const { appConfig, catalogCourses, lessonById, courseById } = useContent()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const streak = useLearnerStore((state) => state.streak)
@@ -36,14 +36,14 @@ export function HomePage() {
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
   const stats = useLearnerStore((state) => state.stats)
-  const summary = selectContinueLearning({ lessonProgress }, courses, lessonById, courseById)
+  const summary = selectContinueLearning({ lessonProgress }, catalogCourses, lessonById, courseById)
   const imageUrl = useAssetUrl(summary?.course.imageAssetId)
   const dailyChallenge = appConfig.challenges.find(({ type }) => type === 'daily')
   const dailyProgress = dailyChallenge ? challenges[dailyChallenge.id] : undefined
   const revisions = selectRevisionRecommendations(
     { mastery, lessonProgress },
     appConfig.concepts,
-    courses,
+    catalogCourses,
     appConfig.product.revision.masteryThreshold,
     appConfig.product.revision.maxRecommendations,
   )
@@ -64,11 +64,7 @@ export function HomePage() {
     appConfig.leaderboard.entries,
     appConfig.product.leaderboard.visibleWindow,
   )
-  const activity = selectWeeklyActivity(
-    { weeklyGoal },
-    appConfig.product.weekStartsOn,
-    today(),
-  )
+  const activity = selectWeeklyActivity({ weeklyGoal }, appConfig.product.weekStartsOn, today())
   const level = selectLevelProgress({ xp }, appConfig.gamification.levels)
   const firstName = learner.name.split(/\s+/)[0] ?? learner.name
   const ctaClass =
@@ -87,7 +83,8 @@ export function HomePage() {
           Ready for your next discovery?
         </h1>
         <p className="mt-3 text-brand-100">
-          Level {level.level}{level.label ? ` · ${level.label}` : ''} · {xp.total.toLocaleString()} XP
+          Level {level.level}
+          {level.label ? ` · ${level.label}` : ''} · {xp.total.toLocaleString()} XP
         </p>
         <div className="mt-6 grid grid-cols-2 gap-3 sm:max-w-lg">
           <StatTile
@@ -108,10 +105,14 @@ export function HomePage() {
         {summary?.nextLesson ? (
           <Card className="mt-4 overflow-hidden p-0 sm:p-0">
             <div className="grid md:grid-cols-[14rem_1fr]">
-              {imageUrl ? <img alt="" className="h-full min-h-44 w-full object-cover" src={imageUrl} /> : null}
+              {imageUrl ? (
+                <img alt="" className="h-full min-h-44 w-full object-cover" src={imageUrl} />
+              ) : null}
               <div className="p-5 sm:p-6">
                 <Chip tone="brand">{summary.course.category}</Chip>
-                <h2 id="continue-heading" className="mt-3 text-title font-bold">{summary.course.title}</h2>
+                <h2 id="continue-heading" className="mt-3 text-title font-bold">
+                  {summary.course.title}
+                </h2>
                 <p className="mt-2 text-neutral-600">Current lesson: {summary.nextLesson.title}</p>
                 <ProgressBar className="mt-5" label="Course progress" value={summary.completion} />
                 <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -121,16 +122,22 @@ export function HomePage() {
                   >
                     <BookOpen aria-hidden="true" size={18} /> Continue lesson
                   </Link>
-                  <span className="text-small text-neutral-600">{summary.remainingMinutes} min remaining</span>
+                  <span className="text-small text-neutral-600">
+                    {summary.remainingMinutes} min remaining
+                  </span>
                 </div>
               </div>
             </div>
           </Card>
         ) : (
           <Card className="mt-4">
-            <h2 id="continue-heading" className="font-bold">You are all caught up</h2>
+            <h2 id="continue-heading" className="font-bold">
+              You are all caught up
+            </h2>
             <p className="mt-1 text-neutral-600">Explore the catalog to find your next course.</p>
-            <Link className="mt-4 inline-flex font-semibold text-brand-700" to="/learn">Browse learning</Link>
+            <Link className="mt-4 inline-flex font-semibold text-brand-700" to="/learn">
+              Browse learning
+            </Link>
           </Card>
         )}
       </section>
@@ -142,16 +149,22 @@ export function HomePage() {
             {dailyChallenge ? (
               <>
                 <Target aria-hidden="true" className="text-brand-700" size={28} />
-                <h2 id="daily-challenge-heading" className="mt-3 text-heading font-bold">{dailyChallenge.title}</h2>
+                <h2 id="daily-challenge-heading" className="mt-3 text-heading font-bold">
+                  {dailyChallenge.title}
+                </h2>
                 <p className="mt-2 text-neutral-600">{dailyChallenge.description}</p>
                 <p className="mt-4 text-small font-medium text-neutral-600">
-                  {dailyChallenge.itemCount} questions · ~{dailyChallenge.estimatedMinutes} min · +{dailyChallenge.rewardXp} XP
+                  {dailyChallenge.itemCount} questions · ~{dailyChallenge.estimatedMinutes} min · +
+                  {dailyChallenge.rewardXp} XP
                 </p>
                 <Link className={`${ctaClass} mt-5`} to={`/challenge/${dailyChallenge.id}/play`}>
-                  {dailyProgress?.completed ? 'Review challenge' : 'Start challenge'} <ArrowRight aria-hidden="true" size={17} />
+                  {dailyProgress?.completed ? 'Review challenge' : 'Start challenge'}{' '}
+                  <ArrowRight aria-hidden="true" size={17} />
                 </Link>
               </>
-            ) : <p className="text-neutral-600">No daily challenge is configured.</p>}
+            ) : (
+              <p className="text-neutral-600">No daily challenge is configured.</p>
+            )}
           </Card>
         </section>
 
@@ -164,7 +177,10 @@ export function HomePage() {
                   <div key={concept.id}>
                     <MasteryBar label={concept.title} value={score} />
                     {course && lesson ? (
-                      <Link className="mt-2 inline-flex text-small font-semibold text-brand-700" to={`/learn/courses/${course.id}/lessons/${lesson.id}`}>
+                      <Link
+                        className="mt-2 inline-flex text-small font-semibold text-brand-700"
+                        to={`/learn/courses/${course.id}/lessons/${lesson.id}`}
+                      >
                         Practice this topic
                       </Link>
                     ) : null}
@@ -173,7 +189,9 @@ export function HomePage() {
               </div>
             ) : (
               <>
-                <h2 id="revision-heading" className="font-bold">Strong across every topic</h2>
+                <h2 id="revision-heading" className="font-bold">
+                  Strong across every topic
+                </h2>
                 <p className="mt-1 text-neutral-600">No concepts currently need revision.</p>
               </>
             )}
@@ -184,12 +202,21 @@ export function HomePage() {
       {activePathway && pathway ? (
         <section aria-labelledby="pathway-preview-heading">
           <SectionHeader
-            action={<Link className="text-small font-semibold text-brand-700" to={`/learn/pathways/${activePathway.id}`}>View pathway</Link>}
+            action={
+              <Link
+                className="text-small font-semibold text-brand-700"
+                to={`/learn/pathways/${activePathway.id}`}
+              >
+                View pathway
+              </Link>
+            }
             description={activePathway.description}
             title="Active pathway"
           />
           <Card className="mt-4">
-            <h2 id="pathway-preview-heading" className="text-heading font-bold">{activePathway.title}</h2>
+            <h2 id="pathway-preview-heading" className="text-heading font-bold">
+              {activePathway.title}
+            </h2>
             <p className="mt-2 text-neutral-600">
               {pathway.currentNode ? `Next: ${pathway.currentNode.title}` : 'Pathway complete'}
             </p>
@@ -227,8 +254,12 @@ export function HomePage() {
           ) : (
             <Card className="mt-4">
               <Award aria-hidden="true" className="text-neutral-400" size={28} />
-              <h2 id="achievements-heading" className="mt-3 font-bold">Your first achievement awaits</h2>
-              <p className="mt-1 text-neutral-600">Complete lessons to start your badge collection.</p>
+              <h2 id="achievements-heading" className="mt-3 font-bold">
+                Your first achievement awaits
+              </h2>
+              <p className="mt-1 text-neutral-600">
+                Complete lessons to start your badge collection.
+              </p>
             </Card>
           )}
         </section>
@@ -238,7 +269,9 @@ export function HomePage() {
           <Card className="mt-4">
             <Trophy aria-hidden="true" className="text-star" size={28} />
             <h2 id="leaderboard-teaser-heading" className="mt-3 text-title font-bold">
-              {leaderboard.rank ? `You're #${leaderboard.rank} this week` : 'Join the weekly cohort'}
+              {leaderboard.rank
+                ? `You're #${leaderboard.rank} this week`
+                : 'Join the weekly cohort'}
             </h2>
             <p className="mt-2 text-neutral-600">
               {leaderboard.rank
@@ -249,7 +282,9 @@ export function HomePage() {
                     : 'Holding your position'
                 : 'Earn weekly XP to enter the ranking.'}
             </p>
-            <Link className="mt-4 inline-flex font-semibold text-brand-700" to="/leaderboard">View leaderboard</Link>
+            <Link className="mt-4 inline-flex font-semibold text-brand-700" to="/leaderboard">
+              View leaderboard
+            </Link>
           </Card>
         </section>
       </div>
@@ -257,7 +292,9 @@ export function HomePage() {
       <section aria-labelledby="weekly-progress-heading">
         <SectionHeader title="Weekly progress" />
         <Card className="mt-4">
-          <h2 id="weekly-progress-heading" className="sr-only">Activity this week</h2>
+          <h2 id="weekly-progress-heading" className="sr-only">
+            Activity this week
+          </h2>
           <WeeklyActivityStrip {...activity} />
         </Card>
       </section>

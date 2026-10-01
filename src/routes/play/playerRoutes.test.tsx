@@ -58,6 +58,15 @@ describe('player routes', () => {
     expect(screen.getByText(/Interpreting Thoracic CT/)).toBeVisible()
   })
 
+  it('opens the internal showcase through the real lesson route', async () => {
+    const user = userEvent.setup()
+    renderRoute('/learn/courses/runtime-showcase/lessons/primitive-showcase')
+
+    expect(screen.getByRole('heading', { name: 'Primitive Showcase' })).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(await screen.findByText('Read evidence before interpreting it')).toBeVisible()
+  })
+
   it.each([
     {
       prerequisiteId: 'thoracic-ct',

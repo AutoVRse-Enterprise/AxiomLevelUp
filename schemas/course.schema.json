@@ -15,6 +15,14 @@
       "minLength": 1,
       "pattern": "^[a-z0-9][a-z0-9_-]*$"
     },
+    "visibility": {
+      "default": "learner",
+      "type": "string",
+      "enum": [
+        "learner",
+        "internal"
+      ]
+    },
     "title": {
       "type": "string",
       "minLength": 1
@@ -537,6 +545,7 @@
     "schemaVersion",
     "courseVersion",
     "id",
+    "visibility",
     "title",
     "description",
     "category",

@@ -19,7 +19,7 @@ const filters: Array<{ id: Filter; label: string }> = [
 ]
 
 export function LearnPage() {
-  const { appConfig, courses, courseById, lessonById, assetById } = useContent()
+  const { appConfig, catalogCourses, courseById, lessonById, assetById } = useContent()
   const [searchParams, setSearchParams] = useSearchParams()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
@@ -33,7 +33,7 @@ export function LearnPage() {
   const activeFilter = filters.some(({ id }) => id === requestedFilter)
     ? (requestedFilter as Filter)
     : 'all'
-  const summaries = courses.map((course) =>
+  const summaries = catalogCourses.map((course) =>
     selectCourseSummary({ lessonProgress }, course, lessonById, courseById),
   )
   const matchesFilter = (status: LearningStatus) => {
@@ -93,7 +93,7 @@ export function LearnPage() {
 
       <section aria-label="Course catalog">
         <SectionHeader
-          description={`${courses.length} courses · ${courses.reduce((total, course) => total + course.lessons.length, 0)} lessons`}
+          description={`${catalogCourses.length} courses · ${catalogCourses.reduce((total, course) => total + course.lessons.length, 0)} lessons`}
           title="Course catalog"
         />
         <div className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label="Filter courses">

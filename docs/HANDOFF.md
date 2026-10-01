@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T12 are complete; P4-T13 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T13 are complete; P4-T14 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -79,13 +79,20 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   recaps and best-choice review.
 - `case-intro` and `trial-case` are real three-decision converging scenarios, and their lesson
   routes are playable once prerequisites are complete.
+- Course visibility defaults to `learner`; internal courses remain in `courses`, `courseById` and
+  `lessonById`, while `catalogCourses` excludes them from learner-facing discovery.
+- The internal `runtime-showcase` course has one directly routable lesson containing all 21
+  implemented standard types across 22 content-, assessment- and scenario-ordered examples.
+- `/dev/primitives` renders the real showcase definitions with local-only interactive, review,
+  disabled, reset and missing-asset controls; `/dev` links both the gallery and real lesson.
+- Internal lesson progress uses ordinary learner state and is removed by the existing demo reset.
 - Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
   fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021 through ADR-032 record player lifecycle, scenarios, scientific data, structured
+- ADR-021 through ADR-033 record player lifecycle, scenarios, scientific data, structured
   assessments, artifact viewport, semantic validation, assessment semantics, timed-response
-  lifecycle and normalized image regions.
-- Type checking, lint, 19 test files with 176 tests, content validation and production build pass.
+  lifecycle, normalized image regions and internal-course/gallery isolation.
+- Type checking, lint, 20 test files with 182 tests, content validation and production build pass.
 
 ## In progress
 
@@ -93,9 +100,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T13: add the internal showcase course and primitive gallery.
-2. P4-T14: add cross-runtime and boundary coverage.
-3. P4-T15: run responsive, accessibility and bundle QA.
+1. P4-T14: add cross-runtime and boundary coverage.
+2. P4-T15: run responsive, accessibility and bundle QA.
+3. P4-T16: run the closing quality gate and finish Phase 4 documentation.
 
 ## Blockers/questions for the user
 
@@ -154,6 +161,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Scenario graph warnings count decisions on every start-to-outcome path; authored demo paths must
   stay within two to four decisions to keep content validation warning-free.
 - ADR-027 was already allocated at the P4-T11 baseline, so the media decision is ADR-032.
+- ADR-028 was already allocated at the P4-T13 baseline, so the showcase decision is ADR-033.
+- Learner-facing surfaces and selectors must receive `catalogCourses`; direct internal routes and
+  progress resolution must continue using the complete registry maps.
 - Do not import Cornerstone outside the lazy spike module.
 - Development plans display unsupported primitives; production plans skip them.
 - Retries do not improve score: first-attempt results remain authoritative.

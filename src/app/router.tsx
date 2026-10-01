@@ -7,6 +7,7 @@ import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { ChallengePage } from '@/routes/challenge/ChallengePage'
 import { DevPage } from '@/routes/dev/DevPage'
+import { PrimitiveGalleryPage } from '@/routes/dev/PrimitiveGalleryPage'
 import { TokenPreviewPage } from '@/routes/dev/TokenPreviewPage'
 import { HomePage } from '@/routes/home/HomePage'
 import { CoursePage } from '@/routes/learn/CoursePage'
@@ -59,6 +60,11 @@ export const router = createBrowserRouter([
       { path: 'leaderboard', element: <LeaderboardPage />, handle: { title: 'Leaderboard' } },
       { path: 'profile', element: <ProfilePage />, handle: { title: 'Profile' } },
       { path: 'dev', element: <DevPage />, handle: { title: 'Development' } },
+      {
+        path: 'dev/primitives',
+        element: <PrimitiveGalleryPage />,
+        handle: { title: 'Primitive gallery' },
+      },
       { path: 'dev/tokens', element: <TokenPreviewPage />, handle: { title: 'Design tokens' } },
       { path: '*', element: <NotFoundPage />, handle: { title: 'Not found' } },
     ],

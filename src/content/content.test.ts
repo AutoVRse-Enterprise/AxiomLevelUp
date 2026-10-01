@@ -18,6 +18,14 @@ describe('content schemas', () => {
     expect(learnerSeedSchema.parse(advancedSeed).learner.name).toBe('Maya Chen')
   })
 
+  it('defaults course visibility to learner', () => {
+    const bundle = makeValidContentBundle()
+    const course = bundle.courseFiles[0]!.data as { visibility?: string }
+    delete course.visibility
+
+    expect(courseSchema.parse(course).visibility).toBe('learner')
+  })
+
   it('rejects the invalid course with useful paths', () => {
     const result = courseSchema.safeParse(invalidCourse)
 
@@ -81,8 +89,12 @@ describe('content loader', () => {
 
     const registry = await loadContent()
 
-    expect(registry.courses).toHaveLength(4)
-    expect(registry.lessonById).toHaveLength(12)
+    expect(registry.courses).toHaveLength(5)
+    expect(registry.catalogCourses).toHaveLength(4)
+    expect(registry.catalogCourses.map(({ id }) => id)).not.toContain('runtime-showcase')
+    expect(registry.lessonById).toHaveLength(13)
+    expect(registry.courseById.get('runtime-showcase')?.visibility).toBe('internal')
+    expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(22)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
     expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
     expect(registry.warnings).toEqual([])

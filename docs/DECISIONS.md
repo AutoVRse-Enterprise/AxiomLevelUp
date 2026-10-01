@@ -458,3 +458,26 @@ small, original media fixtures locally with ffmpeg and a deterministic Node PDF 
 increments, and media interactions remain resumable through existing player state. Captions,
 transcripts, asset types and provenance are explicit. Native PDF behavior avoids a new runtime
 dependency, while richer document rendering remains out of scope.
+
+## ADR-033: Addressable internal courses and isolated primitive previews
+
+**Status:** Accepted
+
+**Context:** The standard primitive runtime needs one complete, playable reference lesson without
+exposing development material in learner discovery. The same content must also feed a gallery that
+can exercise review, disabled and missing-asset states without changing learner progress or emitting
+learner events. ADR-028 was already assigned to shared choice assessment semantics at the required
+starting commit, so the next available append-only number is ADR-033.
+
+**Decision:** Add course visibility as `learner | internal`, defaulting to `learner` for existing
+content. Keep all courses and lessons in the primary registry and identifier maps, while exposing a
+separate `catalogCourses` collection containing only learner-visible courses. Learner-facing
+discovery passes only that collection to selectors. The primitive gallery reads the internal
+showcase lesson from the registry, renders it through the production primitive renderer and confines
+all callback state to gallery components; missing assets are simulated through a nested read-only
+content context.
+
+**Consequences:** Internal courses remain directly routable and use ordinary persisted progress, so
+the normal demo seed reset removes their progress with all other mutations. Catalog, continuation,
+revision and pathway surfaces cannot discover internal content. Gallery interactions provide broad
+visual state coverage without learner events, analytics or gamification side effects.

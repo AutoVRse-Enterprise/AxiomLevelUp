@@ -657,3 +657,25 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   Existing Cornerstone browser-externalization and large DICOM/entry chunk warnings remain
   non-failing.
 - **Follow-ups:** Start P4-T13 internal showcase course and primitive gallery.
+
+### [2026-10-01 23:29] P4-T13 - Add internal primitive showcase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added defaulted learner/internal course visibility and a filtered `catalogCourses`
+  registry collection, then moved learner discovery, continuation, revision and pathway course
+  lookup to that collection while preserving complete direct-route indexes. Added the internal
+  `runtime-showcase` course with all 21 implemented standard types across 22 ordered examples.
+  Added `/dev/primitives` with local-only interactive, review, disabled, reset and missing-asset
+  controls, plus `/dev` links to the gallery and real lesson route. Recorded ADR-033 because
+  ADR-028 was already allocated at baseline.
+- **Files changed:** Course/content schemas and generated schema docs; content loader and manifest;
+  `runtime-showcase` content; learner-facing route surfaces; dev gallery, links and router; hotspot
+  review disabling; content, route, gallery and reset tests; Phase 4 checklist, ADR and handoff
+  documentation.
+- **Commands run:** `npm run validate:content`; focused TypeScript, lint and Vitest runs;
+  `npm run schema:export`; focused Prettier; `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 20 test files and 182 tests. Content validation
+  reports five courses, thirteen lessons and zero warnings; four courses and twelve lessons remain
+  learner-visible. The production build succeeds with the existing Cornerstone browser
+  externalization and large-chunk warnings.
+- **Follow-ups:** Start P4-T14 cross-runtime, resume, timeout and validation boundary coverage.

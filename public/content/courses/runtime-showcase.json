@@ -1,0 +1,649 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "runtime-showcase",
+  "visibility": "internal",
+  "title": "Runtime Primitive Showcase",
+  "description": "Exercise every implemented standard primitive through the real lesson runtime.",
+  "imageAssetId": "showcase-cell-map",
+  "category": "Runtime development",
+  "estimatedMinutes": 35,
+  "difficulty": "intermediate",
+  "authors": ["Axiom Learning Science"],
+  "conceptIds": ["biostatistics", "dose-response"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": [
+    {
+      "id": "primitive-showcase",
+      "title": "Primitive Showcase",
+      "description": "Inspect, interact with and assess every standard learning primitive.",
+      "estimatedMinutes": 35,
+      "difficulty": "intermediate",
+      "conceptIds": ["biostatistics", "dose-response"],
+      "xpReward": 0,
+      "prerequisites": [],
+      "primitives": [
+        {
+          "id": "showcase-rich-text",
+          "type": "rich_text",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "heading": "Read evidence before interpreting it",
+            "body": "A confidence interval describes uncertainty around an estimate. Compare its width with the effect size before drawing a conclusion.",
+            "emphasis": ["effect size"],
+            "terms": [
+              {
+                "term": "confidence interval",
+                "definition": "A range of values compatible with the observed estimate under the analysis assumptions."
+              }
+            ],
+            "bullets": ["Separate magnitude from precision.", "State uncertainty explicitly."],
+            "keyTakeaway": "Strong interpretation combines an estimate with its uncertainty."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-image",
+          "type": "image",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "assetId": "showcase-cell-map",
+            "alt": "Synthetic microscopy field with colored cell clusters.",
+            "caption": "A synthetic field for practicing visual inspection.",
+            "annotations": [
+              { "id": "dense-cluster", "label": "Dense cluster", "x": 0.72, "y": 0.36 }
+            ]
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-zoomable-image",
+          "type": "zoomable_image",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "assetId": "showcase-cell-map",
+            "alt": "Synthetic microscopy field prepared for pan and zoom.",
+            "caption": "Zoom to compare sparse and dense regions.",
+            "maxZoom": 5,
+            "regions": [
+              {
+                "id": "sparse-region",
+                "label": "Sparse region",
+                "description": "Fewer observations appear in this field.",
+                "shape": "rect",
+                "x": 0.08,
+                "y": 0.2,
+                "width": 0.24,
+                "height": 0.3
+              },
+              {
+                "id": "dense-region",
+                "label": "Dense region",
+                "description": "Many observations overlap in this field.",
+                "shape": "circle",
+                "x": 0.72,
+                "y": 0.4,
+                "radius": 0.14
+              }
+            ]
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-hotspot-explore",
+          "type": "image_hotspot",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "mode": "explore",
+            "assetId": "showcase-cell-map",
+            "alt": "Synthetic microscopy field with two explorable regions.",
+            "caption": "Reveal both regions to compare their observation density.",
+            "prompt": "Explore both marked regions.",
+            "regions": [
+              {
+                "id": "explore-sparse",
+                "label": "Sparse observations",
+                "description": "This area contains relatively few observations.",
+                "shape": "rect",
+                "x": 0.08,
+                "y": 0.2,
+                "width": 0.24,
+                "height": 0.3
+              },
+              {
+                "id": "explore-dense",
+                "label": "Dense observations",
+                "description": "This area contains a concentrated cluster.",
+                "shape": "circle",
+                "x": 0.72,
+                "y": 0.4,
+                "radius": 0.14
+              }
+            ]
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "explored" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-image-compare",
+          "type": "image_compare",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "mode": "slider",
+            "before": {
+              "assetId": "showcase-tissue-control",
+              "alt": "Synthetic control tissue with evenly spaced structures.",
+              "label": "Control"
+            },
+            "after": {
+              "assetId": "showcase-tissue-treated",
+              "alt": "Synthetic treated tissue with reduced highlighted structures.",
+              "label": "Treated"
+            },
+            "initialPosition": 0.5,
+            "caption": "Compare the synthetic control and treated fields."
+          },
+          "assets": ["showcase-tissue-control", "showcase-tissue-treated"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-video",
+          "type": "video",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "assetId": "showcase-media-video",
+            "title": "Reading a scientific signal",
+            "description": "A short synthetic demonstration with captions and checkpoints.",
+            "posterAssetId": "showcase-media-poster",
+            "captionsAssetId": "showcase-media-captions",
+            "captionsLabel": "English",
+            "markers": [
+              { "id": "observe", "label": "Observe", "timeSeconds": 3 },
+              { "id": "compare", "label": "Compare", "timeSeconds": 12 }
+            ],
+            "checkpoints": [
+              {
+                "id": "video-check",
+                "timeSeconds": 8,
+                "prompt": "What should be compared before interpreting the signal?",
+                "options": [
+                  { "id": "groups", "label": "The relevant groups" },
+                  { "id": "colors", "label": "Only the display colors" }
+                ],
+                "correctOptionId": "groups",
+                "explanation": "Interpretation depends on a relevant comparison."
+              }
+            ]
+          },
+          "assets": [
+            "showcase-media-video",
+            "showcase-media-poster",
+            "showcase-media-captions"
+          ],
+          "completion": { "mode": "media_progress", "threshold": 0.9 },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-audio",
+          "type": "audio",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "assetId": "showcase-media-audio",
+            "title": "Evidence interpretation reminder",
+            "description": "Listen to a brief accessible summary.",
+            "transcriptAssetId": "showcase-media-transcript"
+          },
+          "assets": ["showcase-media-audio", "showcase-media-transcript"],
+          "completion": { "mode": "media_progress", "threshold": 0.9 },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-carousel",
+          "type": "carousel",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "title": "Three checks for an estimate",
+            "slides": [
+              {
+                "id": "magnitude",
+                "title": "Magnitude",
+                "body": "Ask whether the estimated effect is scientifically meaningful."
+              },
+              {
+                "id": "precision",
+                "title": "Precision",
+                "body": "Use interval width to describe uncertainty.",
+                "imageAssetId": "showcase-cell-map",
+                "imageAlt": "Synthetic cell field illustrating varied observation density."
+              },
+              {
+                "id": "context",
+                "title": "Context",
+                "body": "Consider design limitations before generalizing."
+              }
+            ]
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "explored" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-data-table",
+          "type": "data_table",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "caption": "Synthetic concentration-response observations",
+            "columns": [
+              { "id": "dose", "label": "Concentration", "unit": "µM", "alignment": "decimal" },
+              {
+                "id": "response",
+                "label": "Mean response",
+                "unit": "%",
+                "alignment": "decimal",
+                "emphasis": true
+              }
+            ],
+            "rows": [
+              {
+                "id": "low-dose",
+                "cells": [
+                  { "columnId": "dose", "value": 0.1 },
+                  { "columnId": "response", "value": 24 }
+                ]
+              },
+              {
+                "id": "mid-dose",
+                "highlight": { "marker": "†", "label": "Near the midpoint" },
+                "cells": [
+                  { "columnId": "dose", "value": 0.5 },
+                  { "columnId": "response", "value": 52 }
+                ]
+              },
+              {
+                "id": "high-dose",
+                "cells": [
+                  { "columnId": "dose", "value": 2 },
+                  { "columnId": "response", "value": 82 }
+                ]
+              }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-chart",
+          "type": "chart",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "chartType": "line",
+            "title": "Response by concentration",
+            "summary": "Response increases across the tested concentration range.",
+            "axes": {
+              "x": { "label": "Concentration", "unit": "µM", "scale": "linear" },
+              "y": { "label": "Response", "unit": "%", "scale": "linear" }
+            },
+            "series": [
+              {
+                "id": "response-series",
+                "label": "Mean response",
+                "points": [
+                  { "id": "point-low", "x": 0.1, "y": 24 },
+                  { "id": "point-mid", "x": 0.5, "y": 52 },
+                  { "id": "point-high", "x": 2, "y": 82 }
+                ]
+              }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-formula",
+          "type": "formula",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "title": "Percent response",
+            "expressions": [
+              {
+                "id": "percent-response",
+                "tex": "\\text{Response} = \\frac{\\text{observed}}{\\text{maximum}} \\times 100\\%",
+                "display": true,
+                "ariaLabel": "Response equals observed value divided by maximum value, multiplied by one hundred percent."
+              }
+            ],
+            "variables": [
+              {
+                "symbol": "Response",
+                "definition": "Observed response expressed relative to the maximum.",
+                "unit": "%"
+              }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-pdf-reference",
+          "type": "pdf_reference",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "assetId": "showcase-media-reference",
+            "citation": "Axiom Learning Science. Synthetic Evidence Note. 2026.",
+            "summary": "A one-page local reference used to verify native PDF linking.",
+            "page": 1,
+            "coverAssetId": "showcase-media-poster",
+            "linkLabel": "Open synthetic reference"
+          },
+          "assets": ["showcase-media-reference", "showcase-media-poster"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-hotspot-assess",
+          "type": "image_hotspot",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "mode": "assess",
+            "assetId": "showcase-cell-map",
+            "alt": "Synthetic microscopy field with a dense target cluster.",
+            "prompt": "Place the marker inside the dense cluster.",
+            "regions": [
+              {
+                "id": "target-cluster",
+                "label": "Dense target cluster",
+                "shape": "circle",
+                "x": 0.72,
+                "y": 0.4,
+                "radius": 0.14
+              },
+              {
+                "id": "background-field",
+                "label": "Background field",
+                "shape": "rect",
+                "x": 0.08,
+                "y": 0.2,
+                "width": 0.24,
+                "height": 0.3
+              }
+            ],
+            "targetRegionIds": ["target-cluster"],
+            "explanation": "The dense cluster is centered in the upper-right portion of the field."
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-multiple-choice",
+          "type": "multiple_choice",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "prompt": "Which feature describes precision?",
+            "options": [
+              { "id": "interval-width", "label": "Confidence interval width" },
+              { "id": "effect-direction", "label": "Effect direction alone" },
+              { "id": "sample-label", "label": "The sample label" }
+            ],
+            "correctOptionId": "interval-width",
+            "explanation": "Narrower compatible intervals indicate greater precision.",
+            "shuffle": true
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-multiple-select",
+          "type": "multiple_select",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "prompt": "Which items belong in a concise evidence interpretation?",
+            "options": [
+              { "id": "magnitude-option", "label": "Effect magnitude" },
+              { "id": "uncertainty-option", "label": "Uncertainty" },
+              { "id": "color-option", "label": "Chart color preference" }
+            ],
+            "correctOptionIds": ["magnitude-option", "uncertainty-option"],
+            "scoringMode": "partial",
+            "minSelections": 1,
+            "shuffle": false,
+            "explanation": "Magnitude and uncertainty support interpretation; display preference does not."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-true-false",
+          "type": "true_false",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "statement": "A wider confidence interval generally indicates less precision.",
+            "answer": true,
+            "explanation": "A wider interval leaves more values compatible with the estimate."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-classification",
+          "type": "classification",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "prompt": "Classify each statement as magnitude or precision.",
+            "categories": [
+              { "id": "magnitude", "label": "Magnitude" },
+              { "id": "precision", "label": "Precision" }
+            ],
+            "items": [
+              { "id": "large-effect", "label": "The estimated difference is 18%.", "categoryId": "magnitude" },
+              { "id": "narrow-interval", "label": "The interval spans only 3 percentage points.", "categoryId": "precision" }
+            ],
+            "scoringMode": "partial",
+            "explanation": "Effect size describes magnitude; interval width describes precision."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-match-pairs",
+          "type": "match_pairs",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "prompt": "Match each term with its meaning.",
+            "left": [
+              { "id": "ec50", "label": "EC50" },
+              { "id": "plateau", "label": "Plateau" }
+            ],
+            "right": [
+              { "id": "half-max", "label": "Concentration at half-maximal response" },
+              { "id": "maximum", "label": "Region approaching maximum response" },
+              { "id": "noise", "label": "Unstructured display variation" }
+            ],
+            "pairs": [
+              { "leftId": "ec50", "rightId": "half-max" },
+              { "leftId": "plateau", "rightId": "maximum" }
+            ],
+            "scoringMode": "partial",
+            "explanation": "EC50 locates the midpoint; the plateau approaches the maximum."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-ordering",
+          "type": "ordering",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "prompt": "Order the interpretation workflow.",
+            "items": [
+              { "id": "inspect-design", "label": "Inspect the study design" },
+              { "id": "estimate-effect", "label": "Estimate the effect" },
+              { "id": "quantify-uncertainty", "label": "Quantify uncertainty" }
+            ],
+            "scoringMode": "partial",
+            "explanation": "Begin with design, then interpret magnitude and uncertainty."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-fill-blank",
+          "type": "fill_blank",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "text": "A {{narrow}} interval indicates greater {{precision}}.",
+            "blanks": [
+              {
+                "id": "narrow",
+                "accepted": ["narrower", "narrow"],
+                "caseSensitive": false
+              },
+              {
+                "id": "precision",
+                "accepted": ["precision"],
+                "caseSensitive": false,
+                "choices": ["precision", "magnitude"]
+              }
+            ],
+            "explanation": "Interval width is a visual expression of precision."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-numeric-timed",
+          "type": "numeric",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "prompt": "What response percentage is 52 observations out of 100?",
+            "unit": "%",
+            "answer": 52,
+            "tolerance": { "type": "absolute", "value": 0.5 },
+            "explanation": "52 divided by 100 and multiplied by 100 equals 52%."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {},
+          "timer": { "durationSeconds": 45, "mode": "countdown" }
+        },
+        {
+          "id": "showcase-scenario",
+          "type": "scenario",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "startNodeId": "scenario-context",
+            "nodes": [
+              {
+                "id": "scenario-context",
+                "type": "context",
+                "body": "A small experiment reports a large effect with a wide confidence interval.",
+                "asset": {
+                  "assetId": "showcase-cell-map",
+                  "alt": "Synthetic observation field used as scenario context."
+                },
+                "next": "interpret-estimate"
+              },
+              {
+                "id": "interpret-estimate",
+                "type": "decision",
+                "prompt": "What is the most defensible first interpretation?",
+                "choices": [
+                  {
+                    "id": "promising-uncertain",
+                    "label": "The effect is promising but uncertain",
+                    "consequence": "This separates observed magnitude from limited precision.",
+                    "next": "plan-followup",
+                    "score": 1,
+                    "quality": "Best: acknowledges both signal and uncertainty."
+                  },
+                  {
+                    "id": "proven-effect",
+                    "label": "The effect is already proven",
+                    "consequence": "The wide interval does not support that level of certainty.",
+                    "next": "plan-followup",
+                    "score": 0,
+                    "quality": "Overstated: precision remains limited."
+                  }
+                ]
+              },
+              {
+                "id": "plan-followup",
+                "type": "decision",
+                "prompt": "What should the next study prioritize?",
+                "choices": [
+                  {
+                    "id": "more-precision",
+                    "label": "Increase precision with an adequately sized replication",
+                    "consequence": "Replication can test the signal and narrow uncertainty.",
+                    "next": "scenario-outcome",
+                    "score": 1,
+                    "quality": "Best: directly addresses uncertainty."
+                  },
+                  {
+                    "id": "change-colors",
+                    "label": "Change the chart colors",
+                    "consequence": "Display styling does not resolve statistical uncertainty.",
+                    "next": "scenario-outcome",
+                    "score": 0,
+                    "quality": "Weak: presentation does not improve evidence."
+                  }
+                ]
+              },
+              {
+                "id": "scenario-outcome",
+                "type": "outcome",
+                "title": "A calibrated conclusion",
+                "body": "The team reports the early signal with its uncertainty and plans a stronger replication.",
+                "result": "Good interpretation matches confidence to the available evidence."
+              }
+            ]
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "outcome" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        }
+      ]
+    }
+  ]
+}

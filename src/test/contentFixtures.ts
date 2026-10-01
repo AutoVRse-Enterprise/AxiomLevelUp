@@ -2,6 +2,7 @@ import appConfig from '../../public/content/app-config.json'
 import assets from '../../public/content/assets.json'
 import clinicalResearch from '../../public/content/courses/clinical-research.json'
 import dataInterpretation from '../../public/content/courses/data-interpretation.json'
+import runtimeShowcase from '../../public/content/courses/runtime-showcase.json'
 import safetyAssessment from '../../public/content/courses/safety-assessment.json'
 import scientificImaging from '../../public/content/courses/scientific-imaging.json'
 import manifest from '../../public/content/manifest.json'
@@ -16,6 +17,7 @@ const courseDocuments = [
   ['courses/clinical-research.json', clinicalResearch],
   ['courses/data-interpretation.json', dataInterpretation],
   ['courses/safety-assessment.json', safetyAssessment],
+  ['courses/runtime-showcase.json', runtimeShowcase],
 ] as const
 
 export function makeValidContentBundle(): ContentBundleInput {

@@ -9,7 +9,10 @@ import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle, type ContentRegistry } from '@/content/loader'
 import { learnerSeedSchema } from '@/content/schema'
 import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
-import { initializeLearningEventHandlers, stopLearningEventHandlersForTests } from '@/events/handlers'
+import {
+  initializeLearningEventHandlers,
+  stopLearningEventHandlersForTests,
+} from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
@@ -88,12 +91,15 @@ describe('application surfaces', () => {
     expect(completed).toHaveAttribute('aria-pressed', 'true')
   })
 
+  it('keeps internal courses off learner-facing catalog surfaces', () => {
+    renderSurface(<LearnPage />, '/learn', '/learn')
+
+    expect(screen.getByText('4 courses · 12 lessons')).toBeVisible()
+    expect(screen.queryByText('Runtime Primitive Showcase')).not.toBeInTheDocument()
+  })
+
   it('shows locked lesson reasons without making locked lessons links', () => {
-    renderSurface(
-      <CoursePage />,
-      '/learn/courses/scientific-imaging',
-      '/learn/courses/:courseId',
-    )
+    renderSurface(<CoursePage />, '/learn/courses/scientific-imaging', '/learn/courses/:courseId')
 
     const lockedTitle = screen.getByText('Thoracic Case Practice')
     expect(lockedTitle.closest('[aria-disabled="true"]')).toBeInTheDocument()
@@ -126,11 +132,7 @@ describe('application surfaces', () => {
     const user = userEvent.setup()
     const subscriber = vi.fn()
     subscribeToEvents(subscriber)
-    renderSurface(
-      <CoursePage />,
-      '/learn/courses/scientific-imaging',
-      '/learn/courses/:courseId',
-    )
+    renderSurface(<CoursePage />, '/learn/courses/scientific-imaging', '/learn/courses/:courseId')
     expect(subscriber).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'course_opened', courseId: 'scientific-imaging' }),
     )

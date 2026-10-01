@@ -90,7 +90,7 @@ cannot dead-end an ordering step.
       synthetic media fixtures.
 - [x] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
       migrate `case-intro` and `trial-case`.
-- [ ] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
+- [x] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
 - [ ] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
       validation coverage.
 - [ ] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
@@ -196,6 +196,10 @@ cannot dead-end an ordering step.
   lazy split-layout UI locks decisions, announces consequences, emits typed decision events and
   reviews paths with best choices. Both placeholder scenarios are now three-decision converging
   cases playable through their lesson routes.
+- P4-T13: course visibility defaults to learner-facing while `internal` courses remain indexed and
+  directly routable. The hidden `runtime-showcase` course contains all 21 standard primitive types
+  across 22 ordered examples, and `/dev/primitives` renders those examples with local-only
+  interactive, review, disabled, reset and missing-asset controls.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T10 through P4-T16.
 
@@ -204,3 +208,7 @@ cannot dead-end an ordering step.
 The approved sequence named the P4-T11 media decision ADR-027, but ADR-027 was already assigned to
 content-layer semantic validation at the required starting commit. The media decision is recorded as
 ADR-032 to preserve unique, append-only ADR numbering.
+
+P4-T13 requested ADR-028 when available, but ADR-028 was already assigned to shared choice
+assessment semantics at the required starting commit. Internal-course visibility and gallery
+isolation are recorded as ADR-033, the next available append-only number.

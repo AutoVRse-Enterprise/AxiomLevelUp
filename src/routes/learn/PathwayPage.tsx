@@ -30,7 +30,7 @@ const nodeIcons = {
 
 export function PathwayPage() {
   const { pathwayId } = useParams()
-  const { appConfig, courses, lessonById } = useContent()
+  const { appConfig, catalogCourses, lessonById } = useContent()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
@@ -60,7 +60,7 @@ export function PathwayPage() {
 
   const destinationFor = (node: (typeof view.nodes)[number]) => {
     if (node.type === 'challenge') return '/challenge'
-    const course = courses.find(({ lessons }) => lessons.some(({ id }) => id === node.refId))
+    const course = catalogCourses.find(({ lessons }) => lessons.some(({ id }) => id === node.refId))
     return course ? `/learn/courses/${course.id}/lessons/${node.refId}` : '/learn'
   }
 
@@ -137,9 +137,15 @@ export function PathwayPage() {
                       {body}
                     </button>
                     {openLock === node.id ? (
-                      <p className="mt-2 rounded-md bg-neutral-100 p-3 text-small text-neutral-700" role="status">
+                      <p
+                        className="mt-2 rounded-md bg-neutral-100 p-3 text-small text-neutral-700"
+                        role="status"
+                      >
                         Complete the preceding activity
-                        {node.unmetPrerequisites.length ? ` (${node.unmetPrerequisites.join(', ')})` : ''} to unlock this step.
+                        {node.unmetPrerequisites.length
+                          ? ` (${node.unmetPrerequisites.join(', ')})`
+                          : ''}{' '}
+                        to unlock this step.
                       </p>
                     ) : null}
                   </div>

@@ -8,6 +8,8 @@ import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
+import { router as appRouter } from './router'
+
 const registry = validateContentBundle(makeValidContentBundle())
 
 function renderRouter(path: string, immersive = false) {
@@ -28,6 +30,15 @@ function renderRouter(path: string, immersive = false) {
 }
 
 describe('router layouts', () => {
+  it('registers the gallery and real lesson routes', () => {
+    const paths = appRouter.routes.flatMap(
+      (route) => route.children?.map(({ path }) => path).filter(Boolean) ?? [],
+    )
+
+    expect(paths).toContain('dev/primitives')
+    expect(paths).toContain('learn/courses/:courseId/lessons/:lessonId')
+  })
+
   it.each(['/', '/learn', '/challenge', '/leaderboard', '/profile'])(
     'shows learner navigation on %s',
     (path) => {

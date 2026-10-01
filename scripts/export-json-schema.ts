@@ -65,6 +65,8 @@ and challenge item passes through the same strict parser and semantic validation
 
 ## Semantic validation
 
+- Course visibility defaults to \`learner\`; \`internal\` courses remain addressable but are excluded
+  from learner-facing catalog collections.
 - Primitive IDs must be unique within each lesson or challenge.
 - Primitive concept, badge reward, declared asset and typed content-asset references must resolve.
 - Typed content assets must match the asset type declared by their primitive schema.

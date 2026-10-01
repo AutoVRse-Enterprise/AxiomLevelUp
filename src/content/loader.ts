@@ -41,6 +41,7 @@ export interface ContentRegistry {
   manifest: ContentManifest
   appConfig: AppConfig
   courses: readonly Course[]
+  catalogCourses: readonly Course[]
   seed: LearnerSeed
   assetManifest: AssetManifest
   courseById: ReadonlyMap<string, Course>
@@ -108,6 +109,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     if (!result.success) throw new Error('Unreachable invalid course result')
     return result.data
   })
+  const catalogCourses = courses.filter(({ visibility }) => visibility === 'learner')
   const warnings: ContentIssue[] = []
 
   const duplicate = (kind: string, ids: string[], file: string) => {
@@ -440,6 +442,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     manifest,
     appConfig,
     courses: Object.freeze(courses),
+    catalogCourses: Object.freeze(catalogCourses),
     seed,
     assetManifest,
     courseById,

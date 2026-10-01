@@ -171,12 +171,13 @@ export function ImageHotspotPrimitive({
                 <button
                   key={region.id}
                   type="button"
+                  disabled={readOnly}
                   className="absolute grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-brand-700 font-bold text-white shadow focus-visible:outline-2 focus-visible:outline-offset-2"
                   style={{ left: `${center.x * 100}%`, top: `${center.y * 100}%` }}
                   aria-label={`Explore ${region.label}`}
                   aria-pressed={isExplored}
                   onClick={() => {
-                    if (isExplored) return
+                    if (readOnly || isExplored) return
                     setExplored((current) => new Set(current).add(region.id))
                     onInteract({ name: 'hotspot_revealed', key: region.id })
                   }}

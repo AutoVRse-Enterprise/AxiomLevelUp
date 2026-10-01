@@ -5,7 +5,8 @@
     "courses/scientific-imaging.json",
     "courses/clinical-research.json",
     "courses/data-interpretation.json",
-    "courses/safety-assessment.json"
+    "courses/safety-assessment.json",
+    "courses/runtime-showcase.json"
   ],
   "seeds": {
     "advanced": "seeds/advanced.json",

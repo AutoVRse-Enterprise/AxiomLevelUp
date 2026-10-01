@@ -81,6 +81,7 @@ export const courseSchema = z.object({
   schemaVersion: z.literal('0.1'),
   courseVersion: versionSchema,
   id: idSchema,
+  visibility: z.enum(['learner', 'internal']).default('learner'),
   title: z.string().min(1),
   description: z.string().min(1),
   imageAssetId: idSchema.optional(),

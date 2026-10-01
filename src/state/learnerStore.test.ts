@@ -42,4 +42,28 @@ describe('learner store persistence', () => {
     expect(useLearnerStore.getState().learner).toEqual(advancedSeed.learner)
     expect(useLearnerStore.getState().initialized).toBe(true)
   })
+
+  it('stores internal lesson progress and removes it on demo reset', () => {
+    useLearnerStore.setState((state) => ({
+      lessonProgress: {
+        ...state.lessonProgress,
+        'primitive-showcase': {
+          status: 'current',
+          stars: 0,
+          bestScore: null,
+          attempts: 1,
+          lastPrimitiveIndex: 4,
+          completedAt: null,
+        },
+      },
+    }))
+
+    expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toMatchObject({
+      status: 'current',
+      lastPrimitiveIndex: 4,
+    })
+
+    useLearnerStore.getState().replaceWithSeed(advancedSeed)
+    expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
+  })
 })
