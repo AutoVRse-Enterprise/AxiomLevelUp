@@ -334,3 +334,25 @@ values and non-string responses.
 **Consequences:** Drafts preserve learner input for review, text matching is deterministic, and
 numeric evaluation is locale-tolerant without silently reinterpreting grouped values. Generic input
 labels avoid exposing answers to assistive technology; corrections remain reveal-policy controlled.
+
+## ADR-030: Per-attempt timed-response lifecycle
+
+**Status:** Accepted
+
+**Context:** Compatible assessments may carry the existing base timer, but the runtime needs one
+owner for expiry, draft submission, retry behavior, accessibility announcements and background-tab
+handling. Persisting wall-clock deadlines would also make a resumed activity consume time while the
+learner was away.
+
+**Decision:** The activity player owns one timer per interactive attempt. It uses a wall-clock
+deadline while visible, pauses with the remaining duration while `document.hidden`, and restarts
+that remaining countdown when visible. Resuming a saved activity starts the current item's full
+timer again; timer state is not persisted. Expiry flushes and submits the current draft with score
+zero and `timedOut: true`, then uses the normal retry and max-attempt completion policy. The timer
+badge exposes `role="timer"` without continuous live updates and announces only thresholds from
+`product.player.timerAnnouncements` through a polite status region.
+
+**Consequences:** Background time and time away from a saved activity do not penalize learners,
+while every visible attempt has a deterministic limit and cannot dead-end after expiry. Timeout
+events remain distinguishable from ordinary incorrect answers, and the countdown uses no
+motion-dependent presentation.

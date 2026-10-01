@@ -20,7 +20,8 @@
       "maxAttempts": 2,
       "retryByDefault": true,
       "revealAnswer": "final_attempt",
-      "mediaCompletionThreshold": 0.9
+      "mediaCompletionThreshold": 0.9,
+      "timerAnnouncements": [60, 30, 10]
     }
   },
   "gamification": {

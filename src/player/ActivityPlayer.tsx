@@ -23,6 +23,8 @@ import { FeedbackPanel, type FeedbackStatus } from '@/player/FeedbackPanel'
 import { mapInteractionToEvents } from '@/player/interactionEvents'
 import { shouldRevealAnswer } from '@/player/reviewPolicy'
 import { StepFrame } from '@/player/StepFrame'
+import { TimerBadge } from '@/player/TimerBadge'
+import { useAttemptTimer } from '@/player/useAttemptTimer'
 import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 
@@ -140,6 +142,87 @@ export function ActivityPlayer({
     transition,
   ])
 
+  const submitResponse = useCallback(
+    (submittedResponse: unknown, timedOut = false) => {
+      if (!step || !stepProgress || sessionRef.current.phase !== 'step') return
+
+      const hasPendingDraft = pendingDraft.current?.primitiveId === step.primitive.id
+      const response = timedOut
+        ? hasPendingDraft
+          ? pendingDraft.current?.draft
+          : stepProgress.draft
+        : submittedResponse
+      flushDraft()
+      const result = timedOut
+        ? { score: 0, correct: false }
+        : evaluatePrimitive(step.primitive, response)
+      const attempts = stepProgress.attempts + 1
+      const completed = isPrimitiveComplete(step.primitive, {
+        attempts,
+        correct: result.correct,
+        interactionKeys: stepProgress.interactionKeys,
+        explorableKeys: step.explorableKeys,
+        mediaProgress: stepProgress.mediaProgress,
+        mediaCompletionThreshold: appConfig.product.player.mediaCompletionThreshold,
+        reportedComplete: false,
+        retry: step.retry,
+        maxAttempts: step.maxAttempts,
+      })
+      transition({
+        type: 'submit',
+        primitiveId: step.primitive.id,
+        response,
+        score: result.score,
+        completed,
+        timedOut,
+      })
+      emitEvent({
+        event: 'question_answered',
+        activityKind: plan.activity.kind,
+        activityId: plan.activity.id,
+        questionId: step.primitive.id,
+        primitiveType: step.primitive.type,
+        conceptIds: step.primitive.conceptIds,
+        score: result.score,
+        correct: result.correct,
+        attempt: attempts,
+        xp: step.primitive.scoring.xp ?? 0,
+        timedOut,
+      })
+      if (completed) {
+        emitEvent({
+          event: 'primitive_completed',
+          activityKind: plan.activity.kind,
+          activityId: plan.activity.id,
+          primitiveId: step.primitive.id,
+          primitiveType: step.primitive.type,
+          stepIndex: session.stepIndex,
+        })
+      }
+    },
+    [
+      appConfig.product.player.mediaCompletionThreshold,
+      flushDraft,
+      plan.activity.id,
+      plan.activity.kind,
+      session.stepIndex,
+      step,
+      stepProgress,
+      transition,
+    ],
+  )
+
+  const attemptTimer = useAttemptTimer({
+    active:
+      !awaitingResume &&
+      session.phase === 'step' &&
+      Boolean(step?.supported && step.timerCompatible && step.primitive.timer),
+    attemptKey: `${step?.primitive.id ?? 'none'}:${stepProgress?.attempts ?? 0}`,
+    durationSeconds: step?.primitive.timer?.durationSeconds ?? null,
+    mode: step?.primitive.timer?.mode ?? 'countdown',
+    onExpire: () => submitResponse(undefined, true),
+  })
+
   const finish = useCallback(
     (current: ActivitySession) => {
       const at = new Date().toISOString()
@@ -227,11 +310,12 @@ export function ActivityPlayer({
       ? 'partial'
       : 'incorrect'
   const reviewEvaluation = evaluatePrimitive(step.primitive, stepProgress.response)
-  const feedbackMessage =
-    (feedbackCorrect ? step.primitive.feedback.correct : step.primitive.feedback.incorrect) ??
-    (typeof step.primitive.content.explanation === 'string'
-      ? step.primitive.content.explanation
-      : null)
+  const feedbackMessage = stepProgress.lastTimedOut
+    ? "Time's up."
+    : ((feedbackCorrect ? step.primitive.feedback.correct : step.primitive.feedback.incorrect) ??
+      (typeof step.primitive.content.explanation === 'string'
+        ? step.primitive.content.explanation
+        : null))
   const canRetry = !stepProgress.completed && step.retry && stepProgress.attempts < step.maxAttempts
 
   const handleContinue = () => {
@@ -251,6 +335,16 @@ export function ActivityPlayer({
         progress={selectProgressFraction(session, plan) * 100}
         layout={step.layout}
         onExit={() => navigate(exitPath)}
+        timer={
+          session.phase === 'step' && attemptTimer ? (
+            <TimerBadge
+              key={`${step.primitive.id}:${stepProgress.attempts}`}
+              seconds={attemptTimer.seconds}
+              mode={attemptTimer.mode}
+              announcementThresholds={appConfig.product.player.timerAnnouncements}
+            />
+          ) : undefined
+        }
         footer={
           session.phase === 'step' && stepProgress.completed ? (
             <Button onClick={handleContinue}>Continue</Button>
@@ -360,51 +454,7 @@ export function ActivityPlayer({
                 })
               }
             }}
-            onSubmit={(response) => {
-              flushDraft()
-              const result = evaluatePrimitive(step.primitive, response)
-              const attempts = stepProgress.attempts + 1
-              const completed = isPrimitiveComplete(step.primitive, {
-                attempts,
-                correct: result.correct,
-                interactionKeys: stepProgress.interactionKeys,
-                explorableKeys: step.explorableKeys,
-                mediaProgress: stepProgress.mediaProgress,
-                mediaCompletionThreshold: appConfig.product.player.mediaCompletionThreshold,
-                reportedComplete: false,
-                retry: step.retry,
-                maxAttempts: step.maxAttempts,
-              })
-              transition({
-                type: 'submit',
-                primitiveId: step.primitive.id,
-                response,
-                score: result.score,
-                completed,
-              })
-              emitEvent({
-                event: 'question_answered',
-                activityKind: plan.activity.kind,
-                activityId: plan.activity.id,
-                questionId: step.primitive.id,
-                primitiveType: step.primitive.type,
-                conceptIds: step.primitive.conceptIds,
-                score: result.score,
-                correct: result.correct,
-                attempt: attempts,
-                xp: step.primitive.scoring.xp ?? 0,
-              })
-              if (completed) {
-                emitEvent({
-                  event: 'primitive_completed',
-                  activityKind: plan.activity.kind,
-                  activityId: plan.activity.id,
-                  primitiveId: step.primitive.id,
-                  primitiveType: step.primitive.type,
-                  stepIndex: session.stepIndex,
-                })
-              }
-            }}
+            onSubmit={(response) => submitResponse(response)}
           />
         )}
       </StepFrame>

@@ -82,7 +82,7 @@ cannot dead-end an ordering step.
   shuffle and review.
 - [x] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
 - [x] P4-T07 — Add fill-blank and numeric typed-response assessments.
-- [ ] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
+- [x] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
 - [ ] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
 - [ ] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
   `dose-curve`.
@@ -167,8 +167,12 @@ cannot dead-end an ordering step.
   drafts, generic accessible labels and reveal-aware review. Fill-blank evaluation normalizes NFKC
   text and scores each blank; numeric evaluation accepts comma or point decimals without accepting
   grouping, exponent or non-finite syntax.
+- P4-T08: timer-compatible assessments use the base timer per attempt, with configured polite
+  threshold announcements, hidden-document pausing and full-duration restart on activity resume.
+  Expiry submits the current draft at zero score with `timedOut: true` and follows the configured
+  retry and max-attempt policy.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T08 through P4-T16.
+- Runtime verification remains pending for P4-T09 through P4-T16.
 
 ## Deviations
 

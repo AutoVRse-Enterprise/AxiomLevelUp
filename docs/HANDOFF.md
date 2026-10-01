@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T07 are complete; P4-T08 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T08 are complete; P4-T09 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -40,10 +40,16 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   normalization, configurable case matching and optional select choices.
 - Numeric responses stay as raw strings, accept comma or point decimals, reject grouping syntax
   and non-finite values, and evaluate against an answer/tolerance or inclusive range policy.
+- Timer-compatible assessments run a fresh timer for each attempt, pause while the document is
+  hidden and restart the current item's full timer when a saved activity resumes.
+- Timeout submits the current draft with zero score and `timedOut: true`, shows generic feedback and
+  follows the same retry/max-attempt policy as an ordinary incorrect response.
+- The timer badge exposes `role="timer"`, announces configured thresholds politely and does not use
+  motion-dependent presentation.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021, ADR-025 through ADR-029 record player lifecycle, structured assessments, artifact
-  viewport, semantic validation, choice semantics and typed-response parsing.
-- Type checking, lint, 15 test files with 131 tests, content validation and production build pass.
+- ADR-021, ADR-025 through ADR-030 record player lifecycle, structured assessments, artifact
+  viewport, semantic validation, assessment semantics and timed-response lifecycle.
+- Type checking, lint, 15 test files with 134 tests, content validation and production build pass.
 
 ## In progress
 
@@ -51,9 +57,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T08: add the timed-response wrapper and timeout behavior.
-2. P4-T09: add zoomable, hotspot and comparison image primitives.
-3. P4-T10: add data tables, charts and formula primitives.
+1. P4-T09: add zoomable, hotspot and comparison image primitives.
+2. P4-T10: add data tables, charts and formula primitives.
+3. P4-T11: add video, audio, carousel and PDF-reference primitives.
 
 ## Blockers/questions for the user
 
@@ -85,6 +91,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   parsed by the component.
 - Numeric input treats one comma or point as the decimal separator and rejects mixed or repeated
   separators, exponent notation and non-finite values.
+- Timer state is intentionally not persisted: activity resume restarts the current item timer,
+  while retry starts a new full timer and background visibility pauses the current remainder.
+- Timeout is an ordinary zero-score attempt for retry/completion purposes, but is distinguished by
+  `lastTimedOut` in the session and `timedOut` on `question_answered`.
 - Choice shuffle seeds offset review's submitted-attempt count so option order does not change after
   submission.
 - Classification and matching responses are complete source-to-target ID records; ordering

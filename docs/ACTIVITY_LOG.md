@@ -542,3 +542,27 @@ This file is append-only.
   run exposed and corrected the primitive-module count assertion. Existing Cornerstone
   browser-externalization and large lazy chunk warnings remain non-failing.
 - **Follow-ups:** Start P4-T08 timed-response wrapper, announcements and timeout behavior.
+
+### [2026-10-01 22:26] P4-T08 - Add timed responses
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added player-owned per-attempt timers for timer-compatible assessments, a semantic
+  timer badge with configured polite announcements, hidden-document pause/restart behavior,
+  full-duration activity-resume semantics and zero-score timeout submission of the current draft.
+  Timeout now persists on step progress, emits `question_answered.timedOut`, shows generic feedback
+  and follows the existing retry/max-attempt policy. Recorded ADR-030 because ADR-029 was already
+  allocated to P4-T07 at the required starting commit.
+- **Files changed:** `public/content/app-config.json`, `schemas/app-config.schema.json`,
+  `src/content/schema/index.ts`, `src/engines/learning/{plan,session}.ts`,
+  `src/player/{ActivityPlayer,StepFrame,TimerBadge}.tsx`, `src/player/useAttemptTimer.ts`,
+  `src/player/player.test.tsx`, `docs/{ACTIVITY_LOG,DECISIONS,HANDOFF}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck, lint and player Vitest runs;
+  `npm run schema:export`; `npm run test`; `npm run validate:content`; `npm run check`;
+  `git diff --check`.
+- **Result/verification:** The full gate passes with 15 test files and 134 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. Fake-timer coverage
+  verifies timeout draft submission, configured announcements, retry exhaustion, hidden-tab pause
+  and full timer restart on activity resume. Existing Cornerstone browser-externalization and large
+  lazy chunk warnings remain non-failing.
+- **Follow-ups:** Start P4-T09 zoomable, hotspot and comparison image primitives.

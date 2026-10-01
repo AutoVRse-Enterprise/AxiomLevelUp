@@ -1,7 +1,7 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle } from '@/content/loader'
@@ -9,6 +9,7 @@ import { multipleChoicePrimitiveSchema } from '@/content/schema/primitives'
 import { buildActivityPlan } from '@/engines/learning/plan'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
+import type { LearnerEvent } from '@/events/types'
 import { FeedbackPanel } from '@/player/FeedbackPanel'
 import { ActivityPlayer } from '@/player/ActivityPlayer'
 import { MultipleChoicePrimitive } from '@/primitives/components/MultipleChoicePrimitive'
@@ -25,14 +26,33 @@ const primitiveSources = import.meta.glob('../primitives/components/*Primitive.t
   eager: true,
 }) as Record<string, string>
 
-function renderPlayer() {
+function timedPlan(durationSeconds: number) {
+  return buildActivityPlan(
+    {
+      ...playerFixtures.allTyped,
+      id: `timed-${durationSeconds}`,
+      primitives: [
+        {
+          ...playerFixtures.allTyped.primitives[1]!,
+          timer: { durationSeconds, mode: 'countdown' },
+        },
+      ],
+    },
+    {
+      environment: 'development',
+      player: registry.appConfig.product.player,
+    },
+  )
+}
+
+function renderPlayer(activityPlan = plan) {
   const router = createMemoryRouter(
     [
       {
         path: '/play',
         element: (
           <ActivityPlayer
-            plan={plan}
+            plan={activityPlan}
             previousAttempts={0}
             previousBestScore={null}
             continuePath="/done"
@@ -58,6 +78,10 @@ describe('activity player', () => {
     clearEventSubscribersForTests()
     useActivitySessionStore.getState().clear()
     await useActivitySessionStore.persist.clearStorage()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('executes a configured activity and emits ordered lifecycle events', async () => {
@@ -155,6 +179,100 @@ describe('activity player', () => {
         'supported',
       ),
     )
+  })
+
+  it('submits the current draft for zero when a timed attempt expires', async () => {
+    vi.useFakeTimers()
+    const events: LearnerEvent[] = []
+    subscribeToEvents((event) => events.push(event))
+    const currentPlan = timedPlan(11)
+    renderPlayer(currentPlan)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }))
+    await act(async () => Promise.resolve())
+    expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:11')
+    fireEvent.click(screen.getByRole('radio', { name: 'Supported' }))
+
+    await act(() => vi.advanceTimersByTimeAsync(1_000))
+    expect(screen.getByRole('status')).toHaveTextContent('10 seconds remaining')
+    await act(() => vi.advanceTimersByTimeAsync(10_000))
+
+    expect(screen.getByText("Time's up.")).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeVisible()
+    expect(useActivitySessionStore.getState().session?.progress['fixture-question']).toMatchObject({
+      attempts: 1,
+      response: 'supported',
+      firstScore: 0,
+      lastTimedOut: true,
+      completed: false,
+    })
+    expect(events.find((event) => event.event === 'question_answered')).toMatchObject({
+      event: 'question_answered',
+      score: 0,
+      correct: false,
+      timedOut: true,
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:11')
+    await act(() => vi.advanceTimersByTimeAsync(11_000))
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeVisible()
+    expect(useActivitySessionStore.getState().session?.progress['fixture-question']).toMatchObject({
+      attempts: 2,
+      lastTimedOut: true,
+      completed: true,
+    })
+  })
+
+  it('pauses a timed attempt while the document is hidden', async () => {
+    vi.useFakeTimers()
+    const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden')
+    let hidden = false
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => hidden })
+
+    try {
+      renderPlayer(timedPlan(3))
+      fireEvent.click(screen.getByRole('button', { name: 'Start' }))
+      await act(async () => Promise.resolve())
+      await act(() => vi.advanceTimersByTimeAsync(1_000))
+      expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:02')
+
+      hidden = true
+      document.dispatchEvent(new Event('visibilitychange'))
+      await act(() => vi.advanceTimersByTimeAsync(10_000))
+      expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:02')
+      expect(screen.queryByText("Time's up.")).not.toBeInTheDocument()
+
+      hidden = false
+      document.dispatchEvent(new Event('visibilitychange'))
+      await act(() => vi.advanceTimersByTimeAsync(2_000))
+      expect(screen.getByText("Time's up.")).toBeVisible()
+    } finally {
+      if (hiddenDescriptor) {
+        Object.defineProperty(document, 'hidden', hiddenDescriptor)
+      } else {
+        Reflect.deleteProperty(document, 'hidden')
+      }
+    }
+  })
+
+  it('restarts the current item timer when a session resumes', async () => {
+    vi.useFakeTimers()
+    const currentPlan = timedPlan(3)
+    renderPlayer(currentPlan)
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }))
+    await act(async () => Promise.resolve())
+    await act(() => vi.advanceTimersByTimeAsync(2_000))
+    expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:01')
+
+    cleanup()
+    renderPlayer(currentPlan)
+    fireEvent.click(screen.getByRole('button', { name: 'Resume' }))
+    await act(async () => Promise.resolve())
+
+    expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:03')
+    await act(() => vi.advanceTimersByTimeAsync(3_000))
+    expect(screen.getByText("Time's up.")).toBeVisible()
   })
 
   it('renders retry and continue feedback actions', () => {

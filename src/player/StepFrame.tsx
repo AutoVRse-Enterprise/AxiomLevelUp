@@ -50,7 +50,7 @@ export function StepFrame({
           <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
             {definitionLabel}
           </p>
-          {timer ? <div aria-label="Activity timer">{timer}</div> : null}
+          {timer ? <div>{timer}</div> : null}
         </div>
         <div
           className={

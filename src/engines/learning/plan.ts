@@ -26,6 +26,7 @@ export interface ActivityStep {
   layout: PrimitiveLayout
   prompt: string
   explorableKeys: string[]
+  timerCompatible: boolean
   retry: boolean
   maxAttempts: number
 }
@@ -86,6 +87,7 @@ export function buildActivityPlan(
       layout: resolved?.definition.layout ?? 'stacked',
       prompt: resolved?.definition.reviewPrompt(resolved.primitive) ?? 'Activity item',
       explorableKeys: resolved?.definition.explorableKeys?.(resolved.primitive) ?? [],
+      timerCompatible: resolved?.definition.timerCompatible ?? false,
       retry: primitive.feedback.retry ?? options.player.retryByDefault,
       maxAttempts: primitive.feedback.maxAttempts ?? options.player.maxAttempts,
     }

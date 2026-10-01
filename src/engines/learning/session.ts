@@ -9,6 +9,7 @@ export interface PrimitiveProgress {
   lastCorrect: boolean | null
   firstScore: number | null
   lastScore: number | null
+  lastTimedOut: boolean
   response: unknown
   draft: unknown
   interactions: number
@@ -46,6 +47,7 @@ export type SessionAction =
       response: unknown
       score: number
       completed: boolean
+      timedOut?: boolean
     }
   | { type: 'complete_current'; primitiveId: string }
   | { type: 'retry' }
@@ -58,6 +60,7 @@ const emptyProgress = (): PrimitiveProgress => ({
   lastCorrect: null,
   firstScore: null,
   lastScore: null,
+  lastTimedOut: false,
   response: null,
   draft: null,
   interactions: 0,
@@ -157,6 +160,7 @@ export function sessionReducer(state: ActivitySession, action: SessionAction): A
             lastCorrect: correct,
             firstScore: attempts === 1 ? score : current.firstScore,
             lastScore: score,
+            lastTimedOut: action.timedOut ?? false,
             response: action.response,
             completed: action.completed,
           },
