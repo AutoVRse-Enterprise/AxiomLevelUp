@@ -154,3 +154,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
 - **Result/verification:** All static checks pass; 26 tests pass including branch, date-boundary, fresh-state and zero-accuracy cases.
 - **Follow-ups:** Build shared presentation components and dynamic route headers.
+
+### [2026-10-01 19:52] P2-T02 - Shared presentation and route structure
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added reusable course, lesson, progress, badge, stat, mastery, activity, avatar and leaderboard components; introduced the badge icon registry and asset hook; added content-derived headers and split every placeholder into a focused route module.
+- **Files changed:** `src/components/learning/**`, `src/components/navigation/PageHeader.tsx`, `src/content/useAssetUrl.ts`, `src/layouts/*`, `src/routes/**`, `src/app/router*`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
+- **Result/verification:** TypeScript, lint and all 26 tests pass. Nested routes receive back navigation and content-derived document titles.
+- **Follow-ups:** Compose the complete Home dashboard from these view models and components.

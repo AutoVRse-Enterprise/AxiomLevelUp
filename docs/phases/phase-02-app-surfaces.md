@@ -20,15 +20,16 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 
 - [x] P2-T00 — Confirm surface-level acceptance criteria and map every display field to configuration, learner state or a selector.
 - [x] P2-T01 — Add the pure selector/view-model layer for course, lesson, pathway, activity, rank, badge and profile states.
-- [ ] P2-T02 — Build Home with learner status, continue learning, daily challenge, weak-topic revision, active pathway, recent achievements, leaderboard teaser and weekly activity.
-- [ ] P2-T03 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
-- [ ] P2-T04 — Build the pathway journey with sequence, current position, optional branches, node types and accessible non-visual relationships.
-- [ ] P2-T05 — Build course detail with metadata, aggregate progress, lesson states, prerequisites and navigation into the existing immersive route.
-- [ ] P2-T06 — Build the challenge landing shell for daily and weekly challenge configuration without implementing the Phase 3 player.
-- [ ] P2-T07 — Build the weekly cohort leaderboard with the learner's contextual rank and future-period controls shown as inactive.
-- [ ] P2-T08 — Build Profile with learner summary, derived stats, mastery, badge states and weekly activity.
-- [ ] P2-T09 — Add responsive, accessibility and route-level tests; validate all empty, locked and partially complete states.
-- [ ] P2-T10 — Run the quality gate and update roadmap, handoff and activity documentation.
+- [x] P2-T02 — Add reusable learning components, asset resolution, dynamic route headers and split route modules.
+- [ ] P2-T03 — Build Home with learner status, continue learning, daily challenge, weak-topic revision, active pathway, recent achievements, leaderboard teaser and weekly activity.
+- [ ] P2-T04 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
+- [ ] P2-T05 — Build the pathway journey with sequence, current position, optional branches, node types and accessible non-visual relationships.
+- [ ] P2-T06 — Build course detail with metadata, aggregate progress, lesson states, prerequisites and navigation into the existing immersive route.
+- [ ] P2-T07 — Build the challenge landing shell for daily and weekly challenge configuration without implementing the Phase 3 player.
+- [ ] P2-T08 — Build the weekly cohort leaderboard with the learner's contextual rank and future-period controls shown as inactive.
+- [ ] P2-T09 — Build Profile with learner summary, derived stats, mastery, badge states and weekly activity.
+- [ ] P2-T10 — Add responsive, accessibility and route-level tests; validate all empty, locked and partially complete states.
+- [ ] P2-T11 — Run the quality gate and update roadmap, handoff and activity documentation.
 
 ## Surface data map
 

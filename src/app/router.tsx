@@ -5,18 +5,17 @@ import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
 import { Skeleton } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
-import {
-  ChallengePage,
-  HomePage,
-  ImmersivePlaceholder,
-  LeaderboardPage,
-  LearnPage,
-  NotFoundPage,
-  ParameterPage,
-  ProfilePage,
-} from '@/routes/PlaceholderPages'
+import { ChallengePage } from '@/routes/challenge/ChallengePage'
 import { DevPage } from '@/routes/dev/DevPage'
 import { TokenPreviewPage } from '@/routes/dev/TokenPreviewPage'
+import { HomePage } from '@/routes/home/HomePage'
+import { ImmersivePlaceholder } from '@/routes/ImmersivePlaceholder'
+import { CoursePage } from '@/routes/learn/CoursePage'
+import { LearnPage } from '@/routes/learn/LearnPage'
+import { PathwayPage } from '@/routes/learn/PathwayPage'
+import { LeaderboardPage } from '@/routes/leaderboard/LeaderboardPage'
+import { NotFoundPage } from '@/routes/NotFoundPage'
+import { ProfilePage } from '@/routes/profile/ProfilePage'
 
 const DicomSpikePage = lazy(async () => {
   const module = await import('@/spikes/dicom/DicomSpikePage')
@@ -43,22 +42,24 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: 'learn', element: <LearnPage /> },
+      { index: true, element: <HomePage />, handle: { title: 'Home' } },
+      { path: 'learn', element: <LearnPage />, handle: { title: 'Learn' } },
       {
         path: 'learn/pathways/:pathwayId',
-        element: <ParameterPage kind="Pathway" />,
+        element: <PathwayPage />,
+        handle: { title: 'Pathway' },
       },
       {
         path: 'learn/courses/:courseId',
-        element: <ParameterPage kind="Course" />,
+        element: <CoursePage />,
+        handle: { title: 'Course' },
       },
-      { path: 'challenge', element: <ChallengePage /> },
-      { path: 'leaderboard', element: <LeaderboardPage /> },
-      { path: 'profile', element: <ProfilePage /> },
-      { path: 'dev', element: <DevPage /> },
-      { path: 'dev/tokens', element: <TokenPreviewPage /> },
-      { path: '*', element: <NotFoundPage /> },
+      { path: 'challenge', element: <ChallengePage />, handle: { title: 'Challenges' } },
+      { path: 'leaderboard', element: <LeaderboardPage />, handle: { title: 'Leaderboard' } },
+      { path: 'profile', element: <ProfilePage />, handle: { title: 'Profile' } },
+      { path: 'dev', element: <DevPage />, handle: { title: 'Development' } },
+      { path: 'dev/tokens', element: <TokenPreviewPage />, handle: { title: 'Design tokens' } },
+      { path: '*', element: <NotFoundPage />, handle: { title: 'Not found' } },
     ],
   },
   {
@@ -68,12 +69,14 @@ export const router = createBrowserRouter([
       {
         path: 'learn/courses/:courseId/lessons/:lessonId',
         element: <ImmersivePlaceholder kind="Lesson" />,
+        handle: { title: 'Lesson' },
       },
       {
         path: 'challenge/:challengeId/play',
         element: <ImmersivePlaceholder kind="Challenge" />,
+        handle: { title: 'Challenge' },
       },
-      { path: 'dev/dicom-spike', element: <LazyDicomSpike /> },
+      { path: 'dev/dicom-spike', element: <LazyDicomSpike />, handle: { title: 'DICOM spike' } },
     ],
   },
 ])

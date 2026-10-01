@@ -1,17 +1,14 @@
 import {
   BrainCircuit,
-  Flame,
   Home,
-  Medal,
   RadioTower,
   Trophy,
   UserRound,
 } from 'lucide-react'
-import { NavLink, Outlet, useLocation } from 'react-router'
+import { NavLink, Outlet } from 'react-router'
 
-import { OfflineIndicator } from '@/components/feedback/OfflineIndicator'
+import { PageHeader } from '@/components/navigation/PageHeader'
 import { cn } from '@/lib/cn'
-import { useLearnerStore } from '@/state/learnerStore'
 
 const navigation = [
   { to: '/', label: 'Home', icon: Home, end: true },
@@ -21,50 +18,10 @@ const navigation = [
   { to: '/profile', label: 'Profile', icon: UserRound, end: false },
 ] as const
 
-const routeTitles: Record<string, string> = {
-  '/': 'Learning Runtime',
-  '/learn': 'Learn',
-  '/challenge': 'Daily Challenge',
-  '/leaderboard': 'Leaderboard',
-  '/profile': 'Profile',
-}
-
-function titleFor(pathname: string) {
-  return (
-    routeTitles[pathname] ??
-    (pathname.startsWith('/learn') ? 'Learning' : pathname.startsWith('/dev') ? 'Development' : 'Learning')
-  )
-}
-
 export function AppShell() {
-  const { pathname } = useLocation()
-  const xp = useLearnerStore((state) => state.xp.total)
-  const streak = useLearnerStore((state) => state.streak.currentDays)
-
   return (
     <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))]">
-      <header
-        className="sticky top-0 z-20 border-b border-neutral-200/80 bg-neutral-50/90 backdrop-blur-lg"
-        style={{ paddingTop: 'env(safe-area-inset-top)' }}
-      >
-        <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <div>
-            <p className="text-caption font-semibold tracking-wide text-brand-700 uppercase">
-              Axiom
-            </p>
-            <p className="font-bold text-neutral-900">{titleFor(pathname)}</p>
-          </div>
-          <div className="flex items-center gap-3 text-small font-semibold" aria-label="Learner status">
-            <OfflineIndicator />
-            <span className="flex items-center gap-1 text-xp">
-              <Medal aria-hidden="true" size={17} /> {xp.toLocaleString()}
-            </span>
-            <span className="flex items-center gap-1 text-streak">
-              <Flame aria-hidden="true" size={17} /> {streak}
-            </span>
-          </div>
-        </div>
-      </header>
+      <PageHeader />
 
       <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         <Outlet />
