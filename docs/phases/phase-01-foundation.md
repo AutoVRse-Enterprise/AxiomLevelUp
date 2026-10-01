@@ -15,7 +15,7 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 - [x] P1-T06 — Advanced/fresh seed data and invalid fixtures
 - [x] P1-T07 — Zustand state, IndexedDB persistence and selectors
 - [x] P1-T08 — Typed event bus and bounded event history
-- [ ] P1-T09 — Hidden demo menu and working reset/seed/event controls
+- [x] P1-T09 — Hidden demo menu and working reset/seed/event controls
 - [ ] P1-T10 — PWA manifest, generated icons, precache and online status
 - [ ] P1-T11 — Lazy Cornerstone DICOM/PWA spike, data tools and findings
 - [ ] P1-T12 — Automated tests and green `npm run check`

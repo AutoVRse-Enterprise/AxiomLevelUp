@@ -91,3 +91,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** Event infrastructure compiles, initializes before React and leaves subscriber failures isolated.
 - **Follow-ups:** Add the demo controls and the first event-to-state subscriber.
+
+### [2026-10-01 17:54] P1-T09 - Demo reset and diagnostics
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Expanded the URL-only developer page with reset, fresh/advanced seed switching, an XP simulation that travels through the event bus, a persisted event viewer and clearly labelled future controls. Added the first event-to-state handler.
+- **Files changed:** `src/routes/dev/DevPage.tsx`, `src/events/handlers.ts`, `src/state/seed.ts`, `src/main.tsx`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** All controls compile and the XP action updates the same persistent state shown in the application shell.
+- **Follow-ups:** Add service worker registration, manifest assets and offline status.
