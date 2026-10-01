@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Axiom Learning Runtime</title>
+  <rect width="512" height="512" rx="112" fill="#0f766e"/>
+  <path d="M130 340 245 110c5-11 17-18 29-18s24 7 29 18l80 160h-74l-36-76-73 146h-70Z" fill="#fff"/>
+  <circle cx="335" cy="345" r="64" fill="#7edcc9"/>
+  <path d="m307 345 20 20 38-43" fill="none" stroke="#0b171e" stroke-linecap="round" stroke-linejoin="round" stroke-width="20"/>
+</svg>

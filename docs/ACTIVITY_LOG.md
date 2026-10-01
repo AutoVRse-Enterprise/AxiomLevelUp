@@ -100,3 +100,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** All controls compile and the XP action updates the same persistent state shown in the application shell.
 - **Follow-ups:** Add service worker registration, manifest assets and offline status.
+
+### [2026-10-01 18:04] P1-T10 - Installable PWA shell
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Generated standard and maskable icons from the source SVG, added the web app manifest, prompt-mode service worker registration, app/content precaching, an online-status hook and a calm offline indicator.
+- **Files changed:** `public/assets/icons/**`, `vite.config.ts`, `index.html`, `src/pwa/**`, `src/components/feedback/OfflineIndicator.tsx`, `src/layouts/AppShell.tsx`, `src/main.tsx`.
+- **Commands run:** `npx pwa-assets-generator --preset minimal ...`, `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** Production build emits `manifest.webmanifest`, `sw.js` and Workbox runtime; 40 assets (801.79 KiB) are precached.
+- **Follow-ups:** Add an explicit DICOM CacheFirst policy while implementing the isolated imaging spike.

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 
+import { OfflineIndicator } from '@/components/feedback/OfflineIndicator'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
 
@@ -54,6 +55,7 @@ export function AppShell() {
             <p className="font-bold text-neutral-900">{titleFor(pathname)}</p>
           </div>
           <div className="flex items-center gap-3 text-small font-semibold" aria-label="Learner status">
+            <OfflineIndicator />
             <span className="flex items-center gap-1 text-xp">
               <Medal aria-hidden="true" size={17} /> {xp.toLocaleString()}
             </span>
