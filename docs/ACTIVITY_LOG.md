@@ -1055,3 +1055,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** The viewer shell is keyboard-labelled, responsive, safe-area aware and
   keeps imaging behind the lazy controller boundary.
 - **Follow-ups:** Implement explore and guided primitive behavior.
+
+### [2026-10-02 04:14] P6-T08 - Implement DICOM exploration and guidance
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added callback-only explore and guided primitives with resumable viewer state,
+  configuration-driven requirement tracking, ordered guided steps, acknowledge conditions and an
+  optional in-viewer checkpoint assessment.
+- **Files changed:** `DicomExplorePrimitive.tsx`, `DicomGuidedPrimitive.tsx`, DICOM component
+  helpers/registry and the Cornerstone preset callback.
+- **Commands run:** Prettier, typecheck and lint.
+- **Result/verification:** Both modes resolve through lazy primitive components; completion remains
+  player-owned through interaction keys or checkpoint submission.
+- **Follow-ups:** Implement slice-aware region identification.

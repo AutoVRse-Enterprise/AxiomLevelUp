@@ -331,7 +331,6 @@ export async function createCornerstoneController(
       viewport?.setProperties({ voiRange: presetVoiRange(preset) })
       viewport?.render()
       updateState({ presetId: preset.id })
-      options.onWindow(preset.center, preset.width)
     },
     async setSlice(slice) {
       if (!viewport) return
