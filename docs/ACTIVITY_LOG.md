@@ -118,3 +118,12 @@ This file is append-only.
 - **Commands run:** Cornerstone dependency installs, IDC download/de-identification/preparation commands, `npm run dicom:audit -- public/assets/dicom/spike/files`, `npm run typecheck`, `npm run lint`, `npm run build`, production-preview browser checks with offline network emulation.
 - **Result/verification:** PHI audit passed for 125 files. The lazy route renders and navigates the 125-slice stack, presets and tools work, Cornerstone remains outside the main chunk, Workbox stores 42 shell/content responses plus all 125 DICOM responses, and the stack reloads successfully while offline.
 - **Follow-ups:** Add the Phase 1 automated test suites and run the complete quality gate.
+
+### [2026-10-01 17:44] P1-T12 - Automated tests and quality gate
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added Vitest/jsdom setup and suites for seed/schema validation, useful invalid paths, runtime content loading, unknown primitive warnings, cross-reference failures, IndexedDB persistence, seed reset, typed bus subscriptions, the 500-event cap, derived selectors and shell/immersive navigation behavior.
+- **Files changed:** `vitest.config.ts`, `src/test/setup.ts`, `src/test/contentFixtures.ts`, `src/content/content.test.ts`, `src/state/learnerStore.test.ts`, `src/state/selectors.test.ts`, `src/events/events.test.ts`, `src/app/router.test.tsx`.
+- **Commands run:** `npm run test`, `npm run check`, `npm run format:check`.
+- **Result/verification:** `npm run check` passes: 5 test files and 19 tests pass, content validation reports 4 courses and 12 lessons with 0 warnings, and the production build succeeds. The standalone format audit reports the repository's existing CRLF/style baseline and is not part of `npm run check`.
+- **Follow-ups:** Close Phase 1 documentation and draft the Phase 2 application-surfaces outline.
