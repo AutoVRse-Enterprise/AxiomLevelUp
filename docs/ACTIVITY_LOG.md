@@ -190,3 +190,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass. Relationships and state are available as semantic ordered-list text while connectors remain decorative.
 - **Follow-ups:** Build course details and lesson navigation.
+
+### [2026-10-01 20:11] P2-T06 - Course detail
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built content-derived course heroes, metadata, completion requirements, aggregate progress, prerequisite messaging and lesson rows with effective lock, score and star states.
+- **Files changed:** `src/routes/learn/CoursePage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass; available lesson links enter the immersive route and opening a course emits `course_opened`.
+- **Follow-ups:** Build daily and weekly challenge landing states.
