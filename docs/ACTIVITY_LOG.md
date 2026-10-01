@@ -316,3 +316,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass; primitive components depend only on their props, asset resolution and shared UI.
 - **Follow-ups:** Compose the player lifecycle, immediate feedback, review and completion screens.
+
+### [2026-10-01 21:04] P3-T08 - Activity player shell
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Composed the intro/resume flow, focused step frame, immediate live feedback, configured retry behavior, saved exit confirmation and result/review completion summary.
+- **Files changed:** `src/player/**`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass; one player orchestration path handles both activity kinds and emits lifecycle events without awarding rewards.
+- **Follow-ups:** Resolve and guard lesson/challenge routes and replace the placeholders.
