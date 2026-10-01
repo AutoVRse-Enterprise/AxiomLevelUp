@@ -27,19 +27,16 @@ function event(draft: LearnerEventDraft, occurredAt = '2026-10-01T12:00:00.000Z'
 }
 
 describe('activity planning and sessions', () => {
-  it('skips only deferred DICOM steps in production', () => {
+  it('plays supported DICOM steps in production and preserves unknown fallbacks', () => {
     const future = parsePrimitive({
       id: 'future-step',
       type: 'future_lab_simulation',
       content: {},
       completion: { mode: 'viewed' },
     }).primitive!
-    const dicom = parsePrimitive({
-      id: 'dicom-step',
-      type: 'dicom_explore',
-      content: {},
-      completion: { mode: 'minimum_interactions', count: 1 },
-    }).primitive!
+    const dicom = registry.lessonById
+      .get('thoracic-ct')!
+      .primitives.find(({ type }) => type === 'dicom_explore')!
     const activity = {
       ...playerFixtures.mixedUnsupported,
       primitives: [...playerFixtures.mixedUnsupported.primitives, future, dicom],
@@ -58,7 +55,7 @@ describe('activity planning and sessions', () => {
       'fixture-unsupported',
       'fixture-question',
       'future-step',
-      'dicom-step',
+      'showcase-dicom',
     ])
     expect(development.steps[0]).toMatchObject({
       supported: true,
@@ -79,6 +76,7 @@ describe('activity planning and sessions', () => {
       'fixture-unsupported',
       'fixture-question',
       'future-step',
+      'showcase-dicom',
     ])
     expect(production.steps.filter(({ supported }) => !supported)).toHaveLength(2)
   })
@@ -264,12 +262,9 @@ describe('activity planning and sessions', () => {
   })
 
   it('uses distinct keys for interaction and exploration completion', () => {
-    const minimum = parsePrimitive({
-      id: 'minimum',
-      type: 'dicom_explore',
-      content: {},
-      completion: { mode: 'minimum_interactions', count: 2 },
-    }).primitive!
+    const minimum = registry.lessonById
+      .get('thoracic-ct')!
+      .primitives.find(({ type }) => type === 'dicom_explore')!
     const explored = parsePrimitive({
       id: 'explored',
       type: 'image_hotspot',
@@ -372,10 +367,9 @@ describe('activity planning and sessions', () => {
   it('validates known and forward-compatible completion modes', () => {
     expect(
       parsePrimitive({
-        id: 'minimum',
-        type: 'dicom_explore',
-        content: {},
-        completion: { mode: 'minimum_interactions', count: 2 },
+        ...registry.lessonById
+          .get('thoracic-ct')!
+          .primitives.find(({ type }) => type === 'dicom_explore')!,
       }).issues,
     ).toHaveLength(0)
     expect(

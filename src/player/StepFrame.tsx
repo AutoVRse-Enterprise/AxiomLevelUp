@@ -34,7 +34,7 @@ export function StepFrame({
   return (
     <div
       className={`mx-auto px-4 py-5 sm:px-6 sm:py-8 ${
-        layout === 'split' ? 'max-w-6xl' : 'max-w-3xl'
+        layout === 'viewer' ? 'max-w-7xl' : layout === 'split' ? 'max-w-6xl' : 'max-w-3xl'
       }`}
       data-layout={layout}
     >
@@ -42,7 +42,11 @@ export function StepFrame({
         <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
         <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
       </div>
-      <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-5 shadow-card sm:p-8">
+      <section
+        className={`mt-8 rounded-xl border border-neutral-200 bg-white shadow-card ${
+          layout === 'viewer' ? 'p-2 sm:p-4' : 'p-5 sm:p-8'
+        }`}
+      >
         <h1 ref={headingRef} tabIndex={-1} className="sr-only">
           {title}
         </h1>

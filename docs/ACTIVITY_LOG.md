@@ -1093,3 +1093,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** A new measurement replaces the previous annotation; unknown units cannot
   be submitted as a graded response.
 - **Follow-ups:** Integrate viewer layout, production planning and failure semantics.
+
+### [2026-10-02 04:31] P6-T11 - Integrate DICOM with player
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Enabled supported DICOM steps in production plans, added the wide viewer player layout,
+  preserved DICOM draft resume and connected recoverable skip behavior to unscored completion or a
+  zero-score assessment submission.
+- **Files changed:** activity planning, `StepFrame.tsx`, learning/player tests and phase
+  documentation.
+- **Commands run:** Prettier, typecheck and focused learning/player tests.
+- **Result/verification:** 22 focused tests pass; production retains DICOM and only unknown
+  primitives use the unsupported fallback. Missing scores already contribute zero to summaries.
+- **Follow-ups:** Add the complete DICOM fixture flow to configured course content.

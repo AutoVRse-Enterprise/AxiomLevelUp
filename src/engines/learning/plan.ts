@@ -1,5 +1,4 @@
 import type { AppConfig, Lesson, Primitive } from '@/content/schema'
-import { dicomPrimitiveTypeSet } from '@/content/primitiveTypes'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 import type { PrimitiveLayout } from '@/primitives/definitions'
 
@@ -99,10 +98,7 @@ export function buildActivityPlan(
     }
   })
   const runnableCount = mapped.filter((step) => step.supported).length
-  const steps =
-    options.environment === 'production'
-      ? mapped.filter((step) => !dicomPrimitiveTypeSet.has(step.primitive.type))
-      : mapped
+  const steps = mapped
 
   return {
     activity,
