@@ -129,6 +129,43 @@
             "timerAnnouncements"
           ],
           "additionalProperties": false
+        },
+        "dicom": {
+          "type": "object",
+          "properties": {
+            "prefetchRadius": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "preloadConcurrency": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 8
+            },
+            "cacheMaxMiB": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "sliceEventDebounceMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "tapMaxMovementPx": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "prefetchRadius",
+            "preloadConcurrency",
+            "cacheMaxMiB",
+            "sliceEventDebounceMs",
+            "tapMaxMovementPx"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -136,7 +173,8 @@
         "revision",
         "leaderboard",
         "home",
-        "player"
+        "player",
+        "dicom"
       ],
       "additionalProperties": false
     },

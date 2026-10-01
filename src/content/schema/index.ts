@@ -228,6 +228,13 @@ export const appConfigSchema = z.object({
       mediaCompletionThreshold: z.number().min(0).max(1).default(0.9),
       timerAnnouncements: z.array(z.number().int().positive()).default([60, 30, 10]),
     }),
+    dicom: z.strictObject({
+      prefetchRadius: z.number().int().nonnegative(),
+      preloadConcurrency: z.number().int().positive().max(8),
+      cacheMaxMiB: z.number().int().positive(),
+      sliceEventDebounceMs: z.number().int().nonnegative(),
+      tapMaxMovementPx: z.number().positive(),
+    }),
   }),
   gamification: z.object({
     xp: z.strictObject({

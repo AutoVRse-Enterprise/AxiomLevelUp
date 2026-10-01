@@ -55,5 +55,60 @@ export function mapInteractionToEvents(
     }
   }
 
+  if (interaction.name === 'dicom_slice' && 'slice' in interaction) {
+    events.push({
+      event: 'dicom_slice_changed',
+      ...context,
+      slice: interaction.slice,
+    })
+  }
+
+  if (interaction.name === 'dicom_window' && 'center' in interaction) {
+    events.push({
+      event: 'dicom_window_changed',
+      ...context,
+      presetId: interaction.presetId,
+      center: interaction.center,
+      width: interaction.width,
+    })
+  }
+
+  if (interaction.name === 'dicom_region' && 'x' in interaction) {
+    events.push({
+      event: 'dicom_region_selected',
+      ...context,
+      slice: interaction.slice,
+      x: interaction.x,
+      y: interaction.y,
+    })
+  }
+
+  if (interaction.name === 'dicom_measurement' && 'value' in interaction) {
+    events.push({
+      event: 'measurement_created',
+      ...context,
+      slice: interaction.slice,
+      value: interaction.value,
+      unit: interaction.unit,
+    })
+  }
+
+  if (interaction.name === 'dicom_viewer_loaded' && 'firstImageMs' in interaction) {
+    events.push({
+      event: 'dicom_viewer_loaded',
+      ...context,
+      firstImageMs: interaction.firstImageMs,
+      sliceCount: interaction.sliceCount,
+    })
+  }
+
+  if (interaction.name === 'dicom_viewer_failed' && 'reason' in interaction) {
+    events.push({
+      event: 'dicom_viewer_failed',
+      ...context,
+      reason: interaction.reason,
+    })
+  }
+
   return events
 }

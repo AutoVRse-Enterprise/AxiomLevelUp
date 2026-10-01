@@ -1015,3 +1015,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** All DICOM types resolve through the same definition contract as standard
   primitives; region and measurement evaluators return fractional item results.
 - **Follow-ups:** Extend interactions, events and product configuration.
+
+### [2026-10-02 03:39] P6-T05 - Add DICOM event contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added typed slice, window, tool, region, measurement, requirement and viewer-lifecycle
+  interactions; enriched DICOM events with activity context; mapped them through the player; and
+  added validated DICOM loading/input limits to product configuration.
+- **Files changed:** primitive/event types, interaction mapper, app configuration/schema and
+  generated app-config schema.
+- **Commands run:** Prettier, typecheck, focused event/pipeline/player tests and schema export.
+- **Result/verification:** Type checking passes and 22 focused tests pass. DICOM events remain
+  ordinary pipeline inputs and preserve the callback-only primitive boundary.
+- **Follow-ups:** Build the production Cornerstone adapter.

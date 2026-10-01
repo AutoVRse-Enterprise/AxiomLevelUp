@@ -61,10 +61,20 @@ export interface EventPayloads {
     primitiveType: string
     milestone: MediaProgressMilestone
   }
-  dicom_slice_changed: { primitiveId: string; sliceIndex: number }
-  dicom_window_changed: { primitiveId: string; preset?: string; center: number; width: number }
-  dicom_region_selected: { primitiveId: string; x: number; y: number; correct?: boolean }
-  measurement_created: { primitiveId: string; value: number; unit: string }
+  dicom_slice_changed: DicomEventContext & { slice: number }
+  dicom_window_changed: DicomEventContext & {
+    presetId?: string
+    center: number
+    width: number
+  }
+  dicom_region_selected: DicomEventContext & { slice: number; x: number; y: number }
+  measurement_created: DicomEventContext & {
+    slice: number
+    value: number
+    unit: string
+  }
+  dicom_viewer_loaded: DicomEventContext & { firstImageMs: number; sliceCount: number }
+  dicom_viewer_failed: DicomEventContext & { reason: string }
   lesson_exited: { courseId: string; lessonId: string; stepIndex: number }
   lesson_completed: {
     courseId: string
@@ -116,6 +126,13 @@ export interface EventPayloads {
     | { command: 'simulate_badge'; badgeId?: string }
     | { command: 'simulate_level_up' }
     | { command: 'unlock_all' }
+}
+
+interface DicomEventContext {
+  activityKind: 'lesson' | 'challenge'
+  activityId: string
+  primitiveId: string
+  primitiveType: string
 }
 
 export type LearnerEventName = keyof EventPayloads
