@@ -208,3 +208,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass; starting a daily challenge emits the typed `challenge_opened` event while gameplay remains deferred.
 - **Follow-ups:** Build the contextual weekly leaderboard.
+
+### [2026-10-01 20:19] P2-T08 - Contextual leaderboard
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built a weekly cohort leaderboard centred on the current learner, with rank, live weekly XP, movement, initials avatars and visibly inactive future periods.
+- **Files changed:** `src/routes/leaderboard/LeaderboardPage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass; rank is derived from learner weekly XP and responds to the existing event-driven XP simulator.
+- **Follow-ups:** Build the learner profile.
