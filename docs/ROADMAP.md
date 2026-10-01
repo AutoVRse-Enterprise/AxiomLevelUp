@@ -4,8 +4,8 @@
 | --- | --- | --- | --- |
 | 1 | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
 | 2 | Application surfaces | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3 | Core lesson engine | Next | A configured lesson executes from start to completion |
-| 4 | Standard primitives | Planned | Content, assessment and scenario primitives are playable and tested |
+| 3 | Core lesson engine | Complete | A configured lesson executes from start to completion |
+| 4 | Standard primitives | Next | Content, assessment and scenario primitives are playable and tested |
 | 5 | Gamification and mastery | Planned | Learner events update XP, levels, stars, streaks, badges, rank and mastery |
 | 6 | DICOM learning viewer | Planned | Explore, guide, identify, measure and reveal modes work on target devices |
 | 7 | Complete PWA/offline | Planned | Course assets can be downloaded, verified and removed |
@@ -19,4 +19,9 @@ The Phase 1 DICOM/PWA spike is deliberately early. Its code is isolated and is n
 
 Phase 1 closed with 19 automated tests passing across schema/loader behavior, IndexedDB state, events, selectors and route layouts. The DICOM verdict is a conditional go pending physical Android and iOS testing. See `docs/spikes/dicom-pwa-spike.md`.
 
-Phase 2 closed with all learner-facing surfaces driven by validated configuration and persisted state, with 35 automated tests passing. Phase 3 should replace the immersive lesson and challenge placeholders with the configured execution engine.
+Phase 2 closed with all learner-facing surfaces driven by validated configuration and persisted state, with 35 automated tests passing.
+
+Phase 3 closed with a shared resumable lesson/challenge engine, event-driven learning progress,
+immediate feedback and the first three typed primitives. The quality gate passes with 10 test files
+and 52 tests. Phase 4 should extend the registry with the remaining standard content, assessment and
+scenario primitives.

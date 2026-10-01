@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useBlocker, useNavigate } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { Button } from '@/components/ui'
@@ -47,8 +47,10 @@ export function ActivityPlayer({
   const [awaitingResume, setAwaitingResume] = useState(
     session.startedAt !== null && session.phase !== 'intro' && session.phase !== 'complete',
   )
-  const [confirmExit, setConfirmExit] = useState(false)
   const viewed = useRef(new Set<string>())
+  const blocker = useBlocker(
+    session.startedAt !== null && session.phase !== 'complete',
+  )
 
   const transition = useCallback((action: SessionAction) => {
     setSession((current) => {
@@ -218,7 +220,7 @@ export function ActivityPlayer({
       <StepFrame
         title={`${plan.activity.title}: ${step.primitive.type.replaceAll('_', ' ')}`}
         progress={selectProgressFraction(session, plan) * 100}
-        onExit={() => setConfirmExit(true)}
+        onExit={() => navigate(exitPath)}
         footer={
           session.phase === 'step' && stepProgress.completed ? (
             <Button onClick={handleContinue}>Continue</Button>
@@ -292,8 +294,10 @@ export function ActivityPlayer({
         )}
       </StepFrame>
       <ExitConfirmDialog
-        open={confirmExit}
-        onOpenChange={setConfirmExit}
+        open={blocker.state === 'blocked'}
+        onOpenChange={(open) => {
+          if (!open && blocker.state === 'blocked') blocker.reset()
+        }}
         onExit={() => {
           if (plan.activity.kind === 'lesson') {
             emitEvent({
@@ -303,7 +307,7 @@ export function ActivityPlayer({
               stepIndex: session.stepIndex,
             })
           }
-          navigate(exitPath)
+          if (blocker.state === 'blocked') blocker.proceed()
         }}
       />
     </>

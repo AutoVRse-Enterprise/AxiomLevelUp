@@ -103,3 +103,57 @@
 **Decision:** Store week start, revision mastery threshold/count, leaderboard window and recent-achievement count in the app configuration `product` block.
 
 **Consequences:** Surface behavior can be tuned for a deployment without editing React. Generic interface labels remain presentation copy.
+
+## ADR-013: Activity sessions are separate and resumable
+
+**Status:** Accepted
+
+**Decision:** Persist one versioned active activity session under a separate IndexedDB key. Match it
+by activity kind, ID and course version; invalidate mismatches and clear it after completion or demo
+reseed.
+
+**Consequences:** Reloads can resume exact interaction state without turning transient responses into
+aggregate learner state.
+
+## ADR-014: First attempts determine learning scores
+
+**Status:** Accepted
+
+**Decision:** Weight assessment score by configured `scoring.weight` and count correctness only on
+the first attempt. Retries remain learning opportunities. Activities without assessments score 100,
+and lifetime question statistics count first attempts only.
+
+**Consequences:** Retry behavior cannot inflate scores while content-only lessons can complete
+normally.
+
+## ADR-015: Primitive components report; the player decides
+
+**Status:** Accepted
+
+**Decision:** Primitive components receive configuration and callbacks only. Pure evaluators determine
+results, the activity player applies completion policy and emits typed learner events, and engines
+subscribe to those events.
+
+**Consequences:** Primitives stay reusable and cannot directly mutate progress or gamification.
+
+## ADR-016: Unsupported primitives fail gracefully
+
+**Status:** Accepted
+
+**Decision:** Development plans retain unsupported steps and render an explicit fallback. Production
+plans skip unsupported steps. An activity with no supported steps reports unavailable instead of
+completing silently.
+
+**Consequences:** Partially implemented courses remain demonstrable without masking activities that
+cannot actually run.
+
+## ADR-017: Primitive behavior contracts are typed and extensible
+
+**Status:** Accepted
+
+**Decision:** Type known completion modes, scoring fields and feedback controls in Zod while retaining
+loose-object compatibility for registered future primitive fields and unknown completion modes.
+Player retry limits and defaults live in app configuration.
+
+**Consequences:** Phase 3 behavior is validated before rendering without blocking Phase 4 and Phase 6
+contracts from evolving.

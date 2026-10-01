@@ -31,7 +31,7 @@ Phase 4 and DICOM primitives remain in Phase 6.
 - [x] P3-T09 — Replace immersive placeholders with guarded lesson and challenge routes.
 - [x] P3-T10 — Add representative content and player fixtures.
 - [x] P3-T11 — Add unit, component and route integration coverage plus responsive browser QA.
-- [ ] P3-T12 — Run the quality gate and close Phase 3 documentation.
+- [x] P3-T12 — Run the quality gate and close Phase 3 documentation.
 
 ## PRD traceability
 
@@ -58,3 +58,17 @@ Phase 4 and DICOM primitives remain in Phase 6.
 - Unsupported primitives follow the documented development and production fallback policy.
 - The player is keyboard operable with visible focus, live feedback and reduced-motion support.
 - `npm run check` passes and phase documentation is current.
+
+## Verification
+
+- `npm run check` passes with 10 test files and 52 tests.
+- Content validation passes for four courses and twelve lessons with no warnings.
+- Lesson intro and active-step layouts passed accessibility/visual checks at 375, 768 and 1280 px.
+- Mobile layout has no horizontal overflow and active navigation is protected by saved-exit confirmation.
+
+## Deviations
+
+- The player completion screen deliberately shows score, accuracy and review only. XP, stars, mastery
+  and rewards remain Phase 5 event subscribers.
+- Development plans retain unsupported steps for diagnosis; production plans skip them. Activities
+  containing no implemented steps are unavailable.

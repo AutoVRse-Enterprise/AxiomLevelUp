@@ -352,3 +352,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`; browser accessibility and visual checks at 375 × 812, 768 × 900 and 1280 × 900.
 - **Result/verification:** Ten test files and 52 tests pass. No horizontal overflow or IDE lint diagnostics were found.
 - **Follow-ups:** Run the complete quality gate and close architecture, ADR, roadmap and handoff documentation.
+
+### [2026-10-01 21:23] P3-T12 - Phase 3 quality gate and close-out
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Protected every active-session navigation with confirmation, recorded ADR-013 through ADR-017, updated architecture/roadmap/handoff/phase documentation and closed Phase 3.
+- **Files changed:** `src/player/ActivityPlayer.tsx`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** focused player/route tests, `npm run check`, `git diff --check`.
+- **Result/verification:** All 52 tests, content validation, type checking, lint and production build pass. Existing Cornerstone browser-externalization and large lazy DICOM chunk warnings remain non-failing.
+- **Follow-ups:** Plan Phase 4 standard content, assessment and scenario primitives.
