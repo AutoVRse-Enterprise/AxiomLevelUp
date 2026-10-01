@@ -73,3 +73,12 @@ This file is append-only.
 - **Commands run:** `npm run validate:content`, `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** CLI validation reports 4 courses, 12 lessons and 0 warnings; all static checks and the production build pass.
 - **Follow-ups:** Hydrate the advanced seed into a versioned IndexedDB-backed learner store.
+
+### [2026-10-01 17:36] P1-T07 - Persistent learner state
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a versioned Zustand learner store, explicit async hydration, IndexedDB storage adapter with quota messaging, seed initialization/replacement, XP mutation, local preferences and selectors for level, rank and course completion. Updated visible shell data to use persisted state.
+- **Files changed:** `src/state/**`, `src/app/App.tsx`, `src/layouts/AppShell.tsx`, `src/routes/PlaceholderPages.tsx`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** Static checks and build pass. The store hydrates before routing and initializes once from the validated advanced seed.
+- **Follow-ups:** Route all learner actions through a typed event bus.

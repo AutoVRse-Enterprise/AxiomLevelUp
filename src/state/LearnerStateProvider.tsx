@@ -1,0 +1,59 @@
+import { type ReactNode, useEffect, useState } from 'react'
+
+import { useContent } from '@/app/contentContext'
+import { ErrorState } from '@/components/feedback/ErrorState'
+import { Skeleton } from '@/components/ui'
+import { useLearnerStore } from '@/state/learnerStore'
+
+export function LearnerStateProvider({ children }: { children: ReactNode }) {
+  const { seed } = useContent()
+  const [ready, setReady] = useState(false)
+  const storageError = useLearnerStore((state) => state.storageError)
+
+  useEffect(() => {
+    let active = true
+    void Promise.resolve(useLearnerStore.persist.rehydrate())
+      .then(() => {
+        const store = useLearnerStore.getState()
+        store.initialize(seed)
+        if (active) setReady(true)
+      })
+      .catch((error: unknown) => {
+        const message =
+          error instanceof Error ? error.message : 'Learner progress could not be restored.'
+        useLearnerStore.getState().setStorageError(message)
+        if (active) setReady(true)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [seed])
+
+  if (storageError) {
+    return (
+      <main className="grid min-h-dvh place-items-center p-6">
+        <ErrorState
+          title="Progress storage is unavailable"
+          message={storageError}
+          actionLabel="Retry"
+          onAction={() => window.location.reload()}
+        />
+      </main>
+    )
+  }
+
+  if (!ready) {
+    return (
+      <main className="mx-auto max-w-3xl space-y-5 p-5 sm:p-8">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-44 w-full" />
+        <span className="sr-only" role="status">
+          Restoring learner progress
+        </span>
+      </main>
+    )
+  }
+
+  return children
+}

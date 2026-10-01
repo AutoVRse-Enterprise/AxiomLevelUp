@@ -4,21 +4,22 @@ import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { Button, Card, Chip, ProgressBar } from '@/components/ui'
+import { useLearnerStore } from '@/state/learnerStore'
+import { selectCourseCompletion, selectLeaderboardRank, selectLevel } from '@/state/selectors'
 
 export function HomePage() {
-  const { seed, courseById } = useContent()
+  const { courseById } = useContent()
+  const learner = useLearnerStore((state) => state.learner)
+  const lessonProgress = useLearnerStore((state) => state.lessonProgress)
   const course = courseById.get('scientific-imaging')
-  const completed = course?.lessons.filter(
-    (lesson) => seed.lessonProgress[lesson.id]?.status === 'completed',
-  ).length
-  const progress = course ? Math.round(((completed ?? 0) / course.lessons.length) * 100) : 0
+  const progress = course ? selectCourseCompletion({ lessonProgress }, course) : 0
 
   return (
     <div className="space-y-6">
       <header>
         <p className="text-small font-semibold text-brand-700">Good afternoon</p>
         <h1 className="mt-1 text-display font-bold tracking-tight">
-          Welcome back, {seed.learner.name.split(' ')[0]}
+          Welcome back, {learner.name.split(' ')[0]}
         </h1>
         <p className="mt-2 text-neutral-600">Continue building scientific confidence.</p>
       </header>
@@ -64,31 +65,31 @@ export function ChallengePage() {
 }
 
 export function LeaderboardPage() {
-  const { appConfig, seed } = useContent()
-  const entries = [...appConfig.leaderboard.entries].sort((a, b) => b.weeklyXp - a.weeklyXp)
-  const rank = entries.findIndex(({ id }) => id === seed.learner.id) + 1
-  const current = entries.find(({ id }) => id === seed.learner.id)
+  const { appConfig } = useContent()
+  const learner = useLearnerStore((state) => state.learner)
+  const xp = useLearnerStore((state) => state.xp)
+  const rank = selectLeaderboardRank({ learner, xp }, appConfig.leaderboard.entries) ?? 0
+  const current = appConfig.leaderboard.entries.find(({ id }) => id === learner.id)
   const movement = current?.previousRank ? current.previousRank - rank : 0
   return (
     <Placeholder
       icon={<Trophy size={28} />}
       title={appConfig.leaderboard.scope}
-      description={`${seed.learner.name} is currently #${rank} this week and has moved up ${movement} positions.`}
+      description={`${learner.name} is currently #${rank} this week and has moved up ${movement} positions.`}
     />
   )
 }
 
 export function ProfilePage() {
-  const { appConfig, seed } = useContent()
-  const levels = [...appConfig.gamification.levels].sort((a, b) => a.minimumXp - b.minimumXp)
-  const level = levels.reduce(
-    (current, candidate) => (seed.xp.total >= candidate.minimumXp ? candidate.level : current),
-    1,
-  )
+  const { appConfig } = useContent()
+  const learner = useLearnerStore((state) => state.learner)
+  const xp = useLearnerStore((state) => state.xp)
+  const streak = useLearnerStore((state) => state.streak)
+  const level = selectLevel({ xp }, appConfig.gamification.levels)
   return (
     <Placeholder
-      title={seed.learner.name}
-      description={`${seed.learner.role} · Level ${level} · ${seed.xp.total.toLocaleString()} lifetime XP · ${seed.streak.currentDays} day streak`}
+      title={learner.name}
+      description={`${learner.role} · Level ${level} · ${xp.total.toLocaleString()} lifetime XP · ${streak.currentDays} day streak`}
     />
   )
 }
