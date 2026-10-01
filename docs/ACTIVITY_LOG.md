@@ -217,3 +217,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass; rank is derived from learner weekly XP and responds to the existing event-driven XP simulator.
 - **Follow-ups:** Build the learner profile.
+
+### [2026-10-01 20:23] P2-T09 - Learner profile
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built the learner summary, configurable level progress, lifetime stats and accuracy, sorted concept mastery, grouped locked/unlocked badges and current-week activity.
+- **Files changed:** `src/routes/profile/ProfilePage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass and all profile values originate in configuration, persisted learner state or selectors.
+- **Follow-ups:** Add route-level state, keyboard, event and anti-hard-coding coverage.
