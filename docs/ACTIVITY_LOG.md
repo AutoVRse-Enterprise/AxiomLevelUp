@@ -127,3 +127,12 @@ This file is append-only.
 - **Commands run:** `npm run test`, `npm run check`, `npm run format:check`.
 - **Result/verification:** `npm run check` passes: 5 test files and 19 tests pass, content validation reports 4 courses and 12 lessons with 0 warnings, and the production build succeeds. The standalone format audit reports the repository's existing CRLF/style baseline and is not part of `npm run check`.
 - **Follow-ups:** Close Phase 1 documentation and draft the Phase 2 application-surfaces outline.
+
+### [2026-10-01 17:48] P1-T13 - Phase 1 close-out
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Marked Phase 1 complete, refreshed the handoff with commands, constraints and known issues, recorded the DICOM conditional-go verdict, and drafted the Phase 2 application-surfaces task outline.
+- **Files changed:** `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/DECISIONS.md`, `docs/phases/phase-01-foundation.md`, `docs/phases/phase-02-app-surfaces.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `git status --short --branch`, `git log --oneline --decorate -5`.
+- **Result/verification:** Every Phase 1 checklist item is complete, the required quality gate is green and Phase 2 has a documented entry point.
+- **Follow-ups:** Obtain user approval for Phase 2 scope and complete physical-device DICOM/PWA checks when an HTTPS preview and devices are available.

@@ -19,7 +19,7 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 - [x] P1-T10 — PWA manifest, generated icons, precache and online status
 - [x] P1-T11 — Lazy Cornerstone DICOM/PWA spike, data tools and findings
 - [x] P1-T12 — Automated tests and green `npm run check`
-- [ ] P1-T13 — Close-out docs and Phase 2 outline
+- [x] P1-T13 — Close-out docs and Phase 2 outline
 
 ## Exit criteria
 
@@ -33,3 +33,5 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 ## Deviations
 
 - The local Node runtime is 24.19.0, newer than the plan's stated minimum. It is retained because the selected current tooling supports it.
+- Real-device Android Chrome and iOS Safari checks remain pending user/device; desktop Chrome and mobile emulation passed.
+- Manifest-declared PWA icons are excluded from the Workbox glob because vite-plugin-pwa adds them separately. This avoids conflicting revised/unrevised precache entries.
