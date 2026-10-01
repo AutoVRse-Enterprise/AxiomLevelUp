@@ -25,6 +25,11 @@ const primitiveSources = import.meta.glob('../primitives/components/*Primitive.t
   import: 'default',
   eager: true,
 }) as Record<string, string>
+const imagingSources = import.meta.glob('../imaging/**/*.ts', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
 const rewardEngineSources = import.meta.glob(
   ['../engines/gamification/*.ts', '../engines/mastery/*.ts'],
   {
@@ -316,6 +321,11 @@ describe('activity player', () => {
     }
     for (const [path, source] of Object.entries(rewardEngineSources)) {
       expect(source, path).not.toMatch(/from ['"]react|@\/components|@\/primitives\/components/u)
+    }
+    for (const [path, source] of Object.entries(imagingSources)) {
+      if (!path.includes('/cornerstone/')) {
+        expect(source, path).not.toMatch(/@cornerstonejs\//u)
+      }
     }
   })
 })

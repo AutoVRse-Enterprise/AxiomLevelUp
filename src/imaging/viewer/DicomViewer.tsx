@@ -33,7 +33,7 @@ const toolDetails: Record<DicomTool, { label: string; icon: typeof Move }> = {
   measure: { label: 'Measure', icon: Ruler },
 }
 
-interface DicomViewerProps {
+export interface DicomViewerProps {
   asset: DicomAsset
   prompt: string
   presets: DicomPresetContent[]

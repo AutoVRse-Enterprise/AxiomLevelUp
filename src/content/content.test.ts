@@ -94,7 +94,7 @@ describe('content loader', () => {
     expect(registry.catalogCourses.map(({ id }) => id)).not.toContain('runtime-showcase')
     expect(registry.lessonById).toHaveLength(13)
     expect(registry.courseById.get('runtime-showcase')?.visibility).toBe('internal')
-    expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(22)
+    expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(25)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
     expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
     expect(registry.warnings).toEqual([])

@@ -1132,3 +1132,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Commands run:** Prettier, typecheck and focused router/developer tests.
 - **Result/verification:** Ten focused tests pass; no application route imports the old spike.
 - **Follow-ups:** Complete DICOM unit, component, integration and import-boundary coverage.
+
+### [2026-10-02 04:58] P6-T14 - Add DICOM automated coverage
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure URL/manifest/geometry/requirements/evaluation tests, callback component
+  tests against a fake viewer, a real player-to-pipeline XP/mastery/badge test and an enforced
+  Cornerstone import boundary. Updated fixture counts and moved the full DICOM sequence into Imaging
+  Lab as intended.
+- **Files changed:** DICOM domain/component/player tests, player import-boundary assertion, content
+  fixtures/count assertions and the viewer props export.
+- **Commands run:** Typecheck, focused suites, full Vitest suite, lint and IDE diagnostics.
+- **Result/verification:** 32 test files and 221 tests pass; lint and IDE diagnostics are clean.
+- **Follow-ups:** Run browser, cross-origin, responsive, offline, performance and bundle QA.
