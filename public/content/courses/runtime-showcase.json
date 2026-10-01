@@ -642,6 +642,94 @@
           "completion": { "mode": "outcome" },
           "scoring": { "weight": 1 },
           "feedback": {}
+        },
+        {
+          "id": "showcase-dicom-explore",
+          "type": "dicom_explore",
+          "conceptIds": ["thoracic-imaging", "image-windowing"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Explore the thoracic CT and compare the configured windows.",
+            "presets": [
+              { "id": "lung", "label": "Lung", "center": -600, "width": 1500 },
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "lung",
+            "tools": ["scroll", "window", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "requirements": { "minimumInteractions": 2, "presetIds": ["mediastinal"] }
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "minimum_interactions", "count": 2 },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
+          "id": "showcase-dicom-identify",
+          "type": "dicom_identify_region",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Select the tracheal air column.",
+            "presets": [
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "mediastinal",
+            "tools": ["scroll", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "target": {
+              "sliceRange": { "from": 78, "to": 86 },
+              "referenceSlice": 81,
+              "region": {
+                "id": "tracheal-air-column",
+                "label": "Tracheal air column",
+                "shape": "circle",
+                "x": 0.5009,
+                "y": 0.4668,
+                "radius": 0.035
+              }
+            },
+            "explanation": "The trachea is the central dark air-filled structure."
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 }
+        },
+        {
+          "id": "showcase-dicom-measure",
+          "type": "dicom_measure",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Measure the transverse inner diameter of the tracheal air column.",
+            "presets": [
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "mediastinal",
+            "tools": ["scroll", "zoom", "pan", "measure"],
+            "educationalUseOnly": true,
+            "target": {
+              "sliceRange": { "from": 78, "to": 86 },
+              "expected": {
+                "valueMm": 17.6,
+                "tolerance": { "mode": "percent", "value": 10 }
+              },
+              "referenceLine": {
+                "slice": 81,
+                "start": { "x": 0.484375, "y": 0.466797 },
+                "end": { "x": 0.519531, "y": 0.466797 }
+              }
+            },
+            "explanation": "The reference inner diameter is 17.6 mm on slice 81."
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 }
         }
       ]
     }

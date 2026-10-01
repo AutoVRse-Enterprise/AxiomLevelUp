@@ -48,7 +48,7 @@ mobile emulation.
 - [x] P6-T09 — Implement slice-aware region identification.
 - [x] P6-T10 — Implement calibrated length measurement.
 - [x] P6-T11 — Integrate DICOM with player layout, resume, failure and production planning.
-- [ ] P6-T12 — Migrate scientific-imaging and runtime-showcase content.
+- [x] P6-T12 — Migrate scientific-imaging and runtime-showcase content.
 - [ ] P6-T13 — Replace the isolated spike route with the production DICOM sandbox.
 - [ ] P6-T14 — Add schema, domain, component, player and import-boundary coverage.
 - [ ] P6-T15 — Run responsive, interaction, cross-origin, offline, memory and bundle QA.

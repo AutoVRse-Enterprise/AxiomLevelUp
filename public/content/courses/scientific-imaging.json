@@ -169,6 +169,90 @@
       "prerequisites": ["thoracic-ct"],
       "primitives": [
         {
+          "id": "lab-guided",
+          "type": "dicom_guided",
+          "conceptIds": ["thoracic-imaging", "image-windowing"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Follow a short inspection sequence to locate the tracheal air column.",
+            "presets": [
+              { "id": "lung", "label": "Lung", "center": -600, "width": 1500 },
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 65,
+            "initialPresetId": "lung",
+            "tools": ["scroll", "window", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "steps": [
+              {
+                "id": "choose-mediastinal",
+                "instruction": "Switch to the Mediastinal preset.",
+                "condition": { "type": "preset", "presetId": "mediastinal" }
+              },
+              {
+                "id": "navigate-trachea",
+                "instruction": "Navigate to slices 78–86 and find the central air-filled trachea.",
+                "condition": { "type": "slice_range", "range": { "from": 78, "to": 86 } }
+              },
+              {
+                "id": "confirm-inspection",
+                "instruction": "Inspect adjacent slices, then confirm that the structure is continuous.",
+                "condition": { "type": "acknowledge" }
+              }
+            ],
+            "checkpoint": {
+              "prompt": "Which structure is the central dark oval anterior to the oesophagus?",
+              "options": [
+                { "id": "trachea", "label": "Trachea" },
+                { "id": "aorta", "label": "Descending aorta" },
+                { "id": "vertebra", "label": "Thoracic vertebra" }
+              ],
+              "correctOptionId": "trachea",
+              "explanation": "Air in the trachea appears dark and remains continuous through adjacent superior thoracic slices."
+            }
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 20, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 }
+        },
+        {
+          "id": "lab-identify-trachea",
+          "type": "dicom_identify_region",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Select the tracheal air column on a representative slice.",
+            "presets": [
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "mediastinal",
+            "tools": ["scroll", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "target": {
+              "sliceRange": { "from": 78, "to": 86 },
+              "referenceSlice": 81,
+              "region": {
+                "id": "tracheal-air-column",
+                "label": "Tracheal air column",
+                "description": "Central air-filled lumen anterior to the oesophagus.",
+                "shape": "circle",
+                "x": 0.5009,
+                "y": 0.4668,
+                "radius": 0.035
+              }
+            },
+            "explanation": "The tracheal air column is the central dark oval on these superior thoracic slices.",
+            "sliceFeedback": "Navigate to the superior thorax around slices 78–86.",
+            "locationFeedback": "Look for the central dark oval just anterior to the oesophagus."
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 30, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 }
+        },
+        {
           "id": "case-intro",
           "type": "scenario",
           "conceptIds": ["thoracic-imaging"],

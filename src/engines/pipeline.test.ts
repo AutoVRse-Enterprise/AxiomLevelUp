@@ -217,8 +217,8 @@ describe('learner event pipeline', () => {
       activityKind: 'lesson',
       activityId: 'dicom-lab',
       primitiveId: 'lab-measure',
-      primitiveType: 'dicom_measurement',
-      stepIndex: 0,
+      primitiveType: 'dicom_measure',
+      stepIndex: 2,
     })
     expect(first.state.badges['first-dicom']?.unlockedAt).not.toBeNull()
     expect(first.state.xp.total).toBe(40)
@@ -231,8 +231,8 @@ describe('learner event pipeline', () => {
       activityKind: 'lesson',
       activityId: 'dicom-lab',
       primitiveId: 'lab-measure',
-      primitiveType: 'dicom_measurement',
-      stepIndex: 0,
+      primitiveType: 'dicom_measure',
+      stepIndex: 2,
     })
     expect(second.state.xp.total).toBe(40)
     expect(second.state.gamification.digitalRewards).toHaveLength(1)

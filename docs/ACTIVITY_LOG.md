@@ -1106,3 +1106,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** 22 focused tests pass; production retains DICOM and only unknown
   primitives use the unsupported fallback. Missing scores already contribute zero to summaries.
 - **Follow-ups:** Add the complete DICOM fixture flow to configured course content.
+
+### [2026-10-02 04:40] P6-T12 - Add configured DICOM flows
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Expanded Imaging Lab into guided inspection, slice-aware trachea identification and
+  calibrated measurement; added explore, identify and measure to the internal runtime showcase; and
+  corrected the DICOM primitive type in reward coverage.
+- **Files changed:** scientific-imaging/runtime-showcase content, pipeline and showcase route tests,
+  phase documentation.
+- **Commands run:** Content validation and focused showcase/pipeline tests.
+- **Result/verification:** Five courses and thirteen lessons validate with zero warnings. The
+  25-step showcase completes through a deterministic unavailable-viewer test boundary and emits
+  ordered lifecycle events.
+- **Follow-ups:** Replace the legacy spike route with a production DICOM sandbox.

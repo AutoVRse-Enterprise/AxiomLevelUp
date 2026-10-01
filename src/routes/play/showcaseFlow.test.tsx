@@ -14,6 +14,24 @@ import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
 import { useLearnerStore } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
+vi.mock('@/imaging/viewer/useDicomViewer', () => ({
+  useDicomViewer: () => ({
+    state: {
+      status: 'unavailable',
+      message: 'DICOM fixture intentionally unavailable in route integration tests.',
+      loaded: 0,
+      total: 125,
+      slice: 81,
+      activeTool: 'scroll',
+      presetId: null,
+      measurement: null,
+      firstImageMs: null,
+    },
+    controller: null,
+    retry: vi.fn(),
+  }),
+}))
+
 const registry = validateContentBundle(makeValidContentBundle())
 const showcaseCourse = registry.courseById.get('runtime-showcase')!
 const showcaseLesson = registry.lessonById.get('primitive-showcase')!
@@ -126,7 +144,7 @@ describe('showcase lesson integration', () => {
     )
   })
 
-  it('plays all 22 showcase steps through the real route and emits ordered completion events', async () => {
+  it('plays all 25 showcase steps through the real route and emits ordered completion events', async () => {
     const user = userEvent.setup()
     const events: LearnerEvent[] = []
     subscribeToEvents((event) => events.push(event))
@@ -248,9 +266,19 @@ describe('showcase lesson integration', () => {
     await user.click(screen.getByRole('button', { name: 'Complete scenario' }))
     await continueCompletedStep(user)
 
+    await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
+    await continueCompletedStep(user)
+
+    for (let index = 0; index < 2; index += 1) {
+      await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
+      await user.click(await screen.findByRole('button', { name: 'Try again' }))
+      await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
+      await continueCompletedStep(user)
+    }
+
     expect(await screen.findByText('Activity complete')).toBeVisible()
-    expect(screen.getByText('95%')).toBeVisible()
-    expect(screen.getByText('9 of 10 correct on the first attempt')).toBeVisible()
+    expect(screen.getByText('79%')).toBeVisible()
+    expect(screen.getByText('9 of 12 correct on the first attempt')).toBeVisible()
 
     const lifecycleEvents = events.filter(({ event }) =>
       ['lesson_started', 'primitive_viewed', 'primitive_completed', 'lesson_completed'].includes(
@@ -270,8 +298,8 @@ describe('showcase lesson integration', () => {
     expect(events.at(-1)).toMatchObject({
       event: 'lesson_completed',
       lessonId: 'primitive-showcase',
-      score: 95,
-      accuracy: 90,
+      score: 79,
+      accuracy: 75,
     })
     expect(useActivitySessionStore.getState().session).toBeNull()
   }, 30_000)
