@@ -271,3 +271,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`.
 - **Result/verification:** Lesson and challenge definitions compile into a shared activity plan; empty and unsupported-only activities return an explicit unavailable result.
 - **Follow-ups:** Add the pure session state machine, completion rules and scoring summary.
+
+### [2026-10-01 20:43] P3-T03 - Session engine
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the pure activity session reducer, completion-rule evaluator, progress selectors and weighted first-attempt scoring summary.
+- **Files changed:** `src/engines/learning/completionRules.ts`, `src/engines/learning/session.ts`, `src/content/schema/index.ts`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** Session transitions, completion modes, no-assessment scoring and missed-item/source summaries compile under strict TypeScript.
+- **Follow-ups:** Persist and invalidate the active session independently of learner aggregates.

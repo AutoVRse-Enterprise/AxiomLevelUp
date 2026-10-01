@@ -132,6 +132,7 @@ export type Primitive = z.infer<typeof primitiveBaseSchema>
 export type RichTextPrimitive = z.infer<typeof richTextPrimitiveSchema>
 export type ImagePrimitive = z.infer<typeof imagePrimitiveSchema>
 export type MultipleChoicePrimitive = z.infer<typeof multipleChoicePrimitiveSchema>
+export type Source = z.infer<typeof sourceSchema>
 
 export interface PrimitiveParseResult {
   primitive?: Primitive
