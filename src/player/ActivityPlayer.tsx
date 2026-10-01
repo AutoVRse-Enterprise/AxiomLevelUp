@@ -394,27 +394,29 @@ export function ActivityPlayer({
             onDraftChange={(draft) => queueDraft(step.primitive.id, draft)}
             onComplete={markComplete}
             onInteract={(interaction) => {
+              const currentProgress =
+                sessionRef.current.progress[step.primitive.id] ?? stepProgress
               const key = 'key' in interaction ? (interaction.key ?? interaction.name) : undefined
               const nextReportedMediaProgress =
                 interaction.name === 'media_progress' && 'fraction' in interaction
                   ? interaction.fraction
                   : undefined
               const previousMediaProgress =
-                mediaProgress.current[step.primitive.id] ?? stepProgress.mediaProgress
+                mediaProgress.current[step.primitive.id] ?? currentProgress.mediaProgress
               const interactionKeys =
-                key && !stepProgress.interactionKeys.includes(key)
-                  ? [...stepProgress.interactionKeys, key]
-                  : stepProgress.interactionKeys
+                key && !currentProgress.interactionKeys.includes(key)
+                  ? [...currentProgress.interactionKeys, key]
+                  : currentProgress.interactionKeys
               const nextMediaProgress =
                 nextReportedMediaProgress === undefined
-                  ? stepProgress.mediaProgress
+                  ? currentProgress.mediaProgress
                   : Math.max(previousMediaProgress, nextReportedMediaProgress)
               if (nextReportedMediaProgress !== undefined) {
                 mediaProgress.current[step.primitive.id] = nextMediaProgress
               }
               const completed = isPrimitiveComplete(step.primitive, {
-                attempts: stepProgress.attempts,
-                correct: stepProgress.lastCorrect,
+                attempts: currentProgress.attempts,
+                correct: currentProgress.lastCorrect,
                 interactionKeys,
                 explorableKeys: step.explorableKeys,
                 mediaProgress: nextMediaProgress,
@@ -443,7 +445,7 @@ export function ActivityPlayer({
               )) {
                 emitEvent(event)
               }
-              if (completed && !stepProgress.completed) {
+              if (completed && !currentProgress.completed) {
                 emitEvent({
                   event: 'primitive_completed',
                   activityKind: plan.activity.kind,

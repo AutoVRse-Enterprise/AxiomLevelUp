@@ -24,7 +24,6 @@ export function ImageRegionOverlay({
     >
       {visibleRegions.map((region) => {
         const common = {
-          key: region.id,
           className: 'fill-brand-400/25 stroke-brand-700',
           strokeWidth: 0.8,
           vectorEffect: 'non-scaling-stroke' as const,
@@ -32,11 +31,18 @@ export function ImageRegionOverlay({
         switch (region.shape) {
           case 'circle':
             return (
-              <circle {...common} cx={region.x * 100} cy={region.y * 100} r={region.radius * 100} />
+              <circle
+                key={region.id}
+                {...common}
+                cx={region.x * 100}
+                cy={region.y * 100}
+                r={region.radius * 100}
+              />
             )
           case 'rect':
             return (
               <rect
+                key={region.id}
                 {...common}
                 x={region.x * 100}
                 y={region.y * 100}
@@ -47,6 +53,7 @@ export function ImageRegionOverlay({
           case 'polygon':
             return (
               <polygon
+                key={region.id}
                 {...common}
                 points={region.points.map(({ x, y }) => `${x * 100},${y * 100}`).join(' ')}
               />

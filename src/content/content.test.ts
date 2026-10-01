@@ -181,6 +181,64 @@ describe('content loader', () => {
     )
   })
 
+  it('preserves precise challenge paths for semantic schema failures', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: unknown[] }>
+    }
+    appConfig.challenges[0]!.items[0] = {
+      id: 'semantic-errors',
+      type: 'multiple_select',
+      conceptIds: ['thoracic-imaging'],
+      content: {
+        prompt: 'Select supported findings.',
+        options: [
+          { id: 'duplicate', label: 'First' },
+          { id: 'duplicate', label: 'Second' },
+        ],
+        correctOptionIds: ['missing', 'missing'],
+        scoringMode: 'partial',
+        minSelections: 3,
+        explanation: 'Fixture explanation.',
+      },
+      assets: [],
+      completion: { mode: 'answer' },
+      scoring: { weight: 1 },
+      feedback: {},
+    }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          {
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content.options',
+            message: 'option IDs must be unique',
+            severity: 'error',
+          },
+          {
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content.correctOptionIds',
+            message: 'correctOptionIds must be unique',
+            severity: 'error',
+          },
+          {
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content.correctOptionIds',
+            message: 'correctOptionIds must reference options',
+            severity: 'error',
+          },
+          {
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content.minSelections',
+            message: 'minSelections cannot exceed the number of correct options',
+            severity: 'error',
+          },
+        ]),
+      }),
+    )
+  })
+
   it('validates challenge concept, reward and asset references', () => {
     const bundle = makeValidContentBundle()
     const appConfig = bundle.appConfig as {

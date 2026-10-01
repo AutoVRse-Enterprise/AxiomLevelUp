@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T13 are complete; P4-T14 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T14 are complete; P4-T15 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -86,13 +86,23 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - `/dev/primitives` renders the real showcase definitions with local-only interactive, review,
   disabled, reset and missing-asset controls; `/dev` links both the gallery and real lesson.
 - Internal lesson progress uses ordinary learner state and is removed by the existing demo reset.
+- The real showcase lesson route is covered through all 22 steps, including media/exploration
+  completion, every assessment family, a partial-credit retry, the timed numeric item and scenario
+  completion with ordered lifecycle events.
+- Remount coverage verifies that revealed scenario decisions and changed ordering drafts restore
+  from the activity session. Existing timer tests cover timeout submission and the `timedOut` event.
+- Production activity plans retain ordinary unsupported fallbacks and skip only the four deferred
+  DICOM types. Burst media progress uses current session state so completion emits exactly once.
+- Internal-course isolation is checked across Home, Learn and Pathway while direct lesson and
+  development gallery access remain covered. Primitive component import boundaries and precise
+  challenge semantic diagnostics are enforced by tests.
 - Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
   fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
 - ADR-021 through ADR-033 record player lifecycle, scenarios, scientific data, structured
   assessments, artifact viewport, semantic validation, assessment semantics, timed-response
   lifecycle, normalized image regions and internal-course/gallery isolation.
-- Type checking, lint, 20 test files with 182 tests, content validation and production build pass.
+- Type checking, lint, 21 test files with 186 tests, content validation and production build pass.
 
 ## In progress
 
@@ -100,9 +110,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T14: add cross-runtime and boundary coverage.
-2. P4-T15: run responsive, accessibility and bundle QA.
-3. P4-T16: run the closing quality gate and finish Phase 4 documentation.
+1. P4-T15: run responsive, accessibility and bundle QA.
+2. P4-T16: run the closing quality gate and finish Phase 4 documentation.
+3. Begin Phase 5 planning after Phase 4 closes.
 
 ## Blockers/questions for the user
 
@@ -165,7 +175,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Learner-facing surfaces and selectors must receive `catalogCourses`; direct internal routes and
   progress resolution must continue using the complete registry maps.
 - Do not import Cornerstone outside the lazy spike module.
-- Development plans display unsupported primitives; production plans skip them.
+- Development plans display unsupported primitives; production plans skip only deferred DICOM
+  types and preserve the fallback for other unsupported or malformed primitives.
+- Media components can report several progress milestones in one browser event; player completion
+  checks must read current session state so `primitive_completed` remains de-duplicated.
 - Retries do not improve score: first-attempt results remain authoritative.
 - XP, stars, mastery and rewards remain deferred to Phase 5.
 - `npm run format:check` reports the existing line-ending/style baseline; `npm run check` is the

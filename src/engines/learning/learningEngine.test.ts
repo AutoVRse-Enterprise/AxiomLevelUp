@@ -27,20 +27,38 @@ function event(draft: LearnerEventDraft, occurredAt = '2026-10-01T12:00:00.000Z'
 }
 
 describe('activity planning and sessions', () => {
-  it('filters unsupported steps in production and exposes them in development', () => {
-    const development = buildActivityPlan(playerFixtures.mixedUnsupported, {
+  it('skips only deferred DICOM steps in production', () => {
+    const future = parsePrimitive({
+      id: 'future-step',
+      type: 'future_lab_simulation',
+      content: {},
+      completion: { mode: 'viewed' },
+    }).primitive!
+    const dicom = parsePrimitive({
+      id: 'dicom-step',
+      type: 'dicom_explore',
+      content: {},
+      completion: { mode: 'minimum_interactions', count: 1 },
+    }).primitive!
+    const activity = {
+      ...playerFixtures.mixedUnsupported,
+      primitives: [...playerFixtures.mixedUnsupported.primitives, future, dicom],
+    }
+    const development = buildActivityPlan(activity, {
       environment: 'development',
       player: playerConfig,
     })
-    const production = buildActivityPlan(playerFixtures.mixedUnsupported, {
+    const production = buildActivityPlan(activity, {
       environment: 'production',
       player: playerConfig,
     })
 
-    expect(development.steps.map((step) => step.kind)).toEqual([
-      'content',
-      'unsupported',
-      'assessment',
+    expect(development.steps.map(({ primitive }) => primitive.id)).toEqual([
+      'fixture-text',
+      'fixture-unsupported',
+      'fixture-question',
+      'future-step',
+      'dicom-step',
     ])
     expect(development.steps[0]).toMatchObject({
       supported: true,
@@ -56,7 +74,13 @@ describe('activity planning and sessions', () => {
       prompt: 'Which option is supported?',
       explorableKeys: [],
     })
-    expect(production.steps.map((step) => step.kind)).toEqual(['content', 'assessment'])
+    expect(production.steps.map(({ primitive }) => primitive.id)).toEqual([
+      'fixture-text',
+      'fixture-unsupported',
+      'fixture-question',
+      'future-step',
+    ])
+    expect(production.steps.filter(({ supported }) => !supported)).toHaveLength(2)
   })
 
   it('marks empty and unsupported-only activities unavailable', () => {

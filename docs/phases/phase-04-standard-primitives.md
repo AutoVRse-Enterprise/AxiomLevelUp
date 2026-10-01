@@ -91,7 +91,7 @@ cannot dead-end an ordering step.
 - [x] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
       migrate `case-intro` and `trial-case`.
 - [x] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
-- [ ] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
+- [x] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
       validation coverage.
 - [ ] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
 - [ ] P4-T16 — Run the quality gate, record ADRs and close Phase 4 documentation.
@@ -200,6 +200,12 @@ cannot dead-end an ordering step.
   directly routable. The hidden `runtime-showcase` course contains all 21 standard primitive types
   across 22 ordered examples, and `/dev/primitives` renders those examples with local-only
   interactive, review, disabled, reset and missing-asset controls.
+- P4-T14: the real showcase lesson route completes all 22 steps with ordered lifecycle events,
+  first-attempt partial-credit summary assertions and representative content, assessment and
+  scenario interaction. Remount coverage restores scenario and ordering drafts; timer expiry,
+  internal-course isolation, primitive import boundaries and precise content-validation paths are
+  covered. Production now skips only deferred DICOM types, and burst media progress emits one
+  completion event.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T10 through P4-T16.
 

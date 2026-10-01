@@ -679,3 +679,25 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   learner-visible. The production build succeeds with the existing Cornerstone browser
   externalization and large-chunk warnings.
 - **Follow-ups:** Start P4-T14 cross-runtime, resume, timeout and validation boundary coverage.
+
+### [2026-10-01 23:37] P4-T14 - Cover standard primitive flows
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a real-route play-through of all 22 showcase steps with exact ordered lifecycle
+  events and first-attempt partial-credit summary coverage. Added remount tests for revealed scenario
+  and changed ordering drafts, expanded internal-course surface isolation and precise challenge
+  semantic diagnostics, and tightened primitive component import boundaries. Audited and retained
+  the existing timeout/`timedOut`, duplicate-ID and asset-type mismatch coverage. Fixed production
+  planning to skip only deferred DICOM types, de-duplicated media completion events during burst
+  progress updates, and removed React key-spread warnings from image-region overlays.
+- **Files changed:** `src/routes/play/showcaseFlow.test.tsx`, `src/player/{ActivityPlayer,player.test}.tsx`,
+  `src/engines/learning/{plan,learningEngine.test}.ts`, `src/content/{primitiveTypes,content.test}.ts`,
+  `src/routes/surfaces.test.tsx`, `src/primitives/shared/ImageRegionOverlay.tsx`,
+  `docs/phases/phase-04-standard-primitives.md`, `docs/{ACTIVITY_LOG,HANDOFF}.md`.
+- **Commands run:** focused Vitest runs; `npm run typecheck`; `npm run lint`; focused Prettier;
+  `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 21 test files and 186 tests. Content validation
+  reports five courses, thirteen lessons and zero warnings; the production build succeeds with the
+  existing Cornerstone browser-externalization and large-chunk warnings. The 22-step route test
+  reaches completion at 95% score and 90% first-attempt accuracy after a partial-credit retry.
+- **Follow-ups:** Start P4-T15 responsive, accessibility and bundle QA.

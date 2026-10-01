@@ -1,5 +1,5 @@
 import freshSeedData from '../../public/content/seeds/fresh.json'
-import { act, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { ReactNode } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
@@ -91,11 +91,27 @@ describe('application surfaces', () => {
     expect(completed).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('keeps internal courses off learner-facing catalog surfaces', () => {
-    renderSurface(<LearnPage />, '/learn', '/learn')
+  it('keeps internal courses off Home, Learn and Pathway surfaces', () => {
+    renderSurface(<HomePage />, '/')
+    expect(screen.queryByText('Runtime Primitive Showcase')).not.toBeInTheDocument()
+    cleanup()
 
+    renderSurface(<LearnPage />, '/learn', '/learn')
     expect(screen.getByText('4 courses · 12 lessons')).toBeVisible()
     expect(screen.queryByText('Runtime Primitive Showcase')).not.toBeInTheDocument()
+    cleanup()
+
+    renderSurface(
+      <PathwayPage />,
+      '/learn/pathways/translational-science',
+      '/learn/pathways/:pathwayId',
+    )
+    expect(screen.queryByText('Runtime Primitive Showcase')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', {
+        name: /Runtime Primitive Showcase|Primitive Showcase/u,
+      }),
+    ).not.toBeInTheDocument()
   })
 
   it('shows locked lesson reasons without making locked lessons links', () => {

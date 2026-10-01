@@ -26,13 +26,14 @@ export const assessmentPrimitiveTypes = [
 
 export const timerCompatibleTypes = assessmentPrimitiveTypes
 
-export const domainPrimitiveTypes = [
-  'scenario',
+export const dicomPrimitiveTypes = [
   'dicom_explore',
   'dicom_guided',
   'dicom_identify_region',
   'dicom_measure',
 ] as const
+
+export const domainPrimitiveTypes = ['scenario', ...dicomPrimitiveTypes] as const
 
 export const primitiveTypes = [
   ...contentPrimitiveTypes,
@@ -43,4 +44,5 @@ export const primitiveTypes = [
 export type PrimitiveType = (typeof primitiveTypes)[number]
 
 export const primitiveTypeSet: ReadonlySet<string> = new Set(primitiveTypes)
+export const dicomPrimitiveTypeSet: ReadonlySet<string> = new Set(dicomPrimitiveTypes)
 export const timerCompatibleTypeSet: ReadonlySet<string> = new Set(timerCompatibleTypes)
