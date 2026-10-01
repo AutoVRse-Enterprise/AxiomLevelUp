@@ -19,7 +19,9 @@ import { emitEvent } from '@/events/bus'
 import { ActivityIntro } from '@/player/ActivityIntro'
 import { CompletionSummary } from '@/player/CompletionSummary'
 import { ExitConfirmDialog } from '@/player/ExitConfirmDialog'
-import { FeedbackPanel } from '@/player/FeedbackPanel'
+import { FeedbackPanel, type FeedbackStatus } from '@/player/FeedbackPanel'
+import { mapInteractionToEvents } from '@/player/interactionEvents'
+import { shouldRevealAnswer } from '@/player/reviewPolicy'
 import { StepFrame } from '@/player/StepFrame'
 import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
@@ -45,16 +47,40 @@ export function ActivityPlayer({
   const [awaitingResume, setAwaitingResume] = useState(
     session.startedAt !== null && session.phase !== 'intro' && session.phase !== 'complete',
   )
+  const sessionRef = useRef(session)
   const viewed = useRef(new Set<string>())
+  const pendingDraft = useRef<{ primitiveId: string; draft: unknown } | null>(null)
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mediaProgress = useRef<Record<string, number>>({})
   const blocker = useBlocker(session.startedAt !== null && session.phase !== 'complete')
 
   const transition = useCallback((action: SessionAction) => {
-    setSession((current) => {
-      const next = sessionReducer(current, action)
-      useActivitySessionStore.getState().save(next)
-      return next
-    })
+    const next = sessionReducer(sessionRef.current, action)
+    sessionRef.current = next
+    setSession(next)
+    useActivitySessionStore.getState().save(next)
   }, [])
+
+  const flushDraft = useCallback(() => {
+    if (draftTimer.current) clearTimeout(draftTimer.current)
+    draftTimer.current = null
+    const pending = pendingDraft.current
+    pendingDraft.current = null
+    if (pending) {
+      transition({ type: 'draft', primitiveId: pending.primitiveId, draft: pending.draft })
+    }
+  }, [transition])
+
+  const queueDraft = useCallback(
+    (primitiveId: string, draft: unknown) => {
+      pendingDraft.current = { primitiveId, draft }
+      if (draftTimer.current) clearTimeout(draftTimer.current)
+      draftTimer.current = setTimeout(flushDraft, 300)
+    },
+    [flushDraft],
+  )
+
+  useEffect(() => flushDraft, [flushDraft])
 
   const emitStarted = useCallback(
     (resumed: boolean) => {
@@ -118,6 +144,7 @@ export function ActivityPlayer({
     (current: ActivitySession) => {
       const at = new Date().toISOString()
       const finished = sessionReducer(current, { type: 'finish', at })
+      sessionRef.current = finished
       setSession(finished)
       useActivitySessionStore.getState().clear()
       const summary = selectActivitySummary(finished, plan)
@@ -181,6 +208,7 @@ export function ActivityPlayer({
             type: 'start',
             at: new Date().toISOString(),
           })
+          sessionRef.current = restarted
           setSession(restarted)
           useActivitySessionStore.getState().save(restarted)
           viewed.current.clear()
@@ -193,6 +221,12 @@ export function ActivityPlayer({
   if (!step || !stepProgress) return null
 
   const feedbackCorrect = stepProgress.lastCorrect === true
+  const feedbackStatus: FeedbackStatus = feedbackCorrect
+    ? 'correct'
+    : (stepProgress.lastScore ?? 0) > 0
+      ? 'partial'
+      : 'incorrect'
+  const reviewEvaluation = evaluatePrimitive(step.primitive, stepProgress.response)
   const feedbackMessage =
     (feedbackCorrect ? step.primitive.feedback.correct : step.primitive.feedback.incorrect) ??
     (typeof step.primitive.content.explanation === 'string'
@@ -201,8 +235,9 @@ export function ActivityPlayer({
   const canRetry = !stepProgress.completed && step.retry && stepProgress.attempts < step.maxAttempts
 
   const handleContinue = () => {
+    flushDraft()
     if (session.stepIndex >= plan.steps.length - 1) {
-      finish(session)
+      finish(sessionRef.current)
     } else {
       transition({ type: 'continue', stepCount: plan.steps.length })
     }
@@ -212,7 +247,9 @@ export function ActivityPlayer({
     <>
       <StepFrame
         title={`${plan.activity.title}: ${step.primitive.type.replaceAll('_', ' ')}`}
+        definitionLabel={step.label}
         progress={selectProgressFraction(session, plan) * 100}
+        layout={step.layout}
         onExit={() => navigate(exitPath)}
         footer={
           session.phase === 'step' && stepProgress.completed ? (
@@ -221,14 +258,38 @@ export function ActivityPlayer({
         }
       >
         {session.phase === 'feedback' ? (
-          <FeedbackPanel
-            correct={feedbackCorrect}
-            message={feedbackMessage}
-            source={step.primitive.source}
-            canRetry={canRetry}
-            onRetry={() => transition({ type: 'retry' })}
-            onContinue={handleContinue}
-          />
+          <div className="space-y-6">
+            <PrimitiveRenderer
+              key={`${step.primitive.id}:${stepProgress.attempts}:review`}
+              primitive={step.primitive}
+              attempt={stepProgress.attempts}
+              mode="review"
+              review={{
+                response: stepProgress.response,
+                evaluation: reviewEvaluation,
+                revealAnswer: shouldRevealAnswer(appConfig.product.player.revealAnswer, {
+                  attempt: stepProgress.attempts,
+                  maxAttempts: step.maxAttempts,
+                  retry: step.retry,
+                  correct: feedbackCorrect,
+                }),
+              }}
+              draft={stepProgress.draft}
+              disabled
+              onDraftChange={() => undefined}
+              onComplete={() => undefined}
+              onInteract={() => undefined}
+              onSubmit={() => undefined}
+            />
+            <FeedbackPanel
+              status={feedbackStatus}
+              message={feedbackMessage}
+              source={step.primitive.source}
+              canRetry={canRetry}
+              onRetry={() => transition({ type: 'retry' })}
+              onContinue={handleContinue}
+            />
+          </div>
         ) : (
           <PrimitiveRenderer
             key={`${step.primitive.id}:${stepProgress.attempts}`}
@@ -236,19 +297,27 @@ export function ActivityPlayer({
             attempt={stepProgress.attempts}
             mode="interactive"
             draft={stepProgress.draft}
-            onDraftChange={() => undefined}
+            onDraftChange={(draft) => queueDraft(step.primitive.id, draft)}
             onComplete={markComplete}
             onInteract={(interaction) => {
               const key = 'key' in interaction ? (interaction.key ?? interaction.name) : undefined
-              const mediaProgress = 'fraction' in interaction ? interaction.fraction : undefined
+              const nextReportedMediaProgress =
+                interaction.name === 'media_progress' && 'fraction' in interaction
+                  ? interaction.fraction
+                  : undefined
+              const previousMediaProgress =
+                mediaProgress.current[step.primitive.id] ?? stepProgress.mediaProgress
               const interactionKeys =
                 key && !stepProgress.interactionKeys.includes(key)
                   ? [...stepProgress.interactionKeys, key]
                   : stepProgress.interactionKeys
               const nextMediaProgress =
-                mediaProgress === undefined
+                nextReportedMediaProgress === undefined
                   ? stepProgress.mediaProgress
-                  : Math.max(stepProgress.mediaProgress, mediaProgress)
+                  : Math.max(previousMediaProgress, nextReportedMediaProgress)
+              if (nextReportedMediaProgress !== undefined) {
+                mediaProgress.current[step.primitive.id] = nextMediaProgress
+              }
               const completed = isPrimitiveComplete(step.primitive, {
                 attempts: stepProgress.attempts,
                 correct: stepProgress.lastCorrect,
@@ -264,46 +333,21 @@ export function ActivityPlayer({
                 type: 'interact',
                 primitiveId: step.primitive.id,
                 key,
-                mediaProgress,
+                mediaProgress: nextReportedMediaProgress,
                 completed,
               })
-              emitEvent({
-                event: 'artifact_interacted',
+              const eventContext = {
                 activityKind: plan.activity.kind,
                 activityId: plan.activity.id,
                 primitiveId: step.primitive.id,
                 primitiveType: step.primitive.type,
-                interaction,
-              })
-              if ('nodeId' in interaction) {
-                emitEvent({
-                  event: 'scenario_decision_made',
-                  activityKind: plan.activity.kind,
-                  activityId: plan.activity.id,
-                  primitiveId: step.primitive.id,
-                  primitiveType: step.primitive.type,
-                  nodeId: interaction.nodeId,
-                  choiceId: interaction.choiceId,
-                  decisionIndex: interaction.decisionIndex,
-                })
               }
-              if (mediaProgress !== undefined) {
-                const milestones = [25, 50, 75, 100] as const
-                for (const milestone of milestones) {
-                  if (
-                    stepProgress.mediaProgress < milestone / 100 &&
-                    nextMediaProgress >= milestone / 100
-                  ) {
-                    emitEvent({
-                      event: 'media_progressed',
-                      activityKind: plan.activity.kind,
-                      activityId: plan.activity.id,
-                      primitiveId: step.primitive.id,
-                      primitiveType: step.primitive.type,
-                      milestone,
-                    })
-                  }
-                }
+              for (const event of mapInteractionToEvents(
+                eventContext,
+                interaction,
+                previousMediaProgress,
+              )) {
+                emitEvent(event)
               }
               if (completed && !stepProgress.completed) {
                 emitEvent({
@@ -317,6 +361,7 @@ export function ActivityPlayer({
               }
             }}
             onSubmit={(response) => {
+              flushDraft()
               const result = evaluatePrimitive(step.primitive, response)
               const attempts = stepProgress.attempts + 1
               const completed = isPrimitiveComplete(step.primitive, {

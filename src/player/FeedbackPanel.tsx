@@ -1,10 +1,13 @@
 import { CheckCircle2, CircleAlert } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui'
 import type { Source } from '@/content/schema'
 
+export type FeedbackStatus = 'correct' | 'partial' | 'incorrect'
+
 interface FeedbackPanelProps {
-  correct: boolean
+  status: FeedbackStatus
   message: string | null
   source?: Source
   canRetry: boolean
@@ -13,20 +16,25 @@ interface FeedbackPanelProps {
 }
 
 export function FeedbackPanel({
-  correct,
+  status,
   message,
   source,
   canRetry,
   onRetry,
   onContinue,
 }: FeedbackPanelProps) {
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const correct = status === 'correct'
+
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [status])
+
   return (
     <aside
       aria-live="polite"
       className={`rounded-xl border p-5 ${
-        correct
-          ? 'border-success-600 bg-success-50'
-          : 'border-warning-600 bg-warning-50'
+        correct ? 'border-success-600 bg-success-50' : 'border-warning-600 bg-warning-50'
       }`}
     >
       <div className="flex items-center gap-2">
@@ -35,8 +43,12 @@ export function FeedbackPanel({
         ) : (
           <CircleAlert aria-hidden="true" className="text-warning-700" />
         )}
-        <h2 className="text-heading font-bold text-neutral-950">
-          {correct ? 'Correct' : 'Not quite'}
+        <h2 ref={headingRef} tabIndex={-1} className="text-heading font-bold text-neutral-950">
+          {status === 'correct'
+            ? 'Correct'
+            : status === 'partial'
+              ? 'Partially correct'
+              : 'Not quite'}
         </h2>
       </div>
       {message ? <p className="mt-3 text-neutral-800">{message}</p> : null}

@@ -22,6 +22,7 @@ export interface ActivityStep {
   kind: StepKind
   supported: boolean
   scored: boolean
+  label: string
   layout: PrimitiveLayout
   prompt: string
   explorableKeys: string[]
@@ -81,6 +82,7 @@ export function buildActivityPlan(
       kind: resolved?.definition.family ?? 'unsupported',
       supported: resolved !== null,
       scored: resolved?.definition.scored(resolved.primitive) ?? false,
+      label: resolved?.definition.label ?? 'Activity',
       layout: resolved?.definition.layout ?? 'stacked',
       prompt: resolved?.definition.reviewPrompt(resolved.primitive) ?? 'Activity item',
       explorableKeys: resolved?.definition.explorableKeys?.(resolved.primitive) ?? [],

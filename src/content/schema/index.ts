@@ -166,7 +166,8 @@ export const appConfigSchema = z.object({
     player: z.object({
       maxAttempts: z.number().int().positive(),
       retryByDefault: z.boolean(),
-      mediaCompletionThreshold: z.number().min(0).max(1),
+      revealAnswer: z.enum(['never', 'final_attempt', 'always']).default('final_attempt'),
+      mediaCompletionThreshold: z.number().min(0).max(1).default(0.9),
     }),
   }),
   gamification: z.object({

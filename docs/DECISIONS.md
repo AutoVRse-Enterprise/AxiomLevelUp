@@ -214,3 +214,43 @@ in P4-T03.
 **Consequences:** Completion can depend on unique explored targets or configured media coverage,
 and future structured primitives have a durable draft contract. Learners with a version 1
 in-progress activity restart that activity once; aggregate learner progress is unaffected.
+
+## ADR-021: Player-owned review and interaction lifecycle
+
+**Status:** Accepted
+
+**Context:** Assessment primitives need a consistent read-only review state, configurable answer
+reveal, resumable drafts and domain-specific learner events. Implementing those concerns inside each
+primitive would couple presentation components to persistence, telemetry and retry policy.
+
+**Decision:** The activity player renders the submitted primitive above feedback in `review` mode,
+passes the stored response and a fresh pure evaluation, and decides answer reveal from the
+application-level `never`, `final_attempt` or `always` policy. The player persists draft callbacks
+after a 300 ms debounce, flushes pending drafts at lifecycle boundaries, maps primitive interactions
+to typed scenario and media events, and de-duplicates media milestones against monotonic progress.
+Primitive components remain callback-only and read-only while reviewing. Feedback receives an
+explicit correct, partial or incorrect state and moves focus to its heading.
+
+**Consequences:** Every assessment gets the same retry/reveal and accessibility behavior without
+accessing stores or the event bus. Draft-producing primitives can be added independently, and
+first-attempt scoring remains authoritative. A submitted response is re-evaluated for review, so
+evaluators must remain pure and deterministic.
+
+## ADR-026: Shared artifact viewport mathematics
+
+**Status:** Accepted
+
+**Context:** Images, hotspots, comparisons, tables and future scientific artifacts need consistent
+expanded viewing, coordinate conversion and pan/zoom behavior across pointer and screen sizes.
+Browser fullscreen is not consistently available, especially on iPhone Safari.
+
+**Decision:** Use a full-viewport Radix dialog as the in-app artifact overlay. Keep clamping,
+zoom-at-point and screen-to-normalized coordinate conversion in a pure math module, with interaction
+state isolated in `usePanZoom`. Store authored regions as normalized coordinates. Use deterministic
+seeded Fisher-Yates shuffling, with a separate guard that prevents ordering exercises from starting
+in their solved order.
+
+**Consequences:** Artifact primitives share accessible focus trapping and deterministic geometry
+without depending on browser fullscreen APIs. Coordinate and ordering behavior can be unit tested
+without React, while later primitives can compose the hook and overlay without duplicating input
+logic.

@@ -19,6 +19,7 @@
     "player": {
       "maxAttempts": 2,
       "retryByDefault": true,
+      "revealAnswer": "final_attempt",
       "mediaCompletionThreshold": 0.9
     }
   },

@@ -2,30 +2,28 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T02 are complete; P4-T03 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T03 are complete; P4-T04 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
 
-- Phase 1 foundation remains green: validated content, IndexedDB learner state, event bus, PWA shell and isolated DICOM spike.
-- Phase 2 application surfaces remain configuration-driven and reflect live learner progress.
-- Phase 3 delivered the resumable lesson/challenge engine, lazy primitive registry, immediate feedback and event-driven learning progress.
-- P4-T00 formalized the approved Phase 4 scope, primitive catalogue, resolved decisions, checklist,
-  PRD traceability, architecture constraints and exit criteria.
-- P4-T01 moved the `rich_text`, `image` and `multiple_choice` schemas into content-owned primitive
-  modules with typed asset references.
-- Pure definitions now drive primitive support, family, scoring status, layout, review prompt,
-  exploration keys and evaluation; lazy typed components live under `src/primitives/components/`.
-- The entry-bundle baseline is 595.12 kB raw and 182.85 kB gzip.
-- Evaluations and weighted summaries support normalized fractional scores while first attempts
-  remain authoritative.
-- Activity session v2 stores drafts, distinct interaction keys, monotonic media progress and first
-  and latest scores; migration discards version 1 in-flight sessions.
-- Completion supports distinct-key `minimum_interactions`, `explored`, configured
-  `media_progress`, and answer-compatible `correct_order` semantics.
-- Learner events carry fractional/timed answer data, typed artifact context, scenario decisions and
-  media milestones.
-- Type checking, lint, 11 test files with 62 tests, content validation and production build pass.
+- Phase 1 foundation, Phase 2 application surfaces and the Phase 3 lesson/challenge runtime remain
+  green.
+- Primitive definitions are the source of truth for support, family, scoring, layout, review
+  prompts, exploration keys and evaluation.
+- Fractional first-attempt scoring and activity session v2 support drafts, distinct interactions and
+  monotonic media progress.
+- The player renders submitted primitives read-only above feedback and applies the configured
+  `never`, `final_attempt` or `always` reveal policy; the default is `final_attempt`.
+- Draft callbacks persist after a 300 ms debounce and flush before submission, continuation or
+  unmount.
+- Scenario and media interactions map to typed events, with monotonic milestone de-duplication.
+- Feedback supports correct, partial and incorrect states and focuses its heading.
+- Step frames expose definition labels, timer content and stacked/split responsive layouts.
+- Shared primitive infrastructure now includes a full-viewport Radix artifact overlay,
+  `usePanZoom`, pure clamping/zoom/coordinate math and deterministic unsolved shuffling.
+- ADR-021 and ADR-026 record player lifecycle and artifact viewport decisions.
+- Type checking, lint, 12 test files with 70 tests, content validation and production build pass.
 
 ## In progress
 
@@ -33,15 +31,15 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T03: add review mode, debounced draft persistence, split layout and shared artifact
-   infrastructure.
-2. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
-3. P4-T05: add multiple-select and true/false assessment primitives.
+1. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
+2. P4-T05: add multiple-select and true/false assessment primitives.
+3. P4-T06: add classification, matching and accessible ordering.
 
 ## Blockers/questions for the user
 
 - The DICOM technical note referenced by the PRD is not present.
-- Real Android Chrome and iOS Safari DICOM/PWA checks still require an HTTPS host and physical devices.
+- Real Android Chrome and iOS Safari DICOM/PWA checks still require an HTTPS host and physical
+  devices.
 
 ## Environment notes
 
@@ -56,17 +54,18 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Gotchas
 
-- Challenge `items` currently bypass `parsePrimitive`; strict Phase 4 schemas do not apply to them until P4-T04.
-- Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and `dose-curve` (no axes) will fail strict schemas; migrate content in the same commit that tightens each schema.
-- Definitions, content schemas and lazy components must remain in parity as new primitives land.
+- Challenge `items` bypass `parsePrimitive`; P4-T04 must bring them under strict schemas.
+- Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and
+  `dose-curve` (no axes) must migrate with their strict schemas.
+- Definitions, content schemas and lazy components must remain in parity.
 - Session version 2 discards in-flight version 1 sessions by design.
-- iPhone Safari has no element Fullscreen API; use the planned in-app overlay.
-- DICOM binaries are intentionally ignored; the committed manifest and provenance file do not install the local stack.
-- The development routes are URL-only and must not be linked from learner navigation.
+- Review re-runs the pure evaluator against the stored response; evaluators must stay deterministic.
+- Single-item ordering exercises cannot be made unsolved; `ensureUnsolvedOrder` returns them
+  unchanged.
+- iPhone Safari has no element Fullscreen API; use `ArtifactOverlay`.
 - Do not import Cornerstone outside the lazy spike module.
-- The PWA icon files are excluded from Workbox's glob because vite-plugin-pwa adds manifest icons separately.
-- Development activity plans display unsupported primitives; production plans skip them. Unsupported-only activities remain unavailable.
-- Retries do not improve score: first-attempt results are authoritative.
-- XP, stars, mastery and rewards are intentionally not awarded until Phase 5.
-- Seed activity dates shift when a seed is applied; persisted dates age normally until the next reset.
-- `npm run format:check` reports the repository's existing line-ending/style baseline; the required `npm run check` gate is green.
+- Development plans display unsupported primitives; production plans skip them.
+- Retries do not improve score: first-attempt results remain authoritative.
+- XP, stars, mastery and rewards remain deferred to Phase 5.
+- `npm run format:check` reports the existing line-ending/style baseline; `npm run check` is the
+  required gate.

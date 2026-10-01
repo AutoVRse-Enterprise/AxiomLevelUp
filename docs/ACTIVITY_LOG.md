@@ -430,3 +430,22 @@ This file is append-only.
   warnings remain non-failing.
 - **Follow-ups:** Implement P4-T03 review/reveal rendering, debounced draft persistence, focus and
   shared artifact infrastructure without changing first-attempt score authority.
+
+### [2026-10-01 21:42] P4-T03 - Add player review infrastructure
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added player-owned read-only review and configurable reveal behavior; debounced draft
+  persistence; focused correct, partial and incorrect feedback; labelled stacked/split step frames
+  with a timer slot; typed scenario/media event mapping with milestone de-duplication; a full-screen
+  Radix artifact overlay; pure pan/zoom and normalized-coordinate math; and deterministic seeded
+  shuffle helpers that keep ordering tasks unsolved. Recorded ADR-021 and ADR-026.
+- **Files changed:** `public/content/app-config.json`, `src/content/schema/index.ts`,
+  `src/engines/learning/plan.ts`, `src/player/**`, `src/primitives/components/MultipleChoicePrimitive.tsx`,
+  `src/primitives/shared/**`, `docs/DECISIONS.md`, `docs/HANDOFF.md`,
+  `docs/phases/phase-04-standard-primitives.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier on changed files, focused TypeScript/lint/test checks,
+  `npm run check`, `git diff --check`.
+- **Result/verification:** The full gate passes with 12 test files and 70 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. Existing Cornerstone
+  browser-externalization and large lazy chunk warnings remain non-failing.
+- **Follow-ups:** Start P4-T04 challenge-item, asset-reference, timer and unique-ID validation.

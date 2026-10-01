@@ -71,7 +71,11 @@ describe('activity player', () => {
     await user.click(await screen.findByRole('button', { name: 'Continue' }))
     await user.click(await screen.findByRole('radio', { name: 'Supported' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
-    expect(await screen.findByText('Correct')).toBeVisible()
+    const feedbackHeading = await screen.findByRole('heading', { name: 'Correct' })
+    expect(feedbackHeading).toHaveFocus()
+    expect(screen.getByRole('radio', { name: 'Supported' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Supported' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Check answer' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Continue' }))
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
@@ -135,10 +139,28 @@ describe('activity player', () => {
     expect(onSubmit).toHaveBeenCalledTimes(1)
   })
 
+  it('persists primitive drafts after the debounce window', async () => {
+    const user = userEvent.setup()
+    renderPlayer()
+
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    await user.click(await screen.findByRole('button', { name: 'Continue' }))
+    await user.click(await screen.findByRole('radio', { name: 'Supported' }))
+
+    expect(
+      useActivitySessionStore.getState().session?.progress['fixture-question']?.draft,
+    ).toBeNull()
+    await waitFor(() =>
+      expect(useActivitySessionStore.getState().session?.progress['fixture-question']?.draft).toBe(
+        'supported',
+      ),
+    )
+  })
+
   it('renders retry and continue feedback actions', () => {
     const { rerender } = render(
       <FeedbackPanel
-        correct={false}
+        status="incorrect"
         message="Review the evidence."
         canRetry
         onRetry={vi.fn()}
@@ -148,13 +170,14 @@ describe('activity player', () => {
     expect(screen.getByRole('button', { name: 'Try again' })).toBeVisible()
     rerender(
       <FeedbackPanel
-        correct
+        status="partial"
         message="Supported."
         canRetry={false}
         onRetry={vi.fn()}
         onContinue={vi.fn()}
       />,
     )
+    expect(screen.getByRole('heading', { name: 'Partially correct' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Continue' })).toBeVisible()
   })
 

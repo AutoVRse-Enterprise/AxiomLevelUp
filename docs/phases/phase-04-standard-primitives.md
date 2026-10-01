@@ -74,7 +74,7 @@ cannot dead-end an ordering step.
   primitives without behavior changes; derive support from definitions and add parity coverage.
 - [x] P4-T02 — Add fractional scoring, scored steps, session v2 drafts and interaction keys,
   exploration/media completion and event payload changes.
-- [ ] P4-T03 — Add review and reveal behavior, draft persistence, focus management, split layout,
+- [x] P4-T03 — Add review and reveal behavior, draft persistence, focus management, split layout,
   artifact overlay, pan/zoom and seeded shuffle infrastructure.
 - [ ] P4-T04 — Harden challenge, primitive-ID, asset-reference, timer and manifest validation and
   regenerate schemas.
@@ -149,8 +149,12 @@ cannot dead-end an ordering step.
 - P4-T02: normalized fractional evaluation and first-attempt weighted summaries, session v2
   drafts/keyed interactions/media progress, exploration and media completion, answer-compatible
   `correct_order`, and expanded learner events are covered by 62 tests.
+- P4-T03: player-owned read-only review, configurable reveal policy, debounced drafts, focused
+  partial-aware feedback, labelled stacked/split frames, mapped scenario/media events, milestone
+  de-duplication, an in-app artifact overlay, pure pan/zoom coordinate math and deterministic
+  unsolved shuffling are covered by 70 tests.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T02 through P4-T16.
+- Runtime verification remains pending for P4-T04 through P4-T16.
 
 ## Deviations
 

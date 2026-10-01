@@ -7,11 +7,19 @@ import type { PrimitiveComponentProps } from '@/primitives/types'
 
 export function MultipleChoicePrimitive({
   primitive,
+  mode,
+  review,
+  draft,
   disabled,
   onInteract,
+  onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<MultipleChoicePrimitiveConfig>) {
-  const [selected, setSelected] = useState('')
+  const initialResponse = mode === 'review' ? review?.response : draft
+  const [selected, setSelected] = useState(
+    typeof initialResponse === 'string' ? initialResponse : '',
+  )
+  const readOnly = disabled || mode === 'review'
 
   return (
     <form
@@ -20,7 +28,7 @@ export function MultipleChoicePrimitive({
         if (selected) onSubmit(selected)
       }}
     >
-      <fieldset disabled={disabled} className="space-y-4">
+      <fieldset disabled={readOnly} className="space-y-4">
         <legend className="text-title font-bold text-neutral-950">
           {primitive.content.prompt}
         </legend>
@@ -42,6 +50,7 @@ export function MultipleChoicePrimitive({
                 checked={selected === option.id}
                 onChange={() => {
                   setSelected(option.id)
+                  onDraftChange(option.id)
                   onInteract({ name: 'option_selected', key: option.id })
                 }}
                 className="size-5 accent-brand-700"
@@ -51,9 +60,11 @@ export function MultipleChoicePrimitive({
           ))}
         </div>
       </fieldset>
-      <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
-        Check answer
-      </Button>
+      {mode === 'interactive' ? (
+        <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
+          Check answer
+        </Button>
+      ) : null}
     </form>
   )
 }
