@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "0.1",
+  "assets": [
+    { "assetId": "course-imaging-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
+    { "assetId": "course-clinical-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
+    { "assetId": "course-data-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
+    { "assetId": "course-safety-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
+    { "assetId": "windowing-diagram", "path": "/assets/images/windowing-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048 },
+    { "assetId": "thorax-diagram", "path": "/assets/images/thorax-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048 }
+  ]
+}

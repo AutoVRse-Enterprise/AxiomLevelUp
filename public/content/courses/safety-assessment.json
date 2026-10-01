@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "safety-assessment",
+  "title": "Scientific Safety Assessment",
+  "description": "Recognize potential signals and choose a proportionate response.",
+  "imageAssetId": "course-safety-cover",
+  "category": "Safety Science",
+  "estimatedMinutes": 45,
+  "difficulty": "intermediate",
+  "authors": ["Axiom Learning Science"],
+  "conceptIds": ["safety-signals", "risk-escalation"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": [
+    {
+      "id": "signal-detection",
+      "title": "Recognizing Safety Signals",
+      "description": "Distinguish a signal from an isolated observation.",
+      "estimatedMinutes": 20,
+      "difficulty": "intermediate",
+      "conceptIds": ["safety-signals"],
+      "xpReward": 90,
+      "prerequisites": [],
+      "primitives": [
+        {
+          "id": "signal-intro",
+          "type": "rich_text",
+          "conceptIds": ["safety-signals"],
+          "content": {
+            "heading": "Signals are prompts to investigate",
+            "body": "A signal is information that justifies further assessment, not a final causal conclusion."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "escalation-decisions",
+      "title": "Escalation Decisions",
+      "description": "Balance evidence strength, seriousness and urgency.",
+      "estimatedMinutes": 25,
+      "difficulty": "advanced",
+      "conceptIds": ["safety-signals", "risk-escalation"],
+      "xpReward": 110,
+      "prerequisites": ["signal-detection"],
+      "primitives": [
+        {
+          "id": "escalation-order",
+          "type": "ordering",
+          "conceptIds": ["risk-escalation"],
+          "content": {
+            "prompt": "Arrange the response from detection to action.",
+            "items": ["Triage evidence", "Assess alternatives", "Escalate proportionately", "Document decision"]
+          },
+          "assets": [],
+          "completion": { "mode": "correct_order" },
+          "scoring": { "xp": 20 },
+          "feedback": {}
+        }
+      ]
+    }
+  ]
+}

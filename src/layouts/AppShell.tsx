@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { NavLink, Outlet, useLocation } from 'react-router'
 
+import { useContent } from '@/app/contentContext'
 import { cn } from '@/lib/cn'
 
 const navigation = [
@@ -36,6 +37,7 @@ function titleFor(pathname: string) {
 
 export function AppShell() {
   const { pathname } = useLocation()
+  const { seed } = useContent()
 
   return (
     <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))]">
@@ -52,10 +54,10 @@ export function AppShell() {
           </div>
           <div className="flex items-center gap-3 text-small font-semibold" aria-label="Learner status">
             <span className="flex items-center gap-1 text-xp">
-              <Medal aria-hidden="true" size={17} /> 4,820
+              <Medal aria-hidden="true" size={17} /> {seed.xp.total.toLocaleString()}
             </span>
             <span className="flex items-center gap-1 text-streak">
-              <Flame aria-hidden="true" size={17} /> 8
+              <Flame aria-hidden="true" size={17} /> {seed.streak.currentDays}
             </span>
           </div>
         </div>

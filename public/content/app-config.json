@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "0.1",
+  "app": {
+    "name": "Learning Runtime",
+    "cohortName": "R&D Learning Cohort"
+  },
+  "gamification": {
+    "xp": {
+      "correctStandard": 10,
+      "correctDifficult": 20,
+      "lessonComplete": 75,
+      "perfectLessonBonus": 30,
+      "dailyChallenge": 50,
+      "perfectChallengeBonus": 25,
+      "revisionComplete": 30,
+      "weeklyTarget": 100,
+      "dicomFirstTask": 40
+    },
+    "levels": [
+      { "level": 1, "minimumXp": 0, "label": "Explorer" },
+      { "level": 2, "minimumXp": 250, "label": "Investigator" },
+      { "level": 3, "minimumXp": 600, "label": "Analyst" },
+      { "level": 4, "minimumXp": 1100, "label": "Specialist" },
+      { "level": 5, "minimumXp": 1800, "label": "Senior Specialist" },
+      { "level": 6, "minimumXp": 2800, "label": "Scientific Lead" },
+      { "level": 7, "minimumXp": 4200, "label": "Principal Investigator" },
+      { "level": 8, "minimumXp": 6000, "label": "Research Fellow" }
+    ],
+    "stars": { "one": 0, "two": 75, "three": 90 },
+    "mastery": {
+      "gain": 4,
+      "loss": 2,
+      "difficultyWeights": {
+        "foundation": 0.75,
+        "intermediate": 1,
+        "advanced": 1.25
+      }
+    }
+  },
+  "concepts": [
+    {
+      "id": "thoracic-imaging",
+      "title": "Thoracic Imaging",
+      "description": "Systematic interpretation of chest imaging."
+    },
+    {
+      "id": "image-windowing",
+      "title": "Image Windowing",
+      "description": "Selecting useful display ranges for clinical structures."
+    },
+    {
+      "id": "clinical-trial-design",
+      "title": "Clinical Trial Design",
+      "description": "Foundations of controlled clinical studies."
+    },
+    {
+      "id": "endpoint-selection",
+      "title": "Endpoint Selection",
+      "description": "Choosing defensible efficacy and safety outcomes."
+    },
+    {
+      "id": "biostatistics",
+      "title": "Biostatistics",
+      "description": "Interpreting uncertainty and treatment effects."
+    },
+    {
+      "id": "dose-response",
+      "title": "Dose Response",
+      "description": "Understanding exposure and biological response."
+    },
+    {
+      "id": "safety-signals",
+      "title": "Safety Signals",
+      "description": "Recognizing and assessing emerging safety evidence."
+    },
+    {
+      "id": "risk-escalation",
+      "title": "Risk Escalation",
+      "description": "Applying proportionate investigation and escalation."
+    }
+  ],
+  "pathways": [
+    {
+      "id": "translational-science",
+      "title": "Translational Science",
+      "description": "Move from evidence interpretation to confident scientific decisions.",
+      "active": true,
+      "nodes": [
+        { "id": "node-intro", "type": "lesson", "refId": "imaging-orientation", "optional": false },
+        { "id": "node-core", "type": "lesson", "refId": "ct-windowing", "optional": false },
+        { "id": "node-current", "type": "lesson", "refId": "thoracic-ct", "optional": false },
+        { "id": "node-case", "type": "case", "refId": "imaging-case-practice", "optional": true },
+        { "id": "node-lab", "type": "practice", "refId": "dicom-lab", "optional": true },
+        { "id": "node-challenge", "type": "challenge", "refId": "weekly-imaging-sprint", "optional": false }
+      ],
+      "edges": [
+        { "from": "node-intro", "to": "node-core" },
+        { "from": "node-core", "to": "node-current" },
+        { "from": "node-current", "to": "node-case" },
+        { "from": "node-current", "to": "node-lab" },
+        { "from": "node-case", "to": "node-challenge" },
+        { "from": "node-lab", "to": "node-challenge" }
+      ]
+    }
+  ],
+  "badges": [
+    { "id": "imaging-fundamentals", "title": "Imaging Fundamentals", "description": "Complete the imaging foundation sequence.", "category": "learning", "icon": "scan-line", "rewardXp": 50 },
+    { "id": "clinical-research-basics", "title": "Clinical Research Basics", "description": "Complete the clinical research introduction.", "category": "learning", "icon": "clipboard-check", "rewardXp": 50 },
+    { "id": "scientific-data-explorer", "title": "Scientific Data Explorer", "description": "Complete three data interpretation lessons.", "category": "learning", "icon": "chart-scatter", "rewardXp": 75 },
+    { "id": "perfect-lesson", "title": "Perfect Lesson", "description": "Complete a lesson without an error.", "category": "performance", "icon": "sparkles", "rewardXp": 30 },
+    { "id": "precision-observer", "title": "Precision Observer", "description": "Complete an imaging identification task precisely.", "category": "performance", "icon": "focus", "rewardXp": 40 },
+    { "id": "case-master", "title": "Case Master", "description": "Resolve three advanced cases.", "category": "performance", "icon": "brain", "rewardXp": 75 },
+    { "id": "seven-day-streak", "title": "7 Day Streak", "description": "Learn on seven consecutive days.", "category": "consistency", "icon": "flame", "rewardXp": 40 },
+    { "id": "four-week-goal", "title": "Four Week Goal", "description": "Meet the weekly goal four times.", "category": "consistency", "icon": "calendar-check", "rewardXp": 100 },
+    { "id": "challenge-ten", "title": "Challenge × 10", "description": "Complete ten daily challenges.", "category": "consistency", "icon": "target", "rewardXp": 75 },
+    { "id": "first-dicom", "title": "Imaging Explorer", "description": "Complete a first DICOM activity.", "category": "performance", "icon": "scan", "rewardXp": 40 }
+  ],
+  "challenges": [
+    {
+      "id": "daily-imaging-interpretation",
+      "type": "daily",
+      "title": "Imaging Interpretation",
+      "description": "Five rapid checks across imaging concepts.",
+      "estimatedMinutes": 3,
+      "rewardXp": 50,
+      "itemCount": 5,
+      "items": [
+        {
+          "id": "daily-q1",
+          "type": "multiple_choice",
+          "conceptIds": ["image-windowing"],
+          "content": {
+            "prompt": "Which window best emphasizes lung parenchyma?",
+            "options": [
+              { "id": "lung", "label": "Lung window" },
+              { "id": "bone", "label": "Bone window" },
+              { "id": "brain", "label": "Brain window" }
+            ],
+            "correctOptionId": "lung",
+            "explanation": "A lung window spans the low attenuation range needed to inspect aerated lung."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "foundation" },
+          "feedback": { "retry": false }
+        },
+        {
+          "id": "daily-q2",
+          "type": "multiple_choice",
+          "conceptIds": ["clinical-trial-design"],
+          "content": {
+            "prompt": "What is the main purpose of randomization?",
+            "options": [
+              { "id": "balance", "label": "Balance known and unknown confounders" },
+              { "id": "speed", "label": "Shorten every trial" },
+              { "id": "blinding", "label": "Guarantee participant blinding" }
+            ],
+            "correctOptionId": "balance",
+            "explanation": "Random allocation reduces systematic baseline differences between groups."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "foundation" },
+          "feedback": { "retry": false }
+        },
+        {
+          "id": "daily-q3",
+          "type": "multiple_choice",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "prompt": "A wider confidence interval generally indicates what?",
+            "options": [
+              { "id": "less-precision", "label": "Less precision" },
+              { "id": "more-precision", "label": "More precision" },
+              { "id": "no-bias", "label": "No risk of bias" }
+            ],
+            "correctOptionId": "less-precision",
+            "explanation": "Width reflects uncertainty around the estimated effect."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "intermediate" },
+          "feedback": { "retry": false }
+        },
+        {
+          "id": "daily-q4",
+          "type": "multiple_choice",
+          "conceptIds": ["safety-signals"],
+          "content": {
+            "prompt": "What should an unexpected clustered event prompt first?",
+            "options": [
+              { "id": "assess", "label": "Structured signal assessment" },
+              { "id": "ignore", "label": "No action until proof is absolute" },
+              { "id": "publish", "label": "Immediate public attribution" }
+            ],
+            "correctOptionId": "assess",
+            "explanation": "A structured assessment establishes strength, alternatives and urgency."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "intermediate" },
+          "feedback": { "retry": false }
+        },
+        {
+          "id": "daily-q5",
+          "type": "multiple_choice",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "prompt": "A plateau in response most directly suggests what?",
+            "options": [
+              { "id": "maximal", "label": "A maximal effect may have been reached" },
+              { "id": "zero", "label": "The compound has no activity" },
+              { "id": "bias", "label": "Randomization failed" }
+            ],
+            "correctOptionId": "maximal",
+            "explanation": "A plateau can represent saturation of the achievable biological effect."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "intermediate" },
+          "feedback": { "retry": false }
+        }
+      ]
+    },
+    {
+      "id": "weekly-imaging-sprint",
+      "type": "weekly",
+      "title": "Scientific Imaging Sprint",
+      "description": "Complete three advanced imaging cases.",
+      "estimatedMinutes": 20,
+      "rewardXp": 100,
+      "itemCount": 3,
+      "target": 3,
+      "items": []
+    }
+  ],
+  "leaderboard": {
+    "scope": "R&D Learning Cohort",
+    "period": "weekly",
+    "entries": [
+      { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "isCurrentLearner": false, "previousRank": 1 },
+      { "id": "claire-m", "name": "Claire M.", "weeklyXp": 1360, "isCurrentLearner": false, "previousRank": 3 },
+      { "id": "vikram-s", "name": "Vikram S.", "weeklyXp": 1310, "isCurrentLearner": false, "previousRank": 2 },
+      { "id": "lucas-b", "name": "Lucas B.", "weeklyXp": 1195, "isCurrentLearner": false, "previousRank": 6 },
+      { "id": "fatima-k", "name": "Fatima K.", "weeklyXp": 1110, "isCurrentLearner": false, "previousRank": 4 },
+      { "id": "jonas-l", "name": "Jonas L.", "weeklyXp": 1035, "isCurrentLearner": false, "previousRank": 5 },
+      { "id": "elena-p", "name": "Elena P.", "weeklyXp": 980, "isCurrentLearner": false, "previousRank": 7 },
+      { "id": "maya-chen", "name": "Maya Chen", "weeklyXp": 940, "isCurrentLearner": true, "previousRank": 11 },
+      { "id": "marcus-t", "name": "Marcus T.", "weeklyXp": 910, "isCurrentLearner": false, "previousRank": 8 },
+      { "id": "sofia-g", "name": "Sofia G.", "weeklyXp": 875, "isCurrentLearner": false, "previousRank": 10 },
+      { "id": "nora-a", "name": "Nora A.", "weeklyXp": 830, "isCurrentLearner": false, "previousRank": 9 },
+      { "id": "daniel-w", "name": "Daniel W.", "weeklyXp": 765, "isCurrentLearner": false, "previousRank": 12 },
+      { "id": "yuki-n", "name": "Yuki N.", "weeklyXp": 720, "isCurrentLearner": false, "previousRank": 13 },
+      { "id": "amadou-c", "name": "Amadou C.", "weeklyXp": 680, "isCurrentLearner": false, "previousRank": 15 },
+      { "id": "lena-v", "name": "Lena V.", "weeklyXp": 645, "isCurrentLearner": false, "previousRank": 14 }
+    ]
+  }
+}

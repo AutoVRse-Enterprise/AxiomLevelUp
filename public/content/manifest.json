@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "0.1",
+  "appConfig": "app-config.json",
+  "courses": [
+    "courses/scientific-imaging.json",
+    "courses/clinical-research.json",
+    "courses/data-interpretation.json",
+    "courses/safety-assessment.json"
+  ],
+  "seeds": {
+    "advanced": "seeds/advanced.json",
+    "fresh": "seeds/fresh.json"
+  },
+  "defaultSeed": "advanced",
+  "assetManifest": "assets.json"
+}

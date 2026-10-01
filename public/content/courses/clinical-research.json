@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "clinical-research",
+  "title": "Clinical Research Essentials",
+  "description": "Connect trial design choices to credible clinical evidence.",
+  "imageAssetId": "course-clinical-cover",
+  "category": "Clinical Development",
+  "estimatedMinutes": 65,
+  "difficulty": "foundation",
+  "authors": ["Axiom Learning Science"],
+  "conceptIds": ["clinical-trial-design", "endpoint-selection"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": [
+    {
+      "id": "trial-design-basics",
+      "title": "Controlled Trial Design",
+      "description": "Understand control groups, randomization and blinding.",
+      "estimatedMinutes": 18,
+      "difficulty": "foundation",
+      "conceptIds": ["clinical-trial-design"],
+      "xpReward": 75,
+      "prerequisites": [],
+      "primitives": [
+        {
+          "id": "trial-design-intro",
+          "type": "rich_text",
+          "conceptIds": ["clinical-trial-design"],
+          "content": {
+            "heading": "Design protects the inference",
+            "body": "Controls and randomization help separate treatment effects from alternative explanations."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "endpoint-strategy",
+      "title": "Endpoint Strategy",
+      "description": "Match study questions to meaningful endpoints.",
+      "estimatedMinutes": 22,
+      "difficulty": "intermediate",
+      "conceptIds": ["endpoint-selection"],
+      "xpReward": 90,
+      "prerequisites": ["trial-design-basics"],
+      "primitives": [
+        {
+          "id": "endpoint-intro",
+          "type": "rich_text",
+          "conceptIds": ["endpoint-selection"],
+          "content": {
+            "heading": "Begin with the decision",
+            "body": "An endpoint is useful when it measures an outcome relevant to the scientific decision."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "trial-bias-case",
+      "title": "Bias and Interpretation Case",
+      "description": "Identify threats to inference in a short study scenario.",
+      "estimatedMinutes": 25,
+      "difficulty": "advanced",
+      "conceptIds": ["clinical-trial-design", "endpoint-selection"],
+      "xpReward": 110,
+      "prerequisites": ["endpoint-strategy"],
+      "primitives": [
+        {
+          "id": "trial-case",
+          "type": "scenario",
+          "conceptIds": ["clinical-trial-design"],
+          "content": { "startNodeId": "trial-context", "nodes": [] },
+          "assets": [],
+          "completion": { "mode": "outcome" },
+          "scoring": { "xp": 30 },
+          "feedback": {}
+        }
+      ]
+    }
+  ]
+}

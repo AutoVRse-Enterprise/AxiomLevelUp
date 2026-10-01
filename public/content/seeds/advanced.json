@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "0.1",
+  "stateVersion": 1,
+  "seedProfile": "advanced",
+  "learner": {
+    "id": "maya-chen",
+    "name": "Maya Chen",
+    "role": "R&D Scientist"
+  },
+  "xp": { "total": 4820, "weekly": 940 },
+  "streak": { "currentDays": 8, "lastQualifyingDate": "2026-10-01" },
+  "weeklyGoal": {
+    "targetDays": 5,
+    "completedDays": ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01"]
+  },
+  "lessonProgress": {
+    "imaging-orientation": { "status": "completed", "stars": 3, "bestScore": 96, "attempts": 1, "lastPrimitiveIndex": 0, "completedAt": "2026-09-22T09:20:00+05:30" },
+    "ct-windowing": { "status": "completed", "stars": 2, "bestScore": 84, "attempts": 2, "lastPrimitiveIndex": 0, "completedAt": "2026-09-25T10:10:00+05:30" },
+    "thoracic-ct": { "status": "current", "stars": 0, "bestScore": null, "attempts": 1, "lastPrimitiveIndex": 1, "completedAt": null },
+    "imaging-case-practice": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "dicom-lab": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "trial-design-basics": { "status": "completed", "stars": 3, "bestScore": 93, "attempts": 1, "lastPrimitiveIndex": 0, "completedAt": "2026-09-18T08:30:00+05:30" },
+    "endpoint-strategy": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "trial-bias-case": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "confidence-and-effect": { "status": "completed", "stars": 2, "bestScore": 82, "attempts": 2, "lastPrimitiveIndex": 0, "completedAt": "2026-09-12T15:00:00+05:30" },
+    "dose-response-curves": { "status": "new", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "signal-detection": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "escalation-decisions": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null }
+  },
+  "challenges": {
+    "daily-imaging-interpretation": { "completed": false, "progress": 0, "bestScore": null },
+    "weekly-imaging-sprint": { "completed": false, "progress": 2, "bestScore": 87 }
+  },
+  "badges": {
+    "imaging-fundamentals": { "unlockedAt": "2026-09-25T10:12:00+05:30", "progress": 100 },
+    "clinical-research-basics": { "unlockedAt": null, "progress": 67 },
+    "scientific-data-explorer": { "unlockedAt": null, "progress": 33 },
+    "perfect-lesson": { "unlockedAt": "2026-09-22T09:21:00+05:30", "progress": 100 },
+    "precision-observer": { "unlockedAt": null, "progress": 0 },
+    "case-master": { "unlockedAt": null, "progress": 33 },
+    "seven-day-streak": { "unlockedAt": "2026-09-30T08:00:00+05:30", "progress": 100 },
+    "four-week-goal": { "unlockedAt": null, "progress": 75 },
+    "challenge-ten": { "unlockedAt": null, "progress": 60 },
+    "first-dicom": { "unlockedAt": null, "progress": 0 }
+  },
+  "mastery": {
+    "thoracic-imaging": { "score": 64, "history": [{ "at": "2026-09-25T10:12:00+05:30", "delta": 4, "reason": "ct-windowing" }] },
+    "image-windowing": { "score": 78, "history": [{ "at": "2026-09-25T10:12:00+05:30", "delta": 6, "reason": "ct-windowing" }] },
+    "clinical-trial-design": { "score": 86, "history": [] },
+    "endpoint-selection": { "score": 72, "history": [] },
+    "biostatistics": { "score": 68, "history": [] },
+    "dose-response": { "score": 74, "history": [] },
+    "safety-signals": { "score": 76, "history": [] },
+    "risk-escalation": { "score": 70, "history": [] }
+  },
+  "stats": {
+    "coursesCompleted": 1,
+    "lessonsCompleted": 24,
+    "challengesCompleted": 6,
+    "questionsAnswered": 184,
+    "correctAnswers": 156
+  },
+  "onboarding": { "viewed": true },
+  "offlineDownloads": {}
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "0.1",
+  "stateVersion": 1,
+  "seedProfile": "fresh",
+  "learner": {
+    "id": "new-learner",
+    "name": "Alex Morgan",
+    "role": "R&D Learner"
+  },
+  "xp": { "total": 0, "weekly": 0 },
+  "streak": { "currentDays": 0, "lastQualifyingDate": null },
+  "weeklyGoal": { "targetDays": 5, "completedDays": [] },
+  "lessonProgress": {
+    "imaging-orientation": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "ct-windowing": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "thoracic-ct": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "imaging-case-practice": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "dicom-lab": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "trial-design-basics": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "endpoint-strategy": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "trial-bias-case": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "confidence-and-effect": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "dose-response-curves": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "signal-detection": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
+    "escalation-decisions": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null }
+  },
+  "challenges": {
+    "daily-imaging-interpretation": { "completed": false, "progress": 0, "bestScore": null },
+    "weekly-imaging-sprint": { "completed": false, "progress": 0, "bestScore": null }
+  },
+  "badges": {
+    "imaging-fundamentals": { "unlockedAt": null, "progress": 0 },
+    "clinical-research-basics": { "unlockedAt": null, "progress": 0 },
+    "scientific-data-explorer": { "unlockedAt": null, "progress": 0 },
+    "perfect-lesson": { "unlockedAt": null, "progress": 0 },
+    "precision-observer": { "unlockedAt": null, "progress": 0 },
+    "case-master": { "unlockedAt": null, "progress": 0 },
+    "seven-day-streak": { "unlockedAt": null, "progress": 0 },
+    "four-week-goal": { "unlockedAt": null, "progress": 0 },
+    "challenge-ten": { "unlockedAt": null, "progress": 0 },
+    "first-dicom": { "unlockedAt": null, "progress": 0 }
+  },
+  "mastery": {
+    "thoracic-imaging": { "score": 50, "history": [] },
+    "image-windowing": { "score": 50, "history": [] },
+    "clinical-trial-design": { "score": 50, "history": [] },
+    "endpoint-selection": { "score": 50, "history": [] },
+    "biostatistics": { "score": 50, "history": [] },
+    "dose-response": { "score": 50, "history": [] },
+    "safety-signals": { "score": 50, "history": [] },
+    "risk-escalation": { "score": 50, "history": [] }
+  },
+  "stats": {
+    "coursesCompleted": 0,
+    "lessonsCompleted": 0,
+    "challengesCompleted": 0,
+    "questionsAnswered": 0,
+    "correctAnswers": 0
+  },
+  "onboarding": { "viewed": false },
+  "offlineDownloads": {}
+}

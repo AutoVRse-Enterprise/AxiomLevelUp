@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-labelledby="title desc">
+  <title id="title">Abstract scientific data pattern</title>
+  <desc id="desc">A teal field with connected data points and layered curves.</desc>
+  <rect width="800" height="480" rx="32" fill="#0b171e"/>
+  <g stroke="#47c3ad" stroke-width="2" opacity=".28">
+    <path d="M0 80h800M0 160h800M0 240h800M0 320h800M0 400h800"/>
+    <path d="M80 0v480M160 0v480M240 0v480M320 0v480M400 0v480M480 0v480M560 0v480M640 0v480M720 0v480"/>
+  </g>
+  <path d="M70 340c100-180 185 60 290-90s178-38 370-150" fill="none" stroke="#7edcc9" stroke-width="12" stroke-linecap="round"/>
+  <g fill="#fff">
+    <circle cx="70" cy="340" r="10"/><circle cx="260" cy="282" r="10"/><circle cx="410" cy="190" r="10"/><circle cx="730" cy="100" r="10"/>
+  </g>
+</svg>

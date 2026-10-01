@@ -2,21 +2,31 @@ import { BookOpen, Construction, Target, Trophy } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 
+import { useContent } from '@/app/contentContext'
 import { Button, Card, Chip, ProgressBar } from '@/components/ui'
 
 export function HomePage() {
+  const { seed, courseById } = useContent()
+  const course = courseById.get('scientific-imaging')
+  const completed = course?.lessons.filter(
+    (lesson) => seed.lessonProgress[lesson.id]?.status === 'completed',
+  ).length
+  const progress = course ? Math.round(((completed ?? 0) / course.lessons.length) * 100) : 0
+
   return (
     <div className="space-y-6">
       <header>
         <p className="text-small font-semibold text-brand-700">Good afternoon</p>
-        <h1 className="mt-1 text-display font-bold tracking-tight">Welcome back, Maya</h1>
+        <h1 className="mt-1 text-display font-bold tracking-tight">
+          Welcome back, {seed.learner.name.split(' ')[0]}
+        </h1>
         <p className="mt-2 text-neutral-600">Continue building scientific confidence.</p>
       </header>
       <Card>
         <Chip tone="brand">Continue learning</Chip>
-        <h2 className="mt-4 text-title font-bold">Scientific Imaging Foundations</h2>
+        <h2 className="mt-4 text-title font-bold">{course?.title ?? 'Continue learning'}</h2>
         <p className="mt-2 text-neutral-600">Current lesson: Interpreting thoracic CT</p>
-        <ProgressBar className="mt-5" label="Course progress" value={62} />
+        <ProgressBar className="mt-5" label="Course progress" value={progress} />
         <Button className="mt-6" leadingIcon={<BookOpen aria-hidden="true" size={18} />}>
           Continue lesson
         </Button>
@@ -26,11 +36,12 @@ export function HomePage() {
 }
 
 export function LearnPage() {
+  const { courses } = useContent()
   return (
     <Placeholder
       icon={<BookOpen size={28} />}
       title="Learning pathways"
-      description="Four configured courses and their progression states will appear here."
+      description={`${courses.length} configured courses and ${courses.reduce((sum, course) => sum + course.lessons.length, 0)} lessons are ready for the Phase 2 surfaces.`}
       action={
         <Button onClick={() => undefined}>
           Browse active pathway
@@ -41,30 +52,43 @@ export function LearnPage() {
 }
 
 export function ChallengePage() {
+  const { appConfig } = useContent()
+  const challenge = appConfig.challenges.find(({ type }) => type === 'daily')
   return (
     <Placeholder
       icon={<Target size={28} />}
-      title="Today's challenge"
-      description="Five focused interactions · approximately 3 minutes · +75 XP"
+      title={challenge?.title ?? "Today's challenge"}
+      description={`${challenge?.itemCount ?? 0} focused interactions · approximately ${challenge?.estimatedMinutes ?? 0} minutes · +${challenge?.rewardXp ?? 0} XP`}
     />
   )
 }
 
 export function LeaderboardPage() {
+  const { appConfig, seed } = useContent()
+  const entries = [...appConfig.leaderboard.entries].sort((a, b) => b.weeklyXp - a.weeklyXp)
+  const rank = entries.findIndex(({ id }) => id === seed.learner.id) + 1
+  const current = entries.find(({ id }) => id === seed.learner.id)
+  const movement = current?.previousRank ? current.previousRank - rank : 0
   return (
     <Placeholder
       icon={<Trophy size={28} />}
-      title="R&D Learning Cohort"
-      description="Maya is currently #8 this week and has moved up three positions."
+      title={appConfig.leaderboard.scope}
+      description={`${seed.learner.name} is currently #${rank} this week and has moved up ${movement} positions.`}
     />
   )
 }
 
 export function ProfilePage() {
+  const { appConfig, seed } = useContent()
+  const levels = [...appConfig.gamification.levels].sort((a, b) => a.minimumXp - b.minimumXp)
+  const level = levels.reduce(
+    (current, candidate) => (seed.xp.total >= candidate.minimumXp ? candidate.level : current),
+    1,
+  )
   return (
     <Placeholder
-      title="Maya Chen"
-      description="R&D Scientist · Level 7 · 4,820 lifetime XP · 8 day streak"
+      title={seed.learner.name}
+      description={`${seed.learner.role} · Level ${level} · ${seed.xp.total.toLocaleString()} lifetime XP · ${seed.streak.currentDays} day streak`}
     />
   )
 }

@@ -1,0 +1,10 @@
+{
+  "id": "future-activity",
+  "type": "future_lab_simulation",
+  "conceptIds": ["dose-response"],
+  "content": { "instructions": "A future primitive remains loadable." },
+  "assets": [],
+  "completion": { "mode": "manual" },
+  "scoring": {},
+  "feedback": {}
+}

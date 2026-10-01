@@ -12,7 +12,7 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 - [x] P1-T03 — Route tree, application shell and immersive layout
 - [x] P1-T04 — Zod content schema v0.1 and JSON Schema export
 - [x] P1-T05 — Runtime/CLI loaders, cross-reference validation and validation UX
-- [ ] P1-T06 — Advanced/fresh seed data and invalid fixtures
+- [x] P1-T06 — Advanced/fresh seed data and invalid fixtures
 - [ ] P1-T07 — Zustand state, IndexedDB persistence and selectors
 - [ ] P1-T08 — Typed event bus and bounded event history
 - [ ] P1-T09 — Hidden demo menu and working reset/seed/event controls

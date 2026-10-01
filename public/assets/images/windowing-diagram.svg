@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-labelledby="title desc">
+  <title id="title">CT display window diagram</title>
+  <desc id="desc">Two grayscale ranges compare a broad lung window with a narrow soft tissue window.</desc>
+  <rect width="800" height="480" rx="32" fill="#12242d"/>
+  <defs>
+    <linearGradient id="wide"><stop stop-color="#111"/><stop offset=".5" stop-color="#888"/><stop offset="1" stop-color="#fff"/></linearGradient>
+    <linearGradient id="narrow"><stop offset=".28" stop-color="#111"/><stop offset=".5" stop-color="#aaa"/><stop offset=".72" stop-color="#fff"/></linearGradient>
+  </defs>
+  <text x="70" y="88" fill="#fff" font-family="sans-serif" font-size="30" font-weight="700">Window width controls contrast</text>
+  <rect x="70" y="145" width="660" height="72" rx="18" fill="url(#wide)"/>
+  <text x="70" y="257" fill="#b2eddf" font-family="sans-serif" font-size="22">Wide range · lung</text>
+  <rect x="70" y="295" width="660" height="72" rx="18" fill="url(#narrow)"/>
+  <text x="70" y="407" fill="#b2eddf" font-family="sans-serif" font-size="22">Narrow range · soft tissue</text>
+</svg>

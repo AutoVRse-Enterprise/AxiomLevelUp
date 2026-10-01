@@ -64,3 +64,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass. End-to-end validation awaits the seed files in P1-T06.
 - **Follow-ups:** Create a complete valid bundle and exercise the CLI loader.
+
+### [2026-10-01 17:25] P1-T06 - Demo content and learner seeds
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the content manifest, gamification and product configuration, eight concepts, a branching pathway, ten badges, daily and weekly challenges, a 15-person cohort, four courses with twelve lessons, lightweight local imagery, fresh/advanced learner seeds and invalid/unknown fixtures. Wired the runtime provider and replaced shell placeholders with validated values.
+- **Files changed:** `public/content/**`, `public/assets/images/**`, `src/app/App.tsx`, `src/layouts/AppShell.tsx`, `src/routes/PlaceholderPages.tsx`.
+- **Commands run:** `npm run validate:content`, `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** CLI validation reports 4 courses, 12 lessons and 0 warnings; all static checks and the production build pass.
+- **Follow-ups:** Hydrate the advanced seed into a versioned IndexedDB-backed learner store.

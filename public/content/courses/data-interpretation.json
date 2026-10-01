@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "data-interpretation",
+  "title": "Experimental Data Interpretation",
+  "description": "Read scientific charts and quantify uncertainty without overclaiming.",
+  "imageAssetId": "course-data-cover",
+  "category": "Research Methods",
+  "estimatedMinutes": 48,
+  "difficulty": "intermediate",
+  "authors": ["Axiom Learning Science"],
+  "conceptIds": ["biostatistics", "dose-response"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": [
+    {
+      "id": "confidence-and-effect",
+      "title": "Confidence and Effect Size",
+      "description": "Separate magnitude, uncertainty and practical relevance.",
+      "estimatedMinutes": 22,
+      "difficulty": "intermediate",
+      "conceptIds": ["biostatistics"],
+      "xpReward": 90,
+      "prerequisites": [],
+      "primitives": [
+        {
+          "id": "confidence-intro",
+          "type": "rich_text",
+          "conceptIds": ["biostatistics"],
+          "content": {
+            "heading": "An estimate needs its uncertainty",
+            "body": "Effect size and interval width answer different parts of the interpretation."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "dose-response-curves",
+      "title": "Dose-response Curves",
+      "description": "Interpret potency, efficacy and plateau behavior.",
+      "estimatedMinutes": 26,
+      "difficulty": "advanced",
+      "conceptIds": ["dose-response", "biostatistics"],
+      "xpReward": 110,
+      "prerequisites": ["confidence-and-effect"],
+      "primitives": [
+        {
+          "id": "dose-curve",
+          "type": "chart",
+          "conceptIds": ["dose-response"],
+          "content": {
+            "chartType": "dose_response",
+            "series": [{ "label": "Response", "values": [5, 14, 31, 58, 79, 88, 90] }]
+          },
+          "assets": [],
+          "completion": { "mode": "interacted" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    }
+  ]
+}

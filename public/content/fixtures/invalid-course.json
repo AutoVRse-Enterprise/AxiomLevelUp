@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "invalid-course",
+  "title": "",
+  "description": "This fixture must fail with a path pointing to title.",
+  "category": "Testing",
+  "estimatedMinutes": -1,
+  "difficulty": "foundation",
+  "authors": [],
+  "conceptIds": ["missing-concept"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": []
+}

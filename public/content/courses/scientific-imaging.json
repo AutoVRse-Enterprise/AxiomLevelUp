@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "0.1",
+  "courseVersion": "1.0",
+  "id": "scientific-imaging",
+  "title": "Scientific Imaging Foundations",
+  "description": "Build a repeatable method for inspecting and interpreting medical images.",
+  "imageAssetId": "course-imaging-cover",
+  "category": "Medical Imaging",
+  "estimatedMinutes": 95,
+  "difficulty": "intermediate",
+  "authors": ["Axiom Learning Science"],
+  "conceptIds": ["thoracic-imaging", "image-windowing"],
+  "prerequisites": [],
+  "completionRequirement": { "mode": "all_lessons" },
+  "lessons": [
+    {
+      "id": "imaging-orientation",
+      "title": "Orienting to Cross-sectional Imaging",
+      "description": "Recognize orientation and establish a consistent inspection sequence.",
+      "estimatedMinutes": 10,
+      "difficulty": "foundation",
+      "conceptIds": ["thoracic-imaging"],
+      "xpReward": 75,
+      "starThresholds": { "one": 0, "two": 75, "three": 90 },
+      "prerequisites": [],
+      "primitives": [
+        {
+          "id": "orientation-intro",
+          "type": "rich_text",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "heading": "Use a repeatable search pattern",
+            "body": "A systematic review reduces missed findings and supports defensible interpretation.",
+            "bullets": ["Confirm orientation", "Survey both lungs", "Review mediastinal structures"],
+            "keyTakeaway": "Consistency is a safety tool."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "ct-windowing",
+      "title": "CT Windowing",
+      "description": "Choose display windows that reveal the anatomy under investigation.",
+      "estimatedMinutes": 12,
+      "difficulty": "foundation",
+      "conceptIds": ["image-windowing"],
+      "xpReward": 75,
+      "starThresholds": { "one": 0, "two": 75, "three": 90 },
+      "prerequisites": ["imaging-orientation"],
+      "primitives": [
+        {
+          "id": "windowing-diagram",
+          "type": "image",
+          "conceptIds": ["image-windowing"],
+          "content": {
+            "assetId": "windowing-diagram",
+            "alt": "Diagram showing narrow and wide CT display windows",
+            "caption": "Window width controls contrast; center selects the displayed attenuation range."
+          },
+          "assets": ["windowing-diagram"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "thoracic-ct",
+      "title": "Interpreting Thoracic CT",
+      "description": "Apply an inspection sequence and connect appearance to tissue properties.",
+      "estimatedMinutes": 18,
+      "difficulty": "intermediate",
+      "conceptIds": ["thoracic-imaging", "image-windowing"],
+      "xpReward": 100,
+      "starThresholds": { "one": 0, "two": 75, "three": 90 },
+      "prerequisites": ["ct-windowing"],
+      "primitives": [
+        {
+          "id": "showcase-context",
+          "type": "rich_text",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "heading": "Inspect before interpreting",
+            "body": "First establish image quality, orientation and the current display window.",
+            "keyTakeaway": "Describe the evidence before naming the pattern."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-image",
+          "type": "image",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "assetId": "thorax-diagram",
+            "alt": "Simplified axial thorax diagram",
+            "caption": "Use bilateral comparison as part of the search pattern."
+          },
+          "assets": ["thorax-diagram"],
+          "completion": { "mode": "viewed" },
+          "scoring": {},
+          "feedback": {}
+        },
+        {
+          "id": "showcase-question",
+          "type": "multiple_choice",
+          "conceptIds": ["image-windowing"],
+          "content": {
+            "prompt": "Which action should come before interpreting a subtle lung opacity?",
+            "options": [
+              { "id": "confirm-window", "label": "Confirm the display window and image quality" },
+              { "id": "diagnose", "label": "Commit immediately to a diagnosis" },
+              { "id": "skip", "label": "Skip adjacent slices" }
+            ],
+            "correctOptionId": "confirm-window",
+            "explanation": "Display settings and technical quality can materially change apparent findings."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 10, "difficulty": "intermediate" },
+          "feedback": { "retry": true }
+        },
+        {
+          "id": "showcase-dicom",
+          "type": "dicom_explore",
+          "conceptIds": ["thoracic-imaging", "image-windowing"],
+          "content": {
+            "seriesId": "spike-ct",
+            "prompt": "Explore the stack and compare lung and mediastinal windows.",
+            "presets": ["lung", "mediastinal"]
+          },
+          "assets": [],
+          "completion": { "mode": "minimum_interactions", "count": 3 },
+          "scoring": { "xp": 20 },
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "imaging-case-practice",
+      "title": "Thoracic Case Practice",
+      "description": "Apply the inspection sequence to a short clinical case.",
+      "estimatedMinutes": 20,
+      "difficulty": "advanced",
+      "conceptIds": ["thoracic-imaging"],
+      "xpReward": 110,
+      "prerequisites": ["thoracic-ct"],
+      "primitives": [
+        {
+          "id": "case-intro",
+          "type": "scenario",
+          "conceptIds": ["thoracic-imaging"],
+          "content": { "startNodeId": "case-context", "nodes": [] },
+          "assets": [],
+          "completion": { "mode": "outcome" },
+          "scoring": { "xp": 35 },
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "dicom-lab",
+      "title": "Imaging Lab",
+      "description": "Manipulate a curated CT stack and record a measurement.",
+      "estimatedMinutes": 25,
+      "difficulty": "advanced",
+      "conceptIds": ["thoracic-imaging", "image-windowing"],
+      "xpReward": 125,
+      "prerequisites": ["thoracic-ct"],
+      "primitives": [
+        {
+          "id": "lab-measure",
+          "type": "dicom_measure",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "seriesId": "spike-ct",
+            "prompt": "Measure the maximum diameter of the indicated target.",
+            "expectedMm": 18,
+            "tolerancePercent": 10
+          },
+          "assets": [],
+          "completion": { "mode": "measurement" },
+          "scoring": { "xp": 40 },
+          "feedback": { "revealAnnotation": true },
+          "reward": { "type": "badge", "id": "first-dicom" }
+        }
+      ]
+    }
+  ]
+}
