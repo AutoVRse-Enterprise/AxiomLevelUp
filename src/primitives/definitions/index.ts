@@ -23,6 +23,7 @@ import { numericDefinition } from '@/primitives/definitions/numeric'
 import { orderingDefinition } from '@/primitives/definitions/ordering'
 import { pdfReferenceDefinition } from '@/primitives/definitions/pdfReference'
 import { richTextDefinition } from '@/primitives/definitions/richText'
+import { scenarioDefinition } from '@/primitives/definitions/scenario'
 import { trueFalseDefinition } from '@/primitives/definitions/trueFalse'
 import type { PrimitiveDefinition, PrimitiveDefinitionMap } from '@/primitives/definitions/types'
 import { videoDefinition } from '@/primitives/definitions/video'
@@ -52,6 +53,7 @@ export const primitiveDefinitions = {
   ordering: orderingDefinition,
   fill_blank: fillBlankDefinition,
   numeric: numericDefinition,
+  scenario: scenarioDefinition,
 } satisfies PrimitiveDefinitionMap
 
 export function isSupportedPrimitiveType(type: string): type is TypedPrimitiveType {

@@ -33,6 +33,8 @@ import type { PdfReferencePrimitive } from './pdfReference'
 import { pdfReferenceContentSchema } from './pdfReference'
 import type { RichTextPrimitive } from './richText'
 import { richTextContentSchema } from './richText'
+import type { ScenarioPrimitive } from './scenario'
+import { scenarioContentSchema } from './scenario'
 import type { TrueFalsePrimitive } from './trueFalse'
 import { trueFalseContentSchema } from './trueFalse'
 import type { PrimitiveAssetRef } from './types'
@@ -64,6 +66,24 @@ export { numericPrimitiveSchema, type NumericPrimitive } from './numeric'
 export { orderingPrimitiveSchema, type OrderingPrimitive } from './ordering'
 export { pdfReferencePrimitiveSchema, type PdfReferencePrimitive } from './pdfReference'
 export { richTextPrimitiveSchema, type RichTextPrimitive } from './richText'
+export {
+  scenarioChoiceSchema,
+  scenarioContextNodeSchema,
+  scenarioDecisionNodeSchema,
+  scenarioNodeSchema,
+  scenarioOutcomeNodeSchema,
+  scenarioPrimitiveSchema,
+  validateScenarioGraph,
+  type ScenarioChoice,
+  type ScenarioContent,
+  type ScenarioContextNode,
+  type ScenarioDecisionNode,
+  type ScenarioGraphIssue,
+  type ScenarioGraphValidation,
+  type ScenarioNode,
+  type ScenarioOutcomeNode,
+  type ScenarioPrimitive,
+} from './scenario'
 export { trueFalsePrimitiveSchema, type TrueFalsePrimitive } from './trueFalse'
 export { videoPrimitiveSchema, type VideoPrimitive } from './video'
 export { zoomableImagePrimitiveSchema, type ZoomableImagePrimitive } from './zoomableImage'
@@ -90,6 +110,7 @@ export const primitiveContentSchemas = {
   ordering: orderingContentSchema,
   fill_blank: fillBlankContentSchema,
   numeric: numericContentSchema,
+  scenario: scenarioContentSchema,
 } as const
 
 export type TypedPrimitive =
@@ -113,6 +134,7 @@ export type TypedPrimitive =
   | OrderingPrimitive
   | FillBlankPrimitive
   | NumericPrimitive
+  | ScenarioPrimitive
 
 export type TypedPrimitiveType = TypedPrimitive['type']
 

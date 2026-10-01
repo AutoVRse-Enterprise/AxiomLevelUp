@@ -58,6 +58,43 @@ describe('player routes', () => {
     expect(screen.getByText(/Interpreting Thoracic CT/)).toBeVisible()
   })
 
+  it.each([
+    {
+      prerequisiteId: 'thoracic-ct',
+      courseId: 'scientific-imaging',
+      lessonId: 'imaging-case-practice',
+      context: /67-year-old with fever/,
+    },
+    {
+      prerequisiteId: 'endpoint-strategy',
+      courseId: 'clinical-research',
+      lessonId: 'trial-bias-case',
+      context: /sponsor proposes an open-label/,
+    },
+  ])(
+    'plays the configured scenario in $lessonId',
+    async ({ prerequisiteId, courseId, lessonId, context }) => {
+      const user = userEvent.setup()
+      const prerequisite = useLearnerStore.getState().lessonProgress[prerequisiteId]
+      useLearnerStore.setState((state) => ({
+        lessonProgress: {
+          ...state.lessonProgress,
+          [prerequisiteId]: {
+            ...prerequisite!,
+            status: 'completed',
+            completedAt: new Date().toISOString(),
+          },
+        },
+      }))
+
+      renderRoute(`/learn/courses/${courseId}/lessons/${lessonId}`)
+      await user.click(screen.getByRole('button', { name: 'Start' }))
+
+      expect(await screen.findByText(context)).toBeVisible()
+      expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled()
+    },
+  )
+
   it('reports an item-less challenge as unavailable', () => {
     renderRoute('/challenge/weekly-imaging-sprint/play')
     expect(screen.getByRole('heading', { name: 'Challenge unavailable' })).toBeVisible()
@@ -82,8 +119,9 @@ describe('player routes', () => {
     }
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
-    expect(
-      useLearnerStore.getState().challenges['daily-imaging-interpretation'],
-    ).toMatchObject({ completed: true, bestScore: 100 })
+    expect(useLearnerStore.getState().challenges['daily-imaging-interpretation']).toMatchObject({
+      completed: true,
+      bestScore: 100,
+    })
   })
 })

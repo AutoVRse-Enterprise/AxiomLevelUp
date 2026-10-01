@@ -258,6 +258,53 @@ describe('content loader', () => {
     )
   })
 
+  it('validates scenario graphs and typed context assets through the content layer', () => {
+    const brokenGraphBundle = makeValidContentBundle()
+    const imagingCourse = brokenGraphBundle.courseFiles[0]?.data as {
+      lessons: Array<{
+        primitives: Array<{
+          content: { nodes: Array<{ id: string; next?: string }> }
+        }>
+      }>
+    }
+    const scenario = imagingCourse.lessons
+      .flatMap(({ primitives }) => primitives)
+      .find((primitive) => primitive.content.nodes?.some(({ id }) => id === 'case-context'))
+    const context = scenario?.content.nodes.find(({ id }) => id === 'case-context')
+    if (!context) throw new Error('Expected scenario context fixture')
+    context.next = 'missing-decision'
+
+    expect(() => validateContentBundle(brokenGraphBundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringContaining('content.nodes.0.next'),
+            message: expect.stringContaining('does not exist'),
+          }),
+        ]),
+      }),
+    )
+
+    const wrongAssetBundle = makeValidContentBundle()
+    const assetManifest = wrongAssetBundle.assetManifest as {
+      assets: Array<{ assetId: string; type: string }>
+    }
+    const asset = assetManifest.assets.find(({ assetId }) => assetId === 'thorax-diagram')
+    if (!asset) throw new Error('Expected scenario asset fixture')
+    asset.type = 'video'
+
+    expect(() => validateContentBundle(wrongAssetBundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: expect.stringContaining('content.nodes.0.asset.assetId'),
+            message: expect.stringContaining('expects type "image"'),
+          }),
+        ]),
+      }),
+    )
+  })
+
   it('rejects timers on incompatible registered primitive types', () => {
     const bundle = makeValidContentBundle()
     const course = bundle.courseFiles[0]?.data as {

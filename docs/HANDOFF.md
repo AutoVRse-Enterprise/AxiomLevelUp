@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T11 are complete; P4-T12 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T12 are complete; P4-T13 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -72,13 +72,20 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Rich text safely tokenizes first terminology occurrences and authored emphasis into React nodes.
   Original synthetic MP4, poster, AAC audio and PDF fixtures plus hand-authored accessibility text
   and provenance are registered in the asset manifest.
+- Scenarios use strict context, decision and outcome graphs with content-layer reference,
+  acyclicity, terminal-path and reachability validation plus two-to-four-decision warnings.
+- The pure scenario engine persists `{ path, current, revealed }`, averages only authored choice
+  scores and powers a lazy split-layout UI with locked decisions, announced consequences, outcome
+  recaps and best-choice review.
+- `case-intro` and `trial-case` are real three-decision converging scenarios, and their lesson
+  routes are playable once prerequisites are complete.
 - Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
   fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021 and ADR-023 through ADR-032 record player lifecycle, scientific data, structured
+- ADR-021 through ADR-032 record player lifecycle, scenarios, scientific data, structured
   assessments, artifact viewport, semantic validation, assessment semantics, timed-response
   lifecycle and normalized image regions.
-- Type checking, lint, 18 test files with 166 tests, content validation and production build pass.
+- Type checking, lint, 19 test files with 176 tests, content validation and production build pass.
 
 ## In progress
 
@@ -86,9 +93,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T12: add scenario schemas, engine and resumable UI.
-2. P4-T13: add the internal showcase course and primitive gallery.
-3. P4-T14: add cross-runtime and boundary coverage.
+1. P4-T13: add the internal showcase course and primitive gallery.
+2. P4-T14: add cross-runtime and boundary coverage.
+3. P4-T15: run responsive, accessibility and bundle QA.
 
 ## Blockers/questions for the user
 
@@ -112,8 +119,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 - Every new strict primitive schema must provide typed `assetRefs`; timer-capable types must remain
   in parity with the content-layer compatibility list.
-- Existing `case-intro`/`trial-case` (`nodes: []`) must migrate with their strict scenario schemas;
-  `dose-curve` is already migrated to the strict chart contract.
+- Scenario drafts are `{ path, current, revealed }`; a revealed decision remains locked until its
+  consequence is continued, and outcome submission completes the primitive.
 - Definitions, content schemas and lazy components must remain in parity.
 - Session version 2 discards in-flight version 1 sessions by design.
 - Review re-runs the pure evaluator against the stored response; evaluators must stay deterministic.
@@ -144,6 +151,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   report every crossed five-percent step and the player applies the configured threshold.
 - Carousel IntersectionObserver support has scroll/control fallbacks, and every slide ID is reported
   at most once per mount.
+- Scenario graph warnings count decisions on every start-to-outcome path; authored demo paths must
+  stay within two to four decisions to keep content validation warning-free.
 - ADR-027 was already allocated at the P4-T11 baseline, so the media decision is ADR-032.
 - Do not import Cornerstone outside the lazy spike module.
 - Development plans display unsupported primitives; production plans skip them.

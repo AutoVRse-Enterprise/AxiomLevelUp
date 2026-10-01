@@ -77,7 +77,111 @@
           "id": "trial-case",
           "type": "scenario",
           "conceptIds": ["clinical-trial-design"],
-          "content": { "startNodeId": "trial-context", "nodes": [] },
+          "content": {
+            "startNodeId": "trial-context",
+            "nodes": [
+              {
+                "id": "trial-context",
+                "type": "context",
+                "body": "A sponsor proposes an open-label, single-arm study for a therapy intended to reduce short-term hospitalizations. Historical admission rates vary substantially by site and season.",
+                "next": "choose-control"
+              },
+              {
+                "id": "choose-control",
+                "type": "decision",
+                "prompt": "Which design best protects the treatment-effect inference?",
+                "choices": [
+                  {
+                    "id": "randomized-control",
+                    "label": "Use a concurrent randomized control group",
+                    "consequence": "Randomization balances measured and unmeasured prognostic factors while a concurrent control captures seasonal care changes.",
+                    "next": "balanced-design",
+                    "score": 1,
+                    "quality": "Best: addresses confounding and time trends."
+                  },
+                  {
+                    "id": "historical-control",
+                    "label": "Compare only with last year's admissions",
+                    "consequence": "Differences in sites, season and supportive care remain plausible alternative explanations.",
+                    "next": "confounded-design",
+                    "score": 0.25,
+                    "quality": "Weak: historical variation threatens comparability."
+                  }
+                ]
+              },
+              {
+                "id": "balanced-design",
+                "type": "context",
+                "body": "The team accepts randomization. Investigators can still infer assignment from treatment monitoring requirements.",
+                "next": "reduce-bias"
+              },
+              {
+                "id": "confounded-design",
+                "type": "context",
+                "body": "Regulators challenge the historical comparison. The team adds a concurrent randomized control, but treatment monitoring may reveal assignment.",
+                "next": "reduce-bias"
+              },
+              {
+                "id": "reduce-bias",
+                "type": "decision",
+                "prompt": "How should the team reduce outcome-assessment bias?",
+                "choices": [
+                  {
+                    "id": "blinded-adjudication",
+                    "label": "Use blinded, criteria-based hospitalization adjudication",
+                    "consequence": "Outcome decisions are made without treatment knowledge against the same prespecified criteria.",
+                    "next": "endpoint-review",
+                    "score": 1,
+                    "quality": "Best: protects a judgment-dependent endpoint."
+                  },
+                  {
+                    "id": "site-judgment",
+                    "label": "Let each unblinded site decide without shared criteria",
+                    "consequence": "Knowledge of treatment and inconsistent site thresholds can influence whether an event is counted.",
+                    "next": "endpoint-review",
+                    "score": 0.3,
+                    "quality": "Biased: ascertainment differs by site and assignment."
+                  }
+                ]
+              },
+              {
+                "id": "endpoint-review",
+                "type": "context",
+                "body": "The primary endpoint is now independently adjudicated. A mid-study review shows more missing day-30 status in the control group.",
+                "next": "handle-missingness"
+              },
+              {
+                "id": "handle-missingness",
+                "type": "decision",
+                "prompt": "What is the most credible response to the differential missing data?",
+                "choices": [
+                  {
+                    "id": "sensitivity-analysis",
+                    "label": "Investigate causes and run prespecified sensitivity analyses",
+                    "consequence": "The team quantifies how plausible missing-data assumptions affect the estimated treatment effect.",
+                    "next": "trial-outcome",
+                    "score": 1,
+                    "quality": "Best: tests whether the conclusion is robust."
+                  },
+                  {
+                    "id": "complete-cases",
+                    "label": "Exclude all participants with missing status",
+                    "consequence": "A complete-case analysis may amplify bias because missingness differs between groups.",
+                    "next": "trial-outcome",
+                    "score": 0.4,
+                    "quality": "Incomplete: exclusion assumes the missing outcomes are ignorable."
+                  }
+                ]
+              },
+              {
+                "id": "trial-outcome",
+                "type": "outcome",
+                "title": "A more credible treatment estimate",
+                "body": "The randomized comparison, blinded adjudication and missing-data analyses support an interpretable estimate with explicit limitations.",
+                "result": "Design choices protected the inference before the result was known."
+              }
+            ]
+          },
           "assets": [],
           "completion": { "mode": "outcome" },
           "scoring": { "xp": 30 },

@@ -100,6 +100,11 @@ const NumericPrimitive = lazy(async () => {
   return { default: module.NumericPrimitive }
 })
 
+const ScenarioPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ScenarioPrimitive')
+  return { default: module.ScenarioPrimitive }
+})
+
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
@@ -121,4 +126,5 @@ export const primitiveComponents = {
   ordering: OrderingPrimitive,
   fill_blank: FillBlankPrimitive,
   numeric: NumericPrimitive,
+  scenario: ScenarioPrimitive,
 } as const

@@ -1,7 +1,12 @@
 import { z } from 'zod'
 
 import { primitiveTypeSet } from '../primitiveTypes'
-import { primitiveContentSchemas, type TypedPrimitive } from './primitives'
+import {
+  primitiveContentSchemas,
+  validateScenarioGraph,
+  type ScenarioPrimitive,
+  type TypedPrimitive,
+} from './primitives'
 import { idSchema, primitiveBaseSchema, type Primitive } from './primitiveBase'
 
 const versionSchema = z.string().trim().min(1)
@@ -40,7 +45,12 @@ export function parsePrimitive(input: unknown): PrimitiveParseResult {
     }
     return {
       primitive: typedResult.data as TypedPrimitive,
-      warnings: [],
+      warnings:
+        type === 'scenario'
+          ? validateScenarioGraph((typedResult.data as ScenarioPrimitive).content).warnings.map(
+              ({ message }) => message,
+            )
+          : [],
       issues: [],
     }
   }

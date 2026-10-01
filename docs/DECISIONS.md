@@ -236,6 +236,29 @@ accessing stores or the event bus. Draft-producing primitives can be added indep
 first-attempt scoring remains authoritative. A submitted response is re-evaluated for review, so
 evaluators must remain pure and deterministic.
 
+## ADR-022: Validated scenario graphs with resumable transitions
+
+**Status:** Accepted
+
+**Context:** Scenarios need authored branching, consequences, outcomes, optional scoring and
+reload-safe progress without turning React components into workflow or grading engines. Invalid
+references, cycles or unreachable branches could otherwise strand a learner, while treating a
+scenario like one multiple-choice question would lose its decision history.
+
+**Decision:** Represent scenarios as strict context, decision and outcome node unions. Validate
+node and choice identity, the start node, every transition, acyclicity, outcome termination and
+reachability in the content layer; warn when a complete path has fewer than two or more than four
+decisions. A pure scenario engine owns start, choose, advance, completion and mean scored-choice
+evaluation. Persist `{ path, current, revealed }` as the primitive draft, and submit the decision
+path only after reaching an outcome. The lazy split-layout component reports interactions and
+drafts through existing callbacks, locks each choice after selection, announces its consequence and
+renders a path recap with best-choice review.
+
+**Consequences:** Content errors fail before playback, converging branches remain easy to author,
+and reload cannot skip an unrevealed consequence or reopen a locked decision. Only scenarios with
+authored choice scores contribute to activity scoring; unscored choices are excluded from the mean.
+The player continues to own persistence, events, review and completion policy.
+
 ## ADR-023: Strict native scientific-data primitives
 
 **Status:** Accepted

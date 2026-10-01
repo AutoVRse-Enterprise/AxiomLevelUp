@@ -88,7 +88,7 @@ cannot dead-end an ordering step.
       `dose-curve`.
 - [x] P4-T11 — Add video, audio, carousel and PDF-reference primitives, rich-text terms and
       synthetic media fixtures.
-- [ ] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
+- [x] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
       migrate `case-intro` and `trial-case`.
 - [ ] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
 - [ ] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
@@ -189,6 +189,13 @@ cannot dead-end an ordering step.
   observation keys; PDF references open native documents at authored page fragments. Rich text
   tokenizes first term occurrences and emphasis into React text nodes, and original ffmpeg/Node
   fixtures include provenance.
+- P4-T12: strict scenario context, decision, choice and outcome schemas feed content-layer graph
+  validation for unique IDs, start/transition integrity, acyclicity, outcome termination and
+  reachability, with warnings outside the two-to-four-decision target. A pure engine drives
+  resumable `{ path, current, revealed }` drafts, scored-choice means and outcome completion; the
+  lazy split-layout UI locks decisions, announces consequences, emits typed decision events and
+  reviews paths with best choices. Both placeholder scenarios are now three-decision converging
+  cases playable through their lesson routes.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T10 through P4-T16.
 

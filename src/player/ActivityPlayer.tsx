@@ -164,7 +164,7 @@ export function ActivityPlayer({
         explorableKeys: step.explorableKeys,
         mediaProgress: stepProgress.mediaProgress,
         mediaCompletionThreshold: appConfig.product.player.mediaCompletionThreshold,
-        reportedComplete: false,
+        reportedComplete: step.primitive.completion.mode === 'outcome',
         retry: step.retry,
         maxAttempts: step.maxAttempts,
       })

@@ -161,8 +161,117 @@
           "id": "case-intro",
           "type": "scenario",
           "conceptIds": ["thoracic-imaging"],
-          "content": { "startNodeId": "case-context", "nodes": [] },
-          "assets": [],
+          "content": {
+            "startNodeId": "case-context",
+            "nodes": [
+              {
+                "id": "case-context",
+                "type": "context",
+                "body": "A 67-year-old with fever and increasing oxygen requirement has a new focal opacity on a portable chest image. You are asked to review the available thoracic imaging.",
+                "asset": {
+                  "assetId": "thorax-diagram",
+                  "alt": "Simplified axial thorax diagram showing bilateral lungs and mediastinum",
+                  "caption": "Use a systematic bilateral comparison before interpreting a focal finding."
+                },
+                "next": "initial-review"
+              },
+              {
+                "id": "initial-review",
+                "type": "decision",
+                "prompt": "What should you do first?",
+                "choices": [
+                  {
+                    "id": "verify-technique",
+                    "label": "Verify orientation, image quality and display settings",
+                    "consequence": "You establish that the study is technically adequate and avoid mistaking display artifacts for pathology.",
+                    "next": "adequate-evidence",
+                    "score": 1,
+                    "quality": "Best: establishes whether the evidence is interpretable."
+                  },
+                  {
+                    "id": "name-diagnosis",
+                    "label": "Name the most likely diagnosis immediately",
+                    "consequence": "The early label narrows attention before the technical quality has been checked.",
+                    "next": "anchored-evidence",
+                    "score": 0.25,
+                    "quality": "Premature: interpretation should follow technical review."
+                  }
+                ]
+              },
+              {
+                "id": "adequate-evidence",
+                "type": "context",
+                "body": "The study is correctly oriented and the lung window is appropriate. The focal opacity persists on adjacent slices.",
+                "next": "compare-pattern"
+              },
+              {
+                "id": "anchored-evidence",
+                "type": "context",
+                "body": "A colleague asks whether the opacity could be positional. Returning to the technical review confirms the finding persists on adjacent slices.",
+                "next": "compare-pattern"
+              },
+              {
+                "id": "compare-pattern",
+                "type": "decision",
+                "prompt": "How should you characterize the finding?",
+                "choices": [
+                  {
+                    "id": "systematic-comparison",
+                    "label": "Compare both lungs and describe distribution before assigning a cause",
+                    "consequence": "The comparison confirms a unilateral dependent opacity without a similar contralateral finding.",
+                    "next": "clinical-correlation",
+                    "score": 1,
+                    "quality": "Best: separates observation from interpretation."
+                  },
+                  {
+                    "id": "single-slice",
+                    "label": "Base the interpretation on the most striking slice",
+                    "consequence": "The apparent severity changes across nearby slices, making the single-slice impression unreliable.",
+                    "next": "clinical-correlation",
+                    "score": 0.4,
+                    "quality": "Limited: adjacent anatomy is needed to establish the pattern."
+                  }
+                ]
+              },
+              {
+                "id": "clinical-correlation",
+                "type": "context",
+                "body": "The opacity is confirmed across slices. The patient has fever, productive cough and rising inflammatory markers.",
+                "next": "communicate-finding"
+              },
+              {
+                "id": "communicate-finding",
+                "type": "decision",
+                "prompt": "What is the most defensible communication?",
+                "choices": [
+                  {
+                    "id": "evidence-first-report",
+                    "label": "Report the observed pattern, likely infectious cause and relevant uncertainty",
+                    "consequence": "The care team receives a clear finding linked to the clinical context without overstating certainty.",
+                    "next": "case-outcome",
+                    "score": 1,
+                    "quality": "Best: evidence, interpretation and uncertainty remain distinct."
+                  },
+                  {
+                    "id": "absolute-report",
+                    "label": "State a definitive diagnosis without qualification",
+                    "consequence": "The report communicates more certainty than the imaging evidence supports.",
+                    "next": "case-outcome",
+                    "score": 0.5,
+                    "quality": "Overconfident: imaging findings should be integrated with clinical evidence."
+                  }
+                ]
+              },
+              {
+                "id": "case-outcome",
+                "type": "outcome",
+                "title": "A defensible thoracic interpretation",
+                "body": "The team treats a probable focal infection while monitoring the clinical response and preserving alternative explanations.",
+                "result": "A repeatable sequence—technical review, pattern description and clinical correlation—produced an actionable interpretation."
+              }
+            ]
+          },
+          "assets": ["thorax-diagram"],
           "completion": { "mode": "outcome" },
           "scoring": { "xp": 35 },
           "feedback": {}

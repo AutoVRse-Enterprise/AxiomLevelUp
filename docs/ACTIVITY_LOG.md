@@ -636,3 +636,24 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   Existing Cornerstone browser-externalization and large DICOM/entry chunk warnings remain
   non-failing.
 - **Follow-ups:** Start P4-T12 scenario schemas, engine and resumable UI.
+
+### [2026-10-01 23:19] P4-T12 - Add branching scenarios
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict context, decision, choice and outcome schemas; pure graph validation and
+  scenario transitions; mean scored-choice evaluation; and a lazy split-layout component with
+  resumable path/current/revealed drafts, locked choices, live consequences, outcome submission and
+  best-choice review. Migrated `case-intro` and `trial-case` to real three-decision converging
+  scenarios and recorded ADR-022, which was the intentionally open number before ADR-023.
+- **Files changed:** Scenario schema, engine, definition, lazy component and tests; content parser,
+  primitive registries, player outcome submission and parity coverage; scientific-imaging and
+  clinical-research course content; route/content tests; schema export and generated content-schema
+  documentation; Phase 4 checklist, ADR and handoff documentation.
+- **Commands run:** Focused Prettier, typecheck, lint and Vitest runs; `npm run schema:export`;
+  `npm run validate:content`; `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 19 test files and 176 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. The first full-gate
+  run exposed and corrected the primitive-module count assertion. IDE lint diagnostics are clear.
+  Existing Cornerstone browser-externalization and large DICOM/entry chunk warnings remain
+  non-failing.
+- **Follow-ups:** Start P4-T13 internal showcase course and primitive gallery.
