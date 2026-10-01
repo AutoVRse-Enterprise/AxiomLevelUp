@@ -145,3 +145,12 @@ This file is append-only.
 - **Commands run:** `npm run schema:export`, `npm run typecheck`, `npm run validate:content`.
 - **Result/verification:** Schemas exported, TypeScript passed and all 4 courses/12 lessons validate with no warnings.
 - **Follow-ups:** Build the complete pure selector/view-model layer.
+
+### [2026-10-01 19:48] P2-T01 - Derived surface view models
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure derivation for effective prerequisite locks, course summaries, continuation, pathway DAG layers, weekly activity, revision recommendations, contextual leaderboard rows, badges, profile statistics, level progress and greetings.
+- **Files changed:** `src/state/selectors.ts`, `src/state/selectors/**`, `src/state/selectors.test.ts`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
+- **Result/verification:** All static checks pass; 26 tests pass including branch, date-boundary, fresh-state and zero-accuracy cases.
+- **Follow-ups:** Build shared presentation components and dynamic route headers.

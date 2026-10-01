@@ -19,7 +19,7 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 ## Proposed task outline
 
 - [x] P2-T00 — Confirm surface-level acceptance criteria and map every display field to configuration, learner state or a selector.
-- [ ] P2-T01 — Add reusable course, lesson, progress, badge, stat and activity presentation components.
+- [x] P2-T01 — Add the pure selector/view-model layer for course, lesson, pathway, activity, rank, badge and profile states.
 - [ ] P2-T02 — Build Home with learner status, continue learning, daily challenge, weak-topic revision, active pathway, recent achievements, leaderboard teaser and weekly activity.
 - [ ] P2-T03 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
 - [ ] P2-T04 — Build the pathway journey with sequence, current position, optional branches, node types and accessible non-visual relationships.
