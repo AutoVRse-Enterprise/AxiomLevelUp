@@ -46,3 +46,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** Navigation compiles and builds; the DICOM route is emitted as a separate lazy chunk and immersive screens omit the learner bottom navigation.
 - **Follow-ups:** Replace temporary display values with validated content and persisted state.
+
+### [2026-10-01 16:52] P1-T04 - Content schema v0.1
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Defined the canonical primitive IDs; base, typed primitive, course, lesson, pathway, concept, badge, challenge, leaderboard, gamification, asset, manifest and learner-state schemas. Added unknown-primitive warning behavior and generated six JSON Schema documents.
+- **Files changed:** `src/content/primitiveTypes.ts`, `src/content/schema/index.ts`, `scripts/export-json-schema.ts`, `schemas/*.schema.json`, `docs/CONTENT_SCHEMA.md`.
+- **Commands run:** `npm run typecheck`, `npm run schema:export`, `npm run lint`, `npm run build`.
+- **Result/verification:** Schema export, static checks and build pass. Rich text, image and MCQ content are strict; registered future primitives remain extensible.
+- **Follow-ups:** Add a content loader that applies these schemas and validates cross-document references.

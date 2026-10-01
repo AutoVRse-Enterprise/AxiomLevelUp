@@ -10,7 +10,7 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 - [x] P1-T01 — React/Vite scaffold, strict TypeScript and quality commands
 - [x] P1-T02 — Tailwind tokens, accessible base UI and token preview
 - [x] P1-T03 — Route tree, application shell and immersive layout
-- [ ] P1-T04 — Zod content schema v0.1 and JSON Schema export
+- [x] P1-T04 — Zod content schema v0.1 and JSON Schema export
 - [ ] P1-T05 — Runtime/CLI loaders, cross-reference validation and validation UX
 - [ ] P1-T06 — Advanced/fresh seed data and invalid fixtures
 - [ ] P1-T07 — Zustand state, IndexedDB persistence and selectors
