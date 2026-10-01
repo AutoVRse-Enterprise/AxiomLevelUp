@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { timerCompatibleTypeSet } from '@/content/primitiveTypes'
 import type { MultipleChoicePrimitive } from '@/content/schema/primitives'
 import { definePrimitive } from '@/primitives/definitions/types'
 
@@ -10,7 +11,7 @@ export const multipleChoiceDefinition = definePrimitive<MultipleChoicePrimitive>
   family: 'assessment',
   label: 'Question',
   layout: 'stacked',
-  timerCompatible: true,
+  timerCompatible: timerCompatibleTypeSet.has('multiple_choice'),
   scored: () => true,
   evaluate: (primitive, response) => {
     const parsedResponse = responseSchema.safeParse(response)

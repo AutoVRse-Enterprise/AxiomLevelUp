@@ -2,7 +2,7 @@ import { createElement } from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-import { primitiveTypes } from '@/content/primitiveTypes'
+import { primitiveTypes, timerCompatibleTypeSet } from '@/content/primitiveTypes'
 import { primitiveBaseSchema } from '@/content/schema'
 import { primitiveContentSchemas, richTextPrimitiveSchema } from '@/content/schema/primitives'
 import { primitiveComponents } from '@/primitives/componentRegistry'
@@ -25,6 +25,9 @@ describe('primitive architecture', () => {
     expect(definitionTypes).toEqual(schemaTypes)
     expect(definitionTypes).toEqual(componentTypes)
     expect(definitionTypes.every((type) => canonicalTypes.has(type))).toBe(true)
+    for (const [type, definition] of Object.entries(primitiveDefinitions)) {
+      expect(definition.timerCompatible).toBe(timerCompatibleTypeSet.has(type))
+    }
   })
 
   it('keeps definition modules free of React imports', () => {
@@ -45,7 +48,7 @@ describe('primitive architecture', () => {
     })
 
     expect(primitiveContentSchemas.rich_text.assetRefs(primitive)).toEqual([
-      { assetId: 'figure-one', type: 'image' },
+      { assetId: 'figure-one', type: 'image', path: 'content.imageAssetId' },
     ])
   })
 

@@ -21,6 +21,12 @@ export const richTextContentSchema = {
   schema: richTextPrimitiveSchema,
   assetRefs: (primitive) =>
     primitive.content.imageAssetId
-      ? [{ assetId: primitive.content.imageAssetId, type: 'image' }]
+      ? [
+          {
+            assetId: primitive.content.imageAssetId,
+            type: 'image',
+            path: 'content.imageAssetId',
+          },
+        ]
       : [],
 } satisfies PrimitiveContentSchema<RichTextPrimitive>

@@ -76,7 +76,7 @@ cannot dead-end an ordering step.
   exploration/media completion and event payload changes.
 - [x] P4-T03 — Add review and reveal behavior, draft persistence, focus management, split layout,
   artifact overlay, pan/zoom and seeded shuffle infrastructure.
-- [ ] P4-T04 — Harden challenge, primitive-ID, asset-reference, timer and manifest validation and
+- [x] P4-T04 — Harden challenge, primitive-ID, asset-reference, timer and manifest validation and
   regenerate schemas.
 - [ ] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
   shuffle and review.
@@ -153,8 +153,11 @@ cannot dead-end an ordering step.
   partial-aware feedback, labelled stacked/split frames, mapped scenario/media events, milestone
   de-duplication, an in-app artifact overlay, pure pan/zoom coordinate math and deterministic
   unsolved shuffling are covered by 70 tests.
+- P4-T04: lessons and challenges share strict primitive and semantic validation with scoped
+  primitive-ID uniqueness, typed asset-reference checks, content-layer timer compatibility and
+  precise diagnostics; the asset manifest accepts text assets and optional media metadata.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T04 through P4-T16.
+- Runtime verification remains pending for P4-T05 through P4-T16.
 
 ## Deviations
 

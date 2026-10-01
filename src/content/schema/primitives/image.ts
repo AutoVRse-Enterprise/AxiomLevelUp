@@ -26,5 +26,11 @@ export type ImagePrimitive = z.infer<typeof imagePrimitiveSchema>
 
 export const imageContentSchema = {
   schema: imagePrimitiveSchema,
-  assetRefs: (primitive) => [{ assetId: primitive.content.assetId, type: 'image' }],
+  assetRefs: (primitive) => [
+    {
+      assetId: primitive.content.assetId,
+      type: 'image',
+      path: 'content.assetId',
+    },
+  ],
 } satisfies PrimitiveContentSchema<ImagePrimitive>

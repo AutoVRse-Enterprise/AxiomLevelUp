@@ -12,6 +12,7 @@ import {
   primitiveBaseSchema,
 } from '../src/content/schema/index.ts'
 import { primitiveTypes } from '../src/content/primitiveTypes.ts'
+import { primitiveContentSchemas } from '../src/content/schema/primitives/index.ts'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const outputDirectory = resolve(root, 'schemas')
@@ -52,9 +53,27 @@ ${Object.keys(schemas)
 
 ${primitiveTypes.map((type) => `- \`${type}\``).join('\n')}
 
-Phase 1 strictly validates \`rich_text\`, \`image\` and \`multiple_choice\` content. Registered future
-types retain record-shaped content until their implementation phase. Unknown types are retained with a
-warning so content can fail gracefully at rendering time.
+## Strict primitive schemas
+
+${Object.keys(primitiveContentSchemas)
+  .map((type) => `- \`${type}\``)
+  .join('\n')}
+
+Registered future types retain record-shaped content until their implementation phase. Unknown types
+are retained with a warning so content can fail gracefully at rendering time. Every lesson primitive
+and challenge item passes through the same strict parser and semantic validation.
+
+## Semantic validation
+
+- Primitive IDs must be unique within each lesson or challenge.
+- Primitive concept, badge reward, declared asset and typed content-asset references must resolve.
+- Typed content assets must match the asset type declared by their primitive schema.
+- Timers are accepted only on registered assessment types listed by the content layer.
+
+## Asset manifest
+
+Asset types are \`image\`, \`video\`, \`audio\`, \`dicom\`, \`document\` and \`text\`. Entries may
+include \`mimeType\`, positive integer \`width\` and \`height\`, and non-negative \`sizeBytes\`.
 
 ## Versioning
 

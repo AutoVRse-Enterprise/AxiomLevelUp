@@ -449,3 +449,25 @@ This file is append-only.
   twelve lessons with no content warnings, and a successful production build. Existing Cornerstone
   browser-externalization and large lazy chunk warnings remain non-failing.
 - **Follow-ups:** Start P4-T04 challenge-item, asset-reference, timer and unique-ID validation.
+
+### [2026-10-01 21:54] P4-T04 - Harden primitive content validation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Unified lesson and challenge-item parsing and semantic checks; added precise challenge
+  paths, scoped primitive-ID uniqueness, concept/reward/declared-asset validation, typed content
+  asset existence/type checks, content-layer timer compatibility and challenge warning propagation.
+  Extended asset metadata, added fixture/mutation coverage, regenerated schemas and recorded
+  ADR-027.
+- **Files changed:** `src/content/**`, `src/primitives/definitions/**`,
+  `src/primitives/primitives.test.ts`, `public/content/fixtures/invalid-challenge-primitive.json`,
+  `scripts/export-json-schema.ts`, `schemas/**`, `docs/{CONTENT_SCHEMA,DECISIONS,HANDOFF,ACTIVITY_LOG}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck and Vitest runs; `npm run schema:export`;
+  `npm run check`; `git diff --check`.
+- **Result/verification:** The complete quality gate passes with 12 test files and 78 tests, four
+  courses and twelve lessons with no content warnings, and a successful production build.
+  Generated schemas include text assets, optional MIME/dimension metadata and current completion
+  modes. Existing Cornerstone browser-externalization and large lazy chunk warnings remain
+  non-failing.
+- **Follow-ups:** Start P4-T05 multiple-select and true/false primitives; keep new schemas'
+  `assetRefs` and timer compatibility in parity.

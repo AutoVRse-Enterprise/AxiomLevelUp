@@ -289,9 +289,12 @@ export const assetManifestSchema = z.object({
     z.object({
       assetId: idSchema,
       path: pathSchema,
-      type: z.enum(['image', 'video', 'audio', 'dicom', 'document']),
+      type: z.enum(['image', 'video', 'audio', 'dicom', 'document', 'text']),
       offlineRequired: z.boolean(),
       sizeBytes: z.number().int().nonnegative().optional(),
+      mimeType: z.string().trim().min(1).optional(),
+      width: z.number().int().positive().optional(),
+      height: z.number().int().positive().optional(),
     }),
   ),
 })

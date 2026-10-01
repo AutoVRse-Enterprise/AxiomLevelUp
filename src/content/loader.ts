@@ -3,6 +3,7 @@ import {
   assetManifestSchema,
   contentManifestSchema,
   courseSchema,
+  getPrimitiveAssetRefs,
   learnerSeedSchema,
   parsePrimitive,
   type AppConfig,
@@ -11,8 +12,11 @@ import {
   type Course,
   type LearnerSeed,
   type Lesson,
+  type Primitive,
+  type PrimitiveAssetType,
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
+import { primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
 
 export interface ContentIssue {
   file: string
@@ -52,7 +56,10 @@ export class ContentValidationError extends Error {
   }
 }
 
-function zodIssues(file: string, issues: Array<{ path: PropertyKey[]; message: string }>): ContentIssue[] {
+function zodIssues(
+  file: string,
+  issues: Array<{ path: PropertyKey[]; message: string }>,
+): ContentIssue[] {
   return issues.map((issue) => ({
     file,
     path: issue.path.length ? issue.path.map(String).join('.') : '$',
@@ -118,18 +125,43 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
   }
 
-  duplicate('course', courses.map(({ id }) => id), input.manifestFile)
-  duplicate('concept', appConfig.concepts.map(({ id }) => id), input.appConfigFile)
-  duplicate('badge', appConfig.badges.map(({ id }) => id), input.appConfigFile)
+  duplicate(
+    'course',
+    courses.map(({ id }) => id),
+    input.manifestFile,
+  )
+  duplicate(
+    'concept',
+    appConfig.concepts.map(({ id }) => id),
+    input.appConfigFile,
+  )
+  duplicate(
+    'badge',
+    appConfig.badges.map(({ id }) => id),
+    input.appConfigFile,
+  )
+  duplicate(
+    'challenge',
+    appConfig.challenges.map(({ id }) => id),
+    input.appConfigFile,
+  )
+  duplicate(
+    'asset',
+    assetManifest.assets.map(({ assetId }) => assetId),
+    input.assetManifestFile,
+  )
 
   const courseById = new Map(courses.map((course) => [course.id, course]))
   const lessons = courses.flatMap((course) => course.lessons)
-  duplicate('lesson', lessons.map(({ id }) => id), input.manifestFile)
+  duplicate(
+    'lesson',
+    lessons.map(({ id }) => id),
+    input.manifestFile,
+  )
   const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]))
   const conceptIds = new Set(appConfig.concepts.map(({ id }) => id))
   const challengeIds = new Set(appConfig.challenges.map(({ id }) => id))
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
-  const assetIds = new Set(assetManifest.assets.map(({ assetId }) => assetId))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
 
   const requireRef = (
@@ -149,79 +181,149 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
   }
 
+  const requireAsset = (
+    id: string,
+    file: string,
+    path: string,
+    expectedType?: PrimitiveAssetType,
+  ) => {
+    const asset = assetById.get(id)
+    if (!asset) {
+      issues.push({
+        file,
+        path,
+        message: `Unknown asset reference "${id}".`,
+        severity: 'error',
+      })
+      return
+    }
+    if (expectedType && asset.type !== expectedType) {
+      issues.push({
+        file,
+        path,
+        message: `Asset reference "${id}" expects type "${expectedType}" but the manifest declares "${asset.type}".`,
+        severity: 'error',
+      })
+    }
+  }
+
+  const validatePrimitive = (primitive: Primitive, file: string, path: string) => {
+    const result = parsePrimitive(primitive)
+    result.issues.forEach((issue) => {
+      issues.push(
+        ...zodIssues(file, [
+          {
+            path: [...path.split('.'), ...issue.path],
+            message: issue.message,
+          },
+        ]),
+      )
+    })
+    result.warnings.forEach((message) =>
+      warnings.push({
+        file,
+        path: `${path}.type`,
+        message,
+        severity: 'warning',
+      }),
+    )
+
+    primitive.conceptIds.forEach((id, conceptIndex) =>
+      requireRef(conceptIds, id, file, `${path}.conceptIds.${conceptIndex}`, 'concept'),
+    )
+    primitive.assets.forEach((id, assetIndex) =>
+      requireAsset(id, file, `${path}.assets.${assetIndex}`),
+    )
+    if (primitive.reward?.type === 'badge') {
+      requireRef(badgeIds, primitive.reward.id, file, `${path}.reward.id`, 'badge')
+    }
+    if (
+      primitive.timer &&
+      primitiveTypeSet.has(primitive.type) &&
+      !timerCompatibleTypeSet.has(primitive.type)
+    ) {
+      issues.push({
+        file,
+        path: `${path}.timer`,
+        message: `Primitive type "${primitive.type}" does not support timers.`,
+        severity: 'error',
+      })
+    }
+
+    if (result.primitive) {
+      getPrimitiveAssetRefs(result.primitive).forEach((reference) =>
+        requireAsset(reference.assetId, file, `${path}.${reference.path}`, reference.type),
+      )
+    }
+  }
+
+  const requireUniquePrimitiveIds = (
+    primitives: readonly Primitive[],
+    file: string,
+    path: string,
+  ) => {
+    const seen = new Set<string>()
+    primitives.forEach((primitive, primitiveIndex) => {
+      if (seen.has(primitive.id)) {
+        issues.push({
+          file,
+          path: `${path}.${primitiveIndex}.id`,
+          message: `Duplicate primitive id "${primitive.id}" within this activity.`,
+          severity: 'error',
+        })
+      }
+      seen.add(primitive.id)
+    })
+  }
+
   courses.forEach((course, courseIndex) => {
     const file = input.courseFiles[courseIndex]?.file ?? `course:${course.id}`
     if (course.imageAssetId) {
-      requireRef(assetIds, course.imageAssetId, file, 'imageAssetId', 'asset')
+      requireAsset(course.imageAssetId, file, 'imageAssetId', 'image')
     }
-    course.conceptIds.forEach((id) => requireRef(conceptIds, id, file, 'conceptIds', 'concept'))
-    course.prerequisites.forEach((id) =>
-      requireRef(new Set(courseById.keys()), id, file, 'prerequisites', 'course'),
+    course.conceptIds.forEach((id, conceptIndex) =>
+      requireRef(conceptIds, id, file, `conceptIds.${conceptIndex}`, 'concept'),
+    )
+    course.prerequisites.forEach((id, prerequisiteIndex) =>
+      requireRef(
+        new Set(courseById.keys()),
+        id,
+        file,
+        `prerequisites.${prerequisiteIndex}`,
+        'course',
+      ),
     )
     course.lessons.forEach((lesson, lessonIndex) => {
-      lesson.conceptIds.forEach((id) =>
-        requireRef(conceptIds, id, file, `lessons.${lessonIndex}.conceptIds`, 'concept'),
+      lesson.conceptIds.forEach((id, conceptIndex) =>
+        requireRef(
+          conceptIds,
+          id,
+          file,
+          `lessons.${lessonIndex}.conceptIds.${conceptIndex}`,
+          'concept',
+        ),
       )
-      lesson.prerequisites.forEach((id) =>
+      lesson.prerequisites.forEach((id, prerequisiteIndex) =>
         requireRef(
           new Set(lessonById.keys()),
           id,
           file,
-          `lessons.${lessonIndex}.prerequisites`,
+          `lessons.${lessonIndex}.prerequisites.${prerequisiteIndex}`,
           'lesson',
         ),
       )
+      requireUniquePrimitiveIds(lesson.primitives, file, `lessons.${lessonIndex}.primitives`)
       lesson.primitives.forEach((primitive, primitiveIndex) => {
-        const result = parsePrimitive(primitive)
-        result.issues.forEach((issue) => {
-          issues.push(
-            ...zodIssues(
-              file,
-              [
-                {
-                  path: ['lessons', lessonIndex, 'primitives', primitiveIndex, ...issue.path],
-                  message: issue.message,
-                },
-              ],
-            ),
-          )
-        })
-        result.warnings.forEach((message) =>
-          warnings.push({
-            file,
-            path: `lessons.${lessonIndex}.primitives.${primitiveIndex}.type`,
-            message,
-            severity: 'warning',
-          }),
-        )
-        primitive.conceptIds.forEach((id) =>
-          requireRef(
-            conceptIds,
-            id,
-            file,
-            `lessons.${lessonIndex}.primitives.${primitiveIndex}.conceptIds`,
-            'concept',
-          ),
-        )
-        primitive.assets.forEach((id) =>
-          requireRef(
-            assetIds,
-            id,
-            file,
-            `lessons.${lessonIndex}.primitives.${primitiveIndex}.assets`,
-            'asset',
-          ),
-        )
-        if (primitive.reward?.type === 'badge') {
-          requireRef(
-            badgeIds,
-            primitive.reward.id,
-            file,
-            `lessons.${lessonIndex}.primitives.${primitiveIndex}.reward`,
-            'badge',
-          )
-        }
+        validatePrimitive(primitive, file, `lessons.${lessonIndex}.primitives.${primitiveIndex}`)
       })
+    })
+  })
+
+  appConfig.challenges.forEach((challenge, challengeIndex) => {
+    const itemPath = `challenges.${challengeIndex}.items`
+    requireUniquePrimitiveIds(challenge.items, input.appConfigFile, itemPath)
+    challenge.items.forEach((primitive, primitiveIndex) => {
+      validatePrimitive(primitive, input.appConfigFile, `${itemPath}.${primitiveIndex}`)
     })
   })
 
@@ -230,11 +332,29 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const nodeIds = new Set(pathway.nodes.map(({ id }) => id))
     pathway.nodes.forEach((node, index) => {
       const refs = node.type === 'challenge' ? challengeIds : lessonIds
-      requireRef(refs, node.refId, input.appConfigFile, `pathways.${pathway.id}.nodes.${index}`, node.type)
+      requireRef(
+        refs,
+        node.refId,
+        input.appConfigFile,
+        `pathways.${pathway.id}.nodes.${index}`,
+        node.type,
+      )
     })
     pathway.edges.forEach((edge, index) => {
-      requireRef(nodeIds, edge.from, input.appConfigFile, `pathways.${pathway.id}.edges.${index}.from`, 'node')
-      requireRef(nodeIds, edge.to, input.appConfigFile, `pathways.${pathway.id}.edges.${index}.to`, 'node')
+      requireRef(
+        nodeIds,
+        edge.from,
+        input.appConfigFile,
+        `pathways.${pathway.id}.edges.${index}.from`,
+        'node',
+      )
+      requireRef(
+        nodeIds,
+        edge.to,
+        input.appConfigFile,
+        `pathways.${pathway.id}.edges.${index}.to`,
+        'node',
+      )
     })
 
     const incoming = new Map(pathway.nodes.map(({ id }) => [id, 0]))
@@ -331,7 +451,8 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
 
 async function fetchJson(path: string) {
   const response = await fetch(path)
-  if (!response.ok) throw new Error(`Failed to load ${path}: ${response.status} ${response.statusText}`)
+  if (!response.ok)
+    throw new Error(`Failed to load ${path}: ${response.status} ${response.statusText}`)
   return response.json() as Promise<unknown>
 }
 

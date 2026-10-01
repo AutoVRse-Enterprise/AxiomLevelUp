@@ -1,14 +1,16 @@
+import invalidChallengePrimitive from '../../public/content/fixtures/invalid-challenge-primitive.json'
 import invalidCourse from '../../public/content/fixtures/invalid-course.json'
 import unknownPrimitive from '../../public/content/fixtures/unknown-primitive.json'
 import advancedSeed from '../../public/content/seeds/advanced.json'
 import { describe, expect, it, vi } from 'vitest'
 
+import { ContentValidationError, loadContent, validateContentBundle } from '@/content/loader'
 import {
-  ContentValidationError,
-  loadContent,
-  validateContentBundle,
-} from '@/content/loader'
-import { courseSchema, learnerSeedSchema, parsePrimitive } from '@/content/schema'
+  assetManifestSchema,
+  courseSchema,
+  learnerSeedSchema,
+  parsePrimitive,
+} from '@/content/schema'
 import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures'
 
 describe('content schemas', () => {
@@ -22,10 +24,34 @@ describe('content schemas', () => {
     expect(result.success).toBe(false)
     if (!result.success) {
       expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain('title')
-      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain(
-        'estimatedMinutes',
-      )
+      expect(result.error.issues.map((issue) => issue.path.join('.'))).toContain('estimatedMinutes')
     }
+  })
+
+  it('accepts text assets and optional manifest metadata', () => {
+    const manifest = assetManifestSchema.parse({
+      schemaVersion: '0.1',
+      assets: [
+        {
+          assetId: 'transcript',
+          path: '/assets/transcript.vtt',
+          type: 'text',
+          offlineRequired: true,
+          mimeType: 'text/vtt',
+          width: 1920,
+          height: 1080,
+        },
+      ],
+    })
+
+    expect(manifest.assets[0]).toEqual(
+      expect.objectContaining({
+        type: 'text',
+        mimeType: 'text/vtt',
+        width: 1920,
+        height: 1080,
+      }),
+    )
   })
 
   it('keeps an unknown primitive as a warning', () => {
@@ -77,7 +103,7 @@ describe('content loader', () => {
       expect(validationError.issues).toContainEqual(
         expect.objectContaining({
           file: 'courses/scientific-imaging.json',
-          path: 'conceptIds',
+          path: 'conceptIds.0',
           message: 'Unknown concept reference "missing-concept".',
         }),
       )
@@ -111,8 +137,176 @@ describe('content loader', () => {
     expect(() => validateContentBundle(bundle)).toThrow(
       expect.objectContaining({
         issues: expect.arrayContaining([
-          expect.objectContaining({ path: 'imageAssetId', message: expect.stringContaining('missing-cover') }),
+          expect.objectContaining({
+            path: 'imageAssetId',
+            message: expect.stringContaining('missing-cover'),
+          }),
         ]),
+      }),
+    )
+  })
+
+  it('strictly validates challenge items with their full source path', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: unknown[] }>
+    }
+    appConfig.challenges[0]!.items[0] = structuredClone(invalidChallengePrimitive)
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content.options',
+          }),
+          expect.objectContaining({
+            file: 'app-config.json',
+            path: 'challenges.0.items.0.content',
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('validates challenge concept, reward and asset references', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: unknown[] }>
+    }
+    appConfig.challenges[0]!.items[0] = {
+      id: 'invalid-references',
+      type: 'image',
+      conceptIds: ['missing-concept'],
+      content: { assetId: 'missing-content-asset', alt: 'Missing fixture' },
+      assets: ['missing-declared-asset'],
+      completion: { mode: 'viewed' },
+      scoring: {},
+      feedback: {},
+      reward: { type: 'badge', id: 'missing-badge' },
+    }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'challenges.0.items.0.conceptIds.0',
+            message: expect.stringContaining('missing-concept'),
+          }),
+          expect.objectContaining({
+            path: 'challenges.0.items.0.reward.id',
+            message: expect.stringContaining('missing-badge'),
+          }),
+          expect.objectContaining({
+            path: 'challenges.0.items.0.assets.0',
+            message: expect.stringContaining('missing-declared-asset'),
+          }),
+          expect.objectContaining({
+            path: 'challenges.0.items.0.content.assetId',
+            message: expect.stringContaining('missing-content-asset'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects duplicate primitive ids within lessons and challenges', () => {
+    const bundle = makeValidContentBundle()
+    const course = bundle.courseFiles[0]?.data as {
+      lessons: Array<{ primitives: unknown[] }>
+    }
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: unknown[] }>
+    }
+    course.lessons[0]!.primitives.push(structuredClone(course.lessons[0]!.primitives[0]))
+    appConfig.challenges[0]!.items.push(structuredClone(appConfig.challenges[0]!.items[0]))
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'lessons.0.primitives.1.id',
+            message: expect.stringContaining('Duplicate primitive id'),
+          }),
+          expect.objectContaining({
+            path: 'challenges.0.items.5.id',
+            message: expect.stringContaining('Duplicate primitive id'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('checks content asset references against their expected manifest type', () => {
+    const bundle = makeValidContentBundle()
+    const assetManifest = bundle.assetManifest as {
+      assets: Array<{ assetId: string; type: string }>
+    }
+    const asset = assetManifest.assets.find(({ assetId }) => assetId === 'windowing-diagram')
+    if (!asset) throw new Error('Expected windowing fixture asset')
+    asset.type = 'video'
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'lessons.1.primitives.0.content.assetId',
+            message: expect.stringContaining('expects type "image"'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects timers on incompatible registered primitive types', () => {
+    const bundle = makeValidContentBundle()
+    const course = bundle.courseFiles[0]?.data as {
+      lessons: Array<{ primitives: Array<{ timer?: unknown }> }>
+    }
+    course.lessons[0]!.primitives[0]!.timer = {
+      durationSeconds: 30,
+      mode: 'countdown',
+    }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'lessons.0.primitives.0.timer',
+            message: expect.stringContaining('does not support timers'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('accepts timers on compatible registered primitive types', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: Array<{ timer?: unknown }> }>
+    }
+    appConfig.challenges[0]!.items[0]!.timer = {
+      durationSeconds: 30,
+      mode: 'countdown',
+    }
+
+    expect(() => validateContentBundle(bundle)).not.toThrow()
+  })
+
+  it('surfaces challenge primitive semantic warnings', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      challenges: Array<{ items: unknown[] }>
+    }
+    appConfig.challenges[0]!.items.push(structuredClone(unknownPrimitive))
+
+    const registry = validateContentBundle(bundle)
+
+    expect(registry.warnings).toContainEqual(
+      expect.objectContaining({
+        file: 'app-config.json',
+        path: 'challenges.0.items.5.type',
+        message: expect.stringContaining('runtime fallback'),
       }),
     )
   })

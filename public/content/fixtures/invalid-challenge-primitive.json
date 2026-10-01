@@ -1,0 +1,17 @@
+{
+  "id": "invalid-challenge-question",
+  "type": "multiple_choice",
+  "conceptIds": ["thoracic-imaging"],
+  "content": {
+    "prompt": "Which option is supported?",
+    "options": [
+      { "id": "only-option", "label": "Only option" }
+    ],
+    "correctOptionId": "missing-option",
+    "explanation": "This fixture intentionally violates the strict multiple-choice schema."
+  },
+  "assets": [],
+  "completion": { "mode": "answer" },
+  "scoring": { "weight": 1 },
+  "feedback": {}
+}

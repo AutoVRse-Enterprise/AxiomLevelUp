@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T03 are complete; P4-T04 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T04 are complete; P4-T05 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -22,8 +22,13 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Step frames expose definition labels, timer content and stacked/split responsive layouts.
 - Shared primitive infrastructure now includes a full-viewport Radix artifact overlay,
   `usePanZoom`, pure clamping/zoom/coordinate math and deterministic unsolved shuffling.
-- ADR-021 and ADR-026 record player lifecycle and artifact viewport decisions.
-- Type checking, lint, 12 test files with 70 tests, content validation and production build pass.
+- Lesson primitives and challenge items now share strict parsing, scoped primitive-ID checks,
+  semantic concept/reward/asset validation and content-layer timer compatibility.
+- Typed primitive asset references verify manifest existence and expected type; the manifest now
+  supports text assets plus optional MIME type and dimensions.
+- ADR-021, ADR-026 and ADR-027 record player lifecycle, artifact viewport and semantic validation
+  decisions.
+- Type checking, lint, 12 test files with 78 tests, content validation and production build pass.
 
 ## In progress
 
@@ -31,9 +36,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
-2. P4-T05: add multiple-select and true/false assessment primitives.
-3. P4-T06: add classification, matching and accessible ordering.
+1. P4-T05: add multiple-select and true/false assessment primitives.
+2. P4-T06: add classification, matching and accessible ordering.
+3. P4-T07: add fill-blank and numeric typed-response assessments.
 
 ## Blockers/questions for the user
 
@@ -54,7 +59,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Gotchas
 
-- Challenge `items` bypass `parsePrimitive`; P4-T04 must bring them under strict schemas.
+- Every new strict primitive schema must provide typed `assetRefs`; timer-capable types must remain
+  in parity with the content-layer compatibility list.
 - Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and
   `dose-curve` (no axes) must migrate with their strict schemas.
 - Definitions, content schemas and lazy components must remain in parity.

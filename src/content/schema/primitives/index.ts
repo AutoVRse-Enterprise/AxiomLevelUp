@@ -1,9 +1,11 @@
+import type { Primitive } from '../primitiveBase'
 import type { ImagePrimitive } from './image'
 import { imageContentSchema } from './image'
 import type { MultipleChoicePrimitive } from './multipleChoice'
 import { multipleChoiceContentSchema } from './multipleChoice'
 import type { RichTextPrimitive } from './richText'
 import { richTextContentSchema } from './richText'
+import type { PrimitiveAssetRef } from './types'
 
 export { imagePrimitiveSchema, type ImagePrimitive } from './image'
 export { multipleChoicePrimitiveSchema, type MultipleChoicePrimitive } from './multipleChoice'
@@ -19,3 +21,16 @@ export const primitiveContentSchemas = {
 export type TypedPrimitive = RichTextPrimitive | ImagePrimitive | MultipleChoicePrimitive
 
 export type TypedPrimitiveType = TypedPrimitive['type']
+
+export function getPrimitiveAssetRefs(primitive: Primitive): PrimitiveAssetRef[] {
+  if (!(primitive.type in primitiveContentSchemas)) return []
+
+  const contentSchema =
+    primitiveContentSchemas[primitive.type as keyof typeof primitiveContentSchemas]
+  const parsed = contentSchema.schema.safeParse(primitive)
+  if (!parsed.success) return []
+
+  return (contentSchema.assetRefs as (value: TypedPrimitive) => PrimitiveAssetRef[])(
+    parsed.data as TypedPrimitive,
+  )
+}

@@ -254,3 +254,22 @@ in their solved order.
 without depending on browser fullscreen APIs. Coordinate and ordering behavior can be unit tested
 without React, while later primitives can compose the hook and overlay without duplicating input
 logic.
+
+## ADR-027: Content-layer primitive semantic validation
+
+**Status:** Accepted
+
+**Context:** Lesson primitives and challenge items share the same runtime contract, but challenge
+items previously stopped at the permissive base schema. Asset IDs embedded in typed content also
+bypassed manifest type checks, and importing runtime definitions into the content loader would
+invert the content/runtime dependency.
+
+**Decision:** Run every lesson primitive and challenge item through `parsePrimitive`, then apply one
+content-layer semantic validator for scoped ID uniqueness, concept and reward references, declared
+assets, typed `assetRefs` and timers. Keep the canonical timer-compatible type set in the content
+layer and have supported runtime definitions derive their flag from it. Preserve unknown primitive
+types as warnings.
+
+**Consequences:** Challenge diagnostics now identify exact item paths, typed content assets must
+exist with the expected manifest type, and incompatible registered primitives cannot carry timers.
+Future primitive schemas must declare their asset references and keep definition parity tests green.

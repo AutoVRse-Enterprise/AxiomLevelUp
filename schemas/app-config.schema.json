@@ -91,11 +91,28 @@
             },
             "retryByDefault": {
               "type": "boolean"
+            },
+            "revealAnswer": {
+              "default": "final_attempt",
+              "type": "string",
+              "enum": [
+                "never",
+                "final_attempt",
+                "always"
+              ]
+            },
+            "mediaCompletionThreshold": {
+              "default": 0.9,
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
             }
           },
           "required": [
             "maxAttempts",
-            "retryByDefault"
+            "retryByDefault",
+            "revealAnswer",
+            "mediaCompletionThreshold"
           ],
           "additionalProperties": false
         }
@@ -517,6 +534,42 @@
                           "required": [
                             "mode",
                             "count"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "const": "explored"
+                            },
+                            "count": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "mode"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "const": "media_progress"
+                            },
+                            "threshold": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            }
+                          },
+                          "required": [
+                            "mode"
                           ],
                           "additionalProperties": false
                         },
