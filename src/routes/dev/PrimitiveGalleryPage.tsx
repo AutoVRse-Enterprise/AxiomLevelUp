@@ -102,7 +102,7 @@ function PrimitiveGalleryCard({
     <Card className="min-w-0">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-neutral-200 pb-4">
         <div>
-          <p className="font-mono text-caption text-neutral-500">{primitive.id}</p>
+          <p className="font-mono text-caption text-neutral-600">{primitive.id}</p>
           <h2 className="mt-1 text-heading font-bold">{resolved.definition.label}</h2>
         </div>
         <div className="flex gap-2">
@@ -124,7 +124,7 @@ function PrimitiveGalleryCard({
         review={mode === 'review' ? { response, evaluation, revealAnswer: true } : undefined}
       />
       <p
-        className="mt-5 border-t border-neutral-200 pt-3 text-caption text-neutral-500"
+        className="mt-5 border-t border-neutral-200 pt-3 text-caption text-neutral-600"
         role="status"
       >
         {activity}

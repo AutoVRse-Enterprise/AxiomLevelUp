@@ -39,7 +39,9 @@ describe('primitive gallery', () => {
     const user = userEvent.setup()
     renderGallery()
 
-    expect(screen.getAllByText(/^showcase-/u)).toHaveLength(22)
+    const primitiveIds = screen.getAllByText(/^showcase-/u)
+    expect(primitiveIds).toHaveLength(22)
+    expect(primitiveIds[0]).toHaveClass('text-neutral-600')
     expect(screen.getByRole('link', { name: 'Open the real showcase lesson' })).toHaveAttribute(
       'href',
       '/learn/courses/runtime-showcase/lessons/primitive-showcase',

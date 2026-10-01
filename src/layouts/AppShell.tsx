@@ -38,7 +38,7 @@ export function AppShell() {
               className={({ isActive }) =>
                 cn(
                   'flex min-w-0 flex-col items-center justify-center gap-1 px-1 text-[0.6875rem] font-semibold transition-colors',
-                  isActive ? 'text-brand-700' : 'text-neutral-500 hover:text-neutral-800',
+                  isActive ? 'text-brand-700' : 'text-neutral-600 hover:text-neutral-800',
                 )
               }
               end={end}

@@ -141,7 +141,7 @@ export function DevPage() {
                   key={event.id}
                 >
                   <code className="font-semibold text-brand-800">{event.event}</code>
-                  <time className="text-caption text-neutral-500">
+                  <time className="text-caption text-neutral-600">
                     {new Date(event.occurredAt).toLocaleTimeString()}
                   </time>
                 </li>
@@ -152,7 +152,7 @@ export function DevPage() {
         )}
       </Card>
 
-      <div className="flex items-center gap-2 text-small text-neutral-500">
+      <div className="flex items-center gap-2 text-small text-neutral-600">
         <Sparkles aria-hidden="true" size={16} />
         Phase 5 will add full reward simulation.
       </div>

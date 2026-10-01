@@ -65,7 +65,7 @@ export function CoursePage() {
                 <span>{course.authors.join(', ')}</span>
               </div>
             </dl>
-            <p className="mt-4 text-caption text-neutral-500">Course version {course.courseVersion}</p>
+            <p className="mt-4 text-caption text-neutral-600">Course version {course.courseVersion}</p>
             <ProgressBar className="mt-5" label="Course progress" value={summary.completion} />
             {primaryLesson && summary.status !== 'locked' ? (
               <Link

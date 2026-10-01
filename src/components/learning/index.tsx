@@ -103,7 +103,7 @@ export function StatTile({
 }) {
   return (
     <div className="rounded-md border border-neutral-200 bg-neutral-50 p-4">
-      <div className="flex items-center gap-2 text-neutral-500">
+      <div className="flex items-center gap-2 text-neutral-600">
         {icon}
         <span className="text-caption font-semibold uppercase tracking-wide">{label}</span>
       </div>
@@ -198,7 +198,7 @@ export function CourseCard({
         </div>
         <h3 className="mt-4 text-heading font-bold">{title}</h3>
         <p className="mt-2 line-clamp-2 text-small text-neutral-600">{description}</p>
-        <p className="mt-3 text-caption font-medium text-neutral-500">
+        <p className="mt-3 text-caption font-medium text-neutral-600">
           {difficulty} · {estimatedMinutes} min · {lessonCount} lessons
         </p>
         <ProgressBar className="mt-4" label="Course progress" value={completion} />
@@ -241,7 +241,7 @@ export function LessonRow({
     <>
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge status={status} />
-        <span className="text-caption text-neutral-500">
+        <span className="text-caption text-neutral-600">
           {difficulty} · {estimatedMinutes} min
         </span>
       </div>
@@ -322,7 +322,7 @@ export function LeaderboardRow({
       <Avatar name={name} />
       <div className="min-w-0">
         <p className="truncate font-semibold">{name}{current ? ' (you)' : ''}</p>
-        <p className="flex items-center gap-1 text-caption text-neutral-500">
+        <p className="flex items-center gap-1 text-caption text-neutral-600">
           {movement > 0 ? <TrendingUp aria-hidden="true" size={13} /> : null}
           {movement < 0 ? <TrendingDown aria-hidden="true" size={13} /> : null}
           {movement === 0 ? 'No change' : `${Math.abs(movement)} ${movement > 0 ? 'up' : 'down'}`}

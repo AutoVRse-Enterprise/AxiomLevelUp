@@ -46,7 +46,7 @@ export function LeaderboardPage() {
         {['Monthly', 'All time'].map((period) => (
           <button
             aria-disabled="true"
-            className="min-h-10 cursor-not-allowed rounded-full border border-neutral-200 bg-neutral-100 px-4 text-small font-semibold text-neutral-500"
+            className="min-h-10 cursor-not-allowed rounded-full border border-neutral-200 bg-neutral-100 px-4 text-small font-semibold text-neutral-600"
             disabled
             key={period}
             title={`${period} rankings are coming soon`}

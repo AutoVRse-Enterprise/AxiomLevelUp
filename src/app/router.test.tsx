@@ -55,4 +55,11 @@ describe('router layouts', () => {
     expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument()
     expect(screen.getByText('Lesson route')).toBeVisible()
   })
+
+  it('uses AA-compliant text color for inactive navigation', () => {
+    renderRouter('/')
+
+    expect(screen.getByRole('link', { name: 'Learn' })).toHaveClass('text-neutral-600')
+    expect(screen.getByRole('link', { name: 'Home' })).not.toHaveClass('text-neutral-600')
+  })
 })

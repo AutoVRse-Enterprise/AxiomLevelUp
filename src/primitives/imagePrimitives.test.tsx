@@ -396,7 +396,7 @@ describe('image primitive components', () => {
       },
     })
     const props = callbacks()
-    const { rerender } = render(
+    const { container, rerender } = render(
       <ImageComparePrimitive
         primitive={slider}
         attempt={0}
@@ -410,6 +410,38 @@ describe('image primitive components', () => {
     fireEvent.change(range, { target: { value: '65' } })
     expect(range).toHaveValue('65')
     expect(props.onInteract).toHaveBeenCalledWith({ name: 'image_comparison_adjusted' })
+
+    const divider = container.querySelector<HTMLElement>('[data-image-compare-divider]')
+    expect(divider).toHaveClass('touch-none', 'cursor-ew-resize')
+    const comparison = divider?.parentElement
+    expect(comparison).not.toBeNull()
+    vi.spyOn(comparison!, 'getBoundingClientRect').mockReturnValue({
+      bottom: 310,
+      height: 300,
+      left: 10,
+      right: 410,
+      top: 10,
+      width: 400,
+      x: 10,
+      y: 10,
+      toJSON: vi.fn(),
+    })
+    Object.assign(divider!, {
+      hasPointerCapture: vi.fn(() => true),
+      releasePointerCapture: vi.fn(),
+      setPointerCapture: vi.fn(),
+    })
+
+    expect(
+      fireEvent.pointerDown(divider!, { clientX: 110, pointerId: 1, pointerType: 'touch' }),
+    ).toBe(false)
+    fireEvent.pointerMove(divider!, { clientX: 310, pointerId: 1, pointerType: 'touch' })
+    fireEvent.pointerUp(divider!, { clientX: 310, pointerId: 1, pointerType: 'touch' })
+
+    expect(range).toHaveValue('75')
+    expect(divider).toHaveStyle({ left: '75%' })
+    expect(divider!.setPointerCapture).toHaveBeenCalledWith(1)
+    expect(divider!.releasePointerCapture).toHaveBeenCalledWith(1)
 
     rerender(
       <ImageComparePrimitive

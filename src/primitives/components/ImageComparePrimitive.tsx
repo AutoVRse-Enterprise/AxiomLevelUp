@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import type { ImageComparePrimitive as ImageComparePrimitiveConfig } from '@/content/schema/primitives'
 import { useAsset } from '@/content/useAssetUrl'
@@ -12,8 +12,21 @@ export function ImageComparePrimitive({
   const beforeAsset = useAsset(primitive.content.before.assetId)
   const afterAsset = useAsset(primitive.content.after.assetId)
   const [position, setPosition] = useState(primitive.content.initialPosition)
+  const comparisonRef = useRef<HTMLDivElement>(null)
+  const draggingDivider = useRef(false)
 
   useEffect(onComplete, [onComplete])
+
+  const updatePosition = (nextPosition: number) => {
+    setPosition(Math.min(1, Math.max(0, nextPosition)))
+    onInteract({ name: 'image_comparison_adjusted' })
+  }
+
+  const updatePositionFromPointer = (clientX: number) => {
+    const bounds = comparisonRef.current?.getBoundingClientRect()
+    if (!bounds || bounds.width === 0) return
+    updatePosition((clientX - bounds.left) / bounds.width)
+  }
 
   if (!beforeAsset || !afterAsset) {
     return (
@@ -51,6 +64,7 @@ export function ImageComparePrimitive({
         <>
           <div
             className="relative isolate overflow-hidden rounded-xl bg-neutral-100"
+            ref={comparisonRef}
             style={aspectStyle}
           >
             <img
@@ -71,11 +85,39 @@ export function ImageComparePrimitive({
               />
             </div>
             <div
-              className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.5)]"
-              style={{ left: `${position * 100}%` }}
               aria-hidden="true"
+              className="absolute inset-y-0 z-10 w-11 -translate-x-1/2 cursor-ew-resize touch-none"
+              data-image-compare-divider=""
+              onPointerCancel={(event) => {
+                draggingDivider.current = false
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId)
+                }
+              }}
+              onPointerDown={(event) => {
+                event.preventDefault()
+                draggingDivider.current = true
+                event.currentTarget.setPointerCapture(event.pointerId)
+                updatePositionFromPointer(event.clientX)
+              }}
+              onPointerMove={(event) => {
+                if (!draggingDivider.current) return
+                event.preventDefault()
+                updatePositionFromPointer(event.clientX)
+              }}
+              onPointerUp={(event) => {
+                if (!draggingDivider.current) return
+                draggingDivider.current = false
+                updatePositionFromPointer(event.clientX)
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId)
+                }
+              }}
+              style={{ left: `${position * 100}%` }}
             >
-              <span className="absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-700 shadow" />
+              <span className="pointer-events-none absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.5)]">
+                <span className="absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-700 shadow" />
+              </span>
             </div>
             <span className="absolute bottom-3 left-3 rounded bg-neutral-950/80 px-2 py-1 text-caption font-semibold text-white">
               {primitive.content.after.label}
@@ -95,8 +137,7 @@ export function ImageComparePrimitive({
               value={Math.round(position * 100)}
               aria-valuetext={`${Math.round(position * 100)}% ${primitive.content.after.label}`}
               onChange={(event) => {
-                setPosition(event.currentTarget.valueAsNumber / 100)
-                onInteract({ name: 'image_comparison_adjusted' })
+                updatePosition(event.currentTarget.valueAsNumber / 100)
               }}
             />
           </label>
