@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T14 are complete; P4-T15 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T15 are complete; P4-T16 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -99,10 +99,17 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
   fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
+- Responsive browser QA found zero document horizontal overflow in the primitive gallery and real
+  showcase route at 375×812, 812×375, 768×900 and 1280×900; the real step heading received focus.
+- Accessibility-tree, keyboard, reduced-motion and contrast checks cover every standard primitive
+  family. Carousel, ordering, hotspot and overlay keyboard flows passed; `neutral-600` provides a
+  measured 6.91:1 contrast ratio on white.
+- The production entry is 649.39 kB raw / 197.80 kB gzip, 54.27 / 14.95 kB above baseline. The gzip
+  increase exceeds the approved 10 kB target by 4.95 kB and is recorded as a Phase 4 deviation.
 - ADR-021 through ADR-033 record player lifecycle, scenarios, scientific data, structured
   assessments, artifact viewport, semantic validation, assessment semantics, timed-response
   lifecycle, normalized image regions and internal-course/gallery isolation.
-- Type checking, lint, 21 test files with 186 tests, content validation and production build pass.
+- Type checking, lint, 21 test files with 187 tests, content validation and production build pass.
 
 ## In progress
 
@@ -110,8 +117,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T15: run responsive, accessibility and bundle QA.
-2. P4-T16: run the closing quality gate and finish Phase 4 documentation.
+1. P4-T16: run the closing quality gate and finish Phase 4 documentation.
+2. Commit the Phase 4 closure as one logical change.
 3. Begin Phase 5 planning after Phase 4 closes.
 
 ## Blockers/questions for the user
@@ -179,6 +186,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   types and preserve the fallback for other unsupported or malformed primitives.
 - Media components can report several progress milestones in one browser event; player completion
   checks must read current session state so `primitive_completed` remains de-duplicated.
+- Browser automation approval blocked a synthetic image-comparison divider drag during P4-T15.
+  The native comparison range and the dedicated pointer capture/move/release regression test passed.
+- The Phase 4 entry bundle exceeds its gzip growth target by 4.95 kB; standard primitive
+  dependencies remain lazy and the deviation is documented in the phase file.
 - Retries do not improve score: first-attempt results remain authoritative.
 - XP, stars, mastery and rewards remain deferred to Phase 5.
 - `npm run format:check` reports the existing line-ending/style baseline; `npm run check` is the

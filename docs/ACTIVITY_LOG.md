@@ -701,3 +701,22 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   existing Cornerstone browser-externalization and large-chunk warnings. The 22-step route test
   reaches completion at 95% score and 90% first-attempt accuracy after a partial-credit retry.
 - **Follow-ups:** Start P4-T15 responsive, accessibility and bundle QA.
+
+### [2026-10-02 00:50] P4-T15 - Verify standard primitive UX
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Finalized responsive, accessibility and bundle QA from the supplied browser evidence
+  and the existing P4-T15 defect fixes at `56f4a1a`. Verified all 22 gallery examples/21 standard
+  types and the real showcase route without document overflow at four target viewports; recorded
+  focus, accessibility-tree, keyboard, reduced-motion and contrast checks. Documented the blocked
+  synthetic divider drag, its automated pointer regression coverage and the entry-bundle deviation.
+- **Files changed:** `docs/phases/phase-04-standard-primitives.md`,
+  `docs/ACTIVITY_LOG.md`, `docs/HANDOFF.md`.
+- **Commands run:** `npm run check`; focused Prettier check; `git diff --check`; repository status
+  and commit inspection; final documentation commit.
+- **Result/verification:** The full gate passes with 21 test files and 187 tests; content validation
+  reports five courses, thirteen lessons and zero warnings. The production entry is 649.39 kB raw /
+  197.80 kB gzip, 54.27 / 14.95 kB above baseline and 4.95 kB gzip above target. Lazy standard
+  primitive chunks remain split; the PWA precache contains 98 entries totaling 5553.13 KiB.
+  Existing Cornerstone browser-externalization and large-chunk warnings remain non-failing.
+- **Follow-ups:** Run P4-T16 closing quality gate and finish Phase 4 documentation.

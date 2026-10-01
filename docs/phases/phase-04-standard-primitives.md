@@ -93,7 +93,7 @@ cannot dead-end an ordering step.
 - [x] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
 - [x] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
       validation coverage.
-- [ ] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
+- [x] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
 - [ ] P4-T16 — Run the quality gate, record ADRs and close Phase 4 documentation.
 
 ## PRD traceability
@@ -206,8 +206,24 @@ cannot dead-end an ordering step.
   internal-course isolation, primitive import boundaries and precise content-validation paths are
   covered. Production now skips only deferred DICOM types, and burst media progress emits one
   completion event.
-- Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T10 through P4-T16.
+- P4-T15: `/dev/primitives` rendered all 22 examples and 21 standard types, and both the gallery and
+  the real showcase route had zero document-level horizontal overflow at 375×812, 812×375, 768×900
+  and 1280×900. The real route focused its step heading. Its accessibility tree exposed image
+  overlay/close controls, hotspot crosshair instructions, the native comparison range, media,
+  carousel, table/chart/formula, every assessment family and scenario controls.
+- Keyboard checks advanced and reversed the carousel, changed ordering with a live announcement,
+  selected and submitted a hotspot, and opened then Escape-closed the image overlay. Reduced-motion
+  emulation matched and collapsed transitions/animations to 0.001 seconds. `neutral-600` computed
+  to `rgb(75, 94, 88)`, a 6.91:1 white-background contrast ratio. Browser automation approval
+  blocked a synthetic divider drag; the native range remained operable and the dedicated pointer
+  divider regression test covers capture, movement and release.
+- The production entry is 649.39 kB raw / 197.80 kB gzip versus the 595.12 / 182.85 kB Phase 3
+  baseline. Lazy chunks (raw / gzip) include ordering at 49.87 / 16.69 kB, formula at 294.17 /
+  87.01 kB and chart at 8.38 / 3.14 kB; media primitive raw chunks range from 1.93 to 3.70 kB. The
+  PWA precache contains 98 entries totaling 5553.13 KiB.
+- Type checking, lint, 21 test files with 187 tests, content validation, production build and
+  `git diff --check` pass.
+- Runtime verification remains pending only for P4-T16.
 
 ## Deviations
 
@@ -218,3 +234,8 @@ ADR-032 to preserve unique, append-only ADR numbering.
 P4-T13 requested ADR-028 when available, but ADR-028 was already assigned to shared choice
 assessment semantics at the required starting commit. Internal-course visibility and gallery
 isolation are recorded as ADR-033, the next available append-only number.
+
+The approved entry-growth target was at most 10 kB gzip over the 182.85 kB Phase 3 baseline. The
+P4-T15 entry is 197.80 kB gzip, a 14.95 kB increase that exceeds the target by 4.95 kB. Standard
+primitive implementation remains split into lazy chunks, and the measured entry overage is accepted
+and recorded for Phase 4 rather than expanding P4-T15 into bundle refactoring.
