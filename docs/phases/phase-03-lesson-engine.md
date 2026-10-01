@@ -21,7 +21,7 @@ Phase 4 and DICOM primitives remain in Phase 6.
 
 - [x] P3-T00 — Confirm acceptance criteria, execution boundaries and PRD traceability.
 - [x] P3-T01 — Type the primitive completion, scoring and feedback contracts and player defaults.
-- [ ] P3-T02 — Build the pure activity plan builder for lessons and challenges.
+- [x] P3-T02 — Build the pure activity plan builder for lessons and challenges.
 - [ ] P3-T03 — Build the pure session reducer, completion rules and summary selectors.
 - [ ] P3-T04 — Persist one versioned, resumable activity session outside learner aggregate state.
 - [ ] P3-T05 — Extend the learner-event taxonomy for player lifecycle and outcomes.

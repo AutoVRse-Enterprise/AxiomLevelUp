@@ -262,3 +262,12 @@ This file is append-only.
 - **Commands run:** `npm run schema:export`, `npm run validate:content`, `npm run typecheck`.
 - **Result/verification:** Four courses and twelve lessons validate with no warnings; TypeScript passes.
 - **Follow-ups:** Build a pure activity-plan adapter for lessons and challenges.
+
+### [2026-10-01 20:39] P3-T02 - Activity plan builder
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure lesson and challenge adapters, primitive classification, configured feedback resolution and environment-specific unsupported-step handling.
+- **Files changed:** `src/engines/learning/plan.ts`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** Lesson and challenge definitions compile into a shared activity plan; empty and unsupported-only activities return an explicit unavailable result.
+- **Follow-ups:** Add the pure session state machine, completion rules and scoring summary.
