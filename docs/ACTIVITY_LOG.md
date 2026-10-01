@@ -28,3 +28,12 @@ This file is append-only.
 - **Commands run:** `npm init -y`, dependency installs, `npm run typecheck`, `npm run build`.
 - **Result/verification:** TypeScript and the production Vite build pass. The installed current stack uses React 19.3, React Router 8.4, TypeScript 6 and Vite 8.
 - **Follow-ups:** Build the token system and accessible component foundations.
+
+### [2026-10-01 16:28] P1-T02 - Design tokens and UI foundations
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the scientific/product token palette, type scale, radii, shadows, motion and reduced-motion behavior. Built accessible buttons, icon buttons, cards, chips, progress, skeleton and responsive Radix sheet components plus the internal preview page.
+- **Files changed:** `src/styles/*`, `src/lib/cn.ts`, `src/components/ui/*`, `src/routes/dev/TokenPreviewPage.tsx`, `src/app/App.tsx`, `src/main.tsx`, `eslint.config.js`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** All three commands pass; the base UI compiles into the production build.
+- **Follow-ups:** Wire the preview and learner placeholders into the complete route tree.

@@ -4,9 +4,7 @@ import '@/styles/globals.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-function App() {
-  return <main>Learning Runtime</main>
-}
+import { App } from '@/app/App'
 
 const root = document.getElementById('root')
 

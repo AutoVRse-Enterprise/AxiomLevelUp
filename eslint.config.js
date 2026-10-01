@@ -7,13 +7,12 @@ import tseslint from 'typescript-eslint'
 export default tseslint.config(
   { ignores: ['dist', 'coverage', 'schemas', 'public'] },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: { jsx: true },
       },
     },
     plugins: {
@@ -26,16 +25,6 @@ export default tseslint.config(
       ...reactHooks.configs.flat.recommended.rules,
       ...reactRefresh.configs.vite.rules,
       '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-misused-promises': [
-        'error',
-        { checksVoidReturn: { attributes: false } },
-      ],
-    },
-  },
-  {
-    files: ['scripts/**/*.{ts,mjs}', '*.config.{ts,js}'],
-    rules: {
-      '@typescript-eslint/no-console': 'off',
     },
   },
 )

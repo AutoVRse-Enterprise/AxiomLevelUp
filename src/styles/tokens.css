@@ -1,0 +1,108 @@
+@theme {
+  --color-brand-50: #effcf9;
+  --color-brand-100: #d7f7ef;
+  --color-brand-200: #b2eddf;
+  --color-brand-300: #7edcc9;
+  --color-brand-400: #47c3ad;
+  --color-brand-500: #25a58f;
+  --color-brand-600: #168573;
+  --color-brand-700: #156a5d;
+  --color-brand-800: #15554c;
+  --color-brand-900: #14473f;
+  --color-brand-950: #072b27;
+
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #f7f9f8;
+  --color-neutral-100: #edf1ef;
+  --color-neutral-200: #dce3e0;
+  --color-neutral-300: #c2ceca;
+  --color-neutral-400: #94a6a0;
+  --color-neutral-500: #687d76;
+  --color-neutral-600: #4b5e58;
+  --color-neutral-700: #374842;
+  --color-neutral-800: #24332e;
+  --color-neutral-900: #17231f;
+  --color-neutral-950: #0b1411;
+
+  --color-success-50: #edfcf2;
+  --color-success-600: #168344;
+  --color-success-700: #126b39;
+  --color-warning-50: #fff8e6;
+  --color-warning-600: #b86206;
+  --color-warning-700: #934b08;
+  --color-danger-50: #fff1f1;
+  --color-danger-600: #c73b3b;
+  --color-danger-700: #a22f2f;
+  --color-info-50: #eef7ff;
+  --color-info-600: #1f76bb;
+  --color-info-700: #1d5f94;
+
+  --color-xp: #7458d6;
+  --color-streak: #dc6b23;
+  --color-badge: #2a84b8;
+  --color-star: #d89914;
+
+  --color-clinical-950: #060d11;
+  --color-clinical-900: #0b171e;
+  --color-clinical-800: #12242d;
+  --color-clinical-700: #1c3540;
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.08;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.25;
+  --text-heading: 1.125rem;
+  --text-heading--line-height: 1.35;
+  --text-body: 1rem;
+  --text-body--line-height: 1.55;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.45;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.35;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-card: 0 1px 2px rgb(11 20 17 / 0.05), 0 8px 24px rgb(11 20 17 / 0.06);
+  --shadow-overlay: 0 20px 50px rgb(11 20 17 / 0.24);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --animate-fade-in: fade-in 150ms var(--ease-standard);
+  --animate-slide-up: slide-up 250ms var(--ease-emphasized);
+  --animate-celebrate: celebrate 400ms var(--ease-emphasized);
+}
+
+:root {
+  --layer-base: 0;
+  --layer-header: 20;
+  --layer-nav: 30;
+  --layer-overlay: 50;
+  --layer-toast: 60;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+@keyframes celebrate {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+}
