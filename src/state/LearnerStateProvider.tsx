@@ -3,6 +3,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { Skeleton } from '@/components/ui'
+import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { useLearnerStore } from '@/state/learnerStore'
 
 export function LearnerStateProvider({ children }: { children: ReactNode }) {
@@ -12,7 +13,10 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true
-    void Promise.resolve(useLearnerStore.persist.rehydrate())
+    void Promise.all([
+      Promise.resolve(useLearnerStore.persist.rehydrate()),
+      Promise.resolve(useActivitySessionStore.persist.rehydrate()),
+    ])
       .then(() => {
         const store = useLearnerStore.getState()
         store.initialize(seed)

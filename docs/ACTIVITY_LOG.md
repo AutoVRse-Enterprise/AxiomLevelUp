@@ -280,3 +280,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`.
 - **Result/verification:** Session transitions, completion modes, no-assessment scoring and missed-item/source summaries compile under strict TypeScript.
 - **Follow-ups:** Persist and invalidate the active session independently of learner aggregates.
+
+### [2026-10-01 20:46] P3-T04 - Resumable session persistence
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a versioned IndexedDB-backed activity-session store, plan/version invalidation, hydration alongside learner state and session clearing on demo reseed.
+- **Files changed:** `src/engines/learning/sessionStore.ts`, `src/state/LearnerStateProvider.tsx`, `src/state/learnerStore.ts`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** One incomplete activity session can be restored independently from aggregate learner state.
+- **Follow-ups:** Extend typed events to cover activity lifecycle, primitive completion and result summaries.

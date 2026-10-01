@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import type { LearnerSeed } from '@/content/schema'
+import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
@@ -57,8 +58,10 @@ export const useLearnerStore = create<LearnerStore>()(
       storageError: null,
       initialize: (seed) =>
         set((state) => (state.initialized ? state : { ...dataFromSeed(seed), initialized: true })),
-      replaceWithSeed: (seed) =>
-        set({ ...dataFromSeed(seed), initialized: true, storageError: null }),
+      replaceWithSeed: (seed) => {
+        useActivitySessionStore.getState().clear()
+        set({ ...dataFromSeed(seed), initialized: true, storageError: null })
+      },
       addXp: (amount) =>
         set((state) => ({
           xp: {
