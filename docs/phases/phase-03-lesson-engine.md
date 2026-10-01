@@ -28,7 +28,7 @@ Phase 4 and DICOM primitives remain in Phase 6.
 - [x] P3-T06 — Apply learning events to lesson, course, challenge and lifetime progress.
 - [x] P3-T07 — Add the primitive registry and Phase 3 primitive renderers.
 - [x] P3-T08 — Build the accessible player shell, feedback and completion summary.
-- [ ] P3-T09 — Replace immersive placeholders with guarded lesson and challenge routes.
+- [x] P3-T09 — Replace immersive placeholders with guarded lesson and challenge routes.
 - [ ] P3-T10 — Add representative content and player fixtures.
 - [ ] P3-T11 — Add unit, component and route integration coverage plus responsive browser QA.
 - [ ] P3-T12 — Run the quality gate and close Phase 3 documentation.

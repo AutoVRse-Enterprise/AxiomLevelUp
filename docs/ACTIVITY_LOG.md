@@ -325,3 +325,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass; one player orchestration path handles both activity kinds and emits lifecycle events without awarding rewards.
 - **Follow-ups:** Resolve and guard lesson/challenge routes and replace the placeholders.
+
+### [2026-10-01 21:09] P3-T09 - Playable immersive routes
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced both immersive placeholders with content-resolved lesson and challenge players, including mismatch, lock, unavailable and replay paths.
+- **Files changed:** `src/routes/play/**`, `src/app/router.tsx`, `src/routes/ImmersivePlaceholder.tsx` (deleted), `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, focused router tests.
+- **Result/verification:** Static checks and all six router tests pass; daily challenges share the same runtime while empty weekly challenges report unavailable.
+- **Follow-ups:** Add citation-bearing content and complete player fixtures.

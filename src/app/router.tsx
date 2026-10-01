@@ -9,12 +9,13 @@ import { ChallengePage } from '@/routes/challenge/ChallengePage'
 import { DevPage } from '@/routes/dev/DevPage'
 import { TokenPreviewPage } from '@/routes/dev/TokenPreviewPage'
 import { HomePage } from '@/routes/home/HomePage'
-import { ImmersivePlaceholder } from '@/routes/ImmersivePlaceholder'
 import { CoursePage } from '@/routes/learn/CoursePage'
 import { LearnPage } from '@/routes/learn/LearnPage'
 import { PathwayPage } from '@/routes/learn/PathwayPage'
 import { LeaderboardPage } from '@/routes/leaderboard/LeaderboardPage'
 import { NotFoundPage } from '@/routes/NotFoundPage'
+import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
+import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
 import { ProfilePage } from '@/routes/profile/ProfilePage'
 
 const DicomSpikePage = lazy(async () => {
@@ -68,12 +69,12 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'learn/courses/:courseId/lessons/:lessonId',
-        element: <ImmersivePlaceholder kind="Lesson" />,
+        element: <LessonPlayerPage />,
         handle: { title: 'Lesson' },
       },
       {
         path: 'challenge/:challengeId/play',
-        element: <ImmersivePlaceholder kind="Challenge" />,
+        element: <ChallengePlayerPage />,
         handle: { title: 'Challenge' },
       },
       { path: 'dev/dicom-spike', element: <LazyDicomSpike />, handle: { title: 'DICOM spike' } },
