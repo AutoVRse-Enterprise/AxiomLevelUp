@@ -1,15 +1,18 @@
 import type { ZodType } from 'zod'
 
 import type { Primitive } from '@/content/schema'
-import {
-  primitiveContentSchemas,
-  type TypedPrimitive,
-} from '@/content/schema/primitives'
+import { primitiveContentSchemas, type TypedPrimitive } from '@/content/schema/primitives'
 import { audioDefinition } from '@/primitives/definitions/audio'
 import { carouselDefinition } from '@/primitives/definitions/carousel'
 import { chartDefinition } from '@/primitives/definitions/chart'
 import { classificationDefinition } from '@/primitives/definitions/classification'
 import { dataTableDefinition } from '@/primitives/definitions/dataTable'
+import {
+  dicomExploreDefinition,
+  dicomGuidedDefinition,
+  dicomIdentifyRegionDefinition,
+  dicomMeasureDefinition,
+} from '@/primitives/definitions/dicom'
 import { fillBlankDefinition } from '@/primitives/definitions/fillBlank'
 import { formulaDefinition } from '@/primitives/definitions/formula'
 import { imageDefinition } from '@/primitives/definitions/image'
@@ -53,6 +56,10 @@ export const primitiveDefinitions = {
   fill_blank: fillBlankDefinition,
   numeric: numericDefinition,
   scenario: scenarioDefinition,
+  dicom_explore: dicomExploreDefinition,
+  dicom_guided: dicomGuidedDefinition,
+  dicom_identify_region: dicomIdentifyRegionDefinition,
+  dicom_measure: dicomMeasureDefinition,
 } satisfies PrimitiveDefinitionMap
 
 type SupportedPrimitiveType = keyof typeof primitiveDefinitions

@@ -1003,3 +1003,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Five courses and thirteen lessons validate with zero warnings; all 25
   primitive types now have strict content contracts.
 - **Follow-ups:** Add pure imaging functions and DICOM primitive definitions.
+
+### [2026-10-02 03:33] P6-T04 - Add pure DICOM domain
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added React-free slice/geometry, preset, exploration/guidance and evaluation functions;
+  registered all four DICOM definitions with the `viewer` layout.
+- **Files changed:** `src/imaging/`, DICOM definitions, definition/component registries and a
+  temporary lazy DICOM presentation boundary.
+- **Commands run:** Prettier, typecheck and lint.
+- **Result/verification:** All DICOM types resolve through the same definition contract as standard
+  primitives; region and measurement evaluators return fractional item results.
+- **Follow-ups:** Extend interactions, events and product configuration.

@@ -21,5 +21,5 @@ export function definePrimitive<P extends TypedPrimitive>(definition: PrimitiveD
 }
 
 export type PrimitiveDefinitionMap = {
-  [Type in TypedPrimitiveType]?: PrimitiveDefinition<Extract<TypedPrimitive, { type: Type }>>
+  [Type in TypedPrimitiveType]: PrimitiveDefinition<Extract<TypedPrimitive, { type: Type }>>
 }

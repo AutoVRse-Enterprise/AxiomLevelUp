@@ -105,6 +105,11 @@ const ScenarioPrimitive = lazy(async () => {
   return { default: module.ScenarioPrimitive }
 })
 
+const DicomPrimitivePending = lazy(async () => {
+  const module = await import('@/primitives/components/DicomPrimitivePending')
+  return { default: module.DicomPrimitivePending }
+})
+
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
@@ -127,4 +132,8 @@ export const primitiveComponents = {
   fill_blank: FillBlankPrimitive,
   numeric: NumericPrimitive,
   scenario: ScenarioPrimitive,
+  dicom_explore: DicomPrimitivePending,
+  dicom_guided: DicomPrimitivePending,
+  dicom_identify_region: DicomPrimitivePending,
+  dicom_measure: DicomPrimitivePending,
 } as const

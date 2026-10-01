@@ -40,7 +40,7 @@ mobile emulation.
 - [x] P6-T01 — Add the series manifest, external-host resolver, verification and CORS pipeline.
 - [x] P6-T02 — Author and document calibrated normal-anatomy teaching targets.
 - [x] P6-T03 — Add strict DICOM primitive and asset schemas with semantic validation.
-- [ ] P6-T04 — Add pure imaging geometry, requirements, evaluation and primitive definitions.
+- [x] P6-T04 — Add pure imaging geometry, requirements, evaluation and primitive definitions.
 - [ ] P6-T05 — Add typed DICOM interactions, events and product configuration.
 - [ ] P6-T06 — Add the production Cornerstone adapter and progressive stack controller.
 - [ ] P6-T07 — Add the shared responsive and immersive DICOM viewer shell.
