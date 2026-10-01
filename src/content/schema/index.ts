@@ -25,15 +25,50 @@ const timerSchema = z.object({
   mode: z.enum(['countdown', 'elapsed']).default('countdown'),
 })
 
+const knownCompletionSchema = z.discriminatedUnion('mode', [
+  z.object({ mode: z.literal('viewed') }),
+  z.object({ mode: z.literal('answer') }),
+  z.object({
+    mode: z.literal('minimum_interactions'),
+    count: z.number().int().positive(),
+  }),
+  z.object({ mode: z.literal('measurement') }),
+  z.object({ mode: z.literal('outcome') }),
+  z.object({ mode: z.literal('interacted') }),
+  z.object({ mode: z.literal('correct_order') }),
+])
+
+export const completionSchema = z
+  .union([knownCompletionSchema, z.looseObject({ mode: z.string().min(1) })])
+  .default({ mode: 'viewed' })
+
+export const scoringSchema = z
+  .looseObject({
+    xp: z.number().int().nonnegative().optional(),
+    difficulty: z.enum(['foundation', 'intermediate', 'advanced']).optional(),
+    weight: z.number().positive().default(1),
+  })
+  .default({ weight: 1 })
+
+export const feedbackSchema = z
+  .looseObject({
+    retry: z.boolean().optional(),
+    maxAttempts: z.number().int().positive().optional(),
+    correct: z.string().min(1).optional(),
+    incorrect: z.string().min(1).optional(),
+    hint: z.string().min(1).optional(),
+  })
+  .default({})
+
 export const primitiveBaseSchema = z.object({
   id: idSchema,
   type: z.string().min(1),
   conceptIds: z.array(idSchema).default([]),
   content: z.record(z.string(), z.unknown()),
   assets: z.array(idSchema).default([]),
-  completion: z.record(z.string(), z.unknown()).default({}),
-  scoring: z.record(z.string(), z.unknown()).default({}),
-  feedback: z.record(z.string(), z.unknown()).default({}),
+  completion: completionSchema,
+  scoring: scoringSchema,
+  feedback: feedbackSchema,
   reward: rewardSchema.optional(),
   source: sourceSchema.optional(),
   timer: timerSchema.optional(),
@@ -245,6 +280,10 @@ export const appConfigSchema = z.object({
     }),
     home: z.object({
       recentAchievementCount: z.number().int().nonnegative(),
+    }),
+    player: z.object({
+      maxAttempts: z.number().int().positive(),
+      retryByDefault: z.boolean(),
     }),
   }),
   gamification: z.object({

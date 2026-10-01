@@ -15,6 +15,10 @@
     },
     "home": {
       "recentAchievementCount": 2
+    },
+    "player": {
+      "maxAttempts": 2,
+      "retryByDefault": true
     }
   },
   "gamification": {

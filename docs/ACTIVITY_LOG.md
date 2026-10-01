@@ -253,3 +253,12 @@ This file is append-only.
 - **Commands run:** None.
 - **Result/verification:** Phase 3 has an executable checklist that preserves the Phase 4, 5 and 6 boundaries.
 - **Follow-ups:** Type the primitive runtime contracts and configurable player defaults.
+
+### [2026-10-01 20:36] P3-T01 - Typed player contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added typed, forward-compatible completion, scoring and feedback schemas plus configurable retry defaults; regenerated JSON Schemas.
+- **Files changed:** `src/content/schema/index.ts`, `public/content/app-config.json`, `schemas/**`, `docs/CONTENT_SCHEMA.md`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run schema:export`, `npm run validate:content`, `npm run typecheck`.
+- **Result/verification:** Four courses and twelve lessons validate with no warnings; TypeScript passes.
+- **Follow-ups:** Build a pure activity-plan adapter for lessons and challenges.
