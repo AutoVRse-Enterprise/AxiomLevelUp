@@ -481,3 +481,101 @@ content context.
 the normal demo seed reset removes their progress with all other mutations. Catalog, continuation,
 revision and pathway surfaces cannot discover internal content. Gallery interactions provide broad
 visual state coverage without learner events, analytics or gamification side effects.
+
+## ADR-034: One ordered learner-event pipeline
+
+**Status:** Accepted
+
+**Context:** Learning progress already subscribed to the event bus while a separate handler directly
+applied `xp_awarded`. Adding more independent state-writing subscribers would make reward ordering,
+revision detection, badge cascades and persistence nondeterministic, and could count informational
+events twice.
+
+**Decision:** Reduce every input event through one pure pipeline in learning-progress,
+gamification and mastery order, then commit one learner-state snapshot. The pipeline queues
+re-entrant input follow-ups such as `course_completed`. Reward events such as `xp_awarded`,
+`badge_unlocked` and `mastery_updated` are informational outputs and are never reduced again.
+
+**Consequences:** All aggregate learner changes are atomic and deterministic. The event log still
+receives both input and output events, while components remain event producers rather than reward
+state writers.
+
+## ADR-035: Idempotent XP, stars and revision rewards
+
+**Status:** Accepted
+
+**Context:** First attempts are authoritative, while learners must be able to replay completed
+lessons without farming first-completion or perfect bonuses. Authored lessons and questions already
+carry reward metadata, and product configuration provides fallbacks.
+
+**Decision:** Award rounded fractional question XP only on attempt one. Award lesson completion and
+the first perfect result once through a per-lesson reward ledger. Treat every later completion as a
+revision and award the configured revision amount. Pay daily challenge rewards once per local day.
+Keep the best configured star result. Derive level transitions from lifetime XP after all rewards,
+including badge bonuses.
+
+**Consequences:** Replays remain useful and qualify for calendar activity without duplicating
+milestone rewards. Existing content can override lesson and primitive XP while missing values use
+strict product defaults.
+
+## ADR-036: Validated achievement criteria with derived progress
+
+**Status:** Accepted
+
+**Context:** Seeded badge percentages were manually maintained and had already drifted from actual
+lesson and course state. Badge descriptions alone could not drive unlock behavior.
+
+**Decision:** Give every badge a validated criterion. Criteria cover lessons, courses, perfect
+lessons, streaks, weekly goals, challenge completions, first-attempt answers and primitive rewards.
+Resolve all referenced identifiers during content loading. Derive progress from learner facts and
+persist only unlock timestamps. Use the same criterion contract for weekly challenge progress rules.
+
+**Consequences:** Achievement progress and unlocks cannot disagree with source state. Adding a badge
+is a content change rather than a React or engine branch, while new criterion types still require an
+engine/schema extension.
+
+## ADR-037: Local-calendar periods for engagement state
+
+**Status:** Accepted
+
+**Context:** Streaks, weekly goals, weekly XP and daily/weekly challenges require date boundaries.
+Simple counters never expired and weekly XP never rolled over.
+
+**Decision:** Use pure local-date helpers and the configured `weekStartsOn`. Lesson completion,
+revision and daily challenge completion qualify for streak and weekly activity. Duplicate actions
+on one day do not extend a streak. Weekly XP and incomplete weekly progress reset on the next week;
+daily and weekly challenge rewards use explicit period keys.
+
+**Consequences:** Calendar behavior is deterministic under the injectable clock and can be tested at
+month/week boundaries without depending on UTC dates.
+
+## ADR-038: Deterministic weighted mastery
+
+**Status:** Accepted
+
+**Context:** Mastery must remain separate from participation XP and must support partial credit,
+difficulty and future engine replacement without changing primitive UI.
+
+**Decision:** On the first attempt in a run, apply
+`difficultyWeight × (score × gain - (1 - score) × loss)`, divided across the question's concept IDs.
+Clamp scores from zero to one hundred and cap history to the configured limit. Use the primitive
+difficulty, falling back to the configured default.
+
+**Consequences:** Correct, partial and incorrect results all produce explainable deterministic
+changes. The mastery engine stays pure and replaceable, and revision recommendations continue to
+consume ordinary concept scores.
+
+## ADR-039: Persisted accessible celebration queue
+
+**Status:** Accepted
+
+**Context:** Badge and level transitions may occur in a cascade and must not interrupt an active
+assessment. They also need to survive navigation and refresh.
+
+**Decision:** Persist badge and level celebrations in learner state. Present them one at a time with
+a modal Radix dialog after an activity session is cleared or on a normal application route.
+Dismissal is a learner input event. Keep Phase 5 motion minimal and honor reduced-motion settings.
+
+**Consequences:** Multiple rewards cannot overwrite each other, focus is trapped and restored, and
+an interrupted demo can resume its reward sequence. Richer animation, haptics and sound remain
+Phase 8 work.

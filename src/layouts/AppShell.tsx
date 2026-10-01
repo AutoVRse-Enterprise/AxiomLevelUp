@@ -1,13 +1,8 @@
-import {
-  BrainCircuit,
-  Home,
-  RadioTower,
-  Trophy,
-  UserRound,
-} from 'lucide-react'
+import { BrainCircuit, Home, RadioTower, Trophy, UserRound } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
 
 import { PageHeader } from '@/components/navigation/PageHeader'
+import { CelebrationHost } from '@/components/rewards/CelebrationHost'
 import { cn } from '@/lib/cn'
 
 const navigation = [
@@ -21,6 +16,7 @@ const navigation = [
 export function AppShell() {
   return (
     <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))]">
+      <CelebrationHost />
       <PageHeader />
 
       <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">

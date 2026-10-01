@@ -15,6 +15,8 @@ import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
 import {
   selectBadgeViews,
+  describeCriterion,
+  selectDisplayedStreak,
   selectLevelProgress,
   selectProfileStats,
   selectWeeklyActivity,
@@ -27,7 +29,8 @@ const categoryLabels = {
 } as const
 
 export function ProfilePage() {
-  const { appConfig } = useContent()
+  const registry = useContent()
+  const { appConfig } = registry
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const streak = useLearnerStore((state) => state.streak)
@@ -35,14 +38,18 @@ export function ProfilePage() {
   const stats = useLearnerStore((state) => state.stats)
   const mastery = useLearnerStore((state) => state.mastery)
   const badges = useLearnerStore((state) => state.badges)
+  const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const gamification = useLearnerStore((state) => state.gamification)
   const level = selectLevelProgress({ xp }, appConfig.gamification.levels)
   const profileStats = selectProfileStats({ stats })
-  const badgeViews = selectBadgeViews({ badges }, appConfig.badges)
-  const activity = selectWeeklyActivity(
-    { weeklyGoal },
-    appConfig.product.weekStartsOn,
-    today(),
+  const badgeViews = selectBadgeViews(
+    { badges, lessonProgress, gamification, streak },
+    appConfig.badges,
+    registry,
   )
+  const currentDate = today()
+  const activity = selectWeeklyActivity({ weeklyGoal }, appConfig.product.weekStartsOn, currentDate)
+  const currentStreak = selectDisplayedStreak({ streak }, currentDate)
   const masteryViews = appConfig.concepts
     .map((concept) => ({ ...concept, score: mastery[concept.id]?.score ?? 0 }))
     .sort((a, b) => b.score - a.score)
@@ -62,7 +69,9 @@ export function ProfilePage() {
             <p className="mt-2 text-brand-100">{learner.role}</p>
           </div>
           <div className="rounded-lg bg-white/10 p-4 sm:text-right">
-            <p className="text-caption font-semibold uppercase tracking-wide text-brand-200">Current level</p>
+            <p className="text-caption font-semibold uppercase tracking-wide text-brand-200">
+              Current level
+            </p>
             <p className="mt-1 text-title font-bold">Level {level.level}</p>
             {level.label ? <p className="text-small text-brand-100">{level.label}</p> : null}
           </div>
@@ -78,7 +87,7 @@ export function ProfilePage() {
             value={level.percentage}
           />
           <p className="flex items-center gap-2 font-semibold text-brand-100">
-            <Flame aria-hidden="true" size={19} /> {streak.currentDays} day streak
+            <Flame aria-hidden="true" size={19} /> {currentStreak} day streak
           </p>
         </div>
       </Card>
@@ -86,10 +95,26 @@ export function ProfilePage() {
       <section aria-label="Learner statistics">
         <SectionHeader title="Your stats" />
         <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
-          <StatTile icon={<Trophy aria-hidden="true" size={17} />} label="Courses" value={profileStats.coursesCompleted} />
-          <StatTile icon={<BookOpenCheck aria-hidden="true" size={17} />} label="Lessons" value={profileStats.lessonsCompleted} />
-          <StatTile icon={<RadioTower aria-hidden="true" size={17} />} label="Challenges" value={profileStats.challengesCompleted} />
-          <StatTile icon={<CircleHelp aria-hidden="true" size={17} />} label="Questions" value={profileStats.questionsAnswered} />
+          <StatTile
+            icon={<Trophy aria-hidden="true" size={17} />}
+            label="Courses"
+            value={profileStats.coursesCompleted}
+          />
+          <StatTile
+            icon={<BookOpenCheck aria-hidden="true" size={17} />}
+            label="Lessons"
+            value={profileStats.lessonsCompleted}
+          />
+          <StatTile
+            icon={<RadioTower aria-hidden="true" size={17} />}
+            label="Challenges"
+            value={profileStats.challengesCompleted}
+          />
+          <StatTile
+            icon={<CircleHelp aria-hidden="true" size={17} />}
+            label="Questions"
+            value={profileStats.questionsAnswered}
+          />
           <StatTile label="Accuracy" value={`${profileStats.accuracy}%`} />
         </div>
       </section>
@@ -118,7 +143,11 @@ export function ProfilePage() {
                 <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {items.map((badge) => (
                     <BadgeTile
-                      description={badge.description}
+                      description={
+                        badge.unlocked
+                          ? badge.description
+                          : `${badge.description} ${describeCriterion(badge.criteria)}.`
+                      }
                       icon={getBadgeIcon(badge.icon)}
                       key={badge.id}
                       progress={badge.progress}

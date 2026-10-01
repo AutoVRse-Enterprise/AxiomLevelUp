@@ -27,6 +27,7 @@ import { TimerBadge } from '@/player/TimerBadge'
 import { useAttemptTimer } from '@/player/useAttemptTimer'
 import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
+import { useLearnerStore } from '@/state/learnerStore'
 
 interface ActivityPlayerProps {
   plan: ActivityPlan
@@ -45,6 +46,7 @@ export function ActivityPlayer({
 }: ActivityPlayerProps) {
   const navigate = useNavigate()
   const { appConfig } = useContent()
+  const gamification = useLearnerStore((state) => state.gamification)
   const [session, setSession] = useState(() => useActivitySessionStore.getState().loadForPlan(plan))
   const [awaitingResume, setAwaitingResume] = useState(
     session.startedAt !== null && session.phase !== 'intro' && session.phase !== 'complete',
@@ -186,7 +188,8 @@ export function ActivityPlayer({
         score: result.score,
         correct: result.correct,
         attempt: attempts,
-        xp: step.primitive.scoring.xp ?? 0,
+        difficulty:
+          step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
         timedOut,
       })
       if (completed) {
@@ -201,6 +204,7 @@ export function ActivityPlayer({
       }
     },
     [
+      appConfig.gamification.mastery.defaultDifficulty,
       appConfig.product.player.mediaCompletionThreshold,
       flushDraft,
       plan.activity.id,
@@ -285,6 +289,11 @@ export function ActivityPlayer({
         title={plan.activity.title}
         summary={summary}
         personalBest={previousBestScore === null || summary.score > previousBestScore}
+        rewards={
+          gamification.lastActivityResult?.activityId === plan.activity.id
+            ? gamification.lastActivityResult
+            : null
+        }
         onContinue={() => navigate(continuePath)}
         onReplay={() => {
           const restarted = sessionReducer(createActivitySession(plan), {
@@ -380,6 +389,11 @@ export function ActivityPlayer({
               message={feedbackMessage}
               source={step.primitive.source}
               canRetry={canRetry}
+              xpEarned={
+                gamification.lastQuestionReward?.questionId === step.primitive.id
+                  ? gamification.lastQuestionReward.xp
+                  : 0
+              }
               onRetry={() => transition({ type: 'retry' })}
               onContinue={handleContinue}
             />
@@ -394,8 +408,7 @@ export function ActivityPlayer({
             onDraftChange={(draft) => queueDraft(step.primitive.id, draft)}
             onComplete={markComplete}
             onInteract={(interaction) => {
-              const currentProgress =
-                sessionRef.current.progress[step.primitive.id] ?? stepProgress
+              const currentProgress = sessionRef.current.progress[step.primitive.id] ?? stepProgress
               const key = 'key' in interaction ? (interaction.key ?? interaction.name) : undefined
               const nextReportedMediaProgress =
                 interaction.name === 'media_progress' && 'fraction' in interaction

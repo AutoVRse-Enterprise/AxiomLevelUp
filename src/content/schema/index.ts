@@ -65,7 +65,7 @@ export const lessonSchema = z.object({
   estimatedMinutes: z.number().int().positive(),
   difficulty: z.enum(['foundation', 'intermediate', 'advanced']),
   conceptIds: z.array(idSchema).min(1),
-  xpReward: z.number().int().nonnegative(),
+  xpReward: z.number().int().nonnegative().optional(),
   starThresholds: z
     .object({
       one: z.number().min(0).max(100),
@@ -134,7 +134,53 @@ export const badgeSchema = z.object({
   category: z.enum(['learning', 'performance', 'consistency']),
   icon: z.string().min(1),
   rewardXp: z.number().int().nonnegative().default(0),
+  criteria: z.discriminatedUnion('type', [
+    z.object({
+      type: z.literal('lessons_completed'),
+      count: z.number().int().positive(),
+      lessonIds: z.array(idSchema).min(1).optional(),
+      courseIds: z.array(idSchema).min(1).optional(),
+      difficulties: z
+        .array(z.enum(['foundation', 'intermediate', 'advanced']))
+        .min(1)
+        .optional(),
+    }),
+    z.object({
+      type: z.literal('course_completed'),
+      count: z.number().int().positive().default(1),
+      courseIds: z.array(idSchema).min(1).optional(),
+    }),
+    z.object({
+      type: z.literal('perfect_lessons'),
+      count: z.number().int().positive(),
+    }),
+    z.object({
+      type: z.literal('streak_days'),
+      count: z.number().int().positive(),
+    }),
+    z.object({
+      type: z.literal('weekly_goals_met'),
+      count: z.number().int().positive(),
+    }),
+    z.object({
+      type: z.literal('challenges_completed'),
+      count: z.number().int().positive(),
+      challengeIds: z.array(idSchema).min(1).optional(),
+    }),
+    z.object({
+      type: z.literal('first_attempt_correct'),
+      count: z.number().int().positive(),
+      primitiveTypes: z.array(z.string().min(1)).min(1).optional(),
+      conceptIds: z.array(idSchema).min(1).optional(),
+    }),
+    z.object({
+      type: z.literal('primitive_reward'),
+      rewardId: idSchema,
+    }),
+  ]),
 })
+
+export type AchievementCriterion = z.infer<typeof badgeSchema>['criteria']
 
 export const challengeSchema = z.object({
   id: idSchema,
@@ -146,6 +192,7 @@ export const challengeSchema = z.object({
   itemCount: z.number().int().positive(),
   items: z.array(primitiveBaseSchema).default([]),
   target: z.number().int().positive().optional(),
+  progressRule: badgeSchema.shape.criteria.optional(),
 })
 
 export const leaderboardEntrySchema = z.object({
@@ -183,7 +230,17 @@ export const appConfigSchema = z.object({
     }),
   }),
   gamification: z.object({
-    xp: z.record(z.string(), z.number().int().nonnegative()),
+    xp: z.strictObject({
+      correctStandard: z.number().int().nonnegative(),
+      correctDifficult: z.number().int().nonnegative(),
+      lessonComplete: z.number().int().nonnegative(),
+      perfectLessonBonus: z.number().int().nonnegative(),
+      dailyChallenge: z.number().int().nonnegative(),
+      perfectChallengeBonus: z.number().int().nonnegative(),
+      revisionComplete: z.number().int().nonnegative(),
+      weeklyTarget: z.number().int().nonnegative(),
+      dicomFirstTask: z.number().int().nonnegative(),
+    }),
     levels: z
       .array(
         z.object({
@@ -198,10 +255,20 @@ export const appConfigSchema = z.object({
       two: z.number().min(0).max(100),
       three: z.number().min(0).max(100),
     }),
+    weeklyGoal: z.object({
+      defaultTargetDays: z.number().int().min(1).max(7),
+    }),
     mastery: z.object({
       gain: z.number().positive(),
       loss: z.number().positive(),
-      difficultyWeights: z.record(z.string(), z.number().positive()),
+      difficultyWeights: z.strictObject({
+        foundation: z.number().positive(),
+        intermediate: z.number().positive(),
+        advanced: z.number().positive(),
+      }),
+      defaultDifficulty: z.enum(['foundation', 'intermediate', 'advanced']),
+      initialScore: z.number().min(0).max(100),
+      historyLimit: z.number().int().positive(),
     }),
   }),
   concepts: z.array(conceptSchema).min(1),
@@ -231,6 +298,91 @@ export const masteryStateSchema = z.object({
       at: isoDateSchema,
       delta: z.number(),
       reason: z.string().min(1),
+    }),
+  ),
+})
+
+const activityResultSchema = z.object({
+  activityKind: z.enum(['lesson', 'challenge']),
+  activityId: idSchema,
+  xpEarned: z.number().int().nonnegative(),
+  stars: z.number().int().min(0).max(3),
+  masteryDelta: z.record(idSchema, z.number()),
+  rankBefore: z.number().int().positive().nullable(),
+  rankAfter: z.number().int().positive().nullable(),
+  badgesUnlocked: z.array(idSchema),
+  levelFrom: z.number().int().positive(),
+  levelTo: z.number().int().positive(),
+  streak: z.number().int().nonnegative(),
+  revision: z.boolean(),
+})
+
+const celebrationSchema = z.discriminatedUnion('type', [
+  z.object({
+    id: idSchema,
+    type: z.literal('badge'),
+    badgeId: idSchema,
+    rewardXp: z.number().int().nonnegative(),
+  }),
+  z.object({
+    id: idSchema,
+    type: z.literal('level'),
+    from: z.number().int().positive(),
+    to: z.number().int().positive(),
+  }),
+])
+
+export const gamificationStateSchema = z.object({
+  xpWeekStart: z.iso.date(),
+  weeklyTargetRewardedWeek: z.iso.date().nullable(),
+  lessonRewards: z.record(
+    idSchema,
+    z.object({
+      completionAwarded: z.boolean(),
+      perfectAwarded: z.boolean(),
+    }),
+  ),
+  challengePeriods: z.record(
+    idSchema,
+    z.object({
+      progressPeriod: z.string().nullable(),
+      lastCompletedPeriod: z.string().nullable(),
+      periodProgress: z.number().int().nonnegative(),
+    }),
+  ),
+  counters: z.object({
+    perfectLessons: z.number().int().nonnegative(),
+    weeklyGoalsMet: z.number().int().nonnegative(),
+    challengeCompletions: z.record(idSchema, z.number().int().nonnegative()),
+    firstAttemptCorrect: z.number().int().nonnegative(),
+    firstAttemptCorrectByType: z.record(z.string(), z.number().int().nonnegative()),
+    firstAttemptCorrectByConcept: z.record(idSchema, z.number().int().nonnegative()),
+  }),
+  activeRun: z
+    .object({
+      activityKind: z.enum(['lesson', 'challenge']),
+      activityId: idSchema,
+      revision: z.boolean(),
+      xpEarned: z.number().int().nonnegative(),
+      masteryBefore: z.record(idSchema, z.number()),
+      weeklyXpBefore: z.number().int().nonnegative(),
+      startedAt: isoDateSchema,
+    })
+    .nullable(),
+  lastQuestionReward: z
+    .object({
+      questionId: idSchema,
+      xp: z.number().int().nonnegative(),
+      at: isoDateSchema,
+    })
+    .nullable(),
+  lastActivityResult: activityResultSchema.nullable(),
+  celebrations: z.array(celebrationSchema),
+  digitalRewards: z.array(
+    z.object({
+      type: z.enum(['badge', 'certificate', 'points', 'recognition']),
+      id: idSchema,
+      grantedAt: isoDateSchema,
     }),
   ),
 })
@@ -271,10 +423,11 @@ export const learnerSeedSchema = z.object({
     idSchema,
     z.object({
       unlockedAt: isoDateSchema.nullable(),
-      progress: z.number().min(0).max(100),
+      progress: z.number().min(0).max(100).optional(),
     }),
   ),
   mastery: z.record(idSchema, masteryStateSchema),
+  gamification: gamificationStateSchema,
   stats: z.object({
     coursesCompleted: z.number().int().nonnegative(),
     lessonsCompleted: z.number().int().nonnegative(),

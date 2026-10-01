@@ -7,6 +7,7 @@ import {
   learnerSeedSchema,
   parsePrimitive,
   type AppConfig,
+  type AchievementCriterion,
   type AssetManifest,
   type ContentManifest,
   type Course,
@@ -161,10 +162,19 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     input.manifestFile,
   )
   const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]))
+  const courseIds = new Set(courses.map(({ id }) => id))
+  const lessonIds = new Set(lessons.map(({ id }) => id))
   const conceptIds = new Set(appConfig.concepts.map(({ id }) => id))
   const challengeIds = new Set(appConfig.challenges.map(({ id }) => id))
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
+  const primitiveRewardIds = new Set(
+    courses.flatMap((course) =>
+      course.lessons.flatMap((lesson) =>
+        lesson.primitives.flatMap((primitive) => (primitive.reward ? [primitive.reward.id] : [])),
+      ),
+    ),
+  )
 
   const requireRef = (
     set: ReadonlySet<string>,
@@ -206,6 +216,56 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         message: `Asset reference "${id}" expects type "${expectedType}" but the manifest declares "${asset.type}".`,
         severity: 'error',
       })
+    }
+  }
+
+  const validateCriterion = (criterion: AchievementCriterion, file: string, path: string) => {
+    if ('lessonIds' in criterion) {
+      criterion.lessonIds?.forEach((id, index) =>
+        requireRef(lessonIds, id, file, `${path}.lessonIds.${index}`, 'lesson'),
+      )
+    }
+    if ('courseIds' in criterion) {
+      criterion.courseIds?.forEach((id, index) =>
+        requireRef(courseIds, id, file, `${path}.courseIds.${index}`, 'course'),
+      )
+    }
+    if ('challengeIds' in criterion) {
+      criterion.challengeIds?.forEach((id, index) =>
+        requireRef(challengeIds, id, file, `${path}.challengeIds.${index}`, 'challenge'),
+      )
+    }
+    if ('conceptIds' in criterion) {
+      criterion.conceptIds?.forEach((id, index) =>
+        requireRef(conceptIds, id, file, `${path}.conceptIds.${index}`, 'concept'),
+      )
+    }
+    if ('primitiveTypes' in criterion) {
+      criterion.primitiveTypes?.forEach((id, index) =>
+        requireRef(primitiveTypeSet, id, file, `${path}.primitiveTypes.${index}`, 'primitive type'),
+      )
+    }
+    if (
+      criterion.type === 'first_attempt_correct' &&
+      criterion.primitiveTypes &&
+      criterion.conceptIds
+    ) {
+      issues.push({
+        file,
+        path,
+        message: 'First-attempt criteria must filter by primitive types or concept IDs, not both.',
+        severity: 'error',
+      })
+    }
+    if (criterion.type === 'primitive_reward') {
+      requireRef(badgeIds, criterion.rewardId, file, `${path}.rewardId`, 'badge')
+      requireRef(
+        primitiveRewardIds,
+        criterion.rewardId,
+        file,
+        `${path}.rewardId`,
+        'primitive reward',
+      )
     }
   }
 
@@ -329,7 +389,6 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     })
   })
 
-  const lessonIds = new Set(lessonById.keys())
   for (const pathway of appConfig.pathways) {
     const nodeIds = new Set(pathway.nodes.map(({ id }) => id))
     pathway.nodes.forEach((node, index) => {
@@ -419,6 +478,52 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         path: `badges.${index}.icon`,
         message: `Unknown badge icon "${badge.icon}" will use the fallback icon.`,
         severity: 'warning',
+      })
+    }
+    validateCriterion(badge.criteria, input.appConfigFile, `badges.${index}.criteria`)
+  })
+
+  const orderedLevels = [...appConfig.gamification.levels].sort(
+    (left, right) => left.minimumXp - right.minimumXp,
+  )
+  if (
+    orderedLevels[0]?.minimumXp !== 0 ||
+    new Set(orderedLevels.map(({ level }) => level)).size !== orderedLevels.length ||
+    orderedLevels.some(
+      (level, index) => index > 0 && level.minimumXp <= (orderedLevels[index - 1]?.minimumXp ?? -1),
+    )
+  ) {
+    issues.push({
+      file: input.appConfigFile,
+      path: 'gamification.levels',
+      message: 'Levels require unique identifiers and strictly increasing XP thresholds from zero.',
+      severity: 'error',
+    })
+  }
+  const stars = appConfig.gamification.stars
+  if (!(stars.one <= stars.two && stars.two <= stars.three)) {
+    issues.push({
+      file: input.appConfigFile,
+      path: 'gamification.stars',
+      message: 'Star thresholds must be ordered from one through three stars.',
+      severity: 'error',
+    })
+  }
+
+  appConfig.challenges.forEach((challenge, index) => {
+    if (challenge.progressRule) {
+      validateCriterion(
+        challenge.progressRule,
+        input.appConfigFile,
+        `challenges.${index}.progressRule`,
+      )
+    }
+    if (challenge.type === 'weekly' && !challenge.progressRule) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `challenges.${index}.progressRule`,
+        message: `Weekly challenge "${challenge.id}" requires a progress rule.`,
+        severity: 'error',
       })
     }
   })

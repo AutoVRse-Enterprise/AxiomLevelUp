@@ -22,10 +22,15 @@ read-only ContentRegistry -----> routes -----> activity plan
           learner state + clock   lazy primitive UI      typed event bus
                         ^                                      /       \
                         |                                     v         v
-                    IndexedDB                         event history  progress engine
+                    IndexedDB                         event history  ordered pipeline
+                                                                      |
+                                                       +--------------+-------------+
+                                                       v              v             v
+                                                   progress     gamification     mastery
+                                                       +--------------+-------------+
                                                                       |
                                                                       v
-                                                              learner store
+                                                              learner store v3
 ```
 
 ## Boundaries
@@ -36,6 +41,9 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/events`: framework-independent event taxonomy and transport.
 - `src/engines/learning`: pure activity planning, session v2, completion, scoring and event
   reduction.
+- `src/engines/gamification`: pure XP, stars, levels, calendar, challenge and achievement rules.
+- `src/engines/mastery`: pure deterministic concept-score updates and bounded history.
+- `src/engines/pipeline.ts`: ordered learner-event reduction and one aggregate state result.
 - `src/player`: activity lifecycle orchestration, draft persistence, timers, review/reveal and
   shared player presentation.
 - `src/primitives/definitions`: React-free source of truth for implemented support, family, scoring,
@@ -61,7 +69,17 @@ failures include source file and JSON path.
 
 ## State and events
 
-Components emit typed learner events. The event-history subscriber records a bounded audit trail. The learning progress engine updates the learner store; gamification and mastery remain future independent subscribers. Persisted state is versioned and migrated on hydration. Level, leaderboard rank and aggregate course progress remain derived.
+Components emit typed learner input events. One subscriber queues and reduces them through learning
+progress, gamification and mastery, commits one learner-state v3 snapshot and publishes informational
+reward events. The event-history subscriber records a bounded audit trail. Output events are not
+reduced again. Persisted reward ledgers make completion, perfect, daily and badge awards idempotent.
+Level, leaderboard rank, badge progress, displayed streak and aggregate course progress remain
+derived.
+
+Local-calendar helpers use the injectable clock and configured week start for streaks, weekly goals,
+weekly XP and challenge periods. Badge and weekly-challenge criteria are validated with content.
+Mastery applies configured weighted gains/losses to first-attempt fractional scores and keeps bounded
+per-concept history. Badge and level transitions enter a persisted celebration queue.
 
 Application surfaces consume view models from `src/state/selectors/`. Effective lesson availability is derived from prerequisites, and route components do not duplicate progression logic. Demo seed dates are shifted from their declared `referenceDate` when the seed is applied; persisted state then ages normally.
 
@@ -83,8 +101,8 @@ confirms the saved exit.
 
 Development plans preserve unsupported steps for diagnosis. Production plans skip only the four
 deferred DICOM types, retaining the fallback for other unsupported or malformed primitives. An
-activity with no implemented steps is unavailable. Gamification and mastery remain independent
-future subscribers to the same event stream.
+activity with no implemented steps is unavailable. The player emits results only; the central
+pipeline awards XP, stars and mastery without primitive or learning-engine coupling.
 
 ## DICOM spike isolation
 

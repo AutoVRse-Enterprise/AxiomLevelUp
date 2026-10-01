@@ -84,22 +84,29 @@ export function DevPage() {
           </Button>
           <Button
             leadingIcon={<Plus aria-hidden="true" size={18} />}
-            onClick={() =>
-              emitEvent({ event: 'xp_awarded', amount: 10, reason: 'Developer simulation' })
-            }
+            onClick={() => emitEvent({ event: 'demo_command', command: 'grant_xp', amount: 10 })}
           >
-            Add 10 XP
+            Grant 10 XP
           </Button>
         </div>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Button disabled variant="ghost">
-            Unlock all · Phase 5
+          <Button
+            variant="ghost"
+            onClick={() => emitEvent({ event: 'demo_command', command: 'unlock_all' })}
+          >
+            Unlock all
           </Button>
-          <Button disabled variant="ghost">
-            Simulate badge · Phase 5
+          <Button
+            variant="ghost"
+            onClick={() => emitEvent({ event: 'demo_command', command: 'simulate_badge' })}
+          >
+            Simulate badge
           </Button>
-          <Button disabled variant="ghost">
-            Simulate level-up · Phase 5
+          <Button
+            variant="ghost"
+            onClick={() => emitEvent({ event: 'demo_command', command: 'simulate_level_up' })}
+          >
+            Simulate level-up
           </Button>
           <Button disabled variant="ghost">
             Toggle offline · Phase 7
@@ -154,7 +161,7 @@ export function DevPage() {
 
       <div className="flex items-center gap-2 text-small text-neutral-600">
         <Sparkles aria-hidden="true" size={16} />
-        Phase 5 will add full reward simulation.
+        Reward simulations use the same learner-event pipeline as real activity.
       </div>
     </div>
   )

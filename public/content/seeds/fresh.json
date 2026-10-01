@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 1,
+  "stateVersion": 3,
   "seedProfile": "fresh",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -30,16 +30,16 @@
     "weekly-imaging-sprint": { "completed": false, "progress": 0, "bestScore": null }
   },
   "badges": {
-    "imaging-fundamentals": { "unlockedAt": null, "progress": 0 },
-    "clinical-research-basics": { "unlockedAt": null, "progress": 0 },
-    "scientific-data-explorer": { "unlockedAt": null, "progress": 0 },
-    "perfect-lesson": { "unlockedAt": null, "progress": 0 },
-    "precision-observer": { "unlockedAt": null, "progress": 0 },
-    "case-master": { "unlockedAt": null, "progress": 0 },
-    "seven-day-streak": { "unlockedAt": null, "progress": 0 },
-    "four-week-goal": { "unlockedAt": null, "progress": 0 },
-    "challenge-ten": { "unlockedAt": null, "progress": 0 },
-    "first-dicom": { "unlockedAt": null, "progress": 0 }
+    "imaging-fundamentals": { "unlockedAt": null },
+    "clinical-research-basics": { "unlockedAt": null },
+    "scientific-data-explorer": { "unlockedAt": null },
+    "perfect-lesson": { "unlockedAt": null },
+    "precision-observer": { "unlockedAt": null },
+    "case-master": { "unlockedAt": null },
+    "seven-day-streak": { "unlockedAt": null },
+    "four-week-goal": { "unlockedAt": null },
+    "challenge-ten": { "unlockedAt": null },
+    "first-dicom": { "unlockedAt": null }
   },
   "mastery": {
     "thoracic-imaging": { "score": 50, "history": [] },
@@ -50,6 +50,25 @@
     "dose-response": { "score": 50, "history": [] },
     "safety-signals": { "score": 50, "history": [] },
     "risk-escalation": { "score": 50, "history": [] }
+  },
+  "gamification": {
+    "xpWeekStart": "2026-09-28",
+    "weeklyTargetRewardedWeek": null,
+    "lessonRewards": {},
+    "challengePeriods": {},
+    "counters": {
+      "perfectLessons": 0,
+      "weeklyGoalsMet": 0,
+      "challengeCompletions": {},
+      "firstAttemptCorrect": 0,
+      "firstAttemptCorrectByType": {},
+      "firstAttemptCorrectByConcept": {}
+    },
+    "activeRun": null,
+    "lastQuestionReward": null,
+    "lastActivityResult": null,
+    "celebrations": [],
+    "digitalRewards": []
   },
   "stats": {
     "coursesCompleted": 0,

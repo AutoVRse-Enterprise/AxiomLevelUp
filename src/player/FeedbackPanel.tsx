@@ -11,6 +11,7 @@ interface FeedbackPanelProps {
   message: string | null
   source?: Source
   canRetry: boolean
+  xpEarned?: number
   onRetry: () => void
   onContinue: () => void
 }
@@ -20,6 +21,7 @@ export function FeedbackPanel({
   message,
   source,
   canRetry,
+  xpEarned = 0,
   onRetry,
   onContinue,
 }: FeedbackPanelProps) {
@@ -52,6 +54,7 @@ export function FeedbackPanel({
         </h2>
       </div>
       {message ? <p className="mt-3 text-neutral-800">{message}</p> : null}
+      {xpEarned > 0 ? <p className="mt-3 font-bold text-brand-800">+{xpEarned} XP</p> : null}
       {source ? (
         <p className="mt-3 text-small text-neutral-600">
           Source: {source.title}

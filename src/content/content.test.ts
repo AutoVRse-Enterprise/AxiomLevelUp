@@ -443,4 +443,33 @@ describe('content loader', () => {
       }),
     )
   })
+
+  it('rejects unknown achievement criterion references', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      badges: Array<{
+        criteria: {
+          type: string
+          count: number
+          lessonIds?: string[]
+        }
+      }>
+    }
+    appConfig.badges[0]!.criteria = {
+      type: 'lessons_completed',
+      count: 1,
+      lessonIds: ['missing-lesson'],
+    }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'badges.0.criteria.lessonIds.0',
+            message: expect.stringContaining('Unknown lesson reference'),
+          }),
+        ]),
+      }),
+    )
+  })
 })

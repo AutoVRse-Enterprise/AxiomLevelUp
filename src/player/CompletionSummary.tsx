@@ -1,12 +1,15 @@
 import { CheckCircle2, RotateCcw } from 'lucide-react'
 
 import { Button } from '@/components/ui'
+import { RewardSummary } from '@/components/rewards/RewardSummary'
+import type { LearnerSeed } from '@/content/schema'
 import type { ActivitySummary } from '@/engines/learning/session'
 
 interface CompletionSummaryProps {
   title: string
   summary: ActivitySummary
   personalBest: boolean
+  rewards: LearnerSeed['gamification']['lastActivityResult']
   onContinue: () => void
   onReplay: () => void
 }
@@ -15,6 +18,7 @@ export function CompletionSummary({
   title,
   summary,
   personalBest,
+  rewards,
   onContinue,
   onReplay,
 }: CompletionSummaryProps) {
@@ -38,9 +42,7 @@ export function CompletionSummary({
           {summary.correctCount} of {summary.scoredCount} correct on the first attempt
         </p>
       ) : null}
-      {personalBest ? (
-        <p className="mt-4 font-semibold text-brand-700">New personal best</p>
-      ) : null}
+      {personalBest ? <p className="mt-4 font-semibold text-brand-700">New personal best</p> : null}
       {summary.missed.length ? (
         <section className="mt-8">
           <h2 className="text-heading font-bold">Review</h2>
@@ -56,9 +58,11 @@ export function CompletionSummary({
           </ul>
         </section>
       ) : null}
-      <div className="mt-8 rounded-lg border border-dashed border-neutral-300 p-4 text-small text-neutral-600">
-        Rewards will appear here when gamification is enabled.
-      </div>
+      {rewards ? (
+        <div className="mt-8">
+          <RewardSummary result={rewards} />
+        </div>
+      ) : null}
       <div className="mt-8 flex flex-wrap gap-3">
         <Button size="lg" onClick={onContinue}>
           Continue

@@ -10,7 +10,7 @@ import { validateContentBundle, type ContentRegistry } from '@/content/loader'
 import { learnerSeedSchema } from '@/content/schema'
 import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
 import {
-  initializeLearningEventHandlers,
+  initializeLearningProgressHandlers,
   stopLearningEventHandlersForTests,
 } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -164,12 +164,12 @@ describe('application surfaces', () => {
   })
 
   it('updates the visible leaderboard rank from the event-driven learner XP', () => {
-    initializeLearningEventHandlers()
+    initializeLearningProgressHandlers(advancedRegistry)
     renderSurface(<LeaderboardPage />, '/leaderboard', '/leaderboard')
     expect(screen.getByText('#8')).toBeVisible()
 
     act(() => {
-      emitEvent({ event: 'xp_awarded', amount: 600, reason: 'surface test' })
+      emitEvent({ event: 'demo_command', command: 'grant_xp', amount: 600 })
     })
 
     expect(screen.getByText('#1')).toBeVisible()

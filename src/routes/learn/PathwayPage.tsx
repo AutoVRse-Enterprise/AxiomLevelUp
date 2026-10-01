@@ -15,6 +15,7 @@ import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { emitEvent } from '@/events/bus'
+import { today } from '@/lib/clock'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectPathwayView } from '@/state/selectors'
@@ -39,6 +40,7 @@ export function PathwayPage() {
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
   const stats = useLearnerStore((state) => state.stats)
+  const gamification = useLearnerStore((state) => state.gamification)
   const [openLock, setOpenLock] = useState<string | null>(null)
   const pathway = appConfig.pathways.find(({ id }) => id === pathwayId)
 
@@ -51,10 +53,12 @@ export function PathwayPage() {
   }
 
   const view = selectPathwayView(
-    { learner, xp, weeklyGoal, lessonProgress, challenges, badges, mastery, stats },
+    { learner, xp, weeklyGoal, lessonProgress, challenges, badges, mastery, stats, gamification },
     pathway,
     lessonById,
     appConfig.challenges,
+    today(),
+    appConfig.product.weekStartsOn,
   )
   const completed = view.nodes.filter(({ status }) => status === 'completed').length
 

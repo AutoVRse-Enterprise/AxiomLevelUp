@@ -25,6 +25,14 @@ const primitiveSources = import.meta.glob('../primitives/components/*Primitive.t
   import: 'default',
   eager: true,
 }) as Record<string, string>
+const rewardEngineSources = import.meta.glob(
+  ['../engines/gamification/*.ts', '../engines/mastery/*.ts'],
+  {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  },
+) as Record<string, string>
 
 function timedPlan(durationSeconds: number) {
   return buildActivityPlan(
@@ -305,6 +313,9 @@ describe('activity player', () => {
       expect(source, path).not.toMatch(
         /@\/events|@\/state|@\/engines\/learning\/sessionStore|sessionStore|learnerStore/u,
       )
+    }
+    for (const [path, source] of Object.entries(rewardEngineSources)) {
+      expect(source, path).not.toMatch(/from ['"]react|@\/components|@\/primitives\/components/u)
     }
   })
 })

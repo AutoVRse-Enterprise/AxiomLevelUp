@@ -1,43 +1,37 @@
 import type { ContentRegistry } from '@/content/loader'
-import { applyLearningEvent } from '@/engines/learning/progress'
+import { reduceLearnerEvent } from '@/engines/pipeline'
 import { emitEvent, subscribeToEvents } from '@/events/bus'
-import { useLearnerStore } from '@/state/learnerStore'
+import { isLearnerOutputEvent, type LearnerEvent } from '@/events/types'
+import { learnerDataSnapshot, useLearnerStore } from '@/state/learnerStore'
 
-let unsubscribe: (() => unknown) | null = null
-let progressUnsubscribe: (() => unknown) | null = null
+let pipelineUnsubscribe: (() => unknown) | null = null
 
 export function initializeLearningEventHandlers() {
-  if (unsubscribe) return unsubscribe
-  unsubscribe = subscribeToEvents((event) => {
-    if (event.event === 'xp_awarded') {
-      useLearnerStore.getState().addXp(event.amount)
-    }
-  })
-  return unsubscribe
+  return () => undefined
 }
 
 export function initializeLearningProgressHandlers(registry: ContentRegistry) {
-  if (progressUnsubscribe) return progressUnsubscribe
-  progressUnsubscribe = subscribeToEvents((event) => {
-    const store = useLearnerStore.getState()
-    const result = applyLearningEvent(
-      {
-        lessonProgress: store.lessonProgress,
-        challenges: store.challenges,
-        stats: store.stats,
-      },
-      event,
-      registry,
-    )
-    store.applyLearningProgress(result.state)
-    result.followUps.forEach(emitEvent)
+  if (pipelineUnsubscribe) return pipelineUnsubscribe
+  const queue: LearnerEvent[] = []
+  let processing = false
+  pipelineUnsubscribe = subscribeToEvents((event) => {
+    queue.push(event)
+    if (processing) return
+    processing = true
+    while (queue.length) {
+      const next = queue.shift()
+      if (!next || isLearnerOutputEvent(next)) continue
+      const store = useLearnerStore.getState()
+      const result = reduceLearnerEvent(learnerDataSnapshot(store), next, registry)
+      store.applyEventState(result.state)
+      result.followUps.forEach(emitEvent)
+    }
+    processing = false
   })
-  return progressUnsubscribe
+  return pipelineUnsubscribe
 }
 
 export function stopLearningEventHandlersForTests() {
-  unsubscribe?.()
-  unsubscribe = null
-  progressUnsubscribe?.()
-  progressUnsubscribe = null
+  pipelineUnsubscribe?.()
+  pipelineUnsubscribe = null
 }

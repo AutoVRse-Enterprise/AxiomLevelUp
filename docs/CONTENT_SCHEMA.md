@@ -103,6 +103,19 @@ primitive and challenge item passes through the same parser and semantic validat
 - Scenario graphs require unique IDs, a valid start, resolved transitions, acyclic outcome-ending
   paths and no unreachable nodes; paths outside two to four decisions produce warnings.
 - Formula TeX is parsed in Node with KaTeX and mhchem during content validation.
+- Gamification XP keys, levels, star thresholds, weekly-goal defaults and mastery weights are
+  strictly configured.
+- Badge criteria and weekly challenge progress rules resolve referenced courses, lessons,
+  challenges, concepts, primitive types and primitive rewards.
+
+## Gamification and learner state
+
+- Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
+  challenge completions, first-attempt correctness and authored primitive rewards.
+- Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
+- Learner state version 3 stores reward idempotency, challenge periods, counters, the active reward
+  run, latest activity/question results, celebrations and an abstract digital reward ledger.
+- XP, star, mastery, streak and period rules are reduced from typed learner events.
 
 ## Asset manifest
 
@@ -113,5 +126,5 @@ include `mimeType`, positive integer `width` and `height`, and non-negative `siz
 
 - Content schema: `0.1`
 - Course documents also include an independent `courseVersion`.
-- Persisted learner state uses an integer `stateVersion` and migrations.
+- Persisted learner state is version 3 and migrates older snapshots.
 - In-flight activity sessions are persisted independently at version 2; version 1 sessions restart.

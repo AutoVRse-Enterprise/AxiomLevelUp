@@ -434,7 +434,7 @@ describe('learning progress reducer', () => {
         score: 1,
         correct: true,
         attempt: 2,
-        xp: 10,
+        difficulty: 'intermediate',
       }),
       registry,
     )
@@ -455,7 +455,7 @@ describe('learning progress reducer', () => {
         score: 0.5,
         correct: false,
         attempt: 1,
-        xp: 0,
+        difficulty: 'intermediate',
       }),
       registry,
     ).state

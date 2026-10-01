@@ -3,11 +3,20 @@ import freshSeedData from '../../public/content/seeds/fresh.json'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { learnerSeedSchema } from '@/content/schema'
-import { useLearnerStore } from '@/state/learnerStore'
+import { learnerDataSnapshot, useLearnerStore } from '@/state/learnerStore'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
 const advancedSeed = learnerSeedSchema.parse(advancedSeedData)
 const freshSeed = learnerSeedSchema.parse(freshSeedData)
+
+function addTestXp(amount: number) {
+  const state = learnerDataSnapshot(useLearnerStore.getState())
+  state.xp = {
+    total: state.xp.total + amount,
+    weekly: state.xp.weekly + amount,
+  }
+  useLearnerStore.getState().applyEventState(state)
+}
 
 describe('learner store persistence', () => {
   beforeEach(async () => {
@@ -17,7 +26,7 @@ describe('learner store persistence', () => {
 
   it('round-trips learner state through IndexedDB', async () => {
     useLearnerStore.getState().replaceWithSeed(advancedSeed)
-    useLearnerStore.getState().addXp(25)
+    addTestXp(25)
 
     await expect
       .poll(() => idbStorage.getItem('learner'))
@@ -34,12 +43,29 @@ describe('learner store persistence', () => {
 
   it('resetting to the advanced seed discards mutations', () => {
     useLearnerStore.getState().replaceWithSeed(advancedSeed)
-    useLearnerStore.getState().addXp(500)
+    addTestXp(500)
+    useLearnerStore.setState((state) => ({
+      gamification: {
+        ...state.gamification,
+        celebrations: [
+          {
+            id: 'test-level',
+            type: 'level',
+            from: 7,
+            to: 8,
+          },
+        ],
+      },
+    }))
 
     useLearnerStore.getState().replaceWithSeed(advancedSeed)
 
     expect(useLearnerStore.getState().xp).toEqual(advancedSeed.xp)
     expect(useLearnerStore.getState().learner).toEqual(advancedSeed.learner)
+    expect(useLearnerStore.getState().gamification.celebrations).toEqual([])
+    expect(useLearnerStore.getState().gamification.counters).toEqual(
+      advancedSeed.gamification.counters,
+    )
     expect(useLearnerStore.getState().initialized).toBe(true)
   })
 

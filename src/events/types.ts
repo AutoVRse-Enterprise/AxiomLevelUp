@@ -2,7 +2,7 @@ import type { PrimitiveInteraction } from '@/primitives/types'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
 
-interface EventPayloads {
+export interface EventPayloads {
   app_opened: { source: 'client' }
   pathway_opened: { pathwayId: string }
   course_opened: { courseId: string }
@@ -42,7 +42,7 @@ interface EventPayloads {
     score: number
     correct: boolean
     attempt: number
-    xp: number
+    difficulty: 'foundation' | 'intermediate' | 'advanced'
     timedOut?: boolean
   }
   scenario_decision_made: {
@@ -87,8 +87,35 @@ interface EventPayloads {
   }
   badge_unlocked: { badgeId: string }
   level_up: { from: number; to: number }
+  stars_awarded: { lessonId: string; stars: number }
+  streak_updated: { currentDays: number; qualifyingDate: string }
+  weekly_goal_met: { weekStart: string; completedDays: number }
+  mastery_updated: { conceptId: string; previous: number; current: number; delta: number }
+  reward_granted: {
+    rewardType: 'badge' | 'certificate' | 'points' | 'recognition'
+    rewardId: string
+  }
   course_downloaded: { courseId: string; bytes: number }
-  xp_awarded: { amount: number; reason: string }
+  xp_awarded: {
+    amount: number
+    reason:
+      | 'question'
+      | 'lesson_complete'
+      | 'lesson_perfect'
+      | 'revision'
+      | 'challenge_complete'
+      | 'challenge_perfect'
+      | 'weekly_target'
+      | 'badge'
+      | 'demo'
+    sourceId: string
+  }
+  celebration_dismissed: { celebrationId: string }
+  demo_command:
+    | { command: 'grant_xp'; amount: number }
+    | { command: 'simulate_badge'; badgeId?: string }
+    | { command: 'simulate_level_up' }
+    | { command: 'unlock_all' }
 }
 
 export type LearnerEventName = keyof EventPayloads
@@ -100,4 +127,28 @@ export type LearnerEventDraft = {
 export type LearnerEvent = LearnerEventDraft & {
   id: string
   occurredAt: string
+}
+
+export type LearnerOutputEventName =
+  | 'badge_unlocked'
+  | 'level_up'
+  | 'stars_awarded'
+  | 'streak_updated'
+  | 'weekly_goal_met'
+  | 'mastery_updated'
+  | 'reward_granted'
+  | 'xp_awarded'
+
+export function isLearnerOutputEvent(event: LearnerEvent): boolean {
+  const outputs: ReadonlySet<LearnerOutputEventName> = new Set([
+    'badge_unlocked',
+    'level_up',
+    'stars_awarded',
+    'streak_updated',
+    'weekly_goal_met',
+    'mastery_updated',
+    'reward_granted',
+    'xp_awarded',
+  ])
+  return outputs.has(event.event as LearnerOutputEventName)
 }

@@ -1,4 +1,7 @@
+import type { ContentRegistry } from '@/content/loader'
 import type { AppConfig, Course, LearnerSeed, Lesson } from '@/content/schema'
+import { periodKey } from '@/engines/gamification/calendar'
+import { evaluateCriterion } from '@/engines/gamification/criteria'
 import type { LearnerStore } from '@/state/learnerStore'
 
 type LearnerState = Pick<
@@ -11,6 +14,7 @@ type LearnerState = Pick<
   | 'badges'
   | 'mastery'
   | 'stats'
+  | 'gamification'
 >
 
 export type LearningStatus = 'completed' | 'in_progress' | 'available' | 'locked' | 'new'
@@ -21,7 +25,10 @@ export function selectLevel(
 ) {
   return [...levels]
     .sort((a, b) => a.minimumXp - b.minimumXp)
-    .reduce((level, threshold) => (state.xp.total >= threshold.minimumXp ? threshold.level : level), 1)
+    .reduce(
+      (level, threshold) => (state.xp.total >= threshold.minimumXp ? threshold.level : level),
+      1,
+    )
 }
 
 export function selectLevelProgress(
@@ -77,7 +84,10 @@ export function selectLeaderboardView(
     }))
   const learnerIndex = rows.findIndex(({ isCurrentLearner }) => isCurrentLearner)
   if (learnerIndex < 0) return { rank: null, movement: 0, rows: rows.slice(0, visibleWindow) }
-  const start = Math.max(0, Math.min(learnerIndex - Math.floor(visibleWindow / 2), rows.length - visibleWindow))
+  const start = Math.max(
+    0,
+    Math.min(learnerIndex - Math.floor(visibleWindow / 2), rows.length - visibleWindow),
+  )
   const learnerRow = rows[learnerIndex]
   return {
     rank: learnerRow?.rank ?? null,
@@ -137,7 +147,10 @@ export function selectCourseSummary(
   let status: LearningStatus = 'available'
   if (completedCount === lessons.length) status = 'completed'
   else if (unmetCoursePrerequisites.length) status = 'locked'
-  else if (lessons.some(({ status: lessonStatus }) => lessonStatus === 'in_progress') || completedCount)
+  else if (
+    lessons.some(({ status: lessonStatus }) => lessonStatus === 'in_progress') ||
+    completedCount
+  )
     status = 'in_progress'
   else if (lessons.some(({ status: lessonStatus }) => lessonStatus === 'new')) status = 'new'
   return {
@@ -166,7 +179,9 @@ export function selectContinueLearning(
   )
   return (
     summaries.find(({ lessons }) => lessons.some(({ status }) => status === 'in_progress')) ??
-    summaries.find(({ status, nextLesson }) => status !== 'locked' && status !== 'completed' && nextLesson) ??
+    summaries.find(
+      ({ status, nextLesson }) => status !== 'locked' && status !== 'completed' && nextLesson,
+    ) ??
     null
   )
 }
@@ -229,11 +244,17 @@ export function selectRevisionRecommendations(
 }
 
 export function selectBadgeViews(
-  state: Pick<LearnerStore, 'badges'>,
+  state: Pick<LearnerStore, 'badges' | 'lessonProgress' | 'gamification' | 'streak'>,
   badges: AppConfig['badges'],
+  registry: ContentRegistry,
 ) {
   return badges
-    .map((badge) => ({ ...badge, ...state.badges[badge.id], unlocked: Boolean(state.badges[badge.id]?.unlockedAt) }))
+    .map((badge) => ({
+      ...badge,
+      ...state.badges[badge.id],
+      progress: evaluateCriterion(badge.criteria, state, registry).percentage,
+      unlocked: Boolean(state.badges[badge.id]?.unlockedAt),
+    }))
     .sort((a, b) => {
       if (a.unlocked !== b.unlocked) return a.unlocked ? -1 : 1
       return (b.unlockedAt ?? '').localeCompare(a.unlockedAt ?? '')
@@ -262,6 +283,8 @@ export function selectPathwayView(
   pathway: AppConfig['pathways'][number],
   lessonById: ReadonlyMap<string, Lesson>,
   challenges: AppConfig['challenges'],
+  currentDate?: string,
+  weekStartsOn = 1,
 ) {
   const incoming = new Map(pathway.nodes.map(({ id }) => [id, [] as string[]]))
   pathway.edges.forEach(({ from, to }) => incoming.get(to)?.push(from))
@@ -276,7 +299,8 @@ export function selectPathwayView(
   }
   const nodeViews = pathway.nodes.map((node) => {
     const lesson = node.type === 'challenge' ? undefined : lessonById.get(node.refId)
-    const challenge = node.type === 'challenge' ? challenges.find(({ id }) => id === node.refId) : undefined
+    const challenge =
+      node.type === 'challenge' ? challenges.find(({ id }) => id === node.refId) : undefined
     let status: LearningStatus = 'available'
     let unmetPrerequisites: string[] = []
     if (lesson) {
@@ -285,7 +309,11 @@ export function selectPathwayView(
       unmetPrerequisites = result.unmetPrerequisites
     } else if (challenge) {
       const progress = state.challenges[challenge.id]
-      if (progress?.completed) status = 'completed'
+      const period = state.gamification.challengePeriods[challenge.id]
+      const completedThisPeriod =
+        currentDate &&
+        period?.lastCompletedPeriod === periodKey(challenge.type, currentDate, weekStartsOn)
+      if (completedThisPeriod || (!currentDate && progress?.completed)) status = 'completed'
       else {
         const incompleteParents = (incoming.get(node.id) ?? []).filter((parentId) => {
           const parent = pathway.nodes.find(({ id }) => id === parentId)
@@ -293,7 +321,11 @@ export function selectPathwayView(
           if (parent.type === 'challenge') return !state.challenges[parent.refId]?.completed
           return state.lessonProgress[parent.refId]?.status !== 'completed'
         })
-        status = incompleteParents.length ? 'locked' : progress?.progress ? 'in_progress' : 'available'
+        status = incompleteParents.length
+          ? 'locked'
+          : progress?.progress
+            ? 'in_progress'
+            : 'available'
         unmetPrerequisites = incompleteParents
       }
     } else {

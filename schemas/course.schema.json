@@ -533,7 +533,6 @@
           "estimatedMinutes",
           "difficulty",
           "conceptIds",
-          "xpReward",
           "prerequisites",
           "primitives"
         ],

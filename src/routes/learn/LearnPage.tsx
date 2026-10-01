@@ -6,6 +6,7 @@ import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
+import { today } from '@/lib/clock'
 import { selectCourseSummary, selectPathwayView, type LearningStatus } from '@/state/selectors'
 
 type Filter = 'all' | 'in_progress' | 'not_started' | 'completed' | 'new'
@@ -29,6 +30,7 @@ export function LearnPage() {
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
   const stats = useLearnerStore((state) => state.stats)
+  const gamification = useLearnerStore((state) => state.gamification)
   const requestedFilter = searchParams.get('status')
   const activeFilter = filters.some(({ id }) => id === requestedFilter)
     ? (requestedFilter as Filter)
@@ -52,10 +54,22 @@ export function LearnPage() {
   const activePathway = appConfig.pathways.find(({ active }) => active)
   const pathwayView = activePathway
     ? selectPathwayView(
-        { learner, xp, weeklyGoal, lessonProgress, challenges, badges, mastery, stats },
+        {
+          learner,
+          xp,
+          weeklyGoal,
+          lessonProgress,
+          challenges,
+          badges,
+          mastery,
+          stats,
+          gamification,
+        },
         activePathway,
         lessonById,
         appConfig.challenges,
+        today(),
+        appConfig.product.weekStartsOn,
       )
     : null
 

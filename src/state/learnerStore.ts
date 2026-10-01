@@ -2,24 +2,44 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import type { LearnerSeed } from '@/content/schema'
-import type { LearningProgressState } from '@/engines/learning/progress'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 2
+export const LEARNER_STATE_VERSION = 3
 
-type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
+export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
 interface LearnerStore extends LearnerData {
   initialized: boolean
   storageError: string | null
   initialize: (seed: LearnerSeed) => void
   replaceWithSeed: (seed: LearnerSeed) => void
-  addXp: (amount: number) => void
-  applyLearningProgress: (progress: LearningProgressState) => void
+  applyEventState: (data: LearnerData) => void
   setStorageError: (message: string | null) => void
+}
+
+export function createEmptyGamificationState(date = today()): LearnerData['gamification'] {
+  return {
+    xpWeekStart: date,
+    weeklyTargetRewardedWeek: null,
+    lessonRewards: {},
+    challengePeriods: {},
+    counters: {
+      perfectLessons: 0,
+      weeklyGoalsMet: 0,
+      challengeCompletions: {},
+      firstAttemptCorrect: 0,
+      firstAttemptCorrectByType: {},
+      firstAttemptCorrectByConcept: {},
+    },
+    activeRun: null,
+    lastQuestionReward: null,
+    lastActivityResult: null,
+    celebrations: [],
+    digitalRewards: [],
+  }
 }
 
 const emptyData: LearnerData = {
@@ -34,6 +54,7 @@ const emptyData: LearnerData = {
   challenges: {},
   badges: {},
   mastery: {},
+  gamification: createEmptyGamificationState(),
   stats: {
     coursesCompleted: 0,
     lessonsCompleted: 0,
@@ -52,6 +73,38 @@ function dataFromSeed(seed: LearnerSeed): LearnerData {
   return state as LearnerData
 }
 
+export function migrateLearnerState(persistedState: unknown): LearnerData {
+  const state = persistedState as LearnerData
+  const completedLessonEntries = Object.entries(state.lessonProgress ?? {}).filter(
+    ([, progress]) => progress.status === 'completed',
+  )
+  const gamification =
+    state.gamification ??
+    ({
+      ...createEmptyGamificationState(state.referenceDate ?? today()),
+      lessonRewards: Object.fromEntries(
+        completedLessonEntries.map(([id, progress]) => [
+          id,
+          {
+            completionAwarded: true,
+            perfectAwarded: progress.bestScore === 100,
+          },
+        ]),
+      ),
+      counters: {
+        ...createEmptyGamificationState().counters,
+        perfectLessons: completedLessonEntries.filter(([, progress]) => progress.bestScore === 100)
+          .length,
+      },
+    } satisfies LearnerData['gamification'])
+  return {
+    ...state,
+    stateVersion: LEARNER_STATE_VERSION,
+    referenceDate: state.referenceDate ?? today(),
+    gamification,
+  }
+}
+
 export const useLearnerStore = create<LearnerStore>()(
   persist(
     (set) => ({
@@ -64,19 +117,7 @@ export const useLearnerStore = create<LearnerStore>()(
         useActivitySessionStore.getState().clear()
         set({ ...dataFromSeed(seed), initialized: true, storageError: null })
       },
-      addXp: (amount) =>
-        set((state) => ({
-          xp: {
-            total: Math.max(0, state.xp.total + amount),
-            weekly: Math.max(0, state.xp.weekly + amount),
-          },
-        })),
-      applyLearningProgress: (progress) =>
-        set({
-          lessonProgress: progress.lessonProgress,
-          challenges: progress.challenges,
-          stats: progress.stats,
-        }),
+      applyEventState: (data) => set(data),
       setStorageError: (storageError) => set({ storageError }),
     }),
     {
@@ -84,14 +125,7 @@ export const useLearnerStore = create<LearnerStore>()(
       version: LEARNER_STATE_VERSION,
       storage: createJSONStorage(() => idbStorage),
       skipHydration: true,
-      migrate: (persistedState) => {
-        const state = persistedState as LearnerStore
-        return {
-          ...state,
-          stateVersion: LEARNER_STATE_VERSION,
-          referenceDate: state.referenceDate ?? today(),
-        }
-      },
+      migrate: (persistedState) => migrateLearnerState(persistedState),
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           state?.setStorageError(
@@ -102,5 +136,25 @@ export const useLearnerStore = create<LearnerStore>()(
     },
   ),
 )
+
+export function learnerDataSnapshot(state: LearnerStore): LearnerData {
+  return {
+    stateVersion: state.stateVersion,
+    seedProfile: state.seedProfile,
+    referenceDate: state.referenceDate,
+    learner: state.learner,
+    xp: state.xp,
+    streak: state.streak,
+    weeklyGoal: state.weeklyGoal,
+    lessonProgress: state.lessonProgress,
+    challenges: state.challenges,
+    badges: state.badges,
+    mastery: state.mastery,
+    gamification: state.gamification,
+    stats: state.stats,
+    onboarding: state.onboarding,
+    offlineDownloads: state.offlineDownloads,
+  }
+}
 
 export type { LearnerStore }

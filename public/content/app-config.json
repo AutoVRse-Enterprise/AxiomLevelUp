@@ -47,9 +47,13 @@
       { "level": 8, "minimumXp": 6000, "label": "Research Fellow" }
     ],
     "stars": { "one": 0, "two": 75, "three": 90 },
+    "weeklyGoal": { "defaultTargetDays": 5 },
     "mastery": {
       "gain": 4,
       "loss": 2,
+      "defaultDifficulty": "intermediate",
+      "initialScore": 50,
+      "historyLimit": 100,
       "difficultyWeights": {
         "foundation": 0.75,
         "intermediate": 1,
@@ -124,16 +128,16 @@
     }
   ],
   "badges": [
-    { "id": "imaging-fundamentals", "title": "Imaging Fundamentals", "description": "Complete the imaging foundation sequence.", "category": "learning", "icon": "scan-line", "rewardXp": 50 },
-    { "id": "clinical-research-basics", "title": "Clinical Research Basics", "description": "Complete the clinical research introduction.", "category": "learning", "icon": "clipboard-check", "rewardXp": 50 },
-    { "id": "scientific-data-explorer", "title": "Scientific Data Explorer", "description": "Complete three data interpretation lessons.", "category": "learning", "icon": "chart-scatter", "rewardXp": 75 },
-    { "id": "perfect-lesson", "title": "Perfect Lesson", "description": "Complete a lesson without an error.", "category": "performance", "icon": "sparkles", "rewardXp": 30 },
-    { "id": "precision-observer", "title": "Precision Observer", "description": "Complete an imaging identification task precisely.", "category": "performance", "icon": "focus", "rewardXp": 40 },
-    { "id": "case-master", "title": "Case Master", "description": "Resolve three advanced cases.", "category": "performance", "icon": "brain", "rewardXp": 75 },
-    { "id": "seven-day-streak", "title": "7 Day Streak", "description": "Learn on seven consecutive days.", "category": "consistency", "icon": "flame", "rewardXp": 40 },
-    { "id": "four-week-goal", "title": "Four Week Goal", "description": "Meet the weekly goal four times.", "category": "consistency", "icon": "calendar-check", "rewardXp": 100 },
-    { "id": "challenge-ten", "title": "Challenge × 10", "description": "Complete ten daily challenges.", "category": "consistency", "icon": "target", "rewardXp": 75 },
-    { "id": "first-dicom", "title": "Imaging Explorer", "description": "Complete a first DICOM activity.", "category": "performance", "icon": "scan", "rewardXp": 40 }
+    { "id": "imaging-fundamentals", "title": "Imaging Fundamentals", "description": "Complete Imaging Orientation and CT Windowing.", "category": "learning", "icon": "scan-line", "rewardXp": 50, "criteria": { "type": "lessons_completed", "count": 2, "lessonIds": ["imaging-orientation", "ct-windowing"] } },
+    { "id": "clinical-research-basics", "title": "Clinical Research Basics", "description": "Complete two clinical research lessons.", "category": "learning", "icon": "clipboard-check", "rewardXp": 50, "criteria": { "type": "lessons_completed", "count": 2, "courseIds": ["clinical-research"] } },
+    { "id": "scientific-data-explorer", "title": "Scientific Data Explorer", "description": "Complete both data interpretation lessons.", "category": "learning", "icon": "chart-scatter", "rewardXp": 75, "criteria": { "type": "lessons_completed", "count": 2, "courseIds": ["data-interpretation"] } },
+    { "id": "perfect-lesson", "title": "Perfect Lesson", "description": "Complete one lesson with a perfect first-attempt score.", "category": "performance", "icon": "sparkles", "rewardXp": 30, "criteria": { "type": "perfect_lessons", "count": 1 } },
+    { "id": "precision-observer", "title": "Precision Observer", "description": "Complete one image hotspot correctly on the first attempt.", "category": "performance", "icon": "focus", "rewardXp": 40, "criteria": { "type": "first_attempt_correct", "count": 1, "primitiveTypes": ["image_hotspot"] } },
+    { "id": "case-master", "title": "Case Master", "description": "Complete three advanced lessons.", "category": "performance", "icon": "brain", "rewardXp": 75, "criteria": { "type": "lessons_completed", "count": 3, "difficulties": ["advanced"] } },
+    { "id": "seven-day-streak", "title": "7 Day Streak", "description": "Learn on seven consecutive days.", "category": "consistency", "icon": "flame", "rewardXp": 40, "criteria": { "type": "streak_days", "count": 7 } },
+    { "id": "four-week-goal", "title": "Four Week Goal", "description": "Meet the weekly goal four times.", "category": "consistency", "icon": "calendar-check", "rewardXp": 100, "criteria": { "type": "weekly_goals_met", "count": 4 } },
+    { "id": "challenge-ten", "title": "Challenge × 10", "description": "Complete ten daily challenges.", "category": "consistency", "icon": "target", "rewardXp": 75, "criteria": { "type": "challenges_completed", "count": 10, "challengeIds": ["daily-imaging-interpretation"] } },
+    { "id": "first-dicom", "title": "Imaging Explorer", "description": "Complete a first rewarded DICOM activity.", "category": "performance", "icon": "scan", "rewardXp": 40, "criteria": { "type": "primitive_reward", "rewardId": "first-dicom" } }
   ],
   "challenges": [
     {
@@ -251,6 +255,7 @@
       "rewardXp": 100,
       "itemCount": 3,
       "target": 3,
+      "progressRule": { "type": "lessons_completed", "count": 3, "difficulties": ["advanced"] },
       "items": []
     }
   ],

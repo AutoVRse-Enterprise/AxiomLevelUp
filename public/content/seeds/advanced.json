@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 1,
+  "stateVersion": 3,
   "seedProfile": "advanced",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -15,7 +15,7 @@
     "completedDays": ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01"]
   },
   "lessonProgress": {
-    "imaging-orientation": { "status": "completed", "stars": 3, "bestScore": 96, "attempts": 1, "lastPrimitiveIndex": 0, "completedAt": "2026-09-22T09:20:00+05:30" },
+    "imaging-orientation": { "status": "completed", "stars": 3, "bestScore": 100, "attempts": 1, "lastPrimitiveIndex": 0, "completedAt": "2026-09-22T09:20:00+05:30" },
     "ct-windowing": { "status": "completed", "stars": 2, "bestScore": 84, "attempts": 2, "lastPrimitiveIndex": 0, "completedAt": "2026-09-25T10:10:00+05:30" },
     "thoracic-ct": { "status": "current", "stars": 0, "bestScore": null, "attempts": 1, "lastPrimitiveIndex": 1, "completedAt": null },
     "imaging-case-practice": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
@@ -33,16 +33,16 @@
     "weekly-imaging-sprint": { "completed": false, "progress": 2, "bestScore": 87 }
   },
   "badges": {
-    "imaging-fundamentals": { "unlockedAt": "2026-09-25T10:12:00+05:30", "progress": 100 },
-    "clinical-research-basics": { "unlockedAt": null, "progress": 67 },
-    "scientific-data-explorer": { "unlockedAt": null, "progress": 33 },
-    "perfect-lesson": { "unlockedAt": "2026-09-22T09:21:00+05:30", "progress": 100 },
-    "precision-observer": { "unlockedAt": null, "progress": 0 },
-    "case-master": { "unlockedAt": null, "progress": 33 },
-    "seven-day-streak": { "unlockedAt": "2026-09-30T08:00:00+05:30", "progress": 100 },
-    "four-week-goal": { "unlockedAt": null, "progress": 75 },
-    "challenge-ten": { "unlockedAt": null, "progress": 60 },
-    "first-dicom": { "unlockedAt": null, "progress": 0 }
+    "imaging-fundamentals": { "unlockedAt": "2026-09-25T10:12:00+05:30" },
+    "clinical-research-basics": { "unlockedAt": null },
+    "scientific-data-explorer": { "unlockedAt": null },
+    "perfect-lesson": { "unlockedAt": "2026-09-22T09:21:00+05:30" },
+    "precision-observer": { "unlockedAt": null },
+    "case-master": { "unlockedAt": null },
+    "seven-day-streak": { "unlockedAt": "2026-09-30T08:00:00+05:30" },
+    "four-week-goal": { "unlockedAt": null },
+    "challenge-ten": { "unlockedAt": null },
+    "first-dicom": { "unlockedAt": null }
   },
   "mastery": {
     "thoracic-imaging": { "score": 64, "history": [{ "at": "2026-09-25T10:12:00+05:30", "delta": 4, "reason": "ct-windowing" }] },
@@ -53,6 +53,33 @@
     "dose-response": { "score": 74, "history": [] },
     "safety-signals": { "score": 76, "history": [] },
     "risk-escalation": { "score": 70, "history": [] }
+  },
+  "gamification": {
+    "xpWeekStart": "2026-09-28",
+    "weeklyTargetRewardedWeek": null,
+    "lessonRewards": {
+      "imaging-orientation": { "completionAwarded": true, "perfectAwarded": true },
+      "ct-windowing": { "completionAwarded": true, "perfectAwarded": false },
+      "trial-design-basics": { "completionAwarded": true, "perfectAwarded": false },
+      "confidence-and-effect": { "completionAwarded": true, "perfectAwarded": false }
+    },
+    "challengePeriods": {
+      "daily-imaging-interpretation": { "progressPeriod": "2026-10-01", "lastCompletedPeriod": null, "periodProgress": 0 },
+      "weekly-imaging-sprint": { "progressPeriod": "2026-09-28", "lastCompletedPeriod": null, "periodProgress": 2 }
+    },
+    "counters": {
+      "perfectLessons": 1,
+      "weeklyGoalsMet": 3,
+      "challengeCompletions": { "daily-imaging-interpretation": 6 },
+      "firstAttemptCorrect": 156,
+      "firstAttemptCorrectByType": {},
+      "firstAttemptCorrectByConcept": {}
+    },
+    "activeRun": null,
+    "lastQuestionReward": null,
+    "lastActivityResult": null,
+    "celebrations": [],
+    "digitalRewards": []
   },
   "stats": {
     "coursesCompleted": 1,

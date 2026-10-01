@@ -754,3 +754,190 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   through ADR-033 are unique; the roadmap points to Phase 5; architecture and schema documentation
   reflect the runtime; and the handoff now references final Phase 4 close-out commit `3710374`.
 - **Follow-ups:** Begin Phase 5 planning.
+
+### [2026-10-02 01:58] P5-T00 - Plan gamification and mastery
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Audited the Phase 4 handoff, PRD gamification/mastery requirements, current event
+  handlers, progress reducer, learner state, selectors, player summaries, surfaces, configuration
+  and seed data. Formalized the Phase 5 scope, replay-as-revision policy, functional reward UI,
+  ordered pipeline, state-v3 direction, task sequence, PRD traceability and exit criteria.
+- **Files changed:** `docs/phases/phase-05-gamification-mastery.md`, `docs/ROADMAP.md`,
+  `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Repository status/history inspection and documentation/code searches.
+- **Result/verification:** Phase 5 has an implementation-ready checklist from P5-T00 through P5-T16.
+  The roadmap and handoff now identify Phase 5 as in progress.
+- **Follow-ups:** Add strict gamification configuration and validated achievement criteria.
+
+### [2026-10-02 02:01] P5-T01 - Validate gamification content
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict XP/mastery settings, achievement criteria, weekly challenge progress
+  rules and semantic reference validation; reconciled badge copy and criteria.
+- **Files changed:** `src/content/schema/index.ts`, `src/content/loader.ts`,
+  `public/content/app-config.json`, generated schemas and schema documentation.
+- **Commands run:** Typecheck, content validation and schema export.
+- **Result/verification:** Five courses and thirteen lessons validate with zero warnings.
+- **Follow-ups:** Add learner state v3.
+
+### [2026-10-02 02:04] P5-T02 - Add learner state v3
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added reward ledgers, challenge periods, counters, run/results, celebrations and
+  digital rewards; added v2 migration, date rebasing and consistent v3 seeds.
+- **Files changed:** `src/state/learnerStore.ts`, `src/state/seedDates.ts`,
+  `public/content/seeds/advanced.json`, `public/content/seeds/fresh.json`.
+- **Commands run:** Focused state/migration tests, typecheck and content validation.
+- **Result/verification:** Migration and reset preserve idempotency and seed state.
+- **Follow-ups:** Expand typed events.
+
+### [2026-10-02 02:06] P5-T03 - Split learner event roles
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added question difficulty, typed reward outputs, demo commands and celebration
+  dismissal; removed the misleading authored-XP result field.
+- **Files changed:** `src/events/types.ts`, `src/player/ActivityPlayer.tsx`, affected tests.
+- **Commands run:** Event and player tests; typecheck.
+- **Result/verification:** Input/output payloads compile and existing event coverage passes.
+- **Follow-ups:** Compose the ordered pipeline.
+
+### [2026-10-02 02:09] P5-T04 - Add atomic event pipeline
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Composed learning, gamification and mastery reducers, replaced direct XP mutation and
+  added a re-entrant event queue with one store commit per input.
+- **Files changed:** `src/engines/pipeline.ts`, `src/events/handlers.ts`, `src/main.tsx`,
+  `src/state/learnerStore.ts`.
+- **Commands run:** Pipeline/handler tests and typecheck.
+- **Result/verification:** Informational outputs do not double count and `course_completed` queues.
+- **Follow-ups:** Implement calendar rules.
+
+### [2026-10-02 02:11] P5-T05 - Implement calendar engagement
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added local date/week helpers, streak extension/reset, weekly activity, XP rollover,
+  target rewards and daily/weekly challenge period keys.
+- **Files changed:** `src/engines/gamification/calendar.ts`,
+  `src/engines/gamification/streak.ts`, gamification state/reducer and tests.
+- **Commands run:** Calendar and pipeline tests.
+- **Result/verification:** Month/week boundaries, missed days and weekly target awards pass.
+- **Follow-ups:** Add all XP, star and level rules.
+
+### [2026-10-02 02:13] P5-T06 - Implement XP stars and levels
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added fractional first-attempt XP, completion/revision/perfect/challenge rewards,
+  reward ledgers, best stars, run summaries and level transitions.
+- **Files changed:** `src/engines/gamification/index.ts`, `levels.ts`, `stars.ts`,
+  `src/engines/pipeline.test.ts`.
+- **Commands run:** Focused pipeline tests.
+- **Result/verification:** Repeat rewards are idempotent and badge XP participates in level checks.
+- **Follow-ups:** Add mastery.
+
+### [2026-10-02 02:15] P5-T07 - Implement mastery
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added configured weighted fractional mastery, concept splitting, clamping and bounded
+  history on first attempts.
+- **Files changed:** `src/engines/mastery/mastery.ts`, `mastery.test.ts`.
+- **Commands run:** Focused mastery tests.
+- **Result/verification:** Partial credit, retry exclusion, clamping and history limits pass.
+- **Follow-ups:** Add achievement evaluation.
+
+### [2026-10-02 02:17] P5-T08 - Implement badges and rewards
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added derived criteria evaluation, idempotent unlocks, badge XP cascades, primitive
+  rewards and the abstract digital reward ledger.
+- **Files changed:** `src/engines/gamification/criteria.ts`, `index.ts`, pipeline tests.
+- **Commands run:** Badge/primitive reward pipeline tests.
+- **Result/verification:** Primitive rewards unlock once and badge XP triggers one level transition.
+- **Follow-ups:** Add derived selectors.
+
+### [2026-10-02 02:18] P5-T09 - Add gamification selectors
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added current streak, challenge period, activity result, criterion description and
+  derived badge progress selectors; updated pathway challenge periods.
+- **Files changed:** `src/state/selectors/gamification.ts`, `viewModels.ts`, selector tests.
+- **Commands run:** Selector tests.
+- **Result/verification:** Seeded badge progress is now consistent with source learner facts.
+- **Follow-ups:** Surface activity rewards.
+
+### [2026-10-02 02:19] P5-T10 - Surface earned rewards
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced the completion placeholder with XP, stars, mastery, rank and streak; added
+  question XP to feedback.
+- **Files changed:** `src/components/rewards/RewardSummary.tsx`,
+  `src/player/CompletionSummary.tsx`, `FeedbackPanel.tsx`, `ActivityPlayer.tsx`.
+- **Commands run:** Reward presentation and player tests.
+- **Result/verification:** Activity results render from committed pipeline state.
+- **Follow-ups:** Add queued celebrations.
+
+### [2026-10-02 02:20] P5-T11 - Add reward celebrations
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added persisted, queued Radix badge/level dialogs with focus management, Escape/click
+  dismissal and active-session suppression.
+- **Files changed:** `src/components/rewards/CelebrationHost.tsx`, layout integration and tests.
+- **Commands run:** Celebration component tests.
+- **Result/verification:** Badge reason/XP and level transitions are accessible and queue-safe.
+- **Follow-ups:** Update all learner surfaces.
+
+### [2026-10-02 02:21] P5-T12 - Update learner surfaces
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Updated Home, Profile, Challenge and Pathway to consume derived streak, badge and
+  challenge-period data; leaderboard continues to react to current weekly XP.
+- **Files changed:** surface routes and gamification selectors.
+- **Commands run:** Surface and selector tests.
+- **Result/verification:** All required surfaces update from shared state without local reward rules.
+- **Follow-ups:** Enable demo controls.
+
+### [2026-10-02 02:22] P5-T13 - Enable reward simulation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Enabled Grant XP, Unlock all, Simulate badge and Simulate level-up controls through
+  typed `demo_command` events.
+- **Files changed:** `src/routes/dev/DevPage.tsx`, `DevPage.test.tsx`.
+- **Commands run:** Developer tools component test.
+- **Result/verification:** All four controls emit pipeline inputs; no control mutates the store.
+- **Follow-ups:** Complete integration coverage.
+
+### [2026-10-02 02:24] P5-T14 - Complete gamification coverage
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added engine, calendar, mastery, migration, persistence/reset, handler, criteria,
+  reward UI, dev control, rewarded challenge-flow and import-boundary coverage.
+- **Files changed:** Phase 5 test files across `src/engines`, `src/events`, `src/state`,
+  `src/components` and `src/routes`.
+- **Commands run:** Full tests and focused suites.
+- **Result/verification:** 29 test files with 211 tests pass.
+- **Follow-ups:** Run browser and bundle QA.
+
+### [2026-10-02 02:29] P5-T15 - Verify reward UX
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Exercised badge and level simulation, Profile achievement/mastery output, focus,
+  Escape dismissal, reduced motion and four responsive viewports in the browser; recorded bundle
+  output.
+- **Files changed:** Phase documentation.
+- **Commands run:** `npm run check`, local Vite server and browser accessibility/CDP inspection.
+- **Result/verification:** No overflow at 375×812, 812×375, 768×900 or 1280×900. Continue received
+  dialog focus; reduced motion yielded 0.001-second animation/transition durations. Final entry
+  bundle is 674.74 kB raw / 204.44 kB gzip; precache is 98 entries / 5580.88 KiB.
+- **Follow-ups:** Close Phase 5 documentation.
+
+### [2026-10-02 02:32] P5-T16 - Close gamification and mastery
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recorded ADR-034 through ADR-039, regenerated schemas, updated architecture, roadmap,
+  phase verification and handoff, and ran the final quality gate.
+- **Files changed:** `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`, `docs/CONTENT_SCHEMA.md`,
+  `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/phases/phase-05-gamification-mastery.md`,
+  `docs/ACTIVITY_LOG.md`, generated schemas.
+- **Commands run:** Schema export, focused formatting, `npm run check`, `git diff --check`.
+- **Result/verification:** Phase 5 is complete with 29 test files and 211 tests, zero content
+  warnings and a successful production build.
+- **Follow-ups:** Begin Phase 6 DICOM learning viewer planning.

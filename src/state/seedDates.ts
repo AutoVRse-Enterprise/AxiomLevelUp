@@ -1,4 +1,5 @@
 import type { LearnerSeed } from '@/content/schema'
+import { startOfLocalWeek } from '@/engines/gamification/calendar'
 
 const DAY_MS = 86_400_000
 
@@ -17,9 +18,7 @@ function shiftTimestamp(value: string, days: number) {
 }
 
 export function rebaseSeedDates(seed: LearnerSeed, targetDate: string): LearnerSeed {
-  const days = Math.round(
-    (dateToUtcDay(targetDate) - dateToUtcDay(seed.referenceDate)) / DAY_MS,
-  )
+  const days = Math.round((dateToUtcDay(targetDate) - dateToUtcDay(seed.referenceDate)) / DAY_MS)
   const rebased = structuredClone(seed)
 
   rebased.referenceDate = targetDate
@@ -29,6 +28,44 @@ export function rebaseSeedDates(seed: LearnerSeed, targetDate: string): LearnerS
   rebased.weeklyGoal.completedDays = rebased.weeklyGoal.completedDays.map((date) =>
     shiftDate(date, days),
   )
+  rebased.gamification.xpWeekStart = startOfLocalWeek(targetDate, 1)
+  if (rebased.gamification.weeklyTargetRewardedWeek) {
+    rebased.gamification.weeklyTargetRewardedWeek = shiftDate(
+      rebased.gamification.weeklyTargetRewardedWeek,
+      days,
+    )
+  }
+  Object.entries(rebased.gamification.challengePeriods).forEach(([id, period]) => {
+    const original = seed.gamification.challengePeriods[id]
+    if (period.progressPeriod) {
+      period.progressPeriod =
+        original?.progressPeriod === seed.gamification.xpWeekStart
+          ? rebased.gamification.xpWeekStart
+          : shiftDate(period.progressPeriod, days)
+    }
+    if (period.lastCompletedPeriod) {
+      period.lastCompletedPeriod =
+        original?.lastCompletedPeriod === seed.gamification.xpWeekStart
+          ? rebased.gamification.xpWeekStart
+          : shiftDate(period.lastCompletedPeriod, days)
+    }
+  })
+  if (rebased.gamification.activeRun) {
+    rebased.gamification.activeRun.startedAt = shiftTimestamp(
+      rebased.gamification.activeRun.startedAt,
+      days,
+    )
+  }
+  if (rebased.gamification.lastQuestionReward) {
+    rebased.gamification.lastQuestionReward.at = shiftTimestamp(
+      rebased.gamification.lastQuestionReward.at,
+      days,
+    )
+  }
+  rebased.gamification.digitalRewards = rebased.gamification.digitalRewards.map((reward) => ({
+    ...reward,
+    grantedAt: shiftTimestamp(reward.grantedAt, days),
+  }))
 
   Object.values(rebased.lessonProgress).forEach((progress) => {
     if (progress.completedAt) progress.completedAt = shiftTimestamp(progress.completedAt, days)

@@ -128,9 +128,14 @@ describe('player routes', () => {
     }
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
+    expect(screen.getByText('+125')).toBeVisible()
+    expect(screen.getByLabelText('0 of 3 stars')).toBeVisible()
+    expect(screen.getByText('#6')).toBeVisible()
     expect(useLearnerStore.getState().challenges['daily-imaging-interpretation']).toMatchObject({
       completed: true,
       bestScore: 100,
     })
+    expect(useLearnerStore.getState().xp.total).toBe(4945)
+    expect(useLearnerStore.getState().mastery['image-windowing']?.score).toBe(81)
   })
 })

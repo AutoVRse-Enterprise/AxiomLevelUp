@@ -7,7 +7,6 @@ import { createRoot } from 'react-dom/client'
 import { App } from '@/app/App'
 import { emitEvent } from '@/events/bus'
 import { initializeEventLogging } from '@/events/eventLogStore'
-import { initializeLearningEventHandlers } from '@/events/handlers'
 import { registerServiceWorker } from '@/pwa/registerSW'
 
 const root = document.getElementById('root')
@@ -17,7 +16,6 @@ if (!root) {
 }
 
 initializeEventLogging()
-initializeLearningEventHandlers()
 emitEvent({ event: 'app_opened', source: 'client' })
 registerServiceWorker()
 

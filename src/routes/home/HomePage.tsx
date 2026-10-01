@@ -16,7 +16,9 @@ import { now, today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
 import {
   selectBadgeViews,
+  selectChallengePeriod,
   selectContinueLearning,
+  selectDisplayedStreak,
   selectGreetingPeriod,
   selectLeaderboardView,
   selectLevelProgress,
@@ -26,7 +28,8 @@ import {
 } from '@/state/selectors'
 
 export function HomePage() {
-  const { appConfig, catalogCourses, lessonById, courseById } = useContent()
+  const registry = useContent()
+  const { appConfig, catalogCourses, lessonById, courseById } = registry
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const streak = useLearnerStore((state) => state.streak)
@@ -36,10 +39,19 @@ export function HomePage() {
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
   const stats = useLearnerStore((state) => state.stats)
+  const gamification = useLearnerStore((state) => state.gamification)
   const summary = selectContinueLearning({ lessonProgress }, catalogCourses, lessonById, courseById)
   const imageUrl = useAssetUrl(summary?.course.imageAssetId)
   const dailyChallenge = appConfig.challenges.find(({ type }) => type === 'daily')
-  const dailyProgress = dailyChallenge ? challenges[dailyChallenge.id] : undefined
+  const currentDate = today()
+  const dailyProgress = dailyChallenge
+    ? selectChallengePeriod(
+        { gamification },
+        dailyChallenge,
+        currentDate,
+        appConfig.product.weekStartsOn,
+      )
+    : undefined
   const revisions = selectRevisionRecommendations(
     { mastery, lessonProgress },
     appConfig.concepts,
@@ -50,13 +62,29 @@ export function HomePage() {
   const activePathway = appConfig.pathways.find(({ active }) => active)
   const pathway = activePathway
     ? selectPathwayView(
-        { learner, xp, weeklyGoal, lessonProgress, challenges, badges, mastery, stats },
+        {
+          learner,
+          xp,
+          weeklyGoal,
+          lessonProgress,
+          challenges,
+          badges,
+          mastery,
+          stats,
+          gamification,
+        },
         activePathway,
         lessonById,
         appConfig.challenges,
+        currentDate,
+        appConfig.product.weekStartsOn,
       )
     : null
-  const recentBadges = selectBadgeViews({ badges }, appConfig.badges)
+  const recentBadges = selectBadgeViews(
+    { badges, lessonProgress, gamification, streak },
+    appConfig.badges,
+    registry,
+  )
     .filter(({ unlocked }) => unlocked)
     .slice(0, appConfig.product.home.recentAchievementCount)
   const leaderboard = selectLeaderboardView(
@@ -64,7 +92,8 @@ export function HomePage() {
     appConfig.leaderboard.entries,
     appConfig.product.leaderboard.visibleWindow,
   )
-  const activity = selectWeeklyActivity({ weeklyGoal }, appConfig.product.weekStartsOn, today())
+  const activity = selectWeeklyActivity({ weeklyGoal }, appConfig.product.weekStartsOn, currentDate)
+  const displayedStreak = selectDisplayedStreak({ streak }, currentDate)
   const level = selectLevelProgress({ xp }, appConfig.gamification.levels)
   const firstName = learner.name.split(/\s+/)[0] ?? learner.name
   const ctaClass =
@@ -90,7 +119,7 @@ export function HomePage() {
           <StatTile
             icon={<Flame aria-hidden="true" size={17} />}
             label="Daily streak"
-            value={`${streak.currentDays} days`}
+            value={`${displayedStreak} days`}
           />
           <StatTile
             icon={<Target aria-hidden="true" size={17} />}
