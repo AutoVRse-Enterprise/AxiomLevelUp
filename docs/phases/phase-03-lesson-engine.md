@@ -30,7 +30,7 @@ Phase 4 and DICOM primitives remain in Phase 6.
 - [x] P3-T08 — Build the accessible player shell, feedback and completion summary.
 - [x] P3-T09 — Replace immersive placeholders with guarded lesson and challenge routes.
 - [x] P3-T10 — Add representative content and player fixtures.
-- [ ] P3-T11 — Add unit, component and route integration coverage plus responsive browser QA.
+- [x] P3-T11 — Add unit, component and route integration coverage plus responsive browser QA.
 - [ ] P3-T12 — Run the quality gate and close Phase 3 documentation.
 
 ## PRD traceability

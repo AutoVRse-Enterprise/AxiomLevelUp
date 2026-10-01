@@ -343,3 +343,12 @@ This file is append-only.
 - **Commands run:** `npm run validate:content`, `npm run typecheck`.
 - **Result/verification:** All four courses and twelve lessons validate with no warnings; fixtures compile against the production contracts.
 - **Follow-ups:** Add comprehensive engine, primitive and route behavior tests and run responsive browser QA.
+
+### [2026-10-01 21:19] P3-T11 - Engine and player verification
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added schema/plan/session/completion/scoring/progress unit tests, primitive/player component tests, route guards, challenge play-through, resume/restart/exit and architecture-boundary coverage; checked the lesson intro and step at 375, 768 and 1280 px.
+- **Files changed:** `src/engines/learning/learningEngine.test.ts`, `src/player/player.test.tsx`, `src/routes/play/playerRoutes.test.tsx`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`; browser accessibility and visual checks at 375 × 812, 768 × 900 and 1280 × 900.
+- **Result/verification:** Ten test files and 52 tests pass. No horizontal overflow or IDE lint diagnostics were found.
+- **Follow-ups:** Run the complete quality gate and close architecture, ADR, roadmap and handoff documentation.
