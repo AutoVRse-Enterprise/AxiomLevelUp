@@ -1,10 +1,6 @@
 import type { AppConfig, Lesson, Primitive } from '@/content/schema'
-import {
-  assessmentPrimitiveTypes,
-  contentPrimitiveTypes,
-  domainPrimitiveTypes,
-  type PrimitiveType,
-} from '@/content/primitiveTypes'
+import { resolvePrimitiveDefinition } from '@/primitives/definitions'
+import type { PrimitiveLayout } from '@/primitives/definitions'
 
 export type ActivityKind = 'lesson' | 'challenge'
 export type StepKind = 'content' | 'assessment' | 'domain' | 'unsupported'
@@ -25,6 +21,10 @@ export interface ActivityStep {
   primitive: Primitive
   kind: StepKind
   supported: boolean
+  scored: boolean
+  layout: PrimitiveLayout
+  prompt: string
+  explorableKeys: string[]
   retry: boolean
   maxAttempts: number
 }
@@ -36,19 +36,11 @@ export interface ActivityPlan {
   unavailableReason: string | null
 }
 
-const implementedTypes = new Set<PrimitiveType>(['rich_text', 'image', 'multiple_choice'])
-const contentTypes = new Set<string>(contentPrimitiveTypes)
-const assessmentTypes = new Set<string>(assessmentPrimitiveTypes)
-const domainTypes = new Set<string>(domainPrimitiveTypes)
-
-function stepKind(type: string): StepKind {
-  if (contentTypes.has(type)) return 'content'
-  if (assessmentTypes.has(type)) return 'assessment'
-  if (domainTypes.has(type)) return 'domain'
-  return 'unsupported'
-}
-
-export function lessonActivity(courseId: string, courseVersion: string, lesson: Lesson): ActivityDefinition {
+export function lessonActivity(
+  courseId: string,
+  courseVersion: string,
+  lesson: Lesson,
+): ActivityDefinition {
   return {
     kind: 'lesson',
     id: lesson.id,
@@ -62,9 +54,7 @@ export function lessonActivity(courseId: string, courseVersion: string, lesson: 
   }
 }
 
-export function challengeActivity(
-  challenge: AppConfig['challenges'][number],
-): ActivityDefinition {
+export function challengeActivity(challenge: AppConfig['challenges'][number]): ActivityDefinition {
   return {
     kind: 'challenge',
     id: challenge.id,
@@ -85,11 +75,15 @@ export function buildActivityPlan(
   },
 ): ActivityPlan {
   const mapped = activity.primitives.map((primitive): ActivityStep => {
-    const supported = implementedTypes.has(primitive.type as PrimitiveType)
+    const resolved = resolvePrimitiveDefinition(primitive)
     return {
       primitive,
-      kind: supported ? stepKind(primitive.type) : 'unsupported',
-      supported,
+      kind: resolved?.definition.family ?? 'unsupported',
+      supported: resolved !== null,
+      scored: resolved?.definition.scored(resolved.primitive) ?? false,
+      layout: resolved?.definition.layout ?? 'stacked',
+      prompt: resolved?.definition.reviewPrompt(resolved.primitive) ?? 'Activity item',
+      explorableKeys: resolved?.definition.explorableKeys?.(resolved.primitive) ?? [],
       retry: primitive.feedback.retry ?? options.player.retryByDefault,
       maxAttempts: primitive.feedback.maxAttempts ?? options.player.maxAttempts,
     }

@@ -21,7 +21,7 @@ import { CompletionSummary } from '@/player/CompletionSummary'
 import { ExitConfirmDialog } from '@/player/ExitConfirmDialog'
 import { FeedbackPanel } from '@/player/FeedbackPanel'
 import { StepFrame } from '@/player/StepFrame'
-import { evaluatePrimitive } from '@/primitives/evaluators'
+import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 
 interface ActivityPlayerProps {

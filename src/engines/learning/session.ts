@@ -186,7 +186,7 @@ export function selectActivitySummary(
   session: ActivitySession,
   plan: ActivityPlan,
 ): ActivitySummary {
-  const scored = plan.steps.filter((step) => step.kind === 'assessment')
+  const scored = plan.steps.filter((step) => step.scored)
   const correctCount = scored.filter(
     ({ primitive }) => session.progress[primitive.id]?.firstCorrect === true,
   ).length
@@ -211,7 +211,7 @@ export function selectActivitySummary(
       .filter(({ primitive }) => session.progress[primitive.id]?.firstCorrect !== true)
       .map((step) => ({
         primitiveId: step.primitive.id,
-        prompt: primitiveText(step, 'prompt') ?? 'Assessment item',
+        prompt: step.prompt,
         explanation: primitiveText(step, 'explanation'),
         source: step.primitive.source,
       })),

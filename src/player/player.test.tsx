@@ -5,12 +5,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle } from '@/content/loader'
+import { multipleChoicePrimitiveSchema } from '@/content/schema/primitives'
 import { buildActivityPlan } from '@/engines/learning/plan'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
 import { FeedbackPanel } from '@/player/FeedbackPanel'
 import { ActivityPlayer } from '@/player/ActivityPlayer'
-import { MultipleChoicePrimitive } from '@/primitives/MultipleChoicePrimitive'
+import { MultipleChoicePrimitive } from '@/primitives/components/MultipleChoicePrimitive'
 import { makeValidContentBundle, playerFixtures } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
@@ -18,7 +19,7 @@ const plan = buildActivityPlan(playerFixtures.allTyped, {
   environment: 'development',
   player: registry.appConfig.product.player,
 })
-const primitiveSources = import.meta.glob('../primitives/*Primitive.tsx', {
+const primitiveSources = import.meta.glob('../primitives/components/*Primitive.tsx', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -113,7 +114,7 @@ describe('activity player', () => {
   it('supports keyboard selection and submission in multiple choice', async () => {
     const user = userEvent.setup()
     const onSubmit = vi.fn()
-    const question = plan.steps[1]!.primitive
+    const question = multipleChoicePrimitiveSchema.parse(plan.steps[1]!.primitive)
     render(
       <MultipleChoicePrimitive
         primitive={question}
@@ -157,7 +158,7 @@ describe('activity player', () => {
   it('keeps primitive modules independent from events and stores', () => {
     expect(Object.keys(primitiveSources)).toHaveLength(4)
     for (const source of Object.values(primitiveSources)) {
-      expect(source).not.toMatch(/@\/events|@\/state/)
+      expect(source).not.toMatch(/@\/events|@\/state|sessionStore|learnerStore/)
     }
   })
 })

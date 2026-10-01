@@ -1,32 +1,17 @@
 import { useState } from 'react'
 
 import { Button } from '@/components/ui'
+import type { MultipleChoicePrimitive as MultipleChoicePrimitiveConfig } from '@/content/schema/primitives'
 import { cn } from '@/lib/cn'
 import type { PrimitiveComponentProps } from '@/primitives/types'
-
-interface Option {
-  id: string
-  label: string
-}
-
-function isOption(value: unknown): value is Option {
-  if (!value || typeof value !== 'object') return false
-  const option = value as Record<string, unknown>
-  return typeof option.id === 'string' && typeof option.label === 'string'
-}
 
 export function MultipleChoicePrimitive({
   primitive,
   disabled,
   onInteract,
   onSubmit,
-}: PrimitiveComponentProps) {
+}: PrimitiveComponentProps<MultipleChoicePrimitiveConfig>) {
   const [selected, setSelected] = useState('')
-  const prompt =
-    typeof primitive.content.prompt === 'string' ? primitive.content.prompt : 'Choose an answer'
-  const options = Array.isArray(primitive.content.options)
-    ? primitive.content.options.filter(isOption)
-    : []
 
   return (
     <form
@@ -36,9 +21,11 @@ export function MultipleChoicePrimitive({
       }}
     >
       <fieldset disabled={disabled} className="space-y-4">
-        <legend className="text-title font-bold text-neutral-950">{prompt}</legend>
+        <legend className="text-title font-bold text-neutral-950">
+          {primitive.content.prompt}
+        </legend>
         <div className="space-y-3">
-          {options.map((option) => (
+          {primitive.content.options.map((option) => (
             <label
               key={option.id}
               className={cn(

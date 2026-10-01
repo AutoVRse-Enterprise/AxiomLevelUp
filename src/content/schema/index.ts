@@ -1,138 +1,15 @@
 import { z } from 'zod'
 
 import { primitiveTypeSet } from '../primitiveTypes'
+import { primitiveContentSchemas, type TypedPrimitive } from './primitives'
+import { idSchema, primitiveBaseSchema, type Primitive } from './primitiveBase'
 
-const idSchema = z.string().trim().min(1).regex(/^[a-z0-9][a-z0-9_-]*$/)
 const versionSchema = z.string().trim().min(1)
 const pathSchema = z.string().trim().min(1)
 const isoDateSchema = z.string().datetime({ offset: true })
 
-export const rewardSchema = z.object({
-  type: z.enum(['badge', 'certificate', 'points', 'recognition']),
-  id: idSchema,
-})
-
-export const sourceSchema = z.object({
-  title: z.string().min(1),
-  section: z.string().optional(),
-  page: z.union([z.string(), z.number()]).optional(),
-  url: z.url().optional(),
-  artifactRef: z.string().optional(),
-})
-
-const timerSchema = z.object({
-  durationSeconds: z.number().int().positive(),
-  mode: z.enum(['countdown', 'elapsed']).default('countdown'),
-})
-
-const knownCompletionSchema = z.discriminatedUnion('mode', [
-  z.object({ mode: z.literal('viewed') }),
-  z.object({ mode: z.literal('answer') }),
-  z.object({
-    mode: z.literal('minimum_interactions'),
-    count: z.number().int().positive(),
-  }),
-  z.object({ mode: z.literal('measurement') }),
-  z.object({ mode: z.literal('outcome') }),
-  z.object({ mode: z.literal('interacted') }),
-  z.object({ mode: z.literal('correct_order') }),
-])
-
-export const completionSchema = z
-  .union([knownCompletionSchema, z.looseObject({ mode: z.string().min(1) })])
-  .default({ mode: 'viewed' })
-
-export const scoringSchema = z
-  .looseObject({
-    xp: z.number().int().nonnegative().optional(),
-    difficulty: z.enum(['foundation', 'intermediate', 'advanced']).optional(),
-    weight: z.number().positive().default(1),
-  })
-  .default({ weight: 1 })
-
-export const feedbackSchema = z
-  .looseObject({
-    retry: z.boolean().optional(),
-    maxAttempts: z.number().int().positive().optional(),
-    correct: z.string().min(1).optional(),
-    incorrect: z.string().min(1).optional(),
-    hint: z.string().min(1).optional(),
-  })
-  .default({})
-
-export const primitiveBaseSchema = z.object({
-  id: idSchema,
-  type: z.string().min(1),
-  conceptIds: z.array(idSchema).default([]),
-  content: z.record(z.string(), z.unknown()),
-  assets: z.array(idSchema).default([]),
-  completion: completionSchema,
-  scoring: scoringSchema,
-  feedback: feedbackSchema,
-  reward: rewardSchema.optional(),
-  source: sourceSchema.optional(),
-  timer: timerSchema.optional(),
-})
-
-export const richTextPrimitiveSchema = primitiveBaseSchema.extend({
-  type: z.literal('rich_text'),
-  content: z.object({
-    heading: z.string().optional(),
-    body: z.string().min(1),
-    emphasis: z.array(z.string()).optional(),
-    bullets: z.array(z.string()).optional(),
-    imageAssetId: idSchema.optional(),
-    keyTakeaway: z.string().optional(),
-  }),
-})
-
-export const imagePrimitiveSchema = primitiveBaseSchema.extend({
-  type: z.literal('image'),
-  content: z.object({
-    assetId: idSchema,
-    alt: z.string().min(1),
-    caption: z.string().optional(),
-    annotations: z
-      .array(
-        z.object({
-          id: idSchema,
-          label: z.string().min(1),
-          x: z.number().min(0).max(1),
-          y: z.number().min(0).max(1),
-        }),
-      )
-      .optional(),
-  }),
-})
-
-export const multipleChoicePrimitiveSchema = primitiveBaseSchema.extend({
-  type: z.literal('multiple_choice'),
-  content: z
-    .object({
-      prompt: z.string().min(1),
-      options: z
-        .array(z.object({ id: idSchema, label: z.string().min(1) }))
-        .min(2),
-      correctOptionId: idSchema,
-      explanation: z.string().min(1),
-    })
-    .refine(
-      (value) => value.options.some((option) => option.id === value.correctOptionId),
-      'correctOptionId must reference one of the options',
-    ),
-})
-
-const typedPrimitiveSchemas = {
-  rich_text: richTextPrimitiveSchema,
-  image: imagePrimitiveSchema,
-  multiple_choice: multipleChoicePrimitiveSchema,
-} as const
-
-export type Primitive = z.infer<typeof primitiveBaseSchema>
-export type RichTextPrimitive = z.infer<typeof richTextPrimitiveSchema>
-export type ImagePrimitive = z.infer<typeof imagePrimitiveSchema>
-export type MultipleChoicePrimitive = z.infer<typeof multipleChoicePrimitiveSchema>
-export type Source = z.infer<typeof sourceSchema>
+export * from './primitiveBase'
+export * from './primitives'
 
 export interface PrimitiveParseResult {
   primitive?: Primitive
@@ -155,13 +32,17 @@ export function parsePrimitive(input: unknown): PrimitiveParseResult {
     }
   }
 
-  if (type in typedPrimitiveSchemas) {
-    const schema = typedPrimitiveSchemas[type as keyof typeof typedPrimitiveSchemas]
-    const typedResult = schema.safeParse(input)
+  if (type in primitiveContentSchemas) {
+    const contentSchema = primitiveContentSchemas[type as keyof typeof primitiveContentSchemas]
+    const typedResult = contentSchema.schema.safeParse(input)
     if (!typedResult.success) {
       return { warnings: [], issues: typedResult.error.issues }
     }
-    return { primitive: typedResult.data, warnings: [], issues: [] }
+    return {
+      primitive: typedResult.data as TypedPrimitive,
+      warnings: [],
+      issues: [],
+    }
   }
 
   return { primitive: baseResult.data, warnings: [], issues: [] }

@@ -12,7 +12,7 @@ import {
   sessionReducer,
 } from '@/engines/learning/session'
 import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
-import { evaluateMultipleChoice } from '@/primitives/evaluators'
+import { evaluatePrimitive } from '@/primitives/definitions'
 import { makeValidContentBundle, playerFixtures } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
@@ -38,6 +38,20 @@ describe('activity planning and sessions', () => {
       'unsupported',
       'assessment',
     ])
+    expect(development.steps[0]).toMatchObject({
+      supported: true,
+      scored: false,
+      layout: 'stacked',
+      prompt: 'Observe',
+      explorableKeys: [],
+    })
+    expect(development.steps[2]).toMatchObject({
+      supported: true,
+      scored: true,
+      layout: 'stacked',
+      prompt: 'Which option is supported?',
+      explorableKeys: [],
+    })
     expect(production.steps.map((step) => step.kind)).toEqual(['content', 'assessment'])
   })
 
@@ -99,7 +113,7 @@ describe('activity planning and sessions', () => {
       player: playerConfig,
     })
     const question = plan.steps[1]!.primitive
-    expect(evaluateMultipleChoice(question, 'supported').correct).toBe(true)
+    expect(evaluatePrimitive(question, 'supported').correct).toBe(true)
     expect(
       isPrimitiveComplete(question, {
         attempts: 1,

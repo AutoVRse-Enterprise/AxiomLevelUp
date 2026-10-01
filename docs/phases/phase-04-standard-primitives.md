@@ -70,7 +70,7 @@ cannot dead-end an ordering step.
 ## Checklist
 
 - [x] P4-T00 — Formalize the phase scope, catalogue, decisions, task sequence and PRD traceability.
-- [ ] P4-T01 — Add pure primitive definitions and a lazy component map; migrate the Phase 3
+- [x] P4-T01 — Add pure primitive definitions and a lazy component map; migrate the Phase 3
   primitives without behavior changes; derive support from definitions and add parity coverage.
 - [ ] P4-T02 — Add fractional scoring, scored steps, session v2 drafts and interaction keys,
   exploration/media completion and event payload changes.
@@ -144,8 +144,10 @@ cannot dead-end an ordering step.
 
 - P4-T00: phase structure, checklist, catalogue, resolved decisions and PRD traceability were
   reconciled with the approved execution plan.
-- Documentation-only diff passes `git diff --check`.
-- Runtime verification remains pending for P4-T01 through P4-T16.
+- P4-T01: strict schemas, typed asset references, pure definitions, typed lazy components,
+  definition-driven planning/evaluation and malformed-content fallback are covered by 56 tests.
+- Type checking, lint, content validation, production build and `git diff --check` pass.
+- Runtime verification remains pending for P4-T02 through P4-T16.
 
 ## Deviations
 

@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 is complete; P4-T01 is next.
+Phase 4 — Standard primitives. P4-T00 and P4-T01 are complete; P4-T02 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -12,19 +12,23 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Phase 3 delivered the resumable lesson/challenge engine, lazy primitive registry, immediate feedback and event-driven learning progress.
 - P4-T00 formalized the approved Phase 4 scope, primitive catalogue, resolved decisions, checklist,
   PRD traceability, architecture constraints and exit criteria.
-- `npm run check` last passed with 10 test files and 52 tests (no code changed since).
+- P4-T01 moved the `rich_text`, `image` and `multiple_choice` schemas into content-owned primitive
+  modules with typed asset references.
+- Pure definitions now drive primitive support, family, scoring status, layout, review prompt,
+  exploration keys and evaluation; lazy typed components live under `src/primitives/components/`.
+- The entry-bundle baseline is 595.12 kB raw and 182.85 kB gzip.
+- Type checking, lint, 11 test files with 56 tests, content validation and production build pass.
 
 ## In progress
 
-- None. Phase 4 decisions remain confirmed: synthetic ffmpeg media fixtures, lazy KaTeX + mhchem,
-  `@dnd-kit` drag for ordering with button/keyboard equivalents, and an internal hidden showcase
-  course.
+- None.
 
 ## Next three steps
 
-1. P4-T01: introduce pure primitive definitions and the lazy component map; migrate the three Phase 3 primitives without behavior change.
-2. P4-T02: fractional scoring, session v2 drafts/interaction keys and new completion modes; amend ADR-014.
-3. P4-T03/T04: review mode, shared artifact infrastructure and validation hardening (challenge items, asset references, unique primitive IDs).
+1. P4-T02: add fractional scoring, session v2 drafts/interaction keys and new completion modes;
+   amend ADR-014.
+2. P4-T03: add review mode, draft persistence, split layout and shared artifact infrastructure.
+3. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
 
 ## Blockers/questions for the user
 
@@ -44,10 +48,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Gotchas
 
-- `implementedTypes` in `src/engines/learning/plan.ts` duplicates the component registry until P4-T01 lands.
 - Challenge `items` currently bypass `parsePrimitive`; strict Phase 4 schemas do not apply to them until P4-T04.
 - Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and `dose-curve` (no axes) will fail strict schemas; migrate content in the same commit that tightens each schema.
-- The player boundary test globs `src/primitives/*Primitive.tsx`; update it when components move.
+- Definitions, content schemas and lazy components must remain in parity as new primitives land.
 - Session version 2 will discard in-flight version 1 sessions by design.
 - iPhone Safari has no element Fullscreen API; use the planned in-app overlay.
 - DICOM binaries are intentionally ignored; the committed manifest and provenance file do not install the local stack.

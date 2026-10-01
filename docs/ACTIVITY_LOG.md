@@ -388,3 +388,24 @@ This file is append-only.
 - **Commands run:** `git status --short`, `git diff --check`, `git diff --stat`.
 - **Result/verification:** P4-T00 is checked complete, P4-T01 through P4-T16 remain unchecked, the handoff points to P4-T01, and the documentation-only diff passes `git diff --check`.
 - **Follow-ups:** Start P4-T01 primitive definitions and record the Phase 3 bundle baseline.
+
+### [2026-10-01 21:24] P4-T01 - Unify primitive definitions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recorded the entry-bundle baseline; moved strict `rich_text`, `image` and
+  `multiple_choice` schemas into content-owned modules with typed asset references; introduced pure
+  definitions and a typed lazy component map; derived planning and evaluation behavior from those
+  definitions; added strict renderer fallback, parity and architecture coverage; recorded ADR-018.
+- **Files changed:** `src/content/schema/**`, `src/primitives/**`,
+  `src/engines/learning/{plan,session,learningEngine.test}.ts`,
+  `src/player/{ActivityPlayer,player.test}.tsx`, `docs/DECISIONS.md`,
+  `docs/phases/phase-04-standard-primitives.md`, `docs/HANDOFF.md`,
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Baseline `npm run build`; focused `npm run typecheck`, `npm run lint` and
+  `npm run test`; formatting; final `npm run check`; `git diff --check`.
+- **Result/verification:** Baseline entry chunk: 595.12 kB raw / 182.85 kB gzip. The final quality
+  gate passes with 11 test files and 56 tests, four courses and twelve lessons validate with no
+  warnings, and the production build remains green. Existing Cornerstone browser-externalization
+  and large lazy DICOM chunk warnings remain non-failing.
+- **Follow-ups:** Start P4-T02 fractional scoring and session v2; do not expand standard primitive
+  behavior before its scheduled task.

@@ -157,3 +157,19 @@ Player retry limits and defaults live in app configuration.
 
 **Consequences:** Phase 3 behavior is validated before rendering without blocking Phase 4 and Phase 6
 contracts from evolving.
+
+## ADR-018: Primitive definitions are the runtime source of truth
+
+**Status:** Accepted
+
+**Context:** Phase 3 maintained separate lists for planned and rendered primitive support, while
+components repeated ad hoc content checks and evaluation lived in a separate registry.
+
+**Decision:** Give each implemented primitive a pure, React-free definition that owns its family,
+scoring status, layout, review prompt, exploration metadata and evaluator. Keep strict schemas and
+asset references in the content layer, and keep lazy React components in a separate component map.
+Resolve a primitive through its strict schema before planning, rendering or evaluation.
+
+**Consequences:** Planning, rendering and evaluation cannot independently claim support for a
+primitive. The content layer remains independent from React, malformed registered content uses the
+runtime fallback, and parity tests detect drift between schemas, definitions and components.
