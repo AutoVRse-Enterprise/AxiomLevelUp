@@ -379,3 +379,12 @@ This file is append-only.
 - **Commands run:** None.
 - **Result/verification:** No open Phase 4 product decisions remain.
 - **Follow-ups:** Start P4-T01 primitive definitions.
+
+### [2026-10-01 21:13] P4-T00 - Formalize standard primitives phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recast the approved Phase 4 execution plan as the formal phase snapshot used by Phase 3, preserving the standard primitive catalogue, resolved user decisions, task checklist, PRD traceability, architecture constraints and exit criteria without duplicating implementation detail.
+- **Files changed:** `docs/phases/phase-04-standard-primitives.md`, `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `git status --short`, `git diff --check`, `git diff --stat`.
+- **Result/verification:** P4-T00 is checked complete, P4-T01 through P4-T16 remain unchecked, the handoff points to P4-T01, and the documentation-only diff passes `git diff --check`.
+- **Follow-ups:** Start P4-T01 primitive definitions and record the Phase 3 bundle baseline.

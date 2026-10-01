@@ -2,20 +2,23 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 (execution plan) is complete; P4-T01 is next.
-Plan: `docs/phases/phase-04-standard-primitives.md`.
+Phase 4 — Standard primitives. P4-T00 is complete; P4-T01 is next.
+Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
 
 - Phase 1 foundation remains green: validated content, IndexedDB learner state, event bus, PWA shell and isolated DICOM spike.
 - Phase 2 application surfaces remain configuration-driven and reflect live learner progress.
 - Phase 3 delivered the resumable lesson/challenge engine, lazy primitive registry, immediate feedback and event-driven learning progress.
-- P4-T00 defined the Phase 4 scope, primitive catalogue, contract upgrades, task checklist, sequencing, risks, planned ADRs and exit criteria.
+- P4-T00 formalized the approved Phase 4 scope, primitive catalogue, resolved decisions, checklist,
+  PRD traceability, architecture constraints and exit criteria.
 - `npm run check` last passed with 10 test files and 52 tests (no code changed since).
 
 ## In progress
 
-- None. Phase 4 decisions are confirmed: synthetic ffmpeg media fixtures, lazy KaTeX + mhchem, `@dnd-kit` drag for ordering (with button/keyboard equivalents), and an internal hidden showcase course.
+- None. Phase 4 decisions remain confirmed: synthetic ffmpeg media fixtures, lazy KaTeX + mhchem,
+  `@dnd-kit` drag for ordering with button/keyboard equivalents, and an internal hidden showcase
+  course.
 
 ## Next three steps
 
