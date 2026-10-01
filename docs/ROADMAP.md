@@ -1,17 +1,17 @@
 # Delivery roadmap
 
-| Phase | Scope                          | Status   | Exit signal                                                                              |
-| ----- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------- |
-| 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
-| 2     | Application surfaces           | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                    |
-| 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
-| 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
-| 6     | DICOM learning viewer          | In progress | Explore, guide, identify, measure and reveal modes work on target devices             |
-| 7     | Complete PWA/offline           | Planned  | Course assets can be downloaded, verified and removed                                    |
-| 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
-| 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
-| 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
+| Phase | Scope                          | Status      | Exit signal                                                                              |
+| ----- | ------------------------------ | ----------- | ---------------------------------------------------------------------------------------- |
+| 1     | Foundation and DICOM/PWA spike | Complete    | Validated content, persistent seed state, installable shell and documented DICOM verdict |
+| 2     | Application surfaces           | Complete    | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
+| 3     | Core lesson engine             | Complete    | A configured lesson executes from start to completion                                    |
+| 4     | Standard primitives            | Complete    | Content, assessment and scenario primitives are playable and tested                      |
+| 5     | Gamification and mastery       | Complete    | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
+| 6     | DICOM learning viewer          | In progress | Explore, guide, identify, measure and reveal modes work on target devices                |
+| 7     | Complete PWA/offline           | Planned     | Course assets can be downloaded, verified and removed                                    |
+| 8     | Product polish                 | Planned     | Responsive, accessible, animated, performant and resilient target flows                  |
+| 9     | Showcase and device QA         | Planned     | The 18-primitive fixture passes the browser/device matrix                                |
+| 10    | Sanofi demo course             | Planned     | Prospect-specific content runs without runtime code changes                              |
 
 ## Sequencing note
 

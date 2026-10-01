@@ -963,3 +963,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Phase 6 has an actionable implementation contract; the roadmap marks it
   in progress.
 - **Follow-ups:** Build the externally hosted series pipeline.
+
+### [2026-10-02 03:09] P6-T01 - Add hosted series pipeline
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a v0.2 DICOM manifest with geometry, file sizes and SHA-256 hashes; local and
+  remote verification; a development CORS server; configurable series URL resolution; external-host
+  Workbox matching; and production-series provenance/hosting guidance.
+- **Files changed:** `scripts/dicom/prepare-series.mjs`, `scripts/dicom/verify-series.mjs`,
+  `scripts/dicom/serve-series.mjs`, `src/imaging/seriesUrl.ts`, `vite.config.ts`, `package.json`,
+  `.env.example`, `public/assets/dicom/thoracic-ct/`, phase documentation.
+- **Commands run:** `npm run dicom:prepare`, `npm run dicom:verify`, Prettier, typecheck, lint.
+- **Result/verification:** All 125 instances and 65,894,350 bytes passed size and SHA-256
+  verification. Type checking passed; lint identified Node-global declarations and was corrected.
+- **Follow-ups:** Author calibrated educational targets from the stack.
