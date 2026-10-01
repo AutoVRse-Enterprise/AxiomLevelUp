@@ -7,6 +7,7 @@ Phase 5 — Gamification and mastery is complete. Phase 6 — DICOM learning vie
 ## Done
 
 - Phase 5 implemented P5-T00 through P5-T16 and satisfies its exit criteria.
+- Phase 5 implementation is committed at `6736a96`.
 - One queued learner-event subscriber reduces input events through learning progress,
   gamification and mastery and commits learner state once. Informational output events are retained
   in event history without being reduced again.
