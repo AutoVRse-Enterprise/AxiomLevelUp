@@ -283,6 +283,8 @@ function validateCommon(
 }
 
 export type DicomExplorePrimitive = z.infer<typeof dicomExplorePrimitiveSchema>
+export type DicomPresetContent = z.infer<typeof dicomPresetSchema>
+export type DicomTool = z.infer<typeof dicomToolSchema>
 export type DicomGuidedPrimitive = z.infer<typeof dicomGuidedPrimitiveSchema>
 export type DicomIdentifyRegionPrimitive = z.infer<typeof dicomIdentifyRegionPrimitiveSchema>
 export type DicomMeasurePrimitive = z.infer<typeof dicomMeasurePrimitiveSchema>

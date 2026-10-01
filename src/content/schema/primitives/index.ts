@@ -72,7 +72,9 @@ export {
   type DicomGuidedPrimitive,
   type DicomIdentifyRegionPrimitive,
   type DicomMeasurePrimitive,
+  type DicomPresetContent,
   type DicomPrimitive,
+  type DicomTool,
 } from './dicom'
 export { fillBlankPrimitiveSchema, type FillBlankPrimitive } from './fillBlank'
 export { formulaPrimitiveSchema, type FormulaPrimitive } from './formula'

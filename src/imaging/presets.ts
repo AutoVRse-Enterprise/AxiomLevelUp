@@ -1,8 +1,6 @@
-import type { z } from 'zod'
+import type { DicomPresetContent } from '@/content/schema/primitives'
 
-import type { dicomPresetSchema } from '@/content/schema/primitives'
-
-export type DicomPreset = z.infer<typeof dicomPresetSchema>
+export type DicomPreset = DicomPresetContent
 
 export function presetVoiRange(preset: DicomPreset) {
   return {

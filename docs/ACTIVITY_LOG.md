@@ -1028,3 +1028,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Type checking passes and 22 focused tests pass. DICOM events remain
   ordinary pipeline inputs and preserve the callback-only primitive boundary.
 - **Follow-ups:** Build the production Cornerstone adapter.
+
+### [2026-10-02 03:50] P6-T06 - Add production imaging adapter
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict hosted-manifest loading and metadata reconciliation, a lazy
+  Cornerstone-only adapter, per-instance engines/tool groups, CPU fallback, coordinate transforms,
+  progressive nearby-first prefetch, calibrated measurement callbacks, context-loss handling and
+  reference-counted cache cleanup.
+- **Files changed:** `src/imaging/series.ts`, `src/imaging/viewer/`,
+  `src/imaging/cornerstone/createController.ts`, DICOM exported types.
+- **Commands run:** Cornerstone API inspection, Prettier, typecheck and lint.
+- **Result/verification:** The production adapter compiles without any eager Cornerstone import
+  outside `src/imaging/cornerstone`; initialization and cleanup are StrictMode-tolerant.
+- **Follow-ups:** Build the responsive shared viewer shell.
