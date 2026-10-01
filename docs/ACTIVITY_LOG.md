@@ -1042,3 +1042,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** The production adapter compiles without any eager Cornerstone import
   outside `src/imaging/cornerstone`; initialization and cleanup are StrictMode-tolerant.
 - **Follow-ups:** Build the responsive shared viewer shell.
+
+### [2026-10-02 04:03] P6-T07 - Add DICOM viewer shell
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the shared viewer with loading/error/retry/skip states, configured tools and
+  presets, range and keyboard slice navigation, fit/reset, coordinate-aware annotation overlay,
+  touch tap discrimination and fullscreen/fixed-overlay immersive behavior with instructions sheet.
+- **Files changed:** `src/imaging/viewer/DicomViewer.tsx`, `AnnotationOverlay.tsx`,
+  `useDicomViewer.ts`, phase documentation.
+- **Commands run:** Prettier, typecheck and lint.
+- **Result/verification:** The viewer shell is keyboard-labelled, responsive, safe-area aware and
+  keeps imaging behind the lazy controller boundary.
+- **Follow-ups:** Implement explore and guided primitive behavior.

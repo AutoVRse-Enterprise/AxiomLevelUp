@@ -35,8 +35,22 @@ const initialState: DicomViewerState = {
 
 export function useDicomViewer(options: UseDicomViewerOptions) {
   const [state, setState] = useState(initialState)
+  const [controller, setController] = useState<DicomViewerController | null>(null)
   const [retryToken, setRetryToken] = useState(0)
   const controllerRef = useRef<DicomViewerController | null>(null)
+  const callbacks = useRef({
+    onSlice: options.onSlice,
+    onWindow: options.onWindow,
+    onMeasurement: options.onMeasurement,
+  })
+
+  useEffect(() => {
+    callbacks.current = {
+      onSlice: options.onSlice,
+      onWindow: options.onWindow,
+      onMeasurement: options.onMeasurement,
+    }
+  }, [options.onMeasurement, options.onSlice, options.onWindow])
 
   useEffect(() => {
     if (!options.element) return
@@ -56,12 +70,15 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
           onState: (next) => {
             if (active) setState(next)
           },
-          onSlice: options.onSlice,
-          onWindow: options.onWindow,
-          onMeasurement: options.onMeasurement,
+          onSlice: (slice) => callbacks.current.onSlice(slice),
+          onWindow: (center, width) => callbacks.current.onWindow(center, width),
+          onMeasurement: (measurement) => callbacks.current.onMeasurement(measurement),
         })
         if (!active) controller.destroy()
-        else controllerRef.current = controller
+        else {
+          controllerRef.current = controller
+          setController(controller)
+        }
       },
     )
 
@@ -79,16 +96,14 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
     options.element,
     options.initialPreset,
     options.initialSlice,
-    options.onMeasurement,
-    options.onSlice,
-    options.onWindow,
     retryToken,
   ])
 
   const retry = useCallback(() => {
     setState({ ...initialState, total: options.asset.series.sliceCount })
+    setController(null)
     setRetryToken((value) => value + 1)
   }, [options.asset.series.sliceCount])
 
-  return { state, controllerRef, retry }
+  return { state, controller, retry }
 }

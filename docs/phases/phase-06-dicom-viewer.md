@@ -43,7 +43,7 @@ mobile emulation.
 - [x] P6-T04 — Add pure imaging geometry, requirements, evaluation and primitive definitions.
 - [x] P6-T05 — Add typed DICOM interactions, events and product configuration.
 - [x] P6-T06 — Add the production Cornerstone adapter and progressive stack controller.
-- [ ] P6-T07 — Add the shared responsive and immersive DICOM viewer shell.
+- [x] P6-T07 — Add the shared responsive and immersive DICOM viewer shell.
 - [ ] P6-T08 — Implement explore and guided inspection primitives.
 - [ ] P6-T09 — Implement slice-aware region identification.
 - [ ] P6-T10 — Implement calibrated length measurement.
