@@ -490,3 +490,36 @@ This file is append-only.
   remain non-failing.
 - **Follow-ups:** Start P4-T06 classification, matching and accessible ordering using the shared
   review semantics without coupling components to player state.
+
+### [2026-10-01 22:04] P4-T06 - Install ordering interaction dependencies
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Verified the current `@dnd-kit` packages accept React 19 through their published peer
+  ranges, then installed core, sortable and utility packages for accessible ordering interactions.
+- **Files changed:** `package.json`, `package-lock.json`.
+- **Commands run:** `npm view @dnd-kit/{core,sortable,utilities}@latest`; `npm install
+@dnd-kit/core@^6.3.1 @dnd-kit/sortable@^10.0.0 @dnd-kit/utilities@^3.2.2`.
+- **Result/verification:** npm resolved compatible packages successfully. The existing audit reports
+  12 transitive vulnerabilities; no forced dependency changes were applied.
+- **Follow-ups:** Add strict structured-assessment schemas, evaluators, components and tests.
+
+### [2026-10-01 22:10] P4-T06 - Add structured assessments
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict classification, match-pairs and ordering schemas with semantic reference
+  checks; pure exact/partial evaluators; resumable draft and reveal-aware review components;
+  select-first classification/matching interactions; and accessible drag, keyboard and button
+  ordering. Migrated safety `escalation-order`, recorded ADR-025 and completed the phase checklist.
+- **Files changed:** `package.json`, `package-lock.json`,
+  `public/content/courses/safety-assessment.json`, `src/content/schema/primitives/**`,
+  `src/primitives/{components,definitions}/**`, `src/primitives/componentRegistry.ts`,
+  `src/primitives/structuredAssessments.test.tsx`, `src/{engines/learning,player}/*.test.ts*`,
+  `docs/{ACTIVITY_LOG,CONTENT_SCHEMA,DECISIONS,HANDOFF}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck, lint and Vitest runs; `npm run schema:export`;
+  `npm run validate:content`; `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 14 test files and 114 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. IDE lint diagnostics
+  are clear. Existing Cornerstone browser-externalization and large lazy chunk warnings remain
+  non-failing; ordering is emitted as a lazy 49.87 kB minified chunk.
+- **Follow-ups:** Start P4-T07 fill-blank and numeric typed-response assessments.

@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T05 are complete; P4-T06 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T06 are complete; P4-T07 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -30,9 +30,16 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   reporting, deterministic per-attempt shuffle and reveal-aware review marks.
 - Multiple-select supports all-or-nothing and bounded partial scoring; malformed responses score
   zero, and true/false responses remain booleans through draft and submission.
-- ADR-021, ADR-026, ADR-027 and ADR-028 record player lifecycle, artifact viewport, semantic
-  validation and shared choice semantics.
-- Type checking, lint, 13 test files with 95 tests, content validation and production build pass.
+- Classification and matching use resumable ID assignment records, tap-first interaction,
+  reveal-aware review, strict internal references and exact/partial scoring; matching accepts
+  right-side distractors and displays stable numbered choices.
+- Ordering uses a deterministic unsolved start, delayed pointer/touch drag, sortable keyboard
+  sensors, announcements and always-present move controls. Responses are ordered item IDs and
+  partial scoring counts exact positions.
+- Safety content `escalation-order` now uses identified items and answer completion.
+- ADR-021, ADR-025 through ADR-028 record player lifecycle, structured assessments, artifact
+  viewport, semantic validation and shared choice semantics.
+- Type checking, lint, 14 test files with 114 tests, content validation and production build pass.
 
 ## In progress
 
@@ -40,9 +47,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T06: add classification, matching and accessible ordering.
-2. P4-T07: add fill-blank and numeric typed-response assessments.
-3. P4-T08: add the timed-response wrapper and timeout behavior.
+1. P4-T07: add fill-blank and numeric typed-response assessments.
+2. P4-T08: add the timed-response wrapper and timeout behavior.
+3. P4-T09: add zoomable, hotspot and comparison image primitives.
 
 ## Blockers/questions for the user
 
@@ -65,13 +72,15 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 - Every new strict primitive schema must provide typed `assetRefs`; timer-capable types must remain
   in parity with the content-layer compatibility list.
-- Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and
-  `dose-curve` (no axes) must migrate with their strict schemas.
+- Existing `case-intro`/`trial-case` (`nodes: []`) and `dose-curve` (no axes) must migrate with
+  their strict schemas.
 - Definitions, content schemas and lazy components must remain in parity.
 - Session version 2 discards in-flight version 1 sessions by design.
 - Review re-runs the pure evaluator against the stored response; evaluators must stay deterministic.
 - Choice shuffle seeds offset review's submitted-attempt count so option order does not change after
   submission.
+- Classification and matching responses are complete source-to-target ID records; ordering
+  responses are complete ordered ID arrays. Malformed or incomplete responses score zero.
 - Single-item ordering exercises cannot be made unsolved; `ensureUnsolvedOrder` returns them
   unchanged.
 - iPhone Safari has no element Fullscreen API; use `ArtifactOverlay`.

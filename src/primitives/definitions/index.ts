@@ -6,9 +6,12 @@ import {
   type TypedPrimitive,
   type TypedPrimitiveType,
 } from '@/content/schema/primitives'
+import { classificationDefinition } from '@/primitives/definitions/classification'
 import { imageDefinition } from '@/primitives/definitions/image'
+import { matchPairsDefinition } from '@/primitives/definitions/matchPairs'
 import { multipleChoiceDefinition } from '@/primitives/definitions/multipleChoice'
 import { multipleSelectDefinition } from '@/primitives/definitions/multipleSelect'
+import { orderingDefinition } from '@/primitives/definitions/ordering'
 import { richTextDefinition } from '@/primitives/definitions/richText'
 import { trueFalseDefinition } from '@/primitives/definitions/trueFalse'
 import type { PrimitiveDefinition, PrimitiveDefinitionMap } from '@/primitives/definitions/types'
@@ -22,6 +25,9 @@ export const primitiveDefinitions = {
   multiple_choice: multipleChoiceDefinition,
   multiple_select: multipleSelectDefinition,
   true_false: trueFalseDefinition,
+  classification: classificationDefinition,
+  match_pairs: matchPairsDefinition,
+  ordering: orderingDefinition,
 } satisfies PrimitiveDefinitionMap
 
 export function isSupportedPrimitiveType(type: string): type is TypedPrimitiveType {

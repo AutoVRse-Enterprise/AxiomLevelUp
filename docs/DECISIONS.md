@@ -236,6 +236,29 @@ accessing stores or the event bus. Draft-producing primitives can be added indep
 first-attempt scoring remains authoritative. A submitted response is re-evaluated for review, so
 evaluators must remain pure and deterministic.
 
+## ADR-025: Structured assessment interactions and scoring
+
+**Status:** Accepted
+
+**Context:** Classification, matching and ordering need resumable structured responses, partial
+credit and equivalent pointer, touch and keyboard paths. Ordering also needs drag interaction
+without making drag a prerequisite for completion.
+
+**Decision:** Store classification and matching drafts as source-ID-to-target-ID records and
+ordering drafts as ordered item-ID arrays. Classification and matching use select-first controls;
+matching gives right-side choices stable numbered visual labels and permits unpaired distractors.
+Ordering uses React-19-compatible `@dnd-kit` core, sortable and utility packages with delayed,
+tolerant pointer/touch activation, sortable keyboard coordinates and screen-reader announcements.
+Every ordering row also retains move-up and move-down buttons. Seed each attempt into a
+deterministic unsolved order. Exact modes award only zero or one; partial modes award the fraction
+of correctly classified, matched or positioned items. Malformed or incomplete responses score
+zero.
+
+**Consequences:** Structured drafts remain serializable and review-safe, ordering stays completable
+without drag, and all three evaluators are deterministic. Right-side distractors do not dilute the
+matching denominator, while ordering partial credit measures exact positions rather than relative
+pairs.
+
 ## ADR-026: Shared artifact viewport mathematics
 
 **Status:** Accepted

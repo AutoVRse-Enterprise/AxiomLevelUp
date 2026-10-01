@@ -25,10 +25,28 @@ const TrueFalsePrimitive = lazy(async () => {
   return { default: module.TrueFalsePrimitive }
 })
 
+const ClassificationPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ClassificationPrimitive')
+  return { default: module.ClassificationPrimitive }
+})
+
+const MatchPairsPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/MatchPairsPrimitive')
+  return { default: module.MatchPairsPrimitive }
+})
+
+const OrderingPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/OrderingPrimitive')
+  return { default: module.OrderingPrimitive }
+})
+
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
   multiple_choice: MultipleChoicePrimitive,
   multiple_select: MultipleSelectPrimitive,
   true_false: TrueFalsePrimitive,
+  classification: ClassificationPrimitive,
+  match_pairs: MatchPairsPrimitive,
+  ordering: OrderingPrimitive,
 } as const

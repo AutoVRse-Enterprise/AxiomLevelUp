@@ -80,7 +80,7 @@ cannot dead-end an ordering step.
   regenerate schemas.
 - [x] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
   shuffle and review.
-- [ ] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
+- [x] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
 - [ ] P4-T07 — Add fill-blank and numeric typed-response assessments.
 - [ ] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
 - [ ] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
@@ -159,8 +159,12 @@ cannot dead-end an ordering step.
 - P4-T05: multiple-choice, multiple-select and true/false share accessible choice/review rendering,
   strict schemas, deterministic shuffle and pure malformed-safe evaluators; partial multiple-select
   scoring subtracts incorrect selections and floors the result at zero.
+- P4-T06: classification, matching and ordering have strict semantic references, resumable
+  structured drafts, reveal-aware review and malformed-safe exact/partial evaluators. Ordering adds
+  deterministic unsolved starts, delayed pointer/touch drag, sortable keyboard controls,
+  announcements and always-present move buttons; `escalation-order` uses identified items.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T06 through P4-T16.
+- Runtime verification remains pending for P4-T07 through P4-T16.
 
 ## Deviations
 

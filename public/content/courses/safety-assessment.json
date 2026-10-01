@@ -54,10 +54,17 @@
           "conceptIds": ["risk-escalation"],
           "content": {
             "prompt": "Arrange the response from detection to action.",
-            "items": ["Triage evidence", "Assess alternatives", "Escalate proportionately", "Document decision"]
+            "items": [
+              { "id": "triage-evidence", "label": "Triage evidence" },
+              { "id": "assess-alternatives", "label": "Assess alternatives" },
+              { "id": "escalate-proportionately", "label": "Escalate proportionately" },
+              { "id": "document-decision", "label": "Document decision" }
+            ],
+            "scoringMode": "partial",
+            "explanation": "Triage the evidence, assess alternatives, escalate proportionately, then document the decision."
           },
           "assets": [],
-          "completion": { "mode": "correct_order" },
+          "completion": { "mode": "answer" },
           "scoring": { "xp": 20 },
           "feedback": {}
         }

@@ -284,7 +284,14 @@ describe('activity planning and sessions', () => {
     const ordering = parsePrimitive({
       id: 'ordering',
       type: 'ordering',
-      content: {},
+      content: {
+        prompt: 'Put these in order',
+        items: [
+          { id: 'first', label: 'First' },
+          { id: 'second', label: 'Second' },
+        ],
+        explanation: 'First, then second.',
+      },
       completion: { mode: 'correct_order' },
     }).primitive!
     const context = {
