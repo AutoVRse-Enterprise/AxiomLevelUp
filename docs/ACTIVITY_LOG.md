@@ -199,3 +199,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass; available lesson links enter the immersive route and opening a course emits `course_opened`.
 - **Follow-ups:** Build daily and weekly challenge landing states.
+
+### [2026-10-01 20:15] P2-T07 - Challenge landing
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built configuration-driven daily and weekly challenge cards with duration, item, reward, completion, best-score and target progress states plus immersive player links.
+- **Files changed:** `src/routes/challenge/ChallengePage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass; starting a daily challenge emits the typed `challenge_opened` event while gameplay remains deferred.
+- **Follow-ups:** Build the contextual weekly leaderboard.
