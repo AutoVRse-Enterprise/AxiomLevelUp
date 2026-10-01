@@ -181,3 +181,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** The catalog compiles and lints cleanly; all course metadata, assets, state and filters are configuration driven.
 - **Follow-ups:** Render the pathway DAG as an accessible journey.
+
+### [2026-10-01 20:07] P2-T05 - Accessible pathway journey
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Rendered validated pathway DAG layers as a vertical journey with branch groups, six node types, derived progress/current/locked states, keyboard-operable lock explanations and typed pathway-open events.
+- **Files changed:** `src/routes/learn/PathwayPage.tsx`, `src/events/types.ts`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass. Relationships and state are available as semantic ordered-list text while connectors remain decorative.
+- **Follow-ups:** Build course details and lesson navigation.

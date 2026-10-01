@@ -1,5 +1,6 @@
 interface EventPayloads {
   app_opened: { source: 'client' }
+  pathway_opened: { pathwayId: string }
   course_opened: { courseId: string }
   lesson_started: { courseId: string; lessonId: string }
   primitive_viewed: { lessonId: string; primitiveId: string; primitiveType: string }
@@ -16,6 +17,7 @@ interface EventPayloads {
   dicom_region_selected: { primitiveId: string; x: number; y: number; correct?: boolean }
   measurement_created: { primitiveId: string; value: number; unit: string }
   lesson_completed: { courseId: string; lessonId: string; score: number }
+  challenge_opened: { challengeId: string }
   challenge_completed: { challengeId: string; score: number }
   badge_unlocked: { badgeId: string }
   level_up: { from: number; to: number }
