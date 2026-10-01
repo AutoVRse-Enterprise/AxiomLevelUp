@@ -298,3 +298,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run test -- --run src/events/events.test.ts`.
 - **Result/verification:** Type checking and both event-bus tests pass; XP remains descriptive data on answer events and is not awarded.
 - **Follow-ups:** Reduce learning events into aggregate learner progress and follow-up events.
+
+### [2026-10-01 20:53] P3-T06 - Learning progress engine
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a pure learning-event reducer and registered it against the content registry to update lesson attempts/resume points, first-attempt statistics, completion/best scores, course completions and challenge results.
+- **Files changed:** `src/engines/learning/progress.ts`, `src/events/handlers.ts`, `src/state/learnerStore.ts`, `src/state/LearnerStateProvider.tsx`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, focused event/store tests.
+- **Result/verification:** Strict typing and four existing persistence/event tests pass; follow-up course completion remains event-driven.
+- **Follow-ups:** Add the primitive registry, pure evaluator and Phase 3 components.

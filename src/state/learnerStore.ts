@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import type { LearnerSeed } from '@/content/schema'
+import type { LearningProgressState } from '@/engines/learning/progress'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
@@ -17,6 +18,7 @@ interface LearnerStore extends LearnerData {
   initialize: (seed: LearnerSeed) => void
   replaceWithSeed: (seed: LearnerSeed) => void
   addXp: (amount: number) => void
+  applyLearningProgress: (progress: LearningProgressState) => void
   setStorageError: (message: string | null) => void
 }
 
@@ -69,6 +71,12 @@ export const useLearnerStore = create<LearnerStore>()(
             weekly: Math.max(0, state.xp.weekly + amount),
           },
         })),
+      applyLearningProgress: (progress) =>
+        set({
+          lessonProgress: progress.lessonProgress,
+          challenges: progress.challenges,
+          stats: progress.stats,
+        }),
       setStorageError: (storageError) => set({ storageError }),
     }),
     {

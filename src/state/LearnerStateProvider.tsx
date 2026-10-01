@@ -4,14 +4,17 @@ import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { Skeleton } from '@/components/ui'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { initializeLearningProgressHandlers } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
 
 export function LearnerStateProvider({ children }: { children: ReactNode }) {
-  const { seed } = useContent()
+  const registry = useContent()
+  const { seed } = registry
   const [ready, setReady] = useState(false)
   const storageError = useLearnerStore((state) => state.storageError)
 
   useEffect(() => {
+    initializeLearningProgressHandlers(registry)
     let active = true
     void Promise.all([
       Promise.resolve(useLearnerStore.persist.rehydrate()),
@@ -32,7 +35,7 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false
     }
-  }, [seed])
+  }, [registry, seed])
 
   if (storageError) {
     return (
