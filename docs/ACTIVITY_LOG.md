@@ -289,3 +289,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`.
 - **Result/verification:** One incomplete activity session can be restored independently from aggregate learner state.
 - **Follow-ups:** Extend typed events to cover activity lifecycle, primitive completion and result summaries.
+
+### [2026-10-01 20:49] P3-T05 - Player event taxonomy
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Expanded typed events for lesson and challenge start, primitive context/completion, exits, result summaries and course completion.
+- **Files changed:** `src/events/types.ts`, `src/events/events.test.ts`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, `npm run test -- --run src/events/events.test.ts`.
+- **Result/verification:** Type checking and both event-bus tests pass; XP remains descriptive data on answer events and is not awarded.
+- **Follow-ups:** Reduce learning events into aggregate learner progress and follow-up events.

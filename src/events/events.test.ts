@@ -25,7 +25,10 @@ describe('learner event bus', () => {
 
     const emitted = emitEvent({
       event: 'question_answered',
+      activityKind: 'lesson',
+      activityId: 'lesson-1',
       questionId: 'question-1',
+      primitiveType: 'multiple_choice',
       conceptIds: ['dose-response'],
       correct: true,
       attempt: 1,
