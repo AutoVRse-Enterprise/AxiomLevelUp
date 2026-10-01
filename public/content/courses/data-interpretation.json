@@ -54,10 +54,37 @@
           "conceptIds": ["dose-response"],
           "content": {
             "chartType": "dose_response",
-            "series": [{ "label": "Response", "values": [5, 14, 31, 58, 79, 88, 90] }]
+            "title": "Concentration-response curve",
+            "summary": "Response rises with concentration and approaches a plateau near 90 percent; the fitted EC50 is 0.3 micromolar.",
+            "axes": {
+              "x": { "label": "Concentration", "unit": "µM", "scale": "log" },
+              "y": { "label": "Response", "unit": "%", "scale": "linear" }
+            },
+            "series": [
+              {
+                "id": "observed-response",
+                "label": "Observed response",
+                "points": [
+                  { "id": "dose-001", "x": 0.01, "y": 5 },
+                  { "id": "dose-003", "x": 0.03, "y": 14 },
+                  { "id": "dose-01", "x": 0.1, "y": 31 },
+                  { "id": "dose-03", "x": 0.3, "y": 58 },
+                  { "id": "dose-1", "x": 1, "y": 79 },
+                  { "id": "dose-3", "x": 3, "y": 88 },
+                  { "id": "dose-10", "x": 10, "y": 90 }
+                ]
+              }
+            ],
+            "fourParameterLogistic": {
+              "bottom": 4,
+              "top": 91,
+              "ec50": 0.3,
+              "hill": 1.15,
+              "showEc50Marker": true
+            }
           },
           "assets": [],
-          "completion": { "mode": "interacted" },
+          "completion": { "mode": "viewed" },
           "scoring": {},
           "feedback": {}
         }

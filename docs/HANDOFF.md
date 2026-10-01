@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T09 are complete; P4-T10 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T10 are complete; P4-T11 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -54,11 +54,22 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   testing. Image comparisons support an accessible native slider and responsive side-by-side mode.
 - Three original synthetic SVG showcase assets and their provenance are under
   `public/assets/images/showcase`.
+- Data tables use strict complete-row schemas, semantic scoped headers, focusable labelled
+  horizontal scrolling, sticky first columns, authored units/alignment/emphasis/highlight markers
+  and the shared full-screen artifact overlay.
+- Native SVG charts support line, bar, scatter and dose-response contracts with required summaries,
+  labelled/unit-bearing axes, linear/log/category scales, focusable shape-distinguished points,
+  source-table toggles and optional 4PL curves/EC50 markers.
+- Formulas lazy-load KaTeX, mhchem and their CSS, render with an untrusted non-throwing runtime
+  policy, expose authored labels/variables and receive a strict Node parse during content
+  validation.
+- Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
+  fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021, ADR-025 through ADR-031 record player lifecycle, structured assessments, artifact
-  viewport, semantic validation, assessment semantics, timed-response lifecycle and normalized
-  image regions.
-- Type checking, lint, 16 test files with 147 tests, content validation and production build pass.
+- ADR-021 and ADR-023 through ADR-031 record player lifecycle, scientific data, structured
+  assessments, artifact viewport, semantic validation, assessment semantics, timed-response
+  lifecycle and normalized image regions.
+- Type checking, lint, 17 test files with 157 tests, content validation and production build pass.
 
 ## In progress
 
@@ -66,9 +77,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T10: add data tables, charts and formula primitives.
-2. P4-T11: add video, audio, carousel and PDF-reference primitives.
-3. P4-T12: add scenario schemas, engine and resumable UI.
+1. P4-T11: add video, audio, carousel and PDF-reference primitives.
+2. P4-T12: add scenario schemas, engine and resumable UI.
+3. P4-T13: add the internal showcase course and primitive gallery.
 
 ## Blockers/questions for the user
 
@@ -91,8 +102,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 - Every new strict primitive schema must provide typed `assetRefs`; timer-capable types must remain
   in parity with the content-layer compatibility list.
-- Existing `case-intro`/`trial-case` (`nodes: []`) and `dose-curve` (no axes) must migrate with
-  their strict schemas.
+- Existing `case-intro`/`trial-case` (`nodes: []`) must migrate with their strict scenario schemas;
+  `dose-curve` is already migrated to the strict chart contract.
 - Definitions, content schemas and lazy components must remain in parity.
 - Session version 2 discards in-flight version 1 sessions by design.
 - Review re-runs the pure evaluator against the stored response; evaluators must stay deterministic.
@@ -115,6 +126,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Single-item ordering exercises cannot be made unsolved; `ensureUnsolvedOrder` returns them
   unchanged.
 - iPhone Safari has no element Fullscreen API; use `ArtifactOverlay`.
+- Data-table row cells must cover every declared column exactly once. Log chart values must be
+  positive; dose-response x axes are always logarithmic.
+- KaTeX CSS and fonts live in the formula lazy chunk; Node content validation intentionally parses
+  formula TeX more strictly than the non-throwing learner renderer.
 - Do not import Cornerstone outside the lazy spike module.
 - Development plans display unsupported primitives; production plans skip them.
 - Retries do not improve score: first-attempt results remain authoritative.

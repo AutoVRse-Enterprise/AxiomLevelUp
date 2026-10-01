@@ -25,6 +25,21 @@ const ImageComparePrimitive = lazy(async () => {
   return { default: module.ImageComparePrimitive }
 })
 
+const DataTablePrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/DataTablePrimitive')
+  return { default: module.DataTablePrimitive }
+})
+
+const ChartPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ChartPrimitive')
+  return { default: module.ChartPrimitive }
+})
+
+const FormulaPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/FormulaPrimitive')
+  return { default: module.FormulaPrimitive }
+})
+
 const MultipleChoicePrimitive = lazy(async () => {
   const module = await import('@/primitives/components/MultipleChoicePrimitive')
   return { default: module.MultipleChoicePrimitive }
@@ -71,6 +86,9 @@ export const primitiveComponents = {
   zoomable_image: ZoomableImagePrimitive,
   image_hotspot: ImageHotspotPrimitive,
   image_compare: ImageComparePrimitive,
+  data_table: DataTablePrimitive,
+  chart: ChartPrimitive,
+  formula: FormulaPrimitive,
   multiple_choice: MultipleChoicePrimitive,
   multiple_select: MultipleSelectPrimitive,
   true_false: TrueFalsePrimitive,

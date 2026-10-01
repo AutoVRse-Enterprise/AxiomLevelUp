@@ -1,6 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import katex from 'katex'
+import 'katex/contrib/mhchem'
 
 import {
   ContentValidationError,
@@ -8,6 +10,7 @@ import {
   type ContentBundleInput,
 } from '../src/content/loader.ts'
 import { contentManifestSchema } from '../src/content/schema/index.ts'
+import { formulaPrimitiveSchema } from '../src/content/schema/primitives/formula.ts'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const contentRoot = resolve(root, 'public/content')
@@ -47,6 +50,43 @@ async function main() {
   }
 
   const registry = validateContentBundle(input)
+  const formulaIssues = registry.courses.flatMap((course) =>
+    course.lessons.flatMap((lesson) =>
+      lesson.primitives.flatMap((primitive, primitiveIndex) => {
+        if (primitive.type !== 'formula') return []
+        const formula = formulaPrimitiveSchema.parse(primitive)
+        return formula.content.expressions.flatMap((expression, expressionIndex) => {
+          try {
+            katex.renderToString(expression.tex, {
+              displayMode: expression.display,
+              trust: false,
+              throwOnError: true,
+              strict: 'error',
+            })
+            return []
+          } catch (error) {
+            return [
+              {
+                file:
+                  input.courseFiles.find(
+                    ({ data }) =>
+                      typeof data === 'object' &&
+                      data !== null &&
+                      'id' in data &&
+                      data.id === course.id,
+                  )?.file ?? course.id,
+                path: `lessons.${lesson.id}.primitives.${primitiveIndex}.content.expressions.${expressionIndex}.tex`,
+                message: error instanceof Error ? error.message : 'Invalid TeX expression',
+                severity: 'error' as const,
+              },
+            ]
+          }
+        })
+      }),
+    ),
+  )
+  if (formulaIssues.length > 0) throw new ContentValidationError(formulaIssues)
+
   console.log(
     `Validated ${registry.courses.length} courses, ${registry.lessonById.size} lessons and ${registry.warnings.length} warnings.`,
   )

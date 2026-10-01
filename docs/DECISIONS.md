@@ -236,6 +236,43 @@ accessing stores or the event bus. Draft-producing primitives can be added indep
 first-attempt scoring remains authoritative. A submitted response is re-evaluated for review, so
 evaluators must remain pure and deterministic.
 
+## ADR-023: Strict native scientific-data primitives
+
+**Status:** Accepted
+
+**Context:** Data tables and charts must render authored scientific values accessibly without
+course-specific React or a chart dependency. Dose-response content also needs deterministic
+logarithmic plotting and an optional fitted curve rather than an unlabelled value array.
+
+**Decision:** Define strict, reference-checked table rows and chart-specific line, bar, scatter and
+dose-response contracts. Render semantic tables with scoped headers, visible authored highlight
+markers, a focusable labelled scroll region, a sticky first column and the shared artifact overlay.
+Render charts as in-house SVG using pure linear/log scale, tick and four-parameter-logistic
+functions. Require a prose summary and labelled/unit-bearing axes, expose every datum to keyboard
+focus with series-specific shapes, and provide a semantic source-data table toggle. Dose-response
+x values and EC50 are positive and the x axis is always logarithmic.
+
+**Consequences:** Scientific data stays configuration-driven and inspectable without adding a chart
+runtime. The SVG renderer intentionally supports the four approved chart families rather than an
+arbitrary grammar. Authors must provide stable series/point IDs and complete table rows.
+
+## ADR-024: Lazy trusted-boundary formula rendering
+
+**Status:** Accepted
+
+**Context:** Scientific notation and chemical equations require proper typography, but formula code
+and fonts should not increase the entry chunk. Invalid TeX should fail content checks even though
+the learner runtime must degrade safely.
+
+**Decision:** Lazy-load KaTeX, its mhchem extension and its CSS only through the formula component.
+Render authored expressions with `trust: false` and `throwOnError: false`, while exposing a required
+author-written accessible label and optional variable definitions. During Node content validation,
+parse every formula with the same KaTeX/mhchem support using `trust: false` and
+`throwOnError: true`.
+
+**Consequences:** Formula failures are caught before deployment and runtime rendering remains
+non-fatal. The formula lazy chunk includes KaTeX JavaScript, CSS and font assets.
+
 ## ADR-025: Structured assessment interactions and scoring
 
 **Status:** Accepted

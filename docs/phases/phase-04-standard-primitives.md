@@ -84,7 +84,7 @@ cannot dead-end an ordering step.
 - [x] P4-T07 — Add fill-blank and numeric typed-response assessments.
 - [x] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
 - [x] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
-- [ ] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
+- [x] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
       `dose-curve`.
 - [ ] P4-T11 — Add video, audio, carousel and PDF-reference primitives, rich-text terms and
       synthetic media fixtures.
@@ -176,6 +176,13 @@ cannot dead-end an ordering step.
   regions. Hotspots support all-region exploration and normalized point assessment against circle,
   rectangle and polygon targets; comparisons provide accessible slider and responsive side-by-side
   modes. Original synthetic SVG fixtures include local provenance.
+- P4-T10: strict data tables provide scoped semantic headers, a focusable labelled scroll region,
+  sticky first columns, authored alignment/emphasis/highlight markers and artifact expansion.
+  In-house SVG line, bar, scatter and dose-response charts use pure scale/tick/4PL functions,
+  required summaries, labelled axes, focusable shape-distinguished data and source-table toggles.
+  Formula expressions lazy-load KaTeX, mhchem and CSS with safe runtime options, while Node content
+  validation rejects invalid TeX. The placeholder dose curve now uses the strict logarithmic
+  dose-response contract.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T10 through P4-T16.
 

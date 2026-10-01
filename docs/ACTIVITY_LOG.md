@@ -588,3 +588,26 @@ learningEngine.test.ts}`, `src/primitives/{components,definitions,shared}/**`,
   are clear. Existing Cornerstone browser-externalization and large lazy chunk warnings remain
   non-failing.
 - **Follow-ups:** Start P4-T10 data-table, chart and formula primitives.
+
+### [2026-10-01 22:53] P4-T10 - Add scientific data primitives
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict data-table, chart and formula schemas, pure definitions and lazy
+  components. Tables provide scoped headers, focusable horizontal scrolling, sticky first columns,
+  authored emphasis/highlights and artifact expansion. In-house SVG charts support line, bar,
+  scatter and dose-response data with labelled axes, source tables, keyboard-focusable
+  shape-distinguished points and pure scale/tick/4PL math. KaTeX and mhchem load only with formulas;
+  Node content validation parses TeX strictly while runtime rendering remains untrusted and
+  non-throwing. Migrated `dose-curve` and recorded ADR-023/024.
+- **Files changed:** Package manifests; the data-interpretation course; content validation/export
+  scripts; primitive schemas, definitions, lazy components and tests; player parity coverage; and
+  Phase 4 activity, schema, decision and handoff documentation.
+- **Commands run:** Installed `katex` and `@types/katex`; focused Prettier, typecheck, lint and
+  Vitest runs; `npm run schema:export`; `npm run validate:content`; `npm run build`;
+  `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 17 test files and 157 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. Data table, chart and
+  formula lazy JavaScript chunks are 2.97 kB, 8.38 kB and 294.17 kB minified; formula CSS is a
+  separate 28.83 kB lazy asset. Existing Cornerstone browser-externalization and large DICOM/entry
+  chunk warnings remain non-failing.
+- **Follow-ups:** Start P4-T11 video, audio, carousel and PDF-reference primitives.

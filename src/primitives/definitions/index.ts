@@ -6,8 +6,11 @@ import {
   type TypedPrimitive,
   type TypedPrimitiveType,
 } from '@/content/schema/primitives'
+import { chartDefinition } from '@/primitives/definitions/chart'
 import { classificationDefinition } from '@/primitives/definitions/classification'
+import { dataTableDefinition } from '@/primitives/definitions/dataTable'
 import { fillBlankDefinition } from '@/primitives/definitions/fillBlank'
+import { formulaDefinition } from '@/primitives/definitions/formula'
 import { imageDefinition } from '@/primitives/definitions/image'
 import { imageCompareDefinition } from '@/primitives/definitions/imageCompare'
 import { imageHotspotDefinition } from '@/primitives/definitions/imageHotspot'
@@ -30,6 +33,9 @@ export const primitiveDefinitions = {
   zoomable_image: zoomableImageDefinition,
   image_hotspot: imageHotspotDefinition,
   image_compare: imageCompareDefinition,
+  data_table: dataTableDefinition,
+  chart: chartDefinition,
+  formula: formulaDefinition,
   multiple_choice: multipleChoiceDefinition,
   multiple_select: multipleSelectDefinition,
   true_false: trueFalseDefinition,

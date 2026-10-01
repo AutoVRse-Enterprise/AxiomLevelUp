@@ -69,6 +69,7 @@ and challenge item passes through the same strict parser and semantic validation
 - Primitive concept, badge reward, declared asset and typed content-asset references must resolve.
 - Typed content assets must match the asset type declared by their primitive schema.
 - Timers are accepted only on registered assessment types listed by the content layer.
+- Formula TeX is parsed in Node with KaTeX and mhchem during content validation.
 
 ## Asset manifest
 
