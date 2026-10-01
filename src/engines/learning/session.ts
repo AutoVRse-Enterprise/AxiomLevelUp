@@ -7,8 +7,13 @@ export interface PrimitiveProgress {
   attempts: number
   firstCorrect: boolean | null
   lastCorrect: boolean | null
+  firstScore: number | null
+  lastScore: number | null
   response: unknown
+  draft: unknown
   interactions: number
+  interactionKeys: string[]
+  mediaProgress: number
   completed: boolean
 }
 
@@ -27,12 +32,19 @@ export type SessionAction =
   | { type: 'start'; at: string }
   | { type: 'resume' }
   | { type: 'restart'; at: string }
-  | { type: 'interact'; primitiveId: string; completed?: boolean }
+  | { type: 'draft'; primitiveId: string; draft: unknown }
+  | {
+      type: 'interact'
+      primitiveId: string
+      key?: string
+      mediaProgress?: number
+      completed?: boolean
+    }
   | {
       type: 'submit'
       primitiveId: string
       response: unknown
-      correct: boolean
+      score: number
       completed: boolean
     }
   | { type: 'complete_current'; primitiveId: string }
@@ -44,8 +56,13 @@ const emptyProgress = (): PrimitiveProgress => ({
   attempts: 0,
   firstCorrect: null,
   lastCorrect: null,
+  firstScore: null,
+  lastScore: null,
   response: null,
+  draft: null,
   interactions: 0,
+  interactionKeys: [],
+  mediaProgress: 0,
   completed: false,
 })
 
@@ -72,10 +89,7 @@ export function sessionMatchesPlan(session: ActivitySession, plan: ActivityPlan)
   )
 }
 
-export function sessionReducer(
-  state: ActivitySession,
-  action: SessionAction,
-): ActivitySession {
+export function sessionReducer(state: ActivitySession, action: SessionAction): ActivitySession {
   switch (action.type) {
     case 'start':
       return { ...state, phase: 'step', startedAt: action.at }
@@ -92,8 +106,26 @@ export function sessionReducer(
         startedAt: action.at,
         completedAt: null,
       }
+    case 'draft': {
+      const current = state.progress[action.primitiveId] ?? emptyProgress()
+      return {
+        ...state,
+        progress: {
+          ...state.progress,
+          [action.primitiveId]: { ...current, draft: action.draft },
+        },
+      }
+    }
     case 'interact': {
       const current = state.progress[action.primitiveId] ?? emptyProgress()
+      const interactionKeys =
+        action.key && !current.interactionKeys.includes(action.key)
+          ? [...current.interactionKeys, action.key]
+          : current.interactionKeys
+      const mediaProgress =
+        action.mediaProgress === undefined
+          ? current.mediaProgress
+          : Math.max(current.mediaProgress, Math.min(1, Math.max(0, action.mediaProgress)))
       return {
         ...state,
         progress: {
@@ -101,6 +133,8 @@ export function sessionReducer(
           [action.primitiveId]: {
             ...current,
             interactions: current.interactions + 1,
+            interactionKeys,
+            mediaProgress,
             completed: current.completed || Boolean(action.completed),
           },
         },
@@ -109,6 +143,8 @@ export function sessionReducer(
     case 'submit': {
       const current = state.progress[action.primitiveId] ?? emptyProgress()
       const attempts = current.attempts + 1
+      const score = Number.isFinite(action.score) ? Math.min(1, Math.max(0, action.score)) : 0
+      const correct = score === 1
       return {
         ...state,
         phase: 'feedback',
@@ -117,8 +153,10 @@ export function sessionReducer(
           [action.primitiveId]: {
             ...current,
             attempts,
-            firstCorrect: attempts === 1 ? action.correct : current.firstCorrect,
-            lastCorrect: action.correct,
+            firstCorrect: attempts === 1 ? correct : current.firstCorrect,
+            lastCorrect: correct,
+            firstScore: attempts === 1 ? score : current.firstScore,
+            lastScore: score,
             response: action.response,
             completed: action.completed,
           },
@@ -191,17 +229,14 @@ export function selectActivitySummary(
     ({ primitive }) => session.progress[primitive.id]?.firstCorrect === true,
   ).length
   const totalWeight = scored.reduce((total, step) => total + step.primitive.scoring.weight, 0)
-  const correctWeight = scored.reduce(
+  const earnedWeight = scored.reduce(
     (total, step) =>
       total +
-      (session.progress[step.primitive.id]?.firstCorrect
-        ? step.primitive.scoring.weight
-        : 0),
+      (session.progress[step.primitive.id]?.firstScore ?? 0) * step.primitive.scoring.weight,
     0,
   )
-  const score = totalWeight === 0 ? 100 : Math.round((correctWeight / totalWeight) * 100)
-  const accuracy =
-    scored.length === 0 ? 100 : Math.round((correctCount / scored.length) * 100)
+  const score = totalWeight === 0 ? 100 : Math.round((earnedWeight / totalWeight) * 100)
+  const accuracy = scored.length === 0 ? 100 : Math.round((correctCount / scored.length) * 100)
   return {
     score,
     accuracy,

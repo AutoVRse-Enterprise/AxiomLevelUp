@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 and P4-T01 are complete; P4-T02 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T02 are complete; P4-T03 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -17,7 +17,15 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Pure definitions now drive primitive support, family, scoring status, layout, review prompt,
   exploration keys and evaluation; lazy typed components live under `src/primitives/components/`.
 - The entry-bundle baseline is 595.12 kB raw and 182.85 kB gzip.
-- Type checking, lint, 11 test files with 56 tests, content validation and production build pass.
+- Evaluations and weighted summaries support normalized fractional scores while first attempts
+  remain authoritative.
+- Activity session v2 stores drafts, distinct interaction keys, monotonic media progress and first
+  and latest scores; migration discards version 1 in-flight sessions.
+- Completion supports distinct-key `minimum_interactions`, `explored`, configured
+  `media_progress`, and answer-compatible `correct_order` semantics.
+- Learner events carry fractional/timed answer data, typed artifact context, scenario decisions and
+  media milestones.
+- Type checking, lint, 11 test files with 62 tests, content validation and production build pass.
 
 ## In progress
 
@@ -25,10 +33,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T02: add fractional scoring, session v2 drafts/interaction keys and new completion modes;
-   amend ADR-014.
-2. P4-T03: add review mode, draft persistence, split layout and shared artifact infrastructure.
-3. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
+1. P4-T03: add review mode, debounced draft persistence, split layout and shared artifact
+   infrastructure.
+2. P4-T04: harden challenge-item, asset-reference, timer and unique-ID validation.
+3. P4-T05: add multiple-select and true/false assessment primitives.
 
 ## Blockers/questions for the user
 
@@ -51,7 +59,7 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Challenge `items` currently bypass `parsePrimitive`; strict Phase 4 schemas do not apply to them until P4-T04.
 - Existing `case-intro`/`trial-case` (`nodes: []`), `escalation-order` (string items) and `dose-curve` (no axes) will fail strict schemas; migrate content in the same commit that tightens each schema.
 - Definitions, content schemas and lazy components must remain in parity as new primitives land.
-- Session version 2 will discard in-flight version 1 sessions by design.
+- Session version 2 discards in-flight version 1 sessions by design.
 - iPhone Safari has no element Fullscreen API; use the planned in-app overlay.
 - DICOM binaries are intentionally ignored; the committed manifest and provenance file do not install the local stack.
 - The development routes are URL-only and must not be linked from learner navigation.

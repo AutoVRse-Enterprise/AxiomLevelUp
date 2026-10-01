@@ -119,7 +119,10 @@ describe('activity player', () => {
       <MultipleChoicePrimitive
         primitive={question}
         attempt={0}
+        mode="interactive"
+        draft={null}
         onInteract={vi.fn()}
+        onDraftChange={vi.fn()}
         onSubmit={onSubmit}
         onComplete={vi.fn()}
       />,

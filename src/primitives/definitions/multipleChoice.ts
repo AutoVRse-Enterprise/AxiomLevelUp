@@ -14,8 +14,11 @@ export const multipleChoiceDefinition = definePrimitive<MultipleChoicePrimitive>
   scored: () => true,
   evaluate: (primitive, response) => {
     const parsedResponse = responseSchema.safeParse(response)
+    const score =
+      parsedResponse.success && parsedResponse.data === primitive.content.correctOptionId ? 1 : 0
     return {
-      correct: parsedResponse.success && parsedResponse.data === primitive.content.correctOptionId,
+      score,
+      correct: score === 1,
       explanation: primitive.content.explanation,
     }
   },

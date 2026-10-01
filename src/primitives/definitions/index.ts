@@ -46,10 +46,14 @@ export function resolvePrimitiveDefinition(
 
 export function evaluatePrimitive(primitive: Primitive, response: unknown): EvaluationResult {
   const resolved = resolvePrimitiveDefinition(primitive)
-  return (
-    resolved?.definition.evaluate?.(resolved.primitive, response) ?? {
-      correct: false,
-      explanation: null,
-    }
-  )
+  const evaluation = resolved?.definition.evaluate?.(resolved.primitive, response)
+  const score =
+    evaluation && Number.isFinite(evaluation.score) ? Math.min(1, Math.max(0, evaluation.score)) : 0
+
+  return {
+    ...evaluation,
+    score,
+    correct: score === 1,
+    explanation: evaluation?.explanation ?? null,
+  }
 }

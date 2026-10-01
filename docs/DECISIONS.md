@@ -117,7 +117,7 @@ aggregate learner state.
 
 ## ADR-014: First attempts determine learning scores
 
-**Status:** Accepted
+**Status:** Accepted; amended by ADR-019
 
 **Decision:** Weight assessment score by configured `scoring.weight` and count correctness only on
 the first attempt. Retries remain learning opportunities. Activities without assessments score 100,
@@ -125,6 +125,10 @@ and lifetime question statistics count first attempts only.
 
 **Consequences:** Retry behavior cannot inflate scores while content-only lessons can complete
 normally.
+
+**Amendment:** ADR-019 replaces boolean weighted scoring with fractional first-attempt scoring.
+First-attempt authority, the 100 score for activities without scored steps and first-attempt-only
+lifetime question statistics remain unchanged.
 
 ## ADR-015: Primitive components report; the player decides
 
@@ -173,3 +177,40 @@ Resolve a primitive through its strict schema before planning, rendering or eval
 **Consequences:** Planning, rendering and evaluation cannot independently claim support for a
 primitive. The content layer remains independent from React, malformed registered content uses the
 runtime fallback, and parity tests detect drift between schemas, definitions and components.
+
+## ADR-019: Fractional first-attempt scores
+
+**Status:** Accepted
+
+**Context:** Boolean correctness cannot represent partial-credit assessments or scored scenario
+paths. Retried answers must not inflate activity scores or lifetime accuracy.
+
+**Decision:** Evaluators return a normalized score from 0 through 1 and derive `correct` from
+`score === 1`. Activity score is
+`round(100 × Σ(firstScore × weight) / Σ(weight))` across definition-scored steps. Accuracy and
+lifetime correct-answer statistics count only fully correct first attempts. Evaluators may include
+per-item `correct`, `incorrect` or `missed` results. Retries update the latest result but never
+replace the first score.
+
+**Consequences:** Multiple select, classification, matching, ordering and scenario paths can award
+deterministic partial credit without weakening first-attempt authority. Existing binary evaluators
+produce scores of zero or one, and content-only activities continue to score 100.
+
+## ADR-020: Versioned primitive session state
+
+**Status:** Accepted
+
+**Context:** Complex primitives need resumable in-progress answers, distinct exploration tracking
+and media coverage in addition to submitted responses. The version 1 session shape cannot safely
+represent these fields.
+
+**Decision:** Version activity sessions independently at version 2. Each primitive progress record
+stores `firstScore`, `lastScore`, `draft`, distinct `interactionKeys` and monotonic
+`mediaProgress`. Session actions update drafts, keyed interactions, media coverage and submitted
+scores. Discard version 1 in-flight sessions during migration rather than guessing missing state.
+Player draft writes will use the planned 300 ms debounce when draft-producing primitives are added
+in P4-T03.
+
+**Consequences:** Completion can depend on unique explored targets or configured media coverage,
+and future structured primitives have a durable draft contract. Learners with a version 1
+in-progress activity restart that activity once; aggregate learner progress is unaffected.

@@ -18,7 +18,8 @@
     },
     "player": {
       "maxAttempts": 2,
-      "retryByDefault": true
+      "retryByDefault": true,
+      "mediaCompletionThreshold": 0.9
     }
   },
   "gamification": {

@@ -31,6 +31,14 @@ const knownCompletionSchema = z.discriminatedUnion('mode', [
     mode: z.literal('minimum_interactions'),
     count: z.number().int().positive(),
   }),
+  z.object({
+    mode: z.literal('explored'),
+    count: z.number().int().positive().optional(),
+  }),
+  z.object({
+    mode: z.literal('media_progress'),
+    threshold: z.number().min(0).max(1).optional(),
+  }),
   z.object({ mode: z.literal('measurement') }),
   z.object({ mode: z.literal('outcome') }),
   z.object({ mode: z.literal('interacted') }),

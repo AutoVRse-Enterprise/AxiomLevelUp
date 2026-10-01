@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  clearEventSubscribersForTests,
-  emitEvent,
-  subscribeToEvents,
-} from '@/events/bus'
+import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
 import {
   EVENT_LOG_LIMIT,
   initializeEventLogging,
@@ -30,6 +26,7 @@ describe('learner event bus', () => {
       questionId: 'question-1',
       primitiveType: 'multiple_choice',
       conceptIds: ['dose-response'],
+      score: 1,
       correct: true,
       attempt: 1,
       xp: 10,
@@ -42,6 +39,64 @@ describe('learner event bus', () => {
     unsubscribe()
     emitEvent({ event: 'xp_awarded', amount: 10, reason: 'test' })
     expect(subscriber).toHaveBeenCalledTimes(1)
+  })
+
+  it('preserves enriched primitive, scenario and media payloads', () => {
+    const subscriber = vi.fn()
+    subscribeToEvents(subscriber)
+
+    emitEvent({
+      event: 'artifact_interacted',
+      activityKind: 'lesson',
+      activityId: 'lesson-1',
+      primitiveId: 'scenario-1',
+      primitiveType: 'scenario',
+      interaction: {
+        name: 'scenario_decision',
+        nodeId: 'decision-1',
+        choiceId: 'choice-a',
+        decisionIndex: 0,
+      },
+    })
+    emitEvent({
+      event: 'scenario_decision_made',
+      activityKind: 'lesson',
+      activityId: 'lesson-1',
+      primitiveId: 'scenario-1',
+      primitiveType: 'scenario',
+      nodeId: 'decision-1',
+      choiceId: 'choice-a',
+      decisionIndex: 0,
+    })
+    emitEvent({
+      event: 'media_progressed',
+      activityKind: 'lesson',
+      activityId: 'lesson-1',
+      primitiveId: 'video-1',
+      primitiveType: 'video',
+      milestone: 50,
+    })
+
+    expect(subscriber).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        event: 'artifact_interacted',
+        activityKind: 'lesson',
+        primitiveType: 'scenario',
+        interaction: expect.objectContaining({ choiceId: 'choice-a' }),
+      }),
+    )
+    expect(subscriber).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        event: 'scenario_decision_made',
+        decisionIndex: 0,
+      }),
+    )
+    expect(subscriber).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({ event: 'media_progressed', milestone: 50 }),
+    )
   })
 
   it('persists only the latest 500 events', () => {

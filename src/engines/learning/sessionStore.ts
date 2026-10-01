@@ -9,7 +9,19 @@ import {
 } from '@/engines/learning/session'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
-export const ACTIVITY_SESSION_VERSION = 1
+export const ACTIVITY_SESSION_VERSION = 2
+
+export function migrateActivitySessionState(
+  persistedState: unknown,
+  version: number,
+): { session: ActivitySession | null } {
+  if (version < ACTIVITY_SESSION_VERSION) return { session: null }
+  if (typeof persistedState !== 'object' || persistedState === null) {
+    return { session: null }
+  }
+  const session = (persistedState as { session?: ActivitySession | null }).session
+  return { session: session ?? null }
+}
 
 interface ActivitySessionStore {
   session: ActivitySession | null
@@ -39,6 +51,7 @@ export const useActivitySessionStore = create<ActivitySessionStore>()(
       version: ACTIVITY_SESSION_VERSION,
       storage: createJSONStorage(() => idbStorage),
       skipHydration: true,
+      migrate: migrateActivitySessionState,
       partialize: ({ session }) => ({ session }),
     },
   ),

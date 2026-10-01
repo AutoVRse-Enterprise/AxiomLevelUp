@@ -11,6 +11,10 @@ import {
   sessionMatchesPlan,
   sessionReducer,
 } from '@/engines/learning/session'
+import {
+  ACTIVITY_SESSION_VERSION,
+  migrateActivitySessionState,
+} from '@/engines/learning/sessionStore'
 import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
 import { evaluatePrimitive } from '@/primitives/definitions'
 import { makeValidContentBundle, playerFixtures } from '@/test/contentFixtures'
@@ -86,7 +90,7 @@ describe('activity planning and sessions', () => {
       type: 'submit',
       primitiveId: 'fixture-question',
       response: 'unsupported',
-      correct: false,
+      score: 0,
       completed: false,
     })
     session = sessionReducer(session, { type: 'retry' })
@@ -94,7 +98,7 @@ describe('activity planning and sessions', () => {
       type: 'submit',
       primitiveId: 'fixture-question',
       response: 'supported',
-      correct: true,
+      score: 1,
       completed: true,
     })
 
@@ -105,6 +109,10 @@ describe('activity planning and sessions', () => {
       scoredCount: 1,
     })
     expect(sessionMatchesPlan(session, plan)).toBe(true)
+    expect(session.progress['fixture-question']).toMatchObject({
+      firstScore: 0,
+      lastScore: 1,
+    })
   })
 
   it('evaluates completion contracts and multiple choice responses', () => {
@@ -118,7 +126,10 @@ describe('activity planning and sessions', () => {
       isPrimitiveComplete(question, {
         attempts: 1,
         correct: false,
-        interactions: 0,
+        interactionKeys: [],
+        explorableKeys: [],
+        mediaProgress: 0,
+        mediaCompletionThreshold: playerConfig.mediaCompletionThreshold,
         reportedComplete: false,
         retry: true,
         maxAttempts: 2,
@@ -128,12 +139,176 @@ describe('activity planning and sessions', () => {
       isPrimitiveComplete(question, {
         attempts: 2,
         correct: false,
-        interactions: 0,
+        interactionKeys: [],
+        explorableKeys: [],
+        mediaProgress: 0,
+        mediaCompletionThreshold: playerConfig.mediaCompletionThreshold,
         reportedComplete: false,
         retry: true,
         maxAttempts: 2,
       }),
     ).toBe(true)
+  })
+
+  it('weights fractional first-attempt scores and keeps retries non-authoritative', () => {
+    const baseQuestion = playerFixtures.allTyped.primitives[1]!
+    const activity = {
+      ...playerFixtures.allTyped,
+      primitives: [
+        {
+          ...structuredClone(baseQuestion),
+          id: 'partial-question',
+          scoring: { ...baseQuestion.scoring, weight: 1 },
+        },
+        {
+          ...structuredClone(baseQuestion),
+          id: 'full-question',
+          scoring: { ...baseQuestion.scoring, weight: 3 },
+        },
+      ],
+    }
+    const plan = buildActivityPlan(activity, {
+      environment: 'development',
+      player: playerConfig,
+    })
+    let session = createActivitySession(plan)
+    session = sessionReducer(session, {
+      type: 'submit',
+      primitiveId: 'partial-question',
+      response: ['partial'],
+      score: 0.5,
+      completed: false,
+    })
+    session = sessionReducer(session, { type: 'retry' })
+    session = sessionReducer(session, {
+      type: 'submit',
+      primitiveId: 'partial-question',
+      response: ['complete'],
+      score: 1,
+      completed: true,
+    })
+    session = sessionReducer(session, {
+      type: 'submit',
+      primitiveId: 'full-question',
+      response: 'supported',
+      score: 1,
+      completed: true,
+    })
+
+    expect(selectActivitySummary(session, plan)).toMatchObject({
+      score: 88,
+      accuracy: 50,
+      correctCount: 1,
+      scoredCount: 2,
+    })
+    expect(session.progress['partial-question']).toMatchObject({
+      firstScore: 0.5,
+      lastScore: 1,
+    })
+  })
+
+  it('tracks drafts, distinct interaction keys and monotonic media progress', () => {
+    const plan = buildActivityPlan(playerFixtures.allTyped, {
+      environment: 'development',
+      player: playerConfig,
+    })
+    let session = createActivitySession(plan)
+    session = sessionReducer(session, {
+      type: 'draft',
+      primitiveId: 'fixture-question',
+      draft: { selected: 'supported' },
+    })
+    session = sessionReducer(session, {
+      type: 'interact',
+      primitiveId: 'fixture-question',
+      key: 'region:a',
+      mediaProgress: 0.75,
+    })
+    session = sessionReducer(session, {
+      type: 'interact',
+      primitiveId: 'fixture-question',
+      key: 'region:a',
+      mediaProgress: 0.5,
+    })
+
+    expect(session.progress['fixture-question']).toMatchObject({
+      draft: { selected: 'supported' },
+      interactionKeys: ['region:a'],
+      mediaProgress: 0.75,
+      interactions: 2,
+    })
+  })
+
+  it('uses distinct keys for interaction and exploration completion', () => {
+    const minimum = parsePrimitive({
+      id: 'minimum',
+      type: 'dicom_explore',
+      content: {},
+      completion: { mode: 'minimum_interactions', count: 2 },
+    }).primitive!
+    const explored = parsePrimitive({
+      id: 'explored',
+      type: 'image_hotspot',
+      content: {},
+      completion: { mode: 'explored' },
+    }).primitive!
+    const context = {
+      attempts: 0,
+      correct: null,
+      interactionKeys: ['region:a', 'region:a'],
+      explorableKeys: ['region:a', 'region:b'],
+      mediaProgress: 0,
+      mediaCompletionThreshold: playerConfig.mediaCompletionThreshold,
+      reportedComplete: false,
+      retry: true,
+      maxAttempts: 2,
+    }
+
+    expect(isPrimitiveComplete(minimum, context)).toBe(false)
+    expect(isPrimitiveComplete(explored, context)).toBe(false)
+    expect(
+      isPrimitiveComplete(explored, {
+        ...context,
+        interactionKeys: ['region:a', 'region:b', 'unrelated'],
+      }),
+    ).toBe(true)
+  })
+
+  it('supports configured media progress and correct-order answer semantics', () => {
+    const media = parsePrimitive({
+      id: 'media',
+      type: 'video',
+      content: {},
+      completion: { mode: 'media_progress' },
+    }).primitive!
+    const ordering = parsePrimitive({
+      id: 'ordering',
+      type: 'ordering',
+      content: {},
+      completion: { mode: 'correct_order' },
+    }).primitive!
+    const context = {
+      attempts: 0,
+      correct: null,
+      interactionKeys: [],
+      explorableKeys: [],
+      mediaProgress: 0.89,
+      mediaCompletionThreshold: 0.9,
+      reportedComplete: false,
+      retry: true,
+      maxAttempts: 2,
+    }
+
+    expect(isPrimitiveComplete(media, context)).toBe(false)
+    expect(isPrimitiveComplete(media, { ...context, mediaProgress: 0.9 })).toBe(true)
+    expect(isPrimitiveComplete(ordering, { ...context, attempts: 2, correct: false })).toBe(true)
+  })
+
+  it('discards version 1 activity sessions during version 2 migration', () => {
+    expect(ACTIVITY_SESSION_VERSION).toBe(2)
+    expect(migrateActivitySessionState({ session: { activityId: 'legacy' } }, 1)).toEqual({
+      session: null,
+    })
   })
 
   it('validates known and forward-compatible completion modes', () => {
@@ -198,6 +373,7 @@ describe('learning progress reducer', () => {
         questionId: 'showcase-question',
         primitiveType: 'multiple_choice',
         conceptIds: ['image-windowing'],
+        score: 1,
         correct: true,
         attempt: 2,
         xp: 10,
@@ -208,6 +384,25 @@ describe('learning progress reducer', () => {
     expect(attempts).toBeGreaterThan(0)
     expect(result.state.lessonProgress['thoracic-ct']!.lastPrimitiveIndex).toBe(1)
     expect(result.state.stats.questionsAnswered).toBe(questions)
+
+    const partial = applyLearningEvent(
+      result.state,
+      event({
+        event: 'question_answered',
+        activityKind: 'lesson',
+        activityId: 'thoracic-ct',
+        questionId: 'partial-question',
+        primitiveType: 'multiple_select',
+        conceptIds: ['image-windowing'],
+        score: 0.5,
+        correct: false,
+        attempt: 1,
+        xp: 0,
+      }),
+      registry,
+    ).state
+    expect(partial.stats.questionsAnswered).toBe(questions + 1)
+    expect(partial.stats.correctAnswers).toBe(result.state.stats.correctAnswers)
   })
 
   it('records best scores once and challenge completion idempotently', () => {

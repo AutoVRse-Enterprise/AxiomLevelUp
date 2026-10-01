@@ -72,7 +72,7 @@ cannot dead-end an ordering step.
 - [x] P4-T00 — Formalize the phase scope, catalogue, decisions, task sequence and PRD traceability.
 - [x] P4-T01 — Add pure primitive definitions and a lazy component map; migrate the Phase 3
   primitives without behavior changes; derive support from definitions and add parity coverage.
-- [ ] P4-T02 — Add fractional scoring, scored steps, session v2 drafts and interaction keys,
+- [x] P4-T02 — Add fractional scoring, scored steps, session v2 drafts and interaction keys,
   exploration/media completion and event payload changes.
 - [ ] P4-T03 — Add review and reveal behavior, draft persistence, focus management, split layout,
   artifact overlay, pan/zoom and seeded shuffle infrastructure.
@@ -146,6 +146,9 @@ cannot dead-end an ordering step.
   reconciled with the approved execution plan.
 - P4-T01: strict schemas, typed asset references, pure definitions, typed lazy components,
   definition-driven planning/evaluation and malformed-content fallback are covered by 56 tests.
+- P4-T02: normalized fractional evaluation and first-attempt weighted summaries, session v2
+  drafts/keyed interactions/media progress, exploration and media completion, answer-compatible
+  `correct_order`, and expanded learner events are covered by 62 tests.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T02 through P4-T16.
 

@@ -1,3 +1,7 @@
+import type { PrimitiveInteraction } from '@/primitives/types'
+
+export type MediaProgressMilestone = 25 | 50 | 75 | 100
+
 interface EventPayloads {
   app_opened: { source: 'client' }
   pathway_opened: { pathwayId: string }
@@ -22,16 +26,40 @@ interface EventPayloads {
     primitiveType: string
     stepIndex: number
   }
-  artifact_interacted: { primitiveId: string; interaction: string }
+  artifact_interacted: {
+    activityKind: 'lesson' | 'challenge'
+    activityId: string
+    primitiveId: string
+    primitiveType: string
+    interaction: PrimitiveInteraction
+  }
   question_answered: {
     activityKind: 'lesson' | 'challenge'
     activityId: string
     questionId: string
     primitiveType: string
     conceptIds: string[]
+    score: number
     correct: boolean
     attempt: number
     xp: number
+    timedOut?: boolean
+  }
+  scenario_decision_made: {
+    activityKind: 'lesson' | 'challenge'
+    activityId: string
+    primitiveId: string
+    primitiveType: string
+    nodeId: string
+    choiceId: string
+    decisionIndex: number
+  }
+  media_progressed: {
+    activityKind: 'lesson' | 'challenge'
+    activityId: string
+    primitiveId: string
+    primitiveType: string
+    milestone: MediaProgressMilestone
   }
   dicom_slice_changed: { primitiveId: string; sliceIndex: number }
   dicom_window_changed: { primitiveId: string; preset?: string; center: number; width: number }

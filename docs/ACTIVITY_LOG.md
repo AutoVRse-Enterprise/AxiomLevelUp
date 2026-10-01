@@ -409,3 +409,24 @@ This file is append-only.
   and large lazy DICOM chunk warnings remain non-failing.
 - **Follow-ups:** Start P4-T02 fractional scoring and session v2; do not expand standard primitive
   behavior before its scheduled task.
+
+### [2026-10-01 21:33] P4-T02 - Upgrade primitive session contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added normalized fractional evaluations and first-attempt weighted summaries; upgraded
+  activity sessions to version 2 with drafts, distinct interaction keys, monotonic media progress
+  and first/latest scores; added exploration, media-progress and answer-compatible ordering
+  completion; expanded typed learner events and adapted the player payloads; amended ADR-014 and
+  recorded ADR-019/020.
+- **Files changed:** `src/primitives/**`, `src/engines/learning/**`, `src/events/**`,
+  `src/player/{ActivityPlayer,player.test}.tsx`, `src/content/schema/{index,primitiveBase}.ts`,
+  `public/content/app-config.json`, `docs/{DECISIONS,HANDOFF,ACTIVITY_LOG}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Starting-state Git checks, Prettier on changed files, focused type checking and
+  tests, `npm run lint`, `npm run test`, `npm run check`, `git diff --check`.
+- **Result/verification:** The complete quality gate passes: 11 test files and 62 tests, four
+  courses and twelve lessons with no content warnings, and a successful production build.
+  `git diff --check` passes; existing Cornerstone browser-externalization and large lazy chunk
+  warnings remain non-failing.
+- **Follow-ups:** Implement P4-T03 review/reveal rendering, debounced draft persistence, focus and
+  shared artifact infrastructure without changing first-attempt score authority.

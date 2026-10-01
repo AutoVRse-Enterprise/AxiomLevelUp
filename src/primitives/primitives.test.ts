@@ -60,7 +60,10 @@ describe('primitive architecture', () => {
       createElement(PrimitiveRenderer, {
         primitive,
         attempt: 0,
+        mode: 'interactive',
+        draft: null,
         onInteract: vi.fn(),
+        onDraftChange: vi.fn(),
         onSubmit: vi.fn(),
         onComplete: vi.fn(),
       }),

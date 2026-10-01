@@ -42,7 +42,7 @@ export function MultipleChoicePrimitive({
                 checked={selected === option.id}
                 onChange={() => {
                   setSelected(option.id)
-                  onInteract('option_selected')
+                  onInteract({ name: 'option_selected', key: option.id })
                 }}
                 className="size-5 accent-brand-700"
               />
