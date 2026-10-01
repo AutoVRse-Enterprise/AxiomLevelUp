@@ -109,3 +109,12 @@ This file is append-only.
 - **Commands run:** `npx pwa-assets-generator --preset minimal ...`, `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** Production build emits `manifest.webmanifest`, `sw.js` and Workbox runtime; 40 assets (801.79 KiB) are precached.
 - **Follow-ups:** Add an explicit DICOM CacheFirst policy while implementing the isolated imaging spike.
+
+### [2026-10-01 17:25] P1-T11 - Isolated DICOM and offline spike
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the lazy Cornerstone3D stack viewer, imaging controls, bounded preload queue, public CT preparation/de-identification/PHI-audit tooling, curated series metadata and provenance, DICOM CacheFirst handling and measured spike findings. Corrected duplicate Workbox manifest-icon entries that prevented service-worker handlers from installing.
+- **Files changed:** `package.json`, `package-lock.json`, `vite.config.ts`, `.gitignore`, `src/app/router.tsx`, `src/routes/dev/DicomSpikeRoute.tsx`, `src/spikes/dicom/**`, `scripts/dicom/**`, `public/assets/dicom/spike/manifest.json`, `public/assets/dicom/spike/README.md`, `docs/spikes/dicom-pwa-spike.md`.
+- **Commands run:** Cornerstone dependency installs, IDC download/de-identification/preparation commands, `npm run dicom:audit -- public/assets/dicom/spike/files`, `npm run typecheck`, `npm run lint`, `npm run build`, production-preview browser checks with offline network emulation.
+- **Result/verification:** PHI audit passed for 125 files. The lazy route renders and navigates the 125-slice stack, presets and tools work, Cornerstone remains outside the main chunk, Workbox stores 42 shell/content responses plus all 125 DICOM responses, and the stack reloads successfully while offline.
+- **Follow-ups:** Add the Phase 1 automated test suites and run the complete quality gate.

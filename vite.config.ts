@@ -1,5 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -8,10 +10,10 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    viteCommonjs(),
     VitePWA({
       registerType: 'prompt',
       injectRegister: null,
-      includeAssets: ['assets/icons/favicon.ico', 'assets/icons/app-icon.svg'],
       manifest: {
         name: 'Axiom Learning Runtime',
         short_name: 'Axiom Learn',
@@ -48,19 +50,55 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,json,svg,png,ico,woff2}'],
-        globIgnores: ['**/*.dcm', '**/*.dicom'],
+        globIgnores: [
+          '**/*.dcm',
+          '**/*.dicom',
+          'assets/icons/pwa-*.png',
+          'assets/icons/maskable-*.png',
+        ],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         navigateFallback: '/index.html',
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/assets/dicom/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'dicom-studies-v1',
+              expiration: {
+                maxEntries: 180,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
       },
       devOptions: {
         enabled: true,
-        type: 'module',
       },
     }),
   ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      events: resolve(fileURLToPath(new URL('.', import.meta.url)), 'node_modules/events/events.js'),
+      url: resolve(fileURLToPath(new URL('.', import.meta.url)), 'node_modules/url/url.js'),
+    },
+  },
+  optimizeDeps: {
+    exclude: ['@cornerstonejs/dicom-image-loader'],
+    include: ['dicom-parser'],
+  },
+  worker: {
+    format: 'es',
+  },
+  build: {
+    rolldownOptions: {
+      output: {
+        strictExecutionOrder: true,
+      },
     },
   },
 })

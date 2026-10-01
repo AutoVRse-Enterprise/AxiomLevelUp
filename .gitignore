@@ -1,7 +1,9 @@
 node_modules/
 dist/
+dev-dist/
 coverage/
 .vite/
+.tmp/
 .env
 .env.*
 !.env.example
