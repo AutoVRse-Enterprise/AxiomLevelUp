@@ -46,7 +46,7 @@ mobile emulation.
 - [x] P6-T07 — Add the shared responsive and immersive DICOM viewer shell.
 - [x] P6-T08 — Implement explore and guided inspection primitives.
 - [x] P6-T09 — Implement slice-aware region identification.
-- [ ] P6-T10 — Implement calibrated length measurement.
+- [x] P6-T10 — Implement calibrated length measurement.
 - [ ] P6-T11 — Integrate DICOM with player layout, resume, failure and production planning.
 - [ ] P6-T12 — Migrate scientific-imaging and runtime-showcase content.
 - [ ] P6-T13 — Replace the isolated spike route with the production DICOM sandbox.

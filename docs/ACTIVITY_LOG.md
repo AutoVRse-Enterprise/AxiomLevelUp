@@ -1080,3 +1080,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Region responses include both selected slice and normalized image point;
   pure evaluation can award partial credit for slice or location.
 - **Follow-ups:** Implement calibrated length measurement.
+
+### [2026-10-02 04:27] P6-T10 - Implement DICOM measurement
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a single-length measurement primitive with live physical-unit readout,
+  calibration gating, resumable response, scored submission and reveal-policy-controlled reference
+  line/expected value.
+- **Files changed:** `DicomMeasurePrimitive.tsx`, component registry and Cornerstone annotation
+  lifecycle.
+- **Commands run:** Prettier, typecheck and lint.
+- **Result/verification:** A new measurement replaces the previous annotation; unknown units cannot
+  be submitted as a graded response.
+- **Follow-ups:** Integrate viewer layout, production planning and failure semantics.

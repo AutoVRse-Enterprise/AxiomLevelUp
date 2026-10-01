@@ -12,6 +12,7 @@ import {
 import { init as dicomImageLoaderInit } from '@cornerstonejs/dicom-image-loader'
 import {
   addTool,
+  annotation,
   Enums as ToolEnums,
   init as toolsInit,
   LengthTool,
@@ -74,6 +75,7 @@ export async function createCornerstoneController(
   let seriesKey: string | null = null
   let resizeObserver: ResizeObserver | null = null
   let contextCanvas: HTMLCanvasElement | null = null
+  let measurementAnnotationId: string | null = null
 
   let state: DicomViewerState = {
     status: 'loading',
@@ -125,6 +127,7 @@ export async function createCornerstoneController(
   const onMeasurement = (event: Event) => {
     const detail = (event as CustomEvent).detail as {
       annotation?: {
+        annotationUID?: string
         metadata?: { toolName?: string }
         data?: {
           handles?: { points?: number[][] }
@@ -133,6 +136,16 @@ export async function createCornerstoneController(
       }
     }
     if (detail.annotation?.metadata?.toolName !== LengthTool.toolName || !viewport) return
+    const annotationId = detail.annotation.annotationUID
+    if (
+      event.type === ToolEnums.Events.ANNOTATION_COMPLETED &&
+      annotationId &&
+      measurementAnnotationId &&
+      annotationId !== measurementAnnotationId
+    ) {
+      annotation.state.removeAnnotation(measurementAnnotationId)
+    }
+    if (annotationId) measurementAnnotationId = annotationId
     const stats = Object.values(detail.annotation.data?.cachedStats ?? {}).find(({ length }) =>
       Number.isFinite(length),
     )
@@ -338,6 +351,10 @@ export async function createCornerstoneController(
       await viewport.setImageIdIndex(clamped - 1)
     },
     reset() {
+      if (measurementAnnotationId) {
+        annotation.state.removeAnnotation(measurementAnnotationId)
+        measurementAnnotationId = null
+      }
       viewport?.resetCamera()
       viewport?.resetProperties()
       viewport?.render()
