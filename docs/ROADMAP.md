@@ -7,7 +7,7 @@
 | 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                    |
 | 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
 | 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
-| 6     | DICOM learning viewer          | Next     | Explore, guide, identify, measure and reveal modes work on target devices                |
+| 6     | DICOM learning viewer          | In progress | Explore, guide, identify, measure and reveal modes work on target devices             |
 | 7     | Complete PWA/offline           | Planned  | Course assets can be downloaded, verified and removed                                    |
 | 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
@@ -33,4 +33,5 @@ will subscribe gamification and mastery engines to the existing typed learner-ev
 Phase 5 closed with one ordered event pipeline, learner state v3, configuration-driven reward and
 mastery rules, replay-as-revision semantics and accessible reward summaries/celebrations. The
 quality gate passes with 29 test files and 211 tests; responsive QA found no document overflow at
-the four target viewports. Phase 6 is next.
+the four target viewports. Phase 6 is in progress; physical Android/iOS viewer checks are explicitly
+deferred to Phase 9.

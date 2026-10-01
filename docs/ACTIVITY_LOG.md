@@ -951,3 +951,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Implementation commit `6736a96` contains the complete tested Phase 5
   change set.
 - **Follow-ups:** Commit this documentation note; Phase 6 is next.
+
+### [2026-10-02 03:00] P6-T00 - Define DICOM viewer phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Defined Phase 6 scope, resolved product decisions, architecture rules, task sequence,
+  PRD traceability, exit criteria and the physical-device deviation.
+- **Files changed:** `docs/phases/phase-06-dicom-viewer.md`, `docs/ROADMAP.md`,
+  `docs/HANDOFF.md`.
+- **Commands run:** Documentation review and repository-status inspection.
+- **Result/verification:** Phase 6 has an actionable implementation contract; the roadmap marks it
+  in progress.
+- **Follow-ups:** Build the externally hosted series pipeline.

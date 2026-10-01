@@ -2,7 +2,8 @@
 
 ## Current phase/task
 
-Phase 5 — Gamification and mastery is complete. Phase 6 — DICOM learning viewer is next.
+Phase 6 — DICOM learning viewer. P6-T00 scope and implementation contract are complete; P6-T01 is
+next.
 
 ## Done
 
@@ -45,18 +46,20 @@ Phase 5 — Gamification and mastery is complete. Phase 6 — DICOM learning vie
 
 ## In progress
 
-- None.
+- Phase 6 implementation.
 
 ## Next three steps
 
-1. Define Phase 6 scope, DICOM mode contracts, acceptance criteria and PRD traceability.
-2. Reconcile the Phase 1 Cornerstone spike findings with the four deferred DICOM primitive types.
-3. Design event payloads for slice, window, region and measurement interactions before production
-   viewer implementation.
+1. Add the hosted-series manifest, verification and configurable base-URL pipeline.
+2. Author calibrated normal-anatomy teaching targets from the curated stack.
+3. Add strict DICOM primitive contracts and semantic validation.
 
 ## Blockers/questions for the user
 
 - The DICOM technical note referenced by the PRD is still unavailable.
+- A production external DICOM host URL must be supplied before hosted deployment; local development
+  falls back to `/assets/dicom/`.
+- Physical Android Chrome and iOS Safari checks are deferred to Phase 9 by product decision.
 - Physical Android Chrome and iOS Safari DICOM/PWA checks require an HTTPS host and devices.
 
 ## Environment notes
@@ -87,7 +90,7 @@ Phase 5 — Gamification and mastery is complete. Phase 6 — DICOM learning vie
   or on an ordinary route.
 - Seed period dates are rebased; weekly period anchors use the current local week start.
 - Internal showcase progress is ordinary learner state and reset clears it.
-- Production still skips only the four deferred DICOM types.
-- Do not import Cornerstone outside the lazy spike module until Phase 6 establishes the production
-  boundary.
+- Production still skips only the four deferred DICOM types until P6-T11 removes that filter.
+- Do not import Cornerstone outside `src/spikes/dicom` until P6-T06 establishes and tests the
+  `src/imaging/cornerstone` boundary.
 - The Phase 4 bundle deviation remains; Phase 5 adds 6.47 kB gzip to the entry.
