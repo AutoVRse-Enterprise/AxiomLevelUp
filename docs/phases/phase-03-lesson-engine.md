@@ -26,7 +26,7 @@ Phase 4 and DICOM primitives remain in Phase 6.
 - [x] P3-T04 — Persist one versioned, resumable activity session outside learner aggregate state.
 - [x] P3-T05 — Extend the learner-event taxonomy for player lifecycle and outcomes.
 - [x] P3-T06 — Apply learning events to lesson, course, challenge and lifetime progress.
-- [ ] P3-T07 — Add the primitive registry and Phase 3 primitive renderers.
+- [x] P3-T07 — Add the primitive registry and Phase 3 primitive renderers.
 - [ ] P3-T08 — Build the accessible player shell, feedback and completion summary.
 - [ ] P3-T09 — Replace immersive placeholders with guarded lesson and challenge routes.
 - [ ] P3-T10 — Add representative content and player fixtures.

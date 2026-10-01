@@ -307,3 +307,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, focused event/store tests.
 - **Result/verification:** Strict typing and four existing persistence/event tests pass; follow-up course completion remains event-driven.
 - **Follow-ups:** Add the primitive registry, pure evaluator and Phase 3 components.
+
+### [2026-10-01 20:58] P3-T07 - Primitive runtime
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added lazy primitive registration, render-error fallback, a pure multiple-choice evaluator and accessible rich-text, image, multiple-choice and unsupported components.
+- **Files changed:** `src/primitives/**`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass; primitive components depend only on their props, asset resolution and shared UI.
+- **Follow-ups:** Compose the player lifecycle, immediate feedback, review and completion screens.
