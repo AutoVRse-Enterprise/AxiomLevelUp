@@ -37,3 +37,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** All three commands pass; the base UI compiles into the production build.
 - **Follow-ups:** Wire the preview and learner placeholders into the complete route tree.
+
+### [2026-10-01 16:38] P1-T03 - Routing and application shell
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the complete Phase 1 route tree, a mobile-safe five-tab shell, route-aware header, constrained desktop layout, immersive lesson/challenge layout, lazy DICOM route, placeholders and React/route error boundaries.
+- **Files changed:** `src/app/*`, `src/layouts/*`, `src/routes/*`, `src/components/feedback/*`, `eslint.config.js`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** Navigation compiles and builds; the DICOM route is emitted as a separate lazy chunk and immersive screens omit the learner bottom navigation.
+- **Follow-ups:** Replace temporary display values with validated content and persisted state.
