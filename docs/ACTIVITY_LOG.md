@@ -55,3 +55,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run schema:export`, `npm run lint`, `npm run build`.
 - **Result/verification:** Schema export, static checks and build pass. Rich text, image and MCQ content are strict; registered future primitives remain extensible.
 - **Follow-ups:** Add a content loader that applies these schemas and validates cross-document references.
+
+### [2026-10-01 17:06] P1-T05 - Content loading and validation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added browser and CLI content loading, immutable registries, duplicate/reference validation, primitive warning collection, actionable error structures, a loading provider and a dedicated content error screen.
+- **Files changed:** `src/content/loader.ts`, `src/app/ContentProvider.tsx`, `src/app/contentContext.ts`, `src/components/feedback/ContentErrorScreen.tsx`, `scripts/validate-content.ts`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Static checks pass. End-to-end validation awaits the seed files in P1-T06.
+- **Follow-ups:** Create a complete valid bundle and exercise the CLI loader.
