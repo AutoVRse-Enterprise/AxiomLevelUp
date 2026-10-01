@@ -1,4 +1,8 @@
 import type { Primitive } from '../primitiveBase'
+import type { AudioPrimitive } from './audio'
+import { audioContentSchema } from './audio'
+import type { CarouselPrimitive } from './carousel'
+import { carouselContentSchema } from './carousel'
 import type { ChartPrimitive } from './chart'
 import { chartContentSchema } from './chart'
 import type { ClassificationPrimitive } from './classification'
@@ -25,14 +29,20 @@ import type { NumericPrimitive } from './numeric'
 import { numericContentSchema } from './numeric'
 import type { OrderingPrimitive } from './ordering'
 import { orderingContentSchema } from './ordering'
+import type { PdfReferencePrimitive } from './pdfReference'
+import { pdfReferenceContentSchema } from './pdfReference'
 import type { RichTextPrimitive } from './richText'
 import { richTextContentSchema } from './richText'
 import type { TrueFalsePrimitive } from './trueFalse'
 import { trueFalseContentSchema } from './trueFalse'
 import type { PrimitiveAssetRef } from './types'
+import type { VideoPrimitive } from './video'
+import { videoContentSchema } from './video'
 import type { ZoomableImagePrimitive } from './zoomableImage'
 import { zoomableImageContentSchema } from './zoomableImage'
 
+export { audioPrimitiveSchema, type AudioPrimitive } from './audio'
+export { carouselPrimitiveSchema, type CarouselPrimitive } from './carousel'
 export { classificationPrimitiveSchema, type ClassificationPrimitive } from './classification'
 export { chartPrimitiveSchema, type ChartPrimitive } from './chart'
 export { dataTablePrimitiveSchema, type DataTablePrimitive } from './dataTable'
@@ -52,8 +62,10 @@ export { multipleChoicePrimitiveSchema, type MultipleChoicePrimitive } from './m
 export { multipleSelectPrimitiveSchema, type MultipleSelectPrimitive } from './multipleSelect'
 export { numericPrimitiveSchema, type NumericPrimitive } from './numeric'
 export { orderingPrimitiveSchema, type OrderingPrimitive } from './ordering'
+export { pdfReferencePrimitiveSchema, type PdfReferencePrimitive } from './pdfReference'
 export { richTextPrimitiveSchema, type RichTextPrimitive } from './richText'
 export { trueFalsePrimitiveSchema, type TrueFalsePrimitive } from './trueFalse'
+export { videoPrimitiveSchema, type VideoPrimitive } from './video'
 export { zoomableImagePrimitiveSchema, type ZoomableImagePrimitive } from './zoomableImage'
 export type { PrimitiveAssetRef, PrimitiveAssetType, PrimitiveContentSchema } from './types'
 
@@ -63,9 +75,13 @@ export const primitiveContentSchemas = {
   zoomable_image: zoomableImageContentSchema,
   image_hotspot: imageHotspotContentSchema,
   image_compare: imageCompareContentSchema,
+  video: videoContentSchema,
+  audio: audioContentSchema,
+  carousel: carouselContentSchema,
   data_table: dataTableContentSchema,
   chart: chartContentSchema,
   formula: formulaContentSchema,
+  pdf_reference: pdfReferenceContentSchema,
   multiple_choice: multipleChoiceContentSchema,
   multiple_select: multipleSelectContentSchema,
   true_false: trueFalseContentSchema,
@@ -82,9 +98,13 @@ export type TypedPrimitive =
   | ZoomableImagePrimitive
   | ImageHotspotPrimitive
   | ImageComparePrimitive
+  | VideoPrimitive
+  | AudioPrimitive
+  | CarouselPrimitive
   | DataTablePrimitive
   | ChartPrimitive
   | FormulaPrimitive
+  | PdfReferencePrimitive
   | MultipleChoicePrimitive
   | MultipleSelectPrimitive
   | TrueFalsePrimitive

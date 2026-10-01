@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T10 are complete; P4-T11 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T11 are complete; P4-T12 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -63,13 +63,22 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Formulas lazy-load KaTeX, mhchem and their CSS, render with an untrusted non-throwing runtime
   policy, expose authored labels/variables and receive a strict Node parse during content
   validation.
+- Video and audio use native controls and unioned played-range coverage reported in five-percent
+  steps. Video includes required captions, marker seeking and formative pause checkpoints; audio
+  includes a transcript disclosure.
+- Carousels provide two to eight scroll-snap slides, previous/next and dot controls, arrow-key
+  navigation and distinct observed slide interactions. PDF citations open native documents with
+  `noopener` and optional page fragments.
+- Rich text safely tokenizes first terminology occurrences and authored emphasis into React nodes.
+  Original synthetic MP4, poster, AAC audio and PDF fixtures plus hand-authored accessibility text
+  and provenance are registered in the asset manifest.
 - Data interpretation's `dose-curve` now uses positive logarithmic x values, complete axes and a
   fitted 4PL model.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021 and ADR-023 through ADR-031 record player lifecycle, scientific data, structured
+- ADR-021 and ADR-023 through ADR-032 record player lifecycle, scientific data, structured
   assessments, artifact viewport, semantic validation, assessment semantics, timed-response
   lifecycle and normalized image regions.
-- Type checking, lint, 17 test files with 157 tests, content validation and production build pass.
+- Type checking, lint, 18 test files with 166 tests, content validation and production build pass.
 
 ## In progress
 
@@ -77,9 +86,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T11: add video, audio, carousel and PDF-reference primitives.
-2. P4-T12: add scenario schemas, engine and resumable UI.
-3. P4-T13: add the internal showcase course and primitive gallery.
+1. P4-T12: add scenario schemas, engine and resumable UI.
+2. P4-T13: add the internal showcase course and primitive gallery.
+3. P4-T14: add cross-runtime and boundary coverage.
 
 ## Blockers/questions for the user
 
@@ -95,6 +104,7 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Package manager: npm
 - ffmpeg 7.1 and Python 3.11.7 are available for fixture generation.
 - Install/run: `npm install`, `npm run check`, then `npm run dev`.
+- Regenerate original media fixtures with `npm run media:fixtures`.
 - Production PWA check: `npm run build`, then `npm run preview`.
 - Local DICOM setup and attribution are documented in `public/assets/dicom/spike/README.md`.
 
@@ -130,6 +140,11 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   positive; dose-response x axes are always logarithmic.
 - KaTeX CSS and fonts live in the formula lazy chunk; Node content validation intentionally parses
   formula TeX more strictly than the non-throwing learner renderer.
+- Media completion is based on the union of native `played` ranges, not `currentTime`; components
+  report every crossed five-percent step and the player applies the configured threshold.
+- Carousel IntersectionObserver support has scroll/control fallbacks, and every slide ID is reported
+  at most once per mount.
+- ADR-027 was already allocated at the P4-T11 baseline, so the media decision is ADR-032.
 - Do not import Cornerstone outside the lazy spike module.
 - Development plans display unsupported primitives; production plans skip them.
 - Retries do not improve score: first-attempt results remain authoritative.

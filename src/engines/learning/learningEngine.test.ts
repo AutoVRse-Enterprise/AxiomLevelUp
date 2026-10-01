@@ -301,7 +301,11 @@ describe('activity planning and sessions', () => {
     const media = parsePrimitive({
       id: 'media',
       type: 'video',
-      content: {},
+      content: {
+        assetId: 'video-file',
+        captionsAssetId: 'captions-file',
+        title: 'Media',
+      },
       completion: { mode: 'media_progress' },
     }).primitive!
     const ordering = parsePrimitive({

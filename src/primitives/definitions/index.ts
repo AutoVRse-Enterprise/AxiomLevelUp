@@ -6,6 +6,8 @@ import {
   type TypedPrimitive,
   type TypedPrimitiveType,
 } from '@/content/schema/primitives'
+import { audioDefinition } from '@/primitives/definitions/audio'
+import { carouselDefinition } from '@/primitives/definitions/carousel'
 import { chartDefinition } from '@/primitives/definitions/chart'
 import { classificationDefinition } from '@/primitives/definitions/classification'
 import { dataTableDefinition } from '@/primitives/definitions/dataTable'
@@ -19,9 +21,11 @@ import { multipleChoiceDefinition } from '@/primitives/definitions/multipleChoic
 import { multipleSelectDefinition } from '@/primitives/definitions/multipleSelect'
 import { numericDefinition } from '@/primitives/definitions/numeric'
 import { orderingDefinition } from '@/primitives/definitions/ordering'
+import { pdfReferenceDefinition } from '@/primitives/definitions/pdfReference'
 import { richTextDefinition } from '@/primitives/definitions/richText'
 import { trueFalseDefinition } from '@/primitives/definitions/trueFalse'
 import type { PrimitiveDefinition, PrimitiveDefinitionMap } from '@/primitives/definitions/types'
+import { videoDefinition } from '@/primitives/definitions/video'
 import { zoomableImageDefinition } from '@/primitives/definitions/zoomableImage'
 import type { EvaluationResult } from '@/primitives/types'
 
@@ -33,9 +37,13 @@ export const primitiveDefinitions = {
   zoomable_image: zoomableImageDefinition,
   image_hotspot: imageHotspotDefinition,
   image_compare: imageCompareDefinition,
+  video: videoDefinition,
+  audio: audioDefinition,
+  carousel: carouselDefinition,
   data_table: dataTableDefinition,
   chart: chartDefinition,
   formula: formulaDefinition,
+  pdf_reference: pdfReferenceDefinition,
   multiple_choice: multipleChoiceDefinition,
   multiple_select: multipleSelectDefinition,
   true_false: trueFalseDefinition,

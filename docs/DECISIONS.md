@@ -413,3 +413,25 @@ drafts flow through player callbacks.
 hotspot evaluation remains deterministic and review-safe. Definition family resolution now permits
 a validated primitive subtype to choose content or assessment behavior, and authored SVG dimensions
 prevent layout shift when manifest metadata is available.
+
+## ADR-032: Native media with coverage-based progression
+
+**Status:** Accepted
+
+**Context:** Video and audio need accessible native playback while lesson completion must reflect
+media actually played rather than the current playhead, which can be moved by seeking. Carousels and
+references also need durable, keyed interactions without introducing course-specific UI or a PDF
+rendering dependency.
+
+**Decision:** Use native video and audio elements with metadata preloading, authored captions and
+transcripts. Compute the union of browser-reported played ranges and report every crossed five-percent
+coverage step; the player remains the owner of the configured completion threshold. Keep timestamp
+markers and formative video checkpoints local and callback-only. Model carousel slides as a bounded
+flat collection, report each observed slide ID once through IntersectionObserver with control/scroll
+fallbacks, and open PDF references natively with an optional page fragment and `noopener`. Generate
+small, original media fixtures locally with ffmpeg and a deterministic Node PDF writer.
+
+**Consequences:** Seeking cannot falsely complete media, coarse browser events cannot skip progress
+increments, and media interactions remain resumable through existing player state. Captions,
+transcripts, asset types and provenance are explicit. Native PDF behavior avoids a new runtime
+dependency, while richer document rendering remains out of scope.

@@ -25,6 +25,21 @@ const ImageComparePrimitive = lazy(async () => {
   return { default: module.ImageComparePrimitive }
 })
 
+const VideoPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/VideoPrimitive')
+  return { default: module.VideoPrimitive }
+})
+
+const AudioPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/AudioPrimitive')
+  return { default: module.AudioPrimitive }
+})
+
+const CarouselPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/CarouselPrimitive')
+  return { default: module.CarouselPrimitive }
+})
+
 const DataTablePrimitive = lazy(async () => {
   const module = await import('@/primitives/components/DataTablePrimitive')
   return { default: module.DataTablePrimitive }
@@ -38,6 +53,11 @@ const ChartPrimitive = lazy(async () => {
 const FormulaPrimitive = lazy(async () => {
   const module = await import('@/primitives/components/FormulaPrimitive')
   return { default: module.FormulaPrimitive }
+})
+
+const PdfReferencePrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/PdfReferencePrimitive')
+  return { default: module.PdfReferencePrimitive }
 })
 
 const MultipleChoicePrimitive = lazy(async () => {
@@ -86,9 +106,13 @@ export const primitiveComponents = {
   zoomable_image: ZoomableImagePrimitive,
   image_hotspot: ImageHotspotPrimitive,
   image_compare: ImageComparePrimitive,
+  video: VideoPrimitive,
+  audio: AudioPrimitive,
+  carousel: CarouselPrimitive,
   data_table: DataTablePrimitive,
   chart: ChartPrimitive,
   formula: FormulaPrimitive,
+  pdf_reference: PdfReferencePrimitive,
   multiple_choice: MultipleChoicePrimitive,
   multiple_select: MultipleSelectPrimitive,
   true_false: TrueFalsePrimitive,

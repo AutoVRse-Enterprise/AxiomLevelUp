@@ -611,3 +611,28 @@ learningEngine.test.ts}`, `src/primitives/{components,definitions,shared}/**`,
   separate 28.83 kB lazy asset. Existing Cornerstone browser-externalization and large DICOM/entry
   chunk warnings remain non-failing.
 - **Follow-ups:** Start P4-T11 video, audio, carousel and PDF-reference primitives.
+
+### [2026-10-01 23:06] P4-T11 - Add media and reference primitives
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict video, audio, carousel and PDF-reference schemas, pure definitions and
+  lazy components; upgraded rich text with safe first-term/emphasis tokenization. Native media now
+  reports unioned played-range coverage in five-percent steps, video supports required captions,
+  markers and formative pause checkpoints, audio exposes a transcript disclosure, carousels report
+  distinct observed slides with keyboard/control fallbacks, and PDF citations open native page
+  fragments. Added a deterministic ffmpeg/Node fixture generator, hand-authored accessibility text,
+  provenance and ADR-032 (ADR-027 was already allocated at baseline).
+- **Files changed:** `package.json`, `scripts/media/**`, `public/assets/media/showcase/**`,
+  `public/content/assets.json`, `src/content/schema/primitives/**`,
+  `src/primitives/{components,definitions}/**`, `src/primitives/{componentRegistry,mediaProgress,
+richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, generated schema
+  documentation and Phase 4 activity/decision/handoff documentation.
+- **Commands run:** `npm run media:fixtures`; ffprobe codec/duration audit; focused Prettier,
+  typecheck, lint and Vitest runs; `npm run schema:export`; `npm run validate:content`;
+  `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 18 test files and 166 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. The generated H.264/
+  AAC MP4 is 24 seconds at 640×360; all committed showcase fixture files total 444,375 bytes.
+  Existing Cornerstone browser-externalization and large DICOM/entry chunk warnings remain
+  non-failing.
+- **Follow-ups:** Start P4-T12 scenario schemas, engine and resumable UI.

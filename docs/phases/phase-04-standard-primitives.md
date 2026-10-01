@@ -86,7 +86,7 @@ cannot dead-end an ordering step.
 - [x] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
 - [x] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
       `dose-curve`.
-- [ ] P4-T11 — Add video, audio, carousel and PDF-reference primitives, rich-text terms and
+- [x] P4-T11 — Add video, audio, carousel and PDF-reference primitives, rich-text terms and
       synthetic media fixtures.
 - [ ] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
       migrate `case-intro` and `trial-case`.
@@ -183,9 +183,17 @@ cannot dead-end an ordering step.
   Formula expressions lazy-load KaTeX, mhchem and CSS with safe runtime options, while Node content
   validation rejects invalid TeX. The placeholder dose curve now uses the strict logarithmic
   dose-response contract.
+- P4-T11: native video and audio use caption/transcript alternatives and unioned played-range
+  coverage reported at five-percent steps. Video adds marker seeking and formative pause
+  checkpoints; carousels expose scroll-snap slides, controls, dots, arrow keys and distinct
+  observation keys; PDF references open native documents at authored page fragments. Rich text
+  tokenizes first term occurrences and emphasis into React text nodes, and original ffmpeg/Node
+  fixtures include provenance.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
 - Runtime verification remains pending for P4-T10 through P4-T16.
 
 ## Deviations
 
-None.
+The approved sequence named the P4-T11 media decision ADR-027, but ADR-027 was already assigned to
+content-layer semantic validation at the required starting commit. The media decision is recorded as
+ADR-032 to preserve unique, append-only ADR numbering.

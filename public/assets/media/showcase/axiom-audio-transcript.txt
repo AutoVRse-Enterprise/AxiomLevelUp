@@ -1,0 +1,3 @@
+Axiom synthetic audio fixture.
+
+This locally generated tone is provided only to test native audio playback, transcript disclosure, and played-range progress. It contains no patient, clinical, or third-party source material.

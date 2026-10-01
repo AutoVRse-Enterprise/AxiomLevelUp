@@ -9,6 +9,12 @@
     { "assetId": "thorax-diagram", "path": "/assets/images/thorax-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048, "mimeType": "image/svg+xml", "width": 800, "height": 800 },
     { "assetId": "showcase-cell-map", "path": "/assets/images/showcase/cell-map.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1631, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
     { "assetId": "showcase-tissue-control", "path": "/assets/images/showcase/tissue-control.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1362, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
-    { "assetId": "showcase-tissue-treated", "path": "/assets/images/showcase/tissue-treated.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1811, "mimeType": "image/svg+xml", "width": 1200, "height": 800 }
+    { "assetId": "showcase-tissue-treated", "path": "/assets/images/showcase/tissue-treated.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1811, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
+    { "assetId": "showcase-media-video", "path": "/assets/media/showcase/axiom-media-fixture.mp4", "type": "video", "offlineRequired": true, "sizeBytes": 234213, "mimeType": "video/mp4", "width": 640, "height": 360 },
+    { "assetId": "showcase-media-poster", "path": "/assets/media/showcase/axiom-media-poster.jpg", "type": "image", "offlineRequired": true, "sizeBytes": 9675, "mimeType": "image/jpeg", "width": 640, "height": 360 },
+    { "assetId": "showcase-media-captions", "path": "/assets/media/showcase/axiom-media-captions.vtt", "type": "text", "offlineRequired": true, "sizeBytes": 323, "mimeType": "text/vtt" },
+    { "assetId": "showcase-media-audio", "path": "/assets/media/showcase/axiom-audio-fixture.m4a", "type": "audio", "offlineRequired": true, "sizeBytes": 198352, "mimeType": "audio/mp4" },
+    { "assetId": "showcase-media-transcript", "path": "/assets/media/showcase/axiom-audio-transcript.txt", "type": "text", "offlineRequired": true, "sizeBytes": 227, "mimeType": "text/plain" },
+    { "assetId": "showcase-media-reference", "path": "/assets/media/showcase/axiom-reference-fixture.pdf", "type": "document", "offlineRequired": true, "sizeBytes": 708, "mimeType": "application/pdf" }
   ]
 }
