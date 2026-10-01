@@ -226,3 +226,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Static checks pass and all profile values originate in configuration, persisted learner state or selectors.
 - **Follow-ups:** Add route-level state, keyboard, event and anti-hard-coding coverage.
+
+### [2026-10-01 20:28] P2-T10 - Surface behavior tests
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added route-surface coverage for all Home sections, configuration-driven course identity, URL filters, locked lesson/pathway behavior, unknown/fresh states, event emission, live leaderboard rank and fresh-profile arithmetic.
+- **Files changed:** `src/routes/surfaces.test.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
+- **Result/verification:** Seven test files and 35 tests pass. Keyboard activation, typed intents and event-driven rank changes are covered.
+- **Follow-ups:** Run the complete gate, perform browser QA and close Phase 2 documentation.
