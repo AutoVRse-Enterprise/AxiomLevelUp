@@ -273,3 +273,21 @@ types as warnings.
 **Consequences:** Challenge diagnostics now identify exact item paths, typed content assets must
 exist with the expected manifest type, and incompatible registered primitives cannot carry timers.
 Future primitive schemas must declare their asset references and keep definition parity tests green.
+
+## ADR-028: Shared choice assessment semantics
+
+**Status:** Accepted
+
+**Context:** Multiple-choice, multiple-select and true/false need consistent keyboard interaction,
+draft reporting and review rendering. Multiple-select also needs deterministic partial scoring that
+cannot reward guessing with a negative score, while malformed persisted responses must fail closed.
+
+**Decision:** Render all choice assessments through one native-input `ChoiceList` and accessible
+`ReviewMark`. Keep option order deterministic per attempt, preserving that order when the submitted
+attempt enters review. Validate responses in React-free definitions; treat duplicate, unknown,
+undersized or wrongly typed responses as zero. Partial multiple-select scoring is
+`max(0, (correct selections - incorrect selections) / correct options)`.
+
+**Consequences:** Choice components share disabled and reveal behavior while remaining callback-only.
+Evaluators are deterministic and review-safe, all-or-nothing remains the multiple-select default,
+and future choice-like assessments can reuse the presentation contract without owning score policy.

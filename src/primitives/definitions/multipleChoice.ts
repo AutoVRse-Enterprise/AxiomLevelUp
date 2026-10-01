@@ -1,10 +1,10 @@
-import { z } from 'zod'
-
 import { timerCompatibleTypeSet } from '@/content/primitiveTypes'
 import type { MultipleChoicePrimitive } from '@/content/schema/primitives'
+import {
+  buildChoiceItems,
+  multipleChoiceResponseSchema,
+} from '@/primitives/definitions/choiceEvaluation'
 import { definePrimitive } from '@/primitives/definitions/types'
-
-const responseSchema = z.string()
 
 export const multipleChoiceDefinition = definePrimitive<MultipleChoicePrimitive>({
   type: 'multiple_choice',
@@ -14,13 +14,20 @@ export const multipleChoiceDefinition = definePrimitive<MultipleChoicePrimitive>
   timerCompatible: timerCompatibleTypeSet.has('multiple_choice'),
   scored: () => true,
   evaluate: (primitive, response) => {
-    const parsedResponse = responseSchema.safeParse(response)
-    const score =
-      parsedResponse.success && parsedResponse.data === primitive.content.correctOptionId ? 1 : 0
+    const parsedResponse = multipleChoiceResponseSchema.safeParse(response)
+    const optionIds = primitive.content.options.map((option) => option.id)
+    const validResponse =
+      parsedResponse.success && optionIds.includes(parsedResponse.data) ? parsedResponse.data : null
+    const score = validResponse === primitive.content.correctOptionId ? 1 : 0
     return {
       score,
       correct: score === 1,
       explanation: primitive.content.explanation,
+      items: buildChoiceItems(
+        optionIds,
+        new Set(validResponse === null ? [] : [validResponse]),
+        new Set([primitive.content.correctOptionId]),
+      ),
     }
   },
   reviewPrompt: (primitive) => primitive.content.prompt,

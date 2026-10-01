@@ -78,7 +78,7 @@ cannot dead-end an ordering step.
   artifact overlay, pan/zoom and seeded shuffle infrastructure.
 - [x] P4-T04 — Harden challenge, primitive-ID, asset-reference, timer and manifest validation and
   regenerate schemas.
-- [ ] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
+- [x] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
   shuffle and review.
 - [ ] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
 - [ ] P4-T07 — Add fill-blank and numeric typed-response assessments.
@@ -156,8 +156,11 @@ cannot dead-end an ordering step.
 - P4-T04: lessons and challenges share strict primitive and semantic validation with scoped
   primitive-ID uniqueness, typed asset-reference checks, content-layer timer compatibility and
   precise diagnostics; the asset manifest accepts text assets and optional media metadata.
+- P4-T05: multiple-choice, multiple-select and true/false share accessible choice/review rendering,
+  strict schemas, deterministic shuffle and pure malformed-safe evaluators; partial multiple-select
+  scoring subtracts incorrect selections and floors the result at zero.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T05 through P4-T16.
+- Runtime verification remains pending for P4-T06 through P4-T16.
 
 ## Deviations
 

@@ -471,3 +471,22 @@ This file is append-only.
   non-failing.
 - **Follow-ups:** Start P4-T05 multiple-select and true/false primitives; keep new schemas'
   `assetRefs` and timer compatibility in parity.
+
+### [2026-10-01 21:59] P4-T05 - Add choice assessments
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict multiple-select and true/false schemas, pure malformed-safe response
+  evaluators, bounded partial scoring, multiple-choice shuffle, shared accessible choice/review UI,
+  draft-aware lazy components and table-driven evaluator/component coverage. Recorded ADR-028.
+- **Files changed:** `src/content/schema/primitives/**`, `src/primitives/**`,
+  `src/player/player.test.tsx`, `docs/{CONTENT_SCHEMA,DECISIONS,HANDOFF,ACTIVITY_LOG}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck and Vitest runs; `npm run schema:export`;
+  `npm run lint`; `npm run test`; `npm run check`; `git diff --check`.
+- **Result/verification:** The complete quality gate passes with 13 test files and 95 tests, four
+  courses and twelve lessons with no content warnings, and a successful production build.
+  Definition/schema/component parity and generated strict-schema documentation include all three
+  choice assessments. Existing Cornerstone browser-externalization and large lazy chunk warnings
+  remain non-failing.
+- **Follow-ups:** Start P4-T06 classification, matching and accessible ordering using the shared
+  review semantics without coupling components to player state.

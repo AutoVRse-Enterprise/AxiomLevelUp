@@ -1,14 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui'
-import type { MultipleChoicePrimitive as MultipleChoicePrimitiveConfig } from '@/content/schema/primitives'
+import type { TrueFalsePrimitive as TrueFalsePrimitiveConfig } from '@/content/schema/primitives'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
-import { seededShuffle } from '@/primitives/shared/seededShuffle'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
-export function MultipleChoicePrimitive({
+const options = [
+  { id: 'true', label: 'True' },
+  { id: 'false', label: 'False' },
+] as const
+
+export function TrueFalsePrimitive({
   primitive,
-  attempt,
   mode,
   review,
   draft,
@@ -16,30 +19,22 @@ export function MultipleChoicePrimitive({
   onInteract,
   onDraftChange,
   onSubmit,
-}: PrimitiveComponentProps<MultipleChoicePrimitiveConfig>) {
+}: PrimitiveComponentProps<TrueFalsePrimitiveConfig>) {
   const initialResponse = mode === 'review' ? review?.response : draft
   const [selected, setSelected] = useState(
-    typeof initialResponse === 'string' ? initialResponse : '',
+    typeof initialResponse === 'boolean' ? String(initialResponse) : '',
   )
   const readOnly = disabled || mode === 'review'
-  const shuffleAttempt = mode === 'review' ? Math.max(0, attempt - 1) : attempt
-  const options = useMemo(
-    () =>
-      primitive.content.shuffle
-        ? seededShuffle(primitive.content.options, `${primitive.id}:${shuffleAttempt}`)
-        : primitive.content.options,
-    [primitive, shuffleAttempt],
-  )
 
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault()
-        if (selected) onSubmit(selected)
+        if (selected) onSubmit(selected === 'true')
       }}
     >
       <ChoiceList
-        legend={primitive.content.prompt}
+        legend={primitive.content.statement}
         name={primitive.id}
         options={options}
         selectionMode="single"
@@ -48,8 +43,9 @@ export function MultipleChoicePrimitive({
         reviewItems={mode === 'review' ? review?.evaluation.items : undefined}
         revealAnswer={review?.revealAnswer}
         onChange={(optionId) => {
+          const response = optionId === 'true'
           setSelected(optionId)
-          onDraftChange(optionId)
+          onDraftChange(response)
           onInteract({ name: 'option_selected', key: optionId })
         }}
       />
