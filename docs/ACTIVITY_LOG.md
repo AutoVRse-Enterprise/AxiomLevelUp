@@ -244,3 +244,12 @@ This file is append-only.
 - **Commands run:** `npm run check`, `git diff --check`, browser checks at 375 × 812, 768 × 900 and 1280 × 900.
 - **Result/verification:** All 35 tests, content validation, type checking, lint and production build pass. Browser accessibility snapshots and visual checks passed for the target surface set.
 - **Follow-ups:** Plan and implement Phase 3's configured lesson execution engine; retain physical-device DICOM/PWA verification as an external follow-up.
+
+### [2026-10-01 20:28] P3-T00 - Phase 3 acceptance map
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Defined the Core lesson engine scope, architecture boundaries, task checklist, PRD traceability and exit criteria.
+- **Files changed:** `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** None.
+- **Result/verification:** Phase 3 has an executable checklist that preserves the Phase 4, 5 and 6 boundaries.
+- **Follow-ups:** Type the primitive runtime contracts and configurable player defaults.
