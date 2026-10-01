@@ -10,6 +10,21 @@ const ImagePrimitive = lazy(async () => {
   return { default: module.ImagePrimitive }
 })
 
+const ZoomableImagePrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ZoomableImagePrimitive')
+  return { default: module.ZoomableImagePrimitive }
+})
+
+const ImageHotspotPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ImageHotspotPrimitive')
+  return { default: module.ImageHotspotPrimitive }
+})
+
+const ImageComparePrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/ImageComparePrimitive')
+  return { default: module.ImageComparePrimitive }
+})
+
 const MultipleChoicePrimitive = lazy(async () => {
   const module = await import('@/primitives/components/MultipleChoicePrimitive')
   return { default: module.MultipleChoicePrimitive }
@@ -53,6 +68,9 @@ const NumericPrimitive = lazy(async () => {
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
+  zoomable_image: ZoomableImagePrimitive,
+  image_hotspot: ImageHotspotPrimitive,
+  image_compare: ImageComparePrimitive,
   multiple_choice: MultipleChoicePrimitive,
   multiple_select: MultipleSelectPrimitive,
   true_false: TrueFalsePrimitive,

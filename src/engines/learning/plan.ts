@@ -78,9 +78,14 @@ export function buildActivityPlan(
 ): ActivityPlan {
   const mapped = activity.primitives.map((primitive): ActivityStep => {
     const resolved = resolvePrimitiveDefinition(primitive)
+    const family = resolved
+      ? typeof resolved.definition.family === 'function'
+        ? resolved.definition.family(resolved.primitive)
+        : resolved.definition.family
+      : 'unsupported'
     return {
       primitive,
-      kind: resolved?.definition.family ?? 'unsupported',
+      kind: family,
       supported: resolved !== null,
       scored: resolved?.definition.scored(resolved.primitive) ?? false,
       label: resolved?.definition.label ?? 'Activity',

@@ -249,14 +249,37 @@ describe('activity planning and sessions', () => {
     const explored = parsePrimitive({
       id: 'explored',
       type: 'image_hotspot',
-      content: {},
+      content: {
+        mode: 'explore',
+        assetId: 'hotspot-image',
+        alt: 'Hotspot image',
+        regions: [
+          {
+            id: 'region-a',
+            label: 'Region A',
+            shape: 'circle',
+            x: 0.25,
+            y: 0.25,
+            radius: 0.1,
+          },
+          {
+            id: 'region-b',
+            label: 'Region B',
+            shape: 'rect',
+            x: 0.5,
+            y: 0.5,
+            width: 0.2,
+            height: 0.2,
+          },
+        ],
+      },
       completion: { mode: 'explored' },
     }).primitive!
     const context = {
       attempts: 0,
       correct: null,
-      interactionKeys: ['region:a', 'region:a'],
-      explorableKeys: ['region:a', 'region:b'],
+      interactionKeys: ['region-a', 'region-a'],
+      explorableKeys: ['region-a', 'region-b'],
       mediaProgress: 0,
       mediaCompletionThreshold: playerConfig.mediaCompletionThreshold,
       reportedComplete: false,
@@ -269,7 +292,7 @@ describe('activity planning and sessions', () => {
     expect(
       isPrimitiveComplete(explored, {
         ...context,
-        interactionKeys: ['region:a', 'region:b', 'unrelated'],
+        interactionKeys: ['region-a', 'region-b', 'unrelated'],
       }),
     ).toBe(true)
   })

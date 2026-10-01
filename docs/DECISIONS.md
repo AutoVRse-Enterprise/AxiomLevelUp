@@ -356,3 +356,23 @@ badge exposes `role="timer"` without continuous live updates and announces only 
 while every visible attempt has a deterministic limit and cannot dead-end after expiry. Timeout
 events remain distinguishable from ordinary incorrect answers, and the countdown uses no
 motion-dependent presentation.
+
+## ADR-031: Normalized image-region interaction model
+
+**Status:** Accepted
+
+**Context:** Zoomable labels and hotspot targets must stay aligned across responsive sizes, overlay
+zoom and input methods. The same hotspot primitive also needs content-style exploration and scored
+assessment behavior without moving progression or grading policy into React.
+
+**Decision:** Author circle, rectangle and polygon regions in normalized image coordinates and
+validate their bounds, IDs and assessment target references strictly. Store assessment responses as
+normalized points and grade them with pure inclusive-boundary hit testing. Resolve the hotspot
+definition family and scoring behavior from its validated `explore` or `assess` mode. Keep pan/zoom
+state local to the shared image viewer, while exploration emits unique region keys and assessment
+drafts flow through player callbacks.
+
+**Consequences:** Regions are resolution-independent and reusable in inline and overlay views;
+hotspot evaluation remains deterministic and review-safe. Definition family resolution now permits
+a validated primitive subtype to choose content or assessment behavior, and authored SVG dimensions
+prevent layout shift when manifest metadata is available.

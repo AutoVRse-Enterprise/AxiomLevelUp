@@ -29,30 +29,30 @@ primitive runs from introduction to completion through the real lesson route.
 Completion modes in **bold** are new. "Scored" means the definition supplies an evaluator and the
 step contributes to the activity score.
 
-| Type | Family | Learner interaction | Default completion | Scored | Key content |
-| --- | --- | --- | --- | --- | --- |
-| `rich_text` | Content | Read; activate inline terms for definitions | `viewed` | No | `terms[]` with term and definition |
-| `image` | Content | View; open an in-app pan/zoom overlay; toggle annotations | `viewed` | No | Asset-manifest width and height |
-| `zoomable_image` | Content | Pan, zoom, reset and toggle labelled regions | `viewed` | No | `assetId`, `alt`, `regions[]`, `maxZoom` |
-| `image_hotspot` | Content or assessment | Reveal regions or locate a target | **`explored`** or `answer` | Assess mode | `mode`, normalized regions, `targetRegionIds` |
-| `image_compare` | Content | Use a comparison slider or side-by-side view | `viewed` | No | `mode`, `before`, `after`, `initialPosition` |
-| `video` | Content | Play, use captions and markers, answer formative checkpoints | **`media_progress`** (0.9) | No | `assetId`, poster, captions, markers, checkpoints |
-| `audio` | Content | Play, track progress and read transcript | **`media_progress`** (0.9) | No | `assetId`, `transcript` |
-| `carousel` | Content | Swipe or use previous, next and slide controls | **`explored`** (all slides) | No | Slides with text and optional image; no nested primitives |
-| `data_table` | Content | Scroll, inspect highlighted values and open an overlay | `viewed` | No | Columns, rows, highlights and caption |
-| `chart` | Content | Inspect points and toggle an accessible table | `viewed` | No | Line, bar, scatter or dose-response data; axes and summary |
-| `formula` | Content | Read rendered scientific expressions | `viewed` | No | TeX expressions with display mode and `ariaLabel` |
-| `pdf_reference` | Content | Read a citation card and open the document natively | `viewed` | No | `assetId`, citation, summary and optional cover |
-| `multiple_choice` | Assessment | Select one option | `answer` | Yes | Options and optional shuffle |
-| `multiple_select` | Assessment | Select several options | `answer` | Yes, all-or-nothing or partial | Correct IDs, scoring mode and minimum selections |
-| `true_false` | Assessment | Choose true or false | `answer` | Yes | Statement and answer |
-| `classification` | Assessment | Select an item and place it in a category | `answer` | Yes, all-or-nothing or partial | Categories and classified items |
-| `match_pairs` | Assessment | Select a left item and then its match | `answer` | Yes, all-or-nothing or partial | Left and right items, distractors and pairs |
-| `ordering` | Assessment | Drag or use keyboard and move buttons to reorder | `answer` | Yes, exact or partial | Identified items in correct order |
-| `fill_blank` | Assessment | Type or choose an answer for each blank | `answer` | Yes | Tokenized text, accepted answers and optional choices |
-| `numeric` | Assessment | Enter a number | `answer` | Yes | Answer with tolerance or range and unit |
-| Timed response | Wrapper | Complete a compatible assessment before expiry | Inherited | Inherited | Existing base `timer` field |
-| `scenario` | Domain | Make sequential decisions and inspect consequences | `outcome` | When choices carry scores | Start node and context, decision and outcome nodes |
+| Type              | Family                | Learner interaction                                          | Default completion          | Scored                         | Key content                                                |
+| ----------------- | --------------------- | ------------------------------------------------------------ | --------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| `rich_text`       | Content               | Read; activate inline terms for definitions                  | `viewed`                    | No                             | `terms[]` with term and definition                         |
+| `image`           | Content               | View; open an in-app pan/zoom overlay; toggle annotations    | `viewed`                    | No                             | Asset-manifest width and height                            |
+| `zoomable_image`  | Content               | Pan, zoom, reset and toggle labelled regions                 | `viewed`                    | No                             | `assetId`, `alt`, `regions[]`, `maxZoom`                   |
+| `image_hotspot`   | Content or assessment | Reveal regions or locate a target                            | **`explored`** or `answer`  | Assess mode                    | `mode`, normalized regions, `targetRegionIds`              |
+| `image_compare`   | Content               | Use a comparison slider or side-by-side view                 | `viewed`                    | No                             | `mode`, `before`, `after`, `initialPosition`               |
+| `video`           | Content               | Play, use captions and markers, answer formative checkpoints | **`media_progress`** (0.9)  | No                             | `assetId`, poster, captions, markers, checkpoints          |
+| `audio`           | Content               | Play, track progress and read transcript                     | **`media_progress`** (0.9)  | No                             | `assetId`, `transcript`                                    |
+| `carousel`        | Content               | Swipe or use previous, next and slide controls               | **`explored`** (all slides) | No                             | Slides with text and optional image; no nested primitives  |
+| `data_table`      | Content               | Scroll, inspect highlighted values and open an overlay       | `viewed`                    | No                             | Columns, rows, highlights and caption                      |
+| `chart`           | Content               | Inspect points and toggle an accessible table                | `viewed`                    | No                             | Line, bar, scatter or dose-response data; axes and summary |
+| `formula`         | Content               | Read rendered scientific expressions                         | `viewed`                    | No                             | TeX expressions with display mode and `ariaLabel`          |
+| `pdf_reference`   | Content               | Read a citation card and open the document natively          | `viewed`                    | No                             | `assetId`, citation, summary and optional cover            |
+| `multiple_choice` | Assessment            | Select one option                                            | `answer`                    | Yes                            | Options and optional shuffle                               |
+| `multiple_select` | Assessment            | Select several options                                       | `answer`                    | Yes, all-or-nothing or partial | Correct IDs, scoring mode and minimum selections           |
+| `true_false`      | Assessment            | Choose true or false                                         | `answer`                    | Yes                            | Statement and answer                                       |
+| `classification`  | Assessment            | Select an item and place it in a category                    | `answer`                    | Yes, all-or-nothing or partial | Categories and classified items                            |
+| `match_pairs`     | Assessment            | Select a left item and then its match                        | `answer`                    | Yes, all-or-nothing or partial | Left and right items, distractors and pairs                |
+| `ordering`        | Assessment            | Drag or use keyboard and move buttons to reorder             | `answer`                    | Yes, exact or partial          | Identified items in correct order                          |
+| `fill_blank`      | Assessment            | Type or choose an answer for each blank                      | `answer`                    | Yes                            | Tokenized text, accepted answers and optional choices      |
+| `numeric`         | Assessment            | Enter a number                                               | `answer`                    | Yes                            | Answer with tolerance or range and unit                    |
+| Timed response    | Wrapper               | Complete a compatible assessment before expiry               | Inherited                   | Inherited                      | Existing base `timer` field                                |
+| `scenario`        | Domain                | Make sequential decisions and inspect consequences           | `outcome`                   | When choices carry scores      | Start node and context, decision and outcome nodes         |
 
 Existing `correct_order` completion remains an alias of `answer` semantics so exhausted attempts
 cannot dead-end an ordering step.
@@ -71,28 +71,28 @@ cannot dead-end an ordering step.
 
 - [x] P4-T00 — Formalize the phase scope, catalogue, decisions, task sequence and PRD traceability.
 - [x] P4-T01 — Add pure primitive definitions and a lazy component map; migrate the Phase 3
-  primitives without behavior changes; derive support from definitions and add parity coverage.
+      primitives without behavior changes; derive support from definitions and add parity coverage.
 - [x] P4-T02 — Add fractional scoring, scored steps, session v2 drafts and interaction keys,
-  exploration/media completion and event payload changes.
+      exploration/media completion and event payload changes.
 - [x] P4-T03 — Add review and reveal behavior, draft persistence, focus management, split layout,
-  artifact overlay, pan/zoom and seeded shuffle infrastructure.
+      artifact overlay, pan/zoom and seeded shuffle infrastructure.
 - [x] P4-T04 — Harden challenge, primitive-ID, asset-reference, timer and manifest validation and
-  regenerate schemas.
+      regenerate schemas.
 - [x] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
-  shuffle and review.
+      shuffle and review.
 - [x] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
 - [x] P4-T07 — Add fill-blank and numeric typed-response assessments.
 - [x] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
-- [ ] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
+- [x] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
 - [ ] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
-  `dose-curve`.
+      `dose-curve`.
 - [ ] P4-T11 — Add video, audio, carousel and PDF-reference primitives, rich-text terms and
-  synthetic media fixtures.
+      synthetic media fixtures.
 - [ ] P4-T12 — Add scenario schemas, graph validation, a pure scenario engine and resumable UI;
-  migrate `case-intro` and `trial-case`.
+      migrate `case-intro` and `trial-case`.
 - [ ] P4-T13 — Add the internal `runtime-showcase` course and `/dev/primitives` gallery.
 - [ ] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
-  validation coverage.
+      validation coverage.
 - [ ] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
 - [ ] P4-T16 — Run the quality gate, record ADRs and close Phase 4 documentation.
 
@@ -171,8 +171,13 @@ cannot dead-end an ordering step.
   threshold announcements, hidden-document pausing and full-duration restart on activity resume.
   Expiry submits the current draft at zero score with `timedOut: true` and follows the configured
   retry and max-attempt policy.
+- P4-T09: ordinary images use manifest dimensions, annotation controls and the shared pan/zoom
+  overlay; zoomable images add bounded wheel, pointer, pinch and keyboard navigation with labelled
+  regions. Hotspots support all-region exploration and normalized point assessment against circle,
+  rectangle and polygon targets; comparisons provide accessible slider and responsive side-by-side
+  modes. Original synthetic SVG fixtures include local provenance.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T09 through P4-T16.
+- Runtime verification remains pending for P4-T10 through P4-T16.
 
 ## Deviations
 

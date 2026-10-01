@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T08 are complete; P4-T09 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T09 are complete; P4-T10 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -46,10 +46,19 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   follows the same retry/max-attempt policy as an ordinary incorrect response.
 - The timer badge exposes `role="timer"`, announces configured thresholds politely and does not use
   motion-dependent presentation.
+- Image primitives now share manifest-aware sizing and accessible image interaction: ordinary
+  images have annotation controls and a pan/zoom overlay, while zoomable images add bounded
+  pointer, pinch, wheel and keyboard navigation with optional labelled regions.
+- Image hotspots use normalized circle, rectangle and polygon regions. Explore mode reports each
+  region key once; assessment mode persists a normalized marker and evaluates it with pure hit
+  testing. Image comparisons support an accessible native slider and responsive side-by-side mode.
+- Three original synthetic SVG showcase assets and their provenance are under
+  `public/assets/images/showcase`.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021, ADR-025 through ADR-030 record player lifecycle, structured assessments, artifact
-  viewport, semantic validation, assessment semantics and timed-response lifecycle.
-- Type checking, lint, 15 test files with 134 tests, content validation and production build pass.
+- ADR-021, ADR-025 through ADR-031 record player lifecycle, structured assessments, artifact
+  viewport, semantic validation, assessment semantics, timed-response lifecycle and normalized
+  image regions.
+- Type checking, lint, 16 test files with 147 tests, content validation and production build pass.
 
 ## In progress
 
@@ -57,9 +66,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T09: add zoomable, hotspot and comparison image primitives.
-2. P4-T10: add data tables, charts and formula primitives.
-3. P4-T11: add video, audio, carousel and PDF-reference primitives.
+1. P4-T10: add data tables, charts and formula primitives.
+2. P4-T11: add video, audio, carousel and PDF-reference primitives.
+3. P4-T12: add scenario schemas, engine and resumable UI.
 
 ## Blockers/questions for the user
 
@@ -93,6 +102,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   separators, exponent notation and non-finite values.
 - Timer state is intentionally not persisted: activity resume restarts the current item timer,
   while retry starts a new full timer and background visibility pauses the current remainder.
+- Image regions are normalized to `[0, 1]`; circle bounds, rectangle extents, polygon points,
+  duplicate IDs and hotspot target references are rejected during parsing.
+- Explore hotspots must use uncapped `explored` completion so every configured region is required;
+  assess hotspots must use `answer` completion and persist `{ x, y }` normalized points.
 - Timeout is an ordinary zero-score attempt for retry/completion purposes, but is distinguished by
   `lastTimedOut` in the session and `timedOut` on `question_answered`.
 - Choice shuffle seeds offset review's submitted-attempt count so option order does not change after

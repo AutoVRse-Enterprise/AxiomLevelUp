@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title description">
+  <title id="title">Synthetic treated tissue</title>
+  <desc id="description">An abstract tissue pattern with reduced and irregular structures for image comparison training.</desc>
+  <rect width="1200" height="800" fill="#ecfeff"/>
+  <g fill="#67e8f9" stroke="#0e7490" stroke-width="7" opacity=".88">
+    <ellipse cx="170" cy="145" rx="82" ry="58" transform="rotate(-8 170 145)"/>
+    <ellipse cx="430" cy="135" rx="70" ry="48" transform="rotate(14 430 135)"/>
+    <ellipse cx="720" cy="165" rx="92" ry="52" transform="rotate(-18 720 165)"/>
+    <ellipse cx="1010" cy="120" rx="62" ry="44" transform="rotate(21 1010 120)"/>
+    <ellipse cx="300" cy="410" rx="76" ry="54" transform="rotate(10 300 410)"/>
+    <ellipse cx="600" cy="365" rx="88" ry="47" transform="rotate(-12 600 365)"/>
+    <ellipse cx="900" cy="430" rx="68" ry="52" transform="rotate(24 900 430)"/>
+    <ellipse cx="160" cy="670" rx="72" ry="44" transform="rotate(-16 160 670)"/>
+    <ellipse cx="500" cy="625" rx="80" ry="50" transform="rotate(18 500 625)"/>
+    <ellipse cx="850" cy="665" rx="66" ry="46" transform="rotate(-9 850 665)"/>
+  </g>
+  <g fill="#155e75">
+    <circle cx="170" cy="145" r="18"/><circle cx="430" cy="135" r="15"/>
+    <circle cx="720" cy="165" r="20"/><circle cx="1010" cy="120" r="14"/>
+    <circle cx="300" cy="410" r="16"/><circle cx="600" cy="365" r="18"/>
+    <circle cx="900" cy="430" r="15"/><circle cx="160" cy="670" r="14"/>
+    <circle cx="500" cy="625" r="17"/><circle cx="850" cy="665" r="14"/>
+  </g>
+  <g fill="#fff" opacity=".82">
+    <circle cx="310" cy="215" r="18"/><circle cx="800" cy="300" r="24"/>
+    <circle cx="410" cy="520" r="21"/><circle cx="1050" cy="575" r="28"/>
+  </g>
+</svg>

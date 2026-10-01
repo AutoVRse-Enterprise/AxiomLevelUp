@@ -1,11 +1,14 @@
 {
   "schemaVersion": "0.1",
   "assets": [
-    { "assetId": "course-imaging-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
-    { "assetId": "course-clinical-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
-    { "assetId": "course-data-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
-    { "assetId": "course-safety-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024 },
-    { "assetId": "windowing-diagram", "path": "/assets/images/windowing-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048 },
-    { "assetId": "thorax-diagram", "path": "/assets/images/thorax-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048 }
+    { "assetId": "course-imaging-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
+    { "assetId": "course-clinical-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
+    { "assetId": "course-data-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
+    { "assetId": "course-safety-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
+    { "assetId": "windowing-diagram", "path": "/assets/images/windowing-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
+    { "assetId": "thorax-diagram", "path": "/assets/images/thorax-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048, "mimeType": "image/svg+xml", "width": 800, "height": 800 },
+    { "assetId": "showcase-cell-map", "path": "/assets/images/showcase/cell-map.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1631, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
+    { "assetId": "showcase-tissue-control", "path": "/assets/images/showcase/tissue-control.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1362, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
+    { "assetId": "showcase-tissue-treated", "path": "/assets/images/showcase/tissue-treated.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1811, "mimeType": "image/svg+xml", "width": 1200, "height": 800 }
   ]
 }

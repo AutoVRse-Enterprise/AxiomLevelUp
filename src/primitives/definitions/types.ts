@@ -6,7 +6,7 @@ export type PrimitiveLayout = 'stacked' | 'split'
 
 export interface PrimitiveDefinition<P extends TypedPrimitive> {
   type: P['type']
-  family: PrimitiveFamily
+  family: PrimitiveFamily | ((primitive: P) => PrimitiveFamily)
   label: string
   layout: PrimitiveLayout
   timerCompatible: boolean

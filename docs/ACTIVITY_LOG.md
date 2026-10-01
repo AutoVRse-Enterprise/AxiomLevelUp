@@ -566,3 +566,25 @@ This file is append-only.
   and full timer restart on activity resume. Existing Cornerstone browser-externalization and large
   lazy chunk warnings remain non-failing.
 - **Follow-ups:** Start P4-T09 zoomable, hotspot and comparison image primitives.
+
+### [2026-10-01 22:43] P4-T09 - Add interactive image primitives
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Upgraded ordinary images with manifest-sized rendering, annotation toggles and a
+  pan/zoom artifact overlay. Added strict zoomable-image, hotspot and comparison schemas,
+  definition-driven content/assessment behavior, pure normalized circle/rectangle/polygon hit
+  testing, accessible pointer/pinch/wheel/keyboard interactions, review targets and responsive
+  comparison layouts. Added original synthetic SVG fixtures with provenance and recorded ADR-031.
+- **Files changed:** `public/assets/images/showcase/**`, `public/content/assets.json`,
+  `src/content/{schema/primitives,useAssetUrl.ts}/**`, `src/engines/learning/{plan.ts,
+learningEngine.test.ts}`, `src/primitives/{components,definitions,shared}/**`,
+  `src/primitives/{componentRegistry.ts,imagePrimitives.test.tsx}`,
+  `src/player/player.test.tsx`, `docs/{ACTIVITY_LOG,CONTENT_SCHEMA,DECISIONS,HANDOFF}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck, lint and Vitest runs; `npm run schema:export`;
+  `npm run test`; `npm run validate:content`; `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 16 test files and 147 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. IDE lint diagnostics
+  are clear. Existing Cornerstone browser-externalization and large lazy chunk warnings remain
+  non-failing.
+- **Follow-ups:** Start P4-T10 data-table, chart and formula primitives.

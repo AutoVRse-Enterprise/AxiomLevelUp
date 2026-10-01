@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title description">
+  <title id="title">Synthetic cell field</title>
+  <desc id="description">A stylized microscopy field with a nucleus, vesicles, and membrane structures.</desc>
+  <defs>
+    <radialGradient id="field" cx="50%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </radialGradient>
+    <radialGradient id="cell" cx="38%" cy="32%" r="68%">
+      <stop offset="0" stop-color="#bfdbfe"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#field)"/>
+  <g fill="#93c5fd" opacity=".42">
+    <circle cx="120" cy="130" r="42"/><circle cx="1060" cy="170" r="58"/>
+    <circle cx="1040" cy="660" r="76"/><circle cx="160" cy="680" r="62"/>
+  </g>
+  <path d="M170 420C180 170 430 75 665 125c250 54 406 230 350 424-62 214-334 265-570 177C265 659 162 563 170 420Z" fill="url(#cell)" stroke="#1d4ed8" stroke-width="14"/>
+  <ellipse cx="500" cy="390" rx="170" ry="140" fill="#7c3aed" opacity=".76" stroke="#4c1d95" stroke-width="12"/>
+  <ellipse cx="465" cy="355" rx="55" ry="42" fill="#ddd6fe" opacity=".8"/>
+  <g fill="#f59e0b" stroke="#92400e" stroke-width="7">
+    <circle cx="770" cy="290" r="44"/><circle cx="835" cy="470" r="38"/><circle cx="690" cy="590" r="32"/>
+  </g>
+  <g fill="none" stroke="#0f766e" stroke-linecap="round" stroke-width="18">
+    <path d="M275 540c85-88 130-44 186 22"/>
+    <path d="M670 205c62 31 94 69 113 126"/>
+    <path d="M720 670c82-34 142-88 174-160"/>
+  </g>
+</svg>

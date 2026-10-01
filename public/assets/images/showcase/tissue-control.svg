@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title description">
+  <title id="title">Synthetic control tissue</title>
+  <desc id="description">An abstract evenly organized tissue pattern for image comparison training.</desc>
+  <rect width="1200" height="800" fill="#fef3c7"/>
+  <g fill="#f9a8d4" stroke="#be185d" stroke-width="7" opacity=".88">
+    <ellipse cx="170" cy="145" rx="105" ry="72"/><ellipse cx="430" cy="135" rx="108" ry="70"/>
+    <ellipse cx="700" cy="145" rx="105" ry="72"/><ellipse cx="970" cy="135" rx="108" ry="70"/>
+    <ellipse cx="290" cy="390" rx="105" ry="72"/><ellipse cx="565" cy="395" rx="108" ry="70"/>
+    <ellipse cx="840" cy="385" rx="105" ry="72"/>
+    <ellipse cx="170" cy="650" rx="105" ry="72"/><ellipse cx="430" cy="640" rx="108" ry="70"/>
+    <ellipse cx="700" cy="650" rx="105" ry="72"/><ellipse cx="970" cy="640" rx="108" ry="70"/>
+  </g>
+  <g fill="#831843">
+    <circle cx="170" cy="145" r="24"/><circle cx="430" cy="135" r="24"/>
+    <circle cx="700" cy="145" r="24"/><circle cx="970" cy="135" r="24"/>
+    <circle cx="290" cy="390" r="24"/><circle cx="565" cy="395" r="24"/>
+    <circle cx="840" cy="385" r="24"/><circle cx="170" cy="650" r="24"/>
+    <circle cx="430" cy="640" r="24"/><circle cx="700" cy="650" r="24"/>
+    <circle cx="970" cy="640" r="24"/>
+  </g>
+</svg>

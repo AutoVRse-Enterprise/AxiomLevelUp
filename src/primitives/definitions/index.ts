@@ -9,6 +9,8 @@ import {
 import { classificationDefinition } from '@/primitives/definitions/classification'
 import { fillBlankDefinition } from '@/primitives/definitions/fillBlank'
 import { imageDefinition } from '@/primitives/definitions/image'
+import { imageCompareDefinition } from '@/primitives/definitions/imageCompare'
+import { imageHotspotDefinition } from '@/primitives/definitions/imageHotspot'
 import { matchPairsDefinition } from '@/primitives/definitions/matchPairs'
 import { multipleChoiceDefinition } from '@/primitives/definitions/multipleChoice'
 import { multipleSelectDefinition } from '@/primitives/definitions/multipleSelect'
@@ -17,6 +19,7 @@ import { orderingDefinition } from '@/primitives/definitions/ordering'
 import { richTextDefinition } from '@/primitives/definitions/richText'
 import { trueFalseDefinition } from '@/primitives/definitions/trueFalse'
 import type { PrimitiveDefinition, PrimitiveDefinitionMap } from '@/primitives/definitions/types'
+import { zoomableImageDefinition } from '@/primitives/definitions/zoomableImage'
 import type { EvaluationResult } from '@/primitives/types'
 
 export * from '@/primitives/definitions/types'
@@ -24,6 +27,9 @@ export * from '@/primitives/definitions/types'
 export const primitiveDefinitions = {
   rich_text: richTextDefinition,
   image: imageDefinition,
+  zoomable_image: zoomableImageDefinition,
+  image_hotspot: imageHotspotDefinition,
+  image_compare: imageCompareDefinition,
   multiple_choice: multipleChoiceDefinition,
   multiple_select: multipleSelectDefinition,
   true_false: trueFalseDefinition,

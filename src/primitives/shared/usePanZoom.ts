@@ -30,6 +30,10 @@ export interface PanZoomHandlers {
 }
 
 export function usePanZoom({ viewport, content, minScale = 1, maxScale = 4 }: UsePanZoomOptions) {
+  const viewportWidth = viewport.width
+  const viewportHeight = viewport.height
+  const contentWidth = content.width
+  const contentHeight = content.height
   const initial = clampPanZoom(
     { x: 0, y: 0, scale: minScale },
     viewport,
@@ -39,17 +43,37 @@ export function usePanZoom({ viewport, content, minScale = 1, maxScale = 4 }: Us
   )
   const [transform, setTransform] = useState<PanZoomTransform>(initial)
   const drag = useRef<{ pointerId: number; point: Point } | null>(null)
+  const pointers = useRef(new Map<number, Point>())
+  const pinch = useRef<{
+    pointerIds: [number, number]
+    distance: number
+    transform: PanZoomTransform
+  } | null>(null)
 
   const constrain = useCallback(
-    (next: PanZoomTransform) => clampPanZoom(next, viewport, content, minScale, maxScale),
-    [content, maxScale, minScale, viewport],
+    (next: PanZoomTransform) =>
+      clampPanZoom(
+        next,
+        { width: viewportWidth, height: viewportHeight },
+        { width: contentWidth, height: contentHeight },
+        minScale,
+        maxScale,
+      ),
+    [contentHeight, contentWidth, maxScale, minScale, viewportHeight, viewportWidth],
   )
+  const constrainedTransform = constrain(transform)
 
   const reset = useCallback(() => {
     setTransform(
-      clampPanZoom({ x: 0, y: 0, scale: minScale }, viewport, content, minScale, maxScale),
+      clampPanZoom(
+        { x: 0, y: 0, scale: minScale },
+        { width: viewportWidth, height: viewportHeight },
+        { width: contentWidth, height: contentHeight },
+        minScale,
+        maxScale,
+      ),
     )
-  }, [content, maxScale, minScale, viewport])
+  }, [contentHeight, contentWidth, maxScale, minScale, viewportHeight, viewportWidth])
 
   const panBy = useCallback(
     (x: number, y: number) => {
@@ -59,28 +83,72 @@ export function usePanZoom({ viewport, content, minScale = 1, maxScale = 4 }: Us
   )
 
   const zoomTo = useCallback(
-    (scale: number, point: Point = { x: viewport.width / 2, y: viewport.height / 2 }) => {
+    (scale: number, point: Point = { x: viewportWidth / 2, y: viewportHeight / 2 }) => {
       setTransform((current) => constrain(zoomAtPoint(current, scale, point, minScale, maxScale)))
     },
-    [constrain, maxScale, minScale, viewport.height, viewport.width],
+    [constrain, maxScale, minScale, viewportHeight, viewportWidth],
   )
 
   const releasePointer: PointerEventHandler<HTMLElement> = useCallback((event) => {
-    if (drag.current?.pointerId !== event.pointerId) return
-    drag.current = null
+    pointers.current.delete(event.pointerId)
+    if (drag.current?.pointerId === event.pointerId) drag.current = null
+    pinch.current = null
+    const remaining = [...pointers.current.entries()][0]
+    if (remaining) {
+      drag.current = { pointerId: remaining[0], point: remaining[1] }
+    }
     event.currentTarget.releasePointerCapture?.(event.pointerId)
   }, [])
 
   const handlers: PanZoomHandlers = {
     onPointerDown: (event) => {
       if (event.button !== 0) return
+      const point = { x: event.clientX, y: event.clientY }
+      pointers.current.set(event.pointerId, point)
       drag.current = {
         pointerId: event.pointerId,
-        point: { x: event.clientX, y: event.clientY },
+        point,
+      }
+      const activePointers = [...pointers.current.entries()]
+      if (activePointers.length === 2) {
+        const [first, second] = activePointers as [[number, Point], [number, Point]]
+        pinch.current = {
+          pointerIds: [first[0], second[0]],
+          distance: Math.hypot(second[1].x - first[1].x, second[1].y - first[1].y),
+          transform: constrainedTransform,
+        }
+        drag.current = null
       }
       event.currentTarget.setPointerCapture?.(event.pointerId)
     },
     onPointerMove: (event) => {
+      if (pointers.current.has(event.pointerId)) {
+        pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      }
+      if (pinch.current) {
+        const [firstId, secondId] = pinch.current.pointerIds
+        const first = pointers.current.get(firstId)
+        const second = pointers.current.get(secondId)
+        if (!first || !second || pinch.current.distance === 0) return
+        const distance = Math.hypot(second.x - first.x, second.y - first.y)
+        const bounds = event.currentTarget.getBoundingClientRect()
+        const midpoint = {
+          x: (first.x + second.x) / 2 - bounds.left,
+          y: (first.y + second.y) / 2 - bounds.top,
+        }
+        setTransform(
+          constrain(
+            zoomAtPoint(
+              pinch.current.transform,
+              pinch.current.transform.scale * (distance / pinch.current.distance),
+              midpoint,
+              minScale,
+              maxScale,
+            ),
+          ),
+        )
+        return
+      }
       if (drag.current?.pointerId !== event.pointerId) return
       const previous = drag.current.point
       drag.current.point = { x: event.clientX, y: event.clientY }
@@ -93,14 +161,14 @@ export function usePanZoom({ viewport, content, minScale = 1, maxScale = 4 }: Us
       const bounds = event.currentTarget.getBoundingClientRect()
       const point = { x: event.clientX - bounds.left, y: event.clientY - bounds.top }
       const factor = event.deltaY < 0 ? 1.2 : 1 / 1.2
-      zoomTo(transform.scale * factor, point)
+      zoomTo(constrainedTransform.scale * factor, point)
     },
   }
 
   return {
-    transform,
+    transform: constrainedTransform,
     style: {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.scale})`,
+      transform: `translate3d(${constrainedTransform.x}px, ${constrainedTransform.y}px, 0) scale(${constrainedTransform.scale})`,
       transformOrigin: '0 0',
     },
     handlers,
