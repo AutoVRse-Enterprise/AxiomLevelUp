@@ -9,6 +9,18 @@ import type { ClassificationPrimitive } from './classification'
 import { classificationContentSchema } from './classification'
 import type { DataTablePrimitive } from './dataTable'
 import { dataTableContentSchema } from './dataTable'
+import type {
+  DicomExplorePrimitive,
+  DicomGuidedPrimitive,
+  DicomIdentifyRegionPrimitive,
+  DicomMeasurePrimitive,
+} from './dicom'
+import {
+  dicomExploreContentSchema,
+  dicomGuidedContentSchema,
+  dicomIdentifyRegionContentSchema,
+  dicomMeasureContentSchema,
+} from './dicom'
 import type { FillBlankPrimitive } from './fillBlank'
 import { fillBlankContentSchema } from './fillBlank'
 import type { FormulaPrimitive } from './formula'
@@ -48,6 +60,20 @@ export { carouselPrimitiveSchema, type CarouselPrimitive } from './carousel'
 export { classificationPrimitiveSchema, type ClassificationPrimitive } from './classification'
 export { chartPrimitiveSchema, type ChartPrimitive } from './chart'
 export { dataTablePrimitiveSchema, type DataTablePrimitive } from './dataTable'
+export {
+  dicomExplorePrimitiveSchema,
+  dicomGuidedPrimitiveSchema,
+  dicomIdentifyRegionPrimitiveSchema,
+  dicomMeasurePrimitiveSchema,
+  dicomPresetSchema,
+  dicomSliceRangeSchema,
+  dicomToolSchema,
+  type DicomExplorePrimitive,
+  type DicomGuidedPrimitive,
+  type DicomIdentifyRegionPrimitive,
+  type DicomMeasurePrimitive,
+  type DicomPrimitive,
+} from './dicom'
 export { fillBlankPrimitiveSchema, type FillBlankPrimitive } from './fillBlank'
 export { formulaPrimitiveSchema, type FormulaPrimitive } from './formula'
 export { imagePrimitiveSchema, type ImagePrimitive } from './image'
@@ -111,6 +137,10 @@ export const primitiveContentSchemas = {
   fill_blank: fillBlankContentSchema,
   numeric: numericContentSchema,
   scenario: scenarioContentSchema,
+  dicom_explore: dicomExploreContentSchema,
+  dicom_guided: dicomGuidedContentSchema,
+  dicom_identify_region: dicomIdentifyRegionContentSchema,
+  dicom_measure: dicomMeasureContentSchema,
 } as const
 
 export type TypedPrimitive =
@@ -135,6 +165,10 @@ export type TypedPrimitive =
   | FillBlankPrimitive
   | NumericPrimitive
   | ScenarioPrimitive
+  | DicomExplorePrimitive
+  | DicomGuidedPrimitive
+  | DicomIdentifyRegionPrimitive
+  | DicomMeasurePrimitive
 
 export type TypedPrimitiveType = TypedPrimitive['type']
 

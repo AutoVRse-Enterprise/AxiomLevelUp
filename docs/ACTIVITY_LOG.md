@@ -990,3 +990,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** The 18-column reference line evaluates to 17.578 mm at the declared
   0.976562 mm spacing. The target is labelled educational-only and requires SME review.
 - **Follow-ups:** Encode the four DICOM modes as strict content contracts.
+
+### [2026-10-02 03:27] P6-T03 - Add strict DICOM contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict schemas for explore, guided, region-identification and measurement
+  primitives; required calibrated DICOM asset metadata; and validated slice bounds, references,
+  presets, tools and reference-line geometry.
+- **Files changed:** DICOM/content schemas, loader semantic validation, asset/course fixtures,
+  schema exporter and generated schema documentation.
+- **Commands run:** Prettier, schema export, typecheck and content validation.
+- **Result/verification:** Five courses and thirteen lessons validate with zero warnings; all 25
+  primitive types now have strict content contracts.
+- **Follow-ups:** Add pure imaging functions and DICOM primitive definitions.

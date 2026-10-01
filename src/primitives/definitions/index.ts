@@ -4,7 +4,6 @@ import type { Primitive } from '@/content/schema'
 import {
   primitiveContentSchemas,
   type TypedPrimitive,
-  type TypedPrimitiveType,
 } from '@/content/schema/primitives'
 import { audioDefinition } from '@/primitives/definitions/audio'
 import { carouselDefinition } from '@/primitives/definitions/carousel'
@@ -56,13 +55,16 @@ export const primitiveDefinitions = {
   scenario: scenarioDefinition,
 } satisfies PrimitiveDefinitionMap
 
-export function isSupportedPrimitiveType(type: string): type is TypedPrimitiveType {
+type SupportedPrimitiveType = keyof typeof primitiveDefinitions
+type SupportedPrimitive = Extract<TypedPrimitive, { type: SupportedPrimitiveType }>
+
+export function isSupportedPrimitiveType(type: string): type is SupportedPrimitiveType {
   return type in primitiveDefinitions
 }
 
 export interface ResolvedPrimitiveDefinition {
-  primitive: TypedPrimitive
-  definition: PrimitiveDefinition<TypedPrimitive>
+  primitive: SupportedPrimitive
+  definition: PrimitiveDefinition<SupportedPrimitive>
 }
 
 export function resolvePrimitiveDefinition(
@@ -70,13 +72,13 @@ export function resolvePrimitiveDefinition(
 ): ResolvedPrimitiveDefinition | null {
   if (!isSupportedPrimitiveType(primitive.type)) return null
 
-  const schema = primitiveContentSchemas[primitive.type].schema as ZodType<TypedPrimitive>
+  const schema = primitiveContentSchemas[primitive.type].schema as ZodType<SupportedPrimitive>
   const parsed = schema.safeParse(primitive)
   if (!parsed.success) return null
 
   return {
     primitive: parsed.data,
-    definition: primitiveDefinitions[primitive.type] as PrimitiveDefinition<TypedPrimitive>,
+    definition: primitiveDefinitions[primitive.type] as PrimitiveDefinition<SupportedPrimitive>,
   }
 }
 

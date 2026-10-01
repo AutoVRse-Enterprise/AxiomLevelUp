@@ -448,20 +448,47 @@ export const learnerSeedSchema = z.object({
   ),
 })
 
+const dicomSeriesMetadataSchema = z.strictObject({
+  sliceCount: z.number().int().positive(),
+  rows: z.number().int().positive(),
+  columns: z.number().int().positive(),
+  pixelSpacingMm: z.tuple([z.number().positive(), z.number().positive()]),
+  sliceThicknessMm: z.number().positive(),
+  calibrated: z.boolean(),
+})
+
+const assetSchema = z
+  .object({
+    assetId: idSchema,
+    path: pathSchema,
+    type: z.enum(['image', 'video', 'audio', 'dicom', 'document', 'text']),
+    offlineRequired: z.boolean(),
+    sizeBytes: z.number().int().nonnegative().optional(),
+    mimeType: z.string().trim().min(1).optional(),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    series: dicomSeriesMetadataSchema.optional(),
+  })
+  .superRefine((asset, context) => {
+    if (asset.type === 'dicom' && !asset.series) {
+      context.addIssue({
+        code: 'custom',
+        path: ['series'],
+        message: 'DICOM assets require series geometry and calibration metadata.',
+      })
+    }
+    if (asset.type !== 'dicom' && asset.series) {
+      context.addIssue({
+        code: 'custom',
+        path: ['series'],
+        message: 'Only DICOM assets may declare series metadata.',
+      })
+    }
+  })
+
 export const assetManifestSchema = z.object({
   schemaVersion: z.literal('0.1'),
-  assets: z.array(
-    z.object({
-      assetId: idSchema,
-      path: pathSchema,
-      type: z.enum(['image', 'video', 'audio', 'dicom', 'document', 'text']),
-      offlineRequired: z.boolean(),
-      sizeBytes: z.number().int().nonnegative().optional(),
-      mimeType: z.string().trim().min(1).optional(),
-      width: z.number().int().positive().optional(),
-      height: z.number().int().positive().optional(),
-    }),
-  ),
+  assets: z.array(assetSchema),
 })
 
 export const contentManifestSchema = z.object({

@@ -15,6 +15,21 @@
     { "assetId": "showcase-media-captions", "path": "/assets/media/showcase/axiom-media-captions.vtt", "type": "text", "offlineRequired": true, "sizeBytes": 323, "mimeType": "text/vtt" },
     { "assetId": "showcase-media-audio", "path": "/assets/media/showcase/axiom-audio-fixture.m4a", "type": "audio", "offlineRequired": true, "sizeBytes": 198352, "mimeType": "audio/mp4" },
     { "assetId": "showcase-media-transcript", "path": "/assets/media/showcase/axiom-audio-transcript.txt", "type": "text", "offlineRequired": true, "sizeBytes": 227, "mimeType": "text/plain" },
-    { "assetId": "showcase-media-reference", "path": "/assets/media/showcase/axiom-reference-fixture.pdf", "type": "document", "offlineRequired": true, "sizeBytes": 708, "mimeType": "application/pdf" }
+    { "assetId": "showcase-media-reference", "path": "/assets/media/showcase/axiom-reference-fixture.pdf", "type": "document", "offlineRequired": true, "sizeBytes": 708, "mimeType": "application/pdf" },
+    {
+      "assetId": "thoracic-ct-series",
+      "path": "thoracic-ct/manifest.json",
+      "type": "dicom",
+      "offlineRequired": false,
+      "sizeBytes": 65894350,
+      "series": {
+        "sliceCount": 125,
+        "rows": 512,
+        "columns": 512,
+        "pixelSpacingMm": [0.976562, 0.976562],
+        "sliceThicknessMm": 3.75,
+        "calibrated": true
+      }
+    }
   ]
 }

@@ -52,6 +52,58 @@
             "type": "integer",
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
+          },
+          "series": {
+            "type": "object",
+            "properties": {
+              "sliceCount": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rows": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "columns": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "pixelSpacingMm": {
+                "type": "array",
+                "items": [
+                  {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                ],
+                "additionalItems": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "sliceThicknessMm": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "calibrated": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "sliceCount",
+              "rows",
+              "columns",
+              "pixelSpacingMm",
+              "sliceThicknessMm",
+              "calibrated"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

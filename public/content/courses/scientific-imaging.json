@@ -136,11 +136,22 @@
           "type": "dicom_explore",
           "conceptIds": ["thoracic-imaging", "image-windowing"],
           "content": {
-            "seriesId": "spike-ct",
+            "seriesAssetId": "thoracic-ct-series",
             "prompt": "Explore the stack and compare lung and mediastinal windows.",
-            "presets": ["lung", "mediastinal"]
+            "presets": [
+              { "id": "lung", "label": "Lung", "center": -600, "width": 1500 },
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "lung",
+            "tools": ["scroll", "window", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "requirements": {
+              "minimumInteractions": 3,
+              "presetIds": ["lung", "mediastinal"]
+            }
           },
-          "assets": [],
+          "assets": ["thoracic-ct-series"],
           "completion": { "mode": "minimum_interactions", "count": 3 },
           "scoring": { "xp": 20 },
           "feedback": {}
@@ -293,15 +304,33 @@
           "type": "dicom_measure",
           "conceptIds": ["thoracic-imaging"],
           "content": {
-            "seriesId": "spike-ct",
-            "prompt": "Measure the maximum diameter of the indicated target.",
-            "expectedMm": 18,
-            "tolerancePercent": 10
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Measure the transverse inner diameter of the tracheal air column.",
+            "presets": [
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 81,
+            "initialPresetId": "mediastinal",
+            "tools": ["scroll", "zoom", "pan", "measure"],
+            "educationalUseOnly": true,
+            "target": {
+              "sliceRange": { "from": 78, "to": 86 },
+              "expected": {
+                "valueMm": 17.6,
+                "tolerance": { "mode": "percent", "value": 10 }
+              },
+              "referenceLine": {
+                "slice": 81,
+                "start": { "x": 0.484375, "y": 0.466797 },
+                "end": { "x": 0.519531, "y": 0.466797 }
+              }
+            },
+            "explanation": "The tracheal air column is the central dark oval anterior to the oesophagus. The reference inner diameter is 17.6 mm on slice 81."
           },
-          "assets": [],
-          "completion": { "mode": "measurement" },
-          "scoring": { "xp": 40 },
-          "feedback": { "revealAnnotation": true },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "xp": 40, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 },
           "reward": { "type": "badge", "id": "first-dicom" }
         }
       ]

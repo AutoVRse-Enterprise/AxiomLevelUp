@@ -18,7 +18,7 @@ as separate JSON Schema files.
 
 ## Primitive registry
 
-The canonical registry contains 25 types: 21 strict standard types and 4 deferred DICOM types.
+The canonical registry contains 25 strict primitive types: 21 standard types and 4 DICOM types.
 
 ### Content (12)
 
@@ -49,12 +49,12 @@ The canonical registry contains 25 types: 21 strict standard types and 4 deferre
 ### Domain
 
 - `scenario` (strict standard primitive)
-- `dicom_explore` (deferred to Phase 6)
-- `dicom_guided` (deferred to Phase 6)
-- `dicom_identify_region` (deferred to Phase 6)
-- `dicom_measure` (deferred to Phase 6)
+- `dicom_explore` (strict DICOM primitive)
+- `dicom_guided` (strict DICOM primitive)
+- `dicom_identify_region` (strict DICOM primitive)
+- `dicom_measure` (strict DICOM primitive)
 
-## Strict standard primitive schemas (21)
+## Strict primitive schemas (25)
 
 - `rich_text`
 - `image`
@@ -77,10 +77,14 @@ The canonical registry contains 25 types: 21 strict standard types and 4 deferre
 - `fill_blank`
 - `numeric`
 - `scenario`
+- `dicom_explore`
+- `dicom_guided`
+- `dicom_identify_region`
+- `dicom_measure`
 
-The four registered DICOM types retain record-shaped content until Phase 6. Unknown types are
-retained with a warning so development playback can render the unsupported fallback. Every lesson
-primitive and challenge item passes through the same parser and semantic validation.
+The four DICOM types require a typed DICOM series asset and strict mode-specific content. Unknown
+types are retained with a warning so development playback can render the unsupported fallback.
+Every lesson primitive and challenge item passes through the same parser and semantic validation.
 
 ## Shared primitive envelope
 
@@ -103,6 +107,8 @@ primitive and challenge item passes through the same parser and semantic validat
 - Scenario graphs require unique IDs, a valid start, resolved transitions, acyclic outcome-ending
   paths and no unreachable nodes; paths outside two to four decisions produce warnings.
 - Formula TeX is parsed in Node with KaTeX and mhchem during content validation.
+- DICOM slice ranges, preset/tool references, calibrated measurements and reference-line geometry
+  are validated against series metadata.
 - Gamification XP keys, levels, star thresholds, weekly-goal defaults and mastery weights are
   strictly configured.
 - Badge criteria and weekly challenge progress rules resolve referenced courses, lessons,
@@ -119,8 +125,10 @@ primitive and challenge item passes through the same parser and semantic validat
 
 ## Asset manifest
 
-Asset types are `image`, `video`, `audio`, `dicom`, `document` and `text`. Entries may
-include `mimeType`, positive integer `width` and `height`, and non-negative `sizeBytes`.
+Asset types are `image`, `video`, `audio`, `dicom`, `document` and `text`. DICOM entries
+require slice count, matrix, pixel spacing, slice thickness and calibration metadata. Other entries
+may include `mimeType`, positive integer `width` and `height`, and non-negative
+`sizeBytes`.
 
 ## Versioning
 

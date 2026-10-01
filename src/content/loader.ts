@@ -11,6 +11,7 @@ import {
   type AssetManifest,
   type ContentManifest,
   type Course,
+  type DicomPrimitive,
   type LearnerSeed,
   type Lesson,
   type Primitive,
@@ -219,6 +220,80 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
   }
 
+  const validateDicomSemantics = (primitive: DicomPrimitive, file: string, path: string) => {
+    const asset = assetById.get(primitive.content.seriesAssetId)
+    if (!asset || asset.type !== 'dicom' || !asset.series) return
+    const sliceCount = asset.series.sliceCount
+    const assertSlice = (slice: number, suffix: string) => {
+      if (slice > sliceCount) {
+        issues.push({
+          file,
+          path: `${path}.${suffix}`,
+          message: `Slice ${slice} exceeds series slice count ${sliceCount}.`,
+          severity: 'error',
+        })
+      }
+    }
+    const assertRange = (range: { from: number; to: number }, suffix: string) => {
+      assertSlice(range.from, `${suffix}.from`)
+      assertSlice(range.to, `${suffix}.to`)
+    }
+
+    if (primitive.content.initialSlice) {
+      assertSlice(primitive.content.initialSlice, 'content.initialSlice')
+    }
+    if (primitive.type === 'dicom_explore' && primitive.content.requirements?.visitSliceRange) {
+      assertRange(
+        primitive.content.requirements.visitSliceRange,
+        'content.requirements.visitSliceRange',
+      )
+    }
+    if (primitive.type === 'dicom_guided') {
+      primitive.content.steps.forEach((step, index) => {
+        if (step.condition.type === 'slice_range') {
+          assertRange(step.condition.range, `content.steps.${index}.condition.range`)
+        }
+      })
+    }
+    if (primitive.type === 'dicom_identify_region') {
+      assertRange(primitive.content.target.sliceRange, 'content.target.sliceRange')
+      assertSlice(primitive.content.target.referenceSlice, 'content.target.referenceSlice')
+    }
+    if (primitive.type === 'dicom_measure') {
+      assertRange(primitive.content.target.sliceRange, 'content.target.sliceRange')
+      if (!asset.series.calibrated) {
+        issues.push({
+          file,
+          path: `${path}.content.seriesAssetId`,
+          message: 'Graded DICOM measurement requires a calibrated series asset.',
+          severity: 'error',
+        })
+      }
+      const line = primitive.content.target.referenceLine
+      if (line) {
+        assertSlice(line.slice, 'content.target.referenceLine.slice')
+        const horizontal =
+          (line.end.x - line.start.x) * asset.series.columns * asset.series.pixelSpacingMm[1]
+        const vertical =
+          (line.end.y - line.start.y) * asset.series.rows * asset.series.pixelSpacingMm[0]
+        const actual = Math.hypot(horizontal, vertical)
+        const expected = primitive.content.target.expected
+        const allowed =
+          expected.tolerance.mode === 'percent'
+            ? expected.valueMm * (expected.tolerance.value / 100)
+            : expected.tolerance.value
+        if (Math.abs(actual - expected.valueMm) > allowed) {
+          issues.push({
+            file,
+            path: `${path}.content.target.referenceLine`,
+            message: `Reference line measures ${actual.toFixed(2)} mm, outside the authored ${expected.valueMm.toFixed(2)} ± ${allowed.toFixed(2)} mm.`,
+            severity: 'error',
+          })
+        }
+      }
+    }
+  }
+
   const validateCriterion = (criterion: AchievementCriterion, file: string, path: string) => {
     if ('lessonIds' in criterion) {
       criterion.lessonIds?.forEach((id, index) =>
@@ -316,6 +391,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       getPrimitiveAssetRefs(result.primitive).forEach((reference) =>
         requireAsset(reference.assetId, file, `${path}.${reference.path}`, reference.type),
       )
+      if (result.primitive.type.startsWith('dicom_')) {
+        validateDicomSemantics(result.primitive as DicomPrimitive, file, path)
+      }
     }
   }
 

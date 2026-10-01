@@ -9,6 +9,8 @@ coverage/
 !.env.example
 *.local
 *.log
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db
 public/assets/dicom/**/*.dcm

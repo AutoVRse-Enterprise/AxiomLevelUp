@@ -2,7 +2,7 @@ import type { TypedPrimitive, TypedPrimitiveType } from '@/content/schema/primit
 import type { EvaluationResult } from '@/primitives/types'
 
 export type PrimitiveFamily = 'content' | 'assessment' | 'domain'
-export type PrimitiveLayout = 'stacked' | 'split'
+export type PrimitiveLayout = 'stacked' | 'split' | 'viewer'
 
 export interface PrimitiveDefinition<P extends TypedPrimitive> {
   type: P['type']
@@ -21,5 +21,5 @@ export function definePrimitive<P extends TypedPrimitive>(definition: PrimitiveD
 }
 
 export type PrimitiveDefinitionMap = {
-  [Type in TypedPrimitiveType]: PrimitiveDefinition<Extract<TypedPrimitive, { type: Type }>>
+  [Type in TypedPrimitiveType]?: PrimitiveDefinition<Extract<TypedPrimitive, { type: Type }>>
 }
