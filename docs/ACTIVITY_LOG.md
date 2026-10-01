@@ -1145,3 +1145,22 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Commands run:** Typecheck, focused suites, full Vitest suite, lint and IDE diagnostics.
 - **Result/verification:** 32 test files and 221 tests pass; lint and IDE diagnostics are clean.
 - **Follow-ups:** Run browser, cross-origin, responsive, offline, performance and bundle QA.
+
+### [2026-10-02 05:18] P6-T15 - Verify DICOM browser behavior
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Exercised all configured DICOM learning modes in Chrome, checked the four target
+  viewports with touch emulation, verified immersive fallback and the instructions sheet, graded a
+  calibrated measurement, tested the external host and completed a service-worker-backed offline
+  reload. Recorded the Phase 9 physical-device matrix.
+- **Files changed:** `docs/qa/phase-06-browser-qa.md`,
+  `docs/qa/phase-09-device-checklist.md`, phase documentation and activity log.
+- **Commands run:** Cross-origin production builds, `npm run dicom:verify --
+http://127.0.0.1:4174/thoracic-ct/`, production preview, Chrome CDP viewport/touch/offline/heap
+  checks.
+- **Result/verification:** No document overflow at 375×812, 812×375, 768×900 or 1280×900. The
+  125-instance external series verified, 126 study responses populated the runtime cache, and
+  slice 81 rendered after a fully offline reload. First image was 236 ms cold and 45–83 ms warm;
+  observed heap was about 249 MiB. The 1,014.74 kB gzip imaging chunk remains lazy and the 208.43 kB
+  gzip entry contains no Cornerstone.
+- **Follow-ups:** Run the final gate, record Phase 6 ADRs and close documentation.

@@ -51,7 +51,7 @@ mobile emulation.
 - [x] P6-T12 — Migrate scientific-imaging and runtime-showcase content.
 - [x] P6-T13 — Replace the isolated spike route with the production DICOM sandbox.
 - [x] P6-T14 — Add schema, domain, component, player and import-boundary coverage.
-- [ ] P6-T15 — Run responsive, interaction, cross-origin, offline, memory and bundle QA.
+- [x] P6-T15 — Run responsive, interaction, cross-origin, offline, memory and bundle QA.
 - [ ] P6-T16 — Run the final gate, record ADRs and close Phase 6 documentation.
 
 ## Rules
@@ -91,7 +91,7 @@ mobile emulation.
 - Cornerstone is absent from the entry chunk and imported only by the production imaging adapter.
 - The external-host verifier passes, cross-origin loading works and missing studies are recoverable.
 - Responsive desktop/mobile-emulation QA, memory observation, offline reload and bundle comparison
-  are recorded.
+  are recorded in `docs/qa/phase-06-browser-qa.md`.
 - `npm run check` passes and phase documentation is current.
 
 ## Deviations
