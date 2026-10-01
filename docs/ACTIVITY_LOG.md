@@ -523,3 +523,22 @@ This file is append-only.
   are clear. Existing Cornerstone browser-externalization and large lazy chunk warnings remain
   non-failing; ordering is emitted as a lazy 49.87 kB minified chunk.
 - **Follow-ups:** Start P4-T07 fill-blank and numeric typed-response assessments.
+
+### [2026-10-01 22:18] P4-T07 - Add typed-response assessments
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict fill-blank and numeric schemas, one-to-one blank token validation, pure
+  NFKC text normalization, locale-safe numeric parsing, per-blank and tolerance/range evaluators,
+  accessible draft-aware lazy components and reveal-controlled review. Extended generic review
+  labels, schema documentation and coverage; recorded ADR-029.
+- **Files changed:** `src/content/schema/primitives/**`, `src/primitives/{components,definitions}/**`,
+  `src/primitives/{componentRegistry,shared/ReviewMark,typedResponseAssessments.test}.tsx`,
+  `src/player/player.test.tsx`, `docs/{ACTIVITY_LOG,CONTENT_SCHEMA,DECISIONS,HANDOFF}.md`,
+  `docs/phases/phase-04-standard-primitives.md`.
+- **Commands run:** Focused Prettier, typecheck, lint and Vitest runs; `npm run schema:export`;
+  `npm run check`; `git diff --check`.
+- **Result/verification:** The full gate passes with 15 test files and 131 tests, four courses and
+  twelve lessons with no content warnings, and a successful production build. The first full-gate
+  run exposed and corrected the primitive-module count assertion. Existing Cornerstone
+  browser-externalization and large lazy chunk warnings remain non-failing.
+- **Follow-ups:** Start P4-T08 timed-response wrapper, announcements and timeout behavior.

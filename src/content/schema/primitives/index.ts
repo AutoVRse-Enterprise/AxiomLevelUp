@@ -1,6 +1,8 @@
 import type { Primitive } from '../primitiveBase'
 import type { ClassificationPrimitive } from './classification'
 import { classificationContentSchema } from './classification'
+import type { FillBlankPrimitive } from './fillBlank'
+import { fillBlankContentSchema } from './fillBlank'
 import type { ImagePrimitive } from './image'
 import { imageContentSchema } from './image'
 import type { MatchPairsPrimitive } from './matchPairs'
@@ -9,6 +11,8 @@ import type { MultipleChoicePrimitive } from './multipleChoice'
 import { multipleChoiceContentSchema } from './multipleChoice'
 import type { MultipleSelectPrimitive } from './multipleSelect'
 import { multipleSelectContentSchema } from './multipleSelect'
+import type { NumericPrimitive } from './numeric'
+import { numericContentSchema } from './numeric'
 import type { OrderingPrimitive } from './ordering'
 import { orderingContentSchema } from './ordering'
 import type { RichTextPrimitive } from './richText'
@@ -18,10 +22,12 @@ import { trueFalseContentSchema } from './trueFalse'
 import type { PrimitiveAssetRef } from './types'
 
 export { classificationPrimitiveSchema, type ClassificationPrimitive } from './classification'
+export { fillBlankPrimitiveSchema, type FillBlankPrimitive } from './fillBlank'
 export { imagePrimitiveSchema, type ImagePrimitive } from './image'
 export { matchPairsPrimitiveSchema, type MatchPairsPrimitive } from './matchPairs'
 export { multipleChoicePrimitiveSchema, type MultipleChoicePrimitive } from './multipleChoice'
 export { multipleSelectPrimitiveSchema, type MultipleSelectPrimitive } from './multipleSelect'
+export { numericPrimitiveSchema, type NumericPrimitive } from './numeric'
 export { orderingPrimitiveSchema, type OrderingPrimitive } from './ordering'
 export { richTextPrimitiveSchema, type RichTextPrimitive } from './richText'
 export { trueFalsePrimitiveSchema, type TrueFalsePrimitive } from './trueFalse'
@@ -36,6 +42,8 @@ export const primitiveContentSchemas = {
   classification: classificationContentSchema,
   match_pairs: matchPairsContentSchema,
   ordering: orderingContentSchema,
+  fill_blank: fillBlankContentSchema,
+  numeric: numericContentSchema,
 } as const
 
 export type TypedPrimitive =
@@ -47,6 +55,8 @@ export type TypedPrimitive =
   | ClassificationPrimitive
   | MatchPairsPrimitive
   | OrderingPrimitive
+  | FillBlankPrimitive
+  | NumericPrimitive
 
 export type TypedPrimitiveType = TypedPrimitive['type']
 

@@ -81,7 +81,7 @@ cannot dead-end an ordering step.
 - [x] P4-T05 — Add the `multiple_select` and `true_false` choice family plus multiple-choice
   shuffle and review.
 - [x] P4-T06 — Add classification, matching and accessible ordering; migrate `escalation-order`.
-- [ ] P4-T07 — Add fill-blank and numeric typed-response assessments.
+- [x] P4-T07 — Add fill-blank and numeric typed-response assessments.
 - [ ] P4-T08 — Add the timed-response wrapper, announcements and timeout behavior.
 - [ ] P4-T09 — Add zoomable, hotspot and comparison image primitives and upgrade `image`.
 - [ ] P4-T10 — Add data tables, in-house SVG charts and lazy KaTeX/mhchem formulas; migrate
@@ -163,8 +163,12 @@ cannot dead-end an ordering step.
   structured drafts, reveal-aware review and malformed-safe exact/partial evaluators. Ordering adds
   deterministic unsolved starts, delayed pointer/touch drag, sortable keyboard controls,
   announcements and always-present move buttons; `escalation-order` uses identified items.
+- P4-T07: fill-blank and numeric assessments have strict mutually consistent schemas, resumable raw
+  drafts, generic accessible labels and reveal-aware review. Fill-blank evaluation normalizes NFKC
+  text and scores each blank; numeric evaluation accepts comma or point decimals without accepting
+  grouping, exponent or non-finite syntax.
 - Type checking, lint, content validation, production build and `git diff --check` pass.
-- Runtime verification remains pending for P4-T07 through P4-T16.
+- Runtime verification remains pending for P4-T08 through P4-T16.
 
 ## Deviations
 

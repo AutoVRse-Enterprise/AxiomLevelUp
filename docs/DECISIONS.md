@@ -314,3 +314,23 @@ undersized or wrongly typed responses as zero. Partial multiple-select scoring i
 **Consequences:** Choice components share disabled and reveal behavior while remaining callback-only.
 Evaluators are deterministic and review-safe, all-or-nothing remains the multiple-select default,
 and future choice-like assessments can reuse the presentation contract without owning score policy.
+
+## ADR-029: Typed-response normalization and numeric syntax
+
+**Status:** Accepted
+
+**Context:** Fill-blank responses need predictable matching across Unicode and incidental whitespace,
+while numeric answers must accept the decimal conventions learners commonly enter without guessing
+whether punctuation is a decimal or grouping separator.
+
+**Decision:** Store fill-blank drafts as blank-ID-to-raw-string records and numeric drafts as raw
+strings. Normalize fill-blank comparisons with NFKC, outer trimming and whitespace collapse, then
+apply each blank's case-sensitivity setting. Score valid complete fill-blank responses per blank.
+Require authored fill-blank tokens and definitions to match one-to-one. Numeric content uses either
+an answer with one absolute or percent tolerance, or an inclusive ordered range. Parse one comma or
+point as a decimal separator and reject grouping, mixed separators, exponent syntax, non-finite
+values and non-string responses.
+
+**Consequences:** Drafts preserve learner input for review, text matching is deterministic, and
+numeric evaluation is locale-tolerant without silently reinterpreting grouped values. Generic input
+labels avoid exposing answers to assistive technology; corrections remain reveal-policy controlled.

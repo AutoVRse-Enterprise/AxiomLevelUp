@@ -40,6 +40,16 @@ const OrderingPrimitive = lazy(async () => {
   return { default: module.OrderingPrimitive }
 })
 
+const FillBlankPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/FillBlankPrimitive')
+  return { default: module.FillBlankPrimitive }
+})
+
+const NumericPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/NumericPrimitive')
+  return { default: module.NumericPrimitive }
+})
+
 export const primitiveComponents = {
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
@@ -49,4 +59,6 @@ export const primitiveComponents = {
   classification: ClassificationPrimitive,
   match_pairs: MatchPairsPrimitive,
   ordering: OrderingPrimitive,
+  fill_blank: FillBlankPrimitive,
+  numeric: NumericPrimitive,
 } as const

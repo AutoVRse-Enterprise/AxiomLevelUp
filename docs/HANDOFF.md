@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T06 are complete; P4-T07 is next.
+Phase 4 — Standard primitives. P4-T00 through P4-T07 are complete; P4-T08 is next.
 Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Done
@@ -36,10 +36,14 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Ordering uses a deterministic unsolved start, delayed pointer/touch drag, sortable keyboard
   sensors, announcements and always-present move controls. Responses are ordered item IDs and
   partial scoring counts exact positions.
+- Fill-blank uses exact one-to-one `{{blankId}}` tokens, raw per-blank drafts, NFKC/whitespace
+  normalization, configurable case matching and optional select choices.
+- Numeric responses stay as raw strings, accept comma or point decimals, reject grouping syntax
+  and non-finite values, and evaluate against an answer/tolerance or inclusive range policy.
 - Safety content `escalation-order` now uses identified items and answer completion.
-- ADR-021, ADR-025 through ADR-028 record player lifecycle, structured assessments, artifact
-  viewport, semantic validation and shared choice semantics.
-- Type checking, lint, 14 test files with 114 tests, content validation and production build pass.
+- ADR-021, ADR-025 through ADR-029 record player lifecycle, structured assessments, artifact
+  viewport, semantic validation, choice semantics and typed-response parsing.
+- Type checking, lint, 15 test files with 131 tests, content validation and production build pass.
 
 ## In progress
 
@@ -47,9 +51,9 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T07: add fill-blank and numeric typed-response assessments.
-2. P4-T08: add the timed-response wrapper and timeout behavior.
-3. P4-T09: add zoomable, hotspot and comparison image primitives.
+1. P4-T08: add the timed-response wrapper and timeout behavior.
+2. P4-T09: add zoomable, hotspot and comparison image primitives.
+3. P4-T10: add data tables, charts and formula primitives.
 
 ## Blockers/questions for the user
 
@@ -77,6 +81,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 - Definitions, content schemas and lazy components must remain in parity.
 - Session version 2 discards in-flight version 1 sessions by design.
 - Review re-runs the pure evaluator against the stored response; evaluators must stay deterministic.
+- Fill-blank responses are complete blank-ID records; numeric responses are raw strings and never
+  parsed by the component.
+- Numeric input treats one comma or point as the decimal separator and rejects mixed or repeated
+  separators, exponent notation and non-finite values.
 - Choice shuffle seeds offset review's submitted-attempt count so option order does not change after
   submission.
 - Classification and matching responses are complete source-to-target ID records; ordering

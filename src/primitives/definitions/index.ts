@@ -7,10 +7,12 @@ import {
   type TypedPrimitiveType,
 } from '@/content/schema/primitives'
 import { classificationDefinition } from '@/primitives/definitions/classification'
+import { fillBlankDefinition } from '@/primitives/definitions/fillBlank'
 import { imageDefinition } from '@/primitives/definitions/image'
 import { matchPairsDefinition } from '@/primitives/definitions/matchPairs'
 import { multipleChoiceDefinition } from '@/primitives/definitions/multipleChoice'
 import { multipleSelectDefinition } from '@/primitives/definitions/multipleSelect'
+import { numericDefinition } from '@/primitives/definitions/numeric'
 import { orderingDefinition } from '@/primitives/definitions/ordering'
 import { richTextDefinition } from '@/primitives/definitions/richText'
 import { trueFalseDefinition } from '@/primitives/definitions/trueFalse'
@@ -28,6 +30,8 @@ export const primitiveDefinitions = {
   classification: classificationDefinition,
   match_pairs: matchPairsDefinition,
   ordering: orderingDefinition,
+  fill_blank: fillBlankDefinition,
+  numeric: numericDefinition,
 } satisfies PrimitiveDefinitionMap
 
 export function isSupportedPrimitiveType(type: string): type is TypedPrimitiveType {

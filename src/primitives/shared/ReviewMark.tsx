@@ -11,7 +11,7 @@ const labels: Record<ReviewStatus, string> = {
   missed: 'Correct answer',
 }
 
-export function ReviewMark({ status }: { status: ReviewStatus }) {
+export function ReviewMark({ status, label }: { status: ReviewStatus; label?: string }) {
   const Icon = status === 'incorrect' ? CircleAlert : CheckCircle2
 
   return (
@@ -22,7 +22,7 @@ export function ReviewMark({ status }: { status: ReviewStatus }) {
       )}
     >
       <Icon aria-hidden="true" size={18} />
-      <span>{labels[status]}</span>
+      <span>{label ?? labels[status]}</span>
     </span>
   )
 }
