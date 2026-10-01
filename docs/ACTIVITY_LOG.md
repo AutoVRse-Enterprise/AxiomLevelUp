@@ -361,3 +361,12 @@ This file is append-only.
 - **Commands run:** focused player/route tests, `npm run check`, `git diff --check`.
 - **Result/verification:** All 52 tests, content validation, type checking, lint and production build pass. Existing Cornerstone browser-externalization and large lazy DICOM chunk warnings remain non-failing.
 - **Follow-ups:** Plan Phase 4 standard content, assessment and scenario primitives.
+
+### [2026-10-01 21:02] P4-T00 - Phase 4 execution plan
+
+- **Agent/session:** Cursor planning session
+- **Action:** Audited the Phase 3 primitive, session, scoring, validation and content contracts against PRD sections 14–17, 41–43, 49–50 and 75–76. Defined the Phase 4 scope, primitive catalogue, contract upgrades (unified definitions, fractional scoring, session v2 drafts, review/reveal, keyed completion), 17-task checklist across five milestones, sequencing, risks, planned ADRs, open decisions and exit criteria.
+- **Files changed:** `docs/phases/phase-04-standard-primitives.md`, `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `git status`, `git log`, `ffmpeg -version`, `python --version`.
+- **Result/verification:** The plan records gaps that must be closed before strict schemas land: duplicated support lists, boolean-only scoring, unvalidated challenge items and content asset references, and placeholder scenario/ordering/chart content. ffmpeg 7.1 is available for synthetic media fixtures.
+- **Follow-ups:** Confirm the four open decisions, then start P4-T01 primitive definitions.
