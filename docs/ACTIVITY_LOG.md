@@ -172,3 +172,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`.
 - **Result/verification:** Home compiles cleanly with configured challenges, pathways, badges, course assets and reward values; no course-specific copy remains in React.
 - **Follow-ups:** Build the filterable Learn catalog.
+
+### [2026-10-01 20:02] P2-T04 - Learn catalog
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added active-pathway discovery, grouped responsive course cards and URL-backed status filtering with effective course progress and lock states.
+- **Files changed:** `src/routes/learn/LearnPage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** The catalog compiles and lints cleanly; all course metadata, assets, state and filters are configuration driven.
+- **Follow-ups:** Render the pathway DAG as an accessible journey.

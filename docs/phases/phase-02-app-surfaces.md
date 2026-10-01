@@ -22,7 +22,7 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 - [x] P2-T01 — Add the pure selector/view-model layer for course, lesson, pathway, activity, rank, badge and profile states.
 - [x] P2-T02 — Add reusable learning components, asset resolution, dynamic route headers and split route modules.
 - [x] P2-T03 — Build Home with learner status, continue learning, daily challenge, weak-topic revision, active pathway, recent achievements, leaderboard teaser and weekly activity.
-- [ ] P2-T04 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
+- [x] P2-T04 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
 - [ ] P2-T05 — Build the pathway journey with sequence, current position, optional branches, node types and accessible non-visual relationships.
 - [ ] P2-T06 — Build course detail with metadata, aggregate progress, lesson states, prerequisites and navigation into the existing immersive route.
 - [ ] P2-T07 — Build the challenge landing shell for daily and weekly challenge configuration without implementing the Phase 3 player.
