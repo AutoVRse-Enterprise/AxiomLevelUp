@@ -1,0 +1,47 @@
+import type { LearnerSeed } from '@/content/schema'
+
+const DAY_MS = 86_400_000
+
+function dateToUtcDay(value: string) {
+  const [year, month, day] = value.split('-').map(Number)
+  return Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1)
+}
+
+function shiftDate(value: string, days: number) {
+  const shifted = new Date(dateToUtcDay(value) + days * DAY_MS)
+  return shifted.toISOString().slice(0, 10)
+}
+
+function shiftTimestamp(value: string, days: number) {
+  return new Date(new Date(value).getTime() + days * DAY_MS).toISOString()
+}
+
+export function rebaseSeedDates(seed: LearnerSeed, targetDate: string): LearnerSeed {
+  const days = Math.round(
+    (dateToUtcDay(targetDate) - dateToUtcDay(seed.referenceDate)) / DAY_MS,
+  )
+  const rebased = structuredClone(seed)
+
+  rebased.referenceDate = targetDate
+  if (rebased.streak.lastQualifyingDate) {
+    rebased.streak.lastQualifyingDate = shiftDate(rebased.streak.lastQualifyingDate, days)
+  }
+  rebased.weeklyGoal.completedDays = rebased.weeklyGoal.completedDays.map((date) =>
+    shiftDate(date, days),
+  )
+
+  Object.values(rebased.lessonProgress).forEach((progress) => {
+    if (progress.completedAt) progress.completedAt = shiftTimestamp(progress.completedAt, days)
+  })
+  Object.values(rebased.badges).forEach((badge) => {
+    if (badge.unlockedAt) badge.unlockedAt = shiftTimestamp(badge.unlockedAt, days)
+  })
+  Object.values(rebased.mastery).forEach((mastery) => {
+    mastery.history = mastery.history.map((entry) => ({
+      ...entry,
+      at: shiftTimestamp(entry.at, days),
+    }))
+  })
+
+  return rebased
+}

@@ -2,9 +2,11 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import type { LearnerSeed } from '@/content/schema'
+import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
+import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 1
+export const LEARNER_STATE_VERSION = 2
 
 type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -20,6 +22,7 @@ interface LearnerStore extends LearnerData {
 const emptyData: LearnerData = {
   stateVersion: LEARNER_STATE_VERSION,
   seedProfile: 'fresh',
+  referenceDate: today(),
   learner: { id: 'loading-learner', name: 'Learner', role: 'R&D Learner' },
   xp: { total: 0, weekly: 0 },
   streak: { currentDays: 0, lastQualifyingDate: null },
@@ -40,8 +43,9 @@ const emptyData: LearnerData = {
 }
 
 function dataFromSeed(seed: LearnerSeed): LearnerData {
-  const state = structuredClone(seed) as Partial<LearnerSeed>
+  const state = rebaseSeedDates(seed, today()) as Partial<LearnerSeed>
   delete state.schemaVersion
+  state.stateVersion = LEARNER_STATE_VERSION
   return state as LearnerData
 }
 
@@ -69,7 +73,14 @@ export const useLearnerStore = create<LearnerStore>()(
       version: LEARNER_STATE_VERSION,
       storage: createJSONStorage(() => idbStorage),
       skipHydration: true,
-      migrate: (persistedState) => persistedState as LearnerStore,
+      migrate: (persistedState) => {
+        const state = persistedState as LearnerStore
+        return {
+          ...state,
+          stateVersion: LEARNER_STATE_VERSION,
+          referenceDate: state.referenceDate ?? today(),
+        }
+      },
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           state?.setStorageError(

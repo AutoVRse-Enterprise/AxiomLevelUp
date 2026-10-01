@@ -136,3 +136,12 @@ This file is append-only.
 - **Commands run:** `git status --short --branch`, `git log --oneline --decorate -5`.
 - **Result/verification:** Every Phase 1 checklist item is complete, the required quality gate is green and Phase 2 has a documented entry point.
 - **Follow-ups:** Obtain user approval for Phase 2 scope and complete physical-device DICOM/PWA checks when an HTTPS preview and devices are available.
+
+### [2026-10-01 19:45] P2-T00 - Surface contracts and data mapping
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added configurable surface limits, reference-dated demo seeds, deterministic clock support, seed-date rebasing, learner-state version 2 migration, asset indexing and stricter course/pathway validation.
+- **Files changed:** `public/content/app-config.json`, `public/content/seeds/*.json`, `src/content/**`, `src/lib/clock.ts`, `src/state/learnerStore.ts`, `src/state/seedDates*`, `schemas/**`, `docs/CONTENT_SCHEMA.md`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run schema:export`, `npm run typecheck`, `npm run validate:content`.
+- **Result/verification:** Schemas exported, TypeScript passed and all 4 courses/12 lessons validate with no warnings.
+- **Follow-ups:** Build the complete pure selector/view-model layer.

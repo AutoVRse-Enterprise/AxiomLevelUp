@@ -2,6 +2,7 @@
   "schemaVersion": "0.1",
   "stateVersion": 1,
   "seedProfile": "advanced",
+  "referenceDate": "2026-10-01",
   "learner": {
     "id": "maya-chen",
     "name": "Maya Chen",

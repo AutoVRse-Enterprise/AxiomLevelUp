@@ -12,6 +12,7 @@ import {
   type LearnerSeed,
   type Lesson,
 } from './schema'
+import { badgeIconIdSet } from './badgeIcons'
 
 export interface ContentIssue {
   file: string
@@ -40,6 +41,7 @@ export interface ContentRegistry {
   assetManifest: AssetManifest
   courseById: ReadonlyMap<string, Course>
   lessonById: ReadonlyMap<string, Lesson>
+  assetById: ReadonlyMap<string, AssetManifest['assets'][number]>
   warnings: readonly ContentIssue[]
 }
 
@@ -128,6 +130,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const challengeIds = new Set(appConfig.challenges.map(({ id }) => id))
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
   const assetIds = new Set(assetManifest.assets.map(({ assetId }) => assetId))
+  const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
 
   const requireRef = (
     set: ReadonlySet<string>,
@@ -148,6 +151,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
 
   courses.forEach((course, courseIndex) => {
     const file = input.courseFiles[courseIndex]?.file ?? `course:${course.id}`
+    if (course.imageAssetId) {
+      requireRef(assetIds, course.imageAssetId, file, 'imageAssetId', 'asset')
+    }
     course.conceptIds.forEach((id) => requireRef(conceptIds, id, file, 'conceptIds', 'concept'))
     course.prerequisites.forEach((id) =>
       requireRef(new Set(courseById.keys()), id, file, 'prerequisites', 'course'),
@@ -230,7 +236,70 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       requireRef(nodeIds, edge.from, input.appConfigFile, `pathways.${pathway.id}.edges.${index}.from`, 'node')
       requireRef(nodeIds, edge.to, input.appConfigFile, `pathways.${pathway.id}.edges.${index}.to`, 'node')
     })
+
+    const incoming = new Map(pathway.nodes.map(({ id }) => [id, 0]))
+    const outgoing = new Map(pathway.nodes.map(({ id }) => [id, [] as string[]]))
+    pathway.edges.forEach(({ from, to }) => {
+      if (!nodeIds.has(from) || !nodeIds.has(to)) return
+      incoming.set(to, (incoming.get(to) ?? 0) + 1)
+      outgoing.get(from)?.push(to)
+    })
+    const roots = [...incoming].filter(([, count]) => count === 0).map(([id]) => id)
+    if (roots.length === 0) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `pathways.${pathway.id}.edges`,
+        message: `Pathway "${pathway.id}" must have at least one root node.`,
+        severity: 'error',
+      })
+    }
+    const visited = new Set<string>()
+    const active = new Set<string>()
+    let cyclic = false
+    const visit = (id: string) => {
+      if (active.has(id)) {
+        cyclic = true
+        return
+      }
+      if (visited.has(id)) return
+      active.add(id)
+      outgoing.get(id)?.forEach(visit)
+      active.delete(id)
+      visited.add(id)
+    }
+    roots.forEach(visit)
+    const reachable = new Set(visited)
+    pathway.nodes.forEach(({ id }) => visit(id))
+    if (cyclic) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `pathways.${pathway.id}.edges`,
+        message: `Pathway "${pathway.id}" must be acyclic.`,
+        severity: 'error',
+      })
+    }
+    pathway.nodes.forEach(({ id }, index) => {
+      if (!reachable.has(id)) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `pathways.${pathway.id}.nodes.${index}`,
+          message: `Pathway node "${id}" is not reachable from a root node.`,
+          severity: 'error',
+        })
+      }
+    })
   }
+
+  appConfig.badges.forEach((badge, index) => {
+    if (!badgeIconIdSet.has(badge.icon)) {
+      warnings.push({
+        file: input.appConfigFile,
+        path: `badges.${index}.icon`,
+        message: `Unknown badge icon "${badge.icon}" will use the fallback icon.`,
+        severity: 'warning',
+      })
+    }
+  })
 
   Object.keys(seed.lessonProgress).forEach((id) =>
     requireRef(lessonIds, id, input.seedFile, 'lessonProgress', 'lesson'),
@@ -255,6 +324,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     assetManifest,
     courseById,
     lessonById,
+    assetById,
     warnings: Object.freeze(warnings),
   }
 }

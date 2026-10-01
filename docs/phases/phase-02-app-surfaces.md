@@ -18,7 +18,7 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 
 ## Proposed task outline
 
-- [ ] P2-T00 — Confirm surface-level acceptance criteria and map every display field to configuration, learner state or a selector.
+- [x] P2-T00 — Confirm surface-level acceptance criteria and map every display field to configuration, learner state or a selector.
 - [ ] P2-T01 — Add reusable course, lesson, progress, badge, stat and activity presentation components.
 - [ ] P2-T02 — Build Home with learner status, continue learning, daily challenge, weak-topic revision, active pathway, recent achievements, leaderboard teaser and weekly activity.
 - [ ] P2-T03 — Build Learn with pathway and course discovery, progress states, lock states and responsive filtering/grouping.
@@ -29,6 +29,13 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 - [ ] P2-T08 — Build Profile with learner summary, derived stats, mastery, badge states and weekly activity.
 - [ ] P2-T09 — Add responsive, accessibility and route-level tests; validate all empty, locked and partially complete states.
 - [ ] P2-T10 — Run the quality gate and update roadmap, handoff and activity documentation.
+
+## Surface data map
+
+- **Configuration:** app/cohort labels, course and lesson metadata, pathway graph, challenge definitions, badge definitions, concepts, leaderboard peers, level thresholds and product display limits.
+- **Persisted learner state:** identity, XP, streak, completed learning days, lesson attempts/results, challenge progress, badge progress/unlock dates, mastery and lifetime stats.
+- **Derived selectors:** level and next threshold, effective prerequisite locks, course progress/status, current lesson and remaining time, pathway position, recommendations, weekly activity, leaderboard rank/movement, badge views and accuracy.
+- **Clock:** greeting period and the current calendar week. Seed activity dates are rebased from their configured `referenceDate` only when a seed is applied.
 
 ## Architecture constraints
 

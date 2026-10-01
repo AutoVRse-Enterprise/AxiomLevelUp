@@ -58,6 +58,7 @@ describe('content loader', () => {
     expect(registry.courses).toHaveLength(4)
     expect(registry.lessonById).toHaveLength(12)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
+    expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
     expect(registry.warnings).toEqual([])
   })
 
@@ -98,6 +99,36 @@ describe('content loader', () => {
       expect.objectContaining({
         path: `lessons.0.primitives.${primitiveIndex}.type`,
         severity: 'warning',
+      }),
+    )
+  })
+
+  it('rejects missing course image assets', () => {
+    const bundle = makeValidContentBundle()
+    const course = bundle.courseFiles[0]?.data as { imageAssetId: string }
+    course.imageAssetId = 'missing-cover'
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({ path: 'imageAssetId', message: expect.stringContaining('missing-cover') }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects cyclic pathway graphs', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = bundle.appConfig as {
+      pathways: Array<{ edges: Array<{ from: string; to: string }> }>
+    }
+    appConfig.pathways[0]?.edges.push({ from: 'node-challenge', to: 'node-intro' })
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({ message: expect.stringContaining('acyclic') }),
+        ]),
       }),
     )
   })

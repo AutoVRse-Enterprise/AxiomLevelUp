@@ -234,6 +234,19 @@ export const appConfigSchema = z.object({
     name: z.string().min(1),
     cohortName: z.string().min(1),
   }),
+  product: z.object({
+    weekStartsOn: z.number().int().min(0).max(6).default(1),
+    revision: z.object({
+      masteryThreshold: z.number().min(0).max(100),
+      maxRecommendations: z.number().int().positive(),
+    }),
+    leaderboard: z.object({
+      visibleWindow: z.number().int().positive(),
+    }),
+    home: z.object({
+      recentAchievementCount: z.number().int().nonnegative(),
+    }),
+  }),
   gamification: z.object({
     xp: z.record(z.string(), z.number().int().nonnegative()),
     levels: z
@@ -291,6 +304,7 @@ export const learnerSeedSchema = z.object({
   schemaVersion: z.literal('0.1'),
   stateVersion: z.number().int().positive(),
   seedProfile: z.enum(['fresh', 'advanced']),
+  referenceDate: z.iso.date(),
   learner: z.object({
     id: idSchema,
     name: z.string().min(1),

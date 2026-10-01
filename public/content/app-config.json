@@ -4,6 +4,19 @@
     "name": "Learning Runtime",
     "cohortName": "R&D Learning Cohort"
   },
+  "product": {
+    "weekStartsOn": 1,
+    "revision": {
+      "masteryThreshold": 70,
+      "maxRecommendations": 2
+    },
+    "leaderboard": {
+      "visibleWindow": 10
+    },
+    "home": {
+      "recentAchievementCount": 2
+    }
+  },
   "gamification": {
     "xp": {
       "correctStandard": 10,
