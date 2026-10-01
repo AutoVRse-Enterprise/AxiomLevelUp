@@ -29,7 +29,7 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 - [x] P2-T08 — Build the weekly cohort leaderboard with the learner's contextual rank and future-period controls shown as inactive.
 - [x] P2-T09 — Build Profile with learner summary, derived stats, mastery, badge states and weekly activity.
 - [x] P2-T10 — Add responsive, accessibility and route-level tests; validate all empty, locked and partially complete states.
-- [ ] P2-T11 — Run the quality gate and update roadmap, handoff and activity documentation.
+- [x] P2-T11 — Run the quality gate and update roadmap, handoff and activity documentation.
 
 ## Surface data map
 
@@ -55,3 +55,14 @@ The lesson engine, playable challenge flow, reward processing and production DIC
 - Navigation and primary interactions are keyboard accessible with visible focus.
 - Automated tests cover critical data mapping, state variants and route behavior.
 - `npm run check` passes and phase documentation is current.
+
+## Verification
+
+- `npm run check` passes with 7 test files and 35 tests.
+- Manual responsive checks passed at 375 px, 768 px and 1280 px for Home, Learn, Pathway and Profile.
+- Accessibility snapshots confirm labelled primary navigation, semantic headings and regions, current-page state, ordered pathway steps, keyboard-operable locked nodes and descriptive controls.
+
+## Deviations
+
+- The original outline was expanded to twelve tasks so data contracts, pure selectors and shared presentation components could be verified independently before composing surfaces.
+- Surface motion is intentionally limited to short transitions and progress changes. Celebrations and pathway state animations remain in Phases 5 and 8.

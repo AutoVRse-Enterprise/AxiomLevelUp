@@ -107,7 +107,7 @@ export function StatTile({
         {icon}
         <span className="text-caption font-semibold uppercase tracking-wide">{label}</span>
       </div>
-      <div className="mt-2 text-title font-bold tabular-nums">{value}</div>
+      <div className="mt-2 text-title font-bold tabular-nums text-neutral-900">{value}</div>
     </div>
   )
 }

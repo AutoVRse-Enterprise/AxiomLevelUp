@@ -235,3 +235,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
 - **Result/verification:** Seven test files and 35 tests pass. Keyboard activation, typed intents and event-driven rank changes are covered.
 - **Follow-ups:** Run the complete gate, perform browser QA and close Phase 2 documentation.
+
+### [2026-10-01 20:34] P2-T11 - Phase 2 quality gate and close-out
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Ran the full quality gate, checked Home, Learn, Pathway and Profile at mobile/tablet/desktop widths, corrected learner-stat contrast, recorded the Phase 2 architecture decisions and moved the handoff to Phase 3.
+- **Files changed:** `src/components/learning/index.tsx`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md`, `docs/HANDOFF.md`, `docs/phases/phase-02-app-surfaces.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run check`, `git diff --check`, browser checks at 375 × 812, 768 × 900 and 1280 × 900.
+- **Result/verification:** All 35 tests, content validation, type checking, lint and production build pass. Browser accessibility snapshots and visual checks passed for the target surface set.
+- **Follow-ups:** Plan and implement Phase 3's configured lesson execution engine; retain physical-device DICOM/PWA verification as an external follow-up.

@@ -67,3 +67,39 @@
 **Decision:** Keep DICOM files out of Workbox precache, cache successful `/assets/dicom/` responses in a dedicated CacheFirst cache capped at 180 entries for 30 days, and cap Cornerstone's in-memory cache at 256 MiB. Exclude manifest-declared PWA icons from the precache glob because vite-plugin-pwa adds those entries separately.
 
 **Consequences:** A visited study can reload offline without delaying service-worker installation on the full dataset. Phase 7 must add explicit download, quota and eviction UX before multiple studies are supported.
+
+## ADR-009: Effective learning availability is derived
+
+**Status:** Accepted
+
+**Context:** Seed files contain display states, but prerequisite completion is the authoritative reason that an activity can be entered.
+
+**Decision:** Treat persisted `completed`, `current` and `new` lesson states as explicit. Derive `available` and `locked` from lesson and course prerequisite completion, including human-readable unmet prerequisite names.
+
+**Consequences:** Surface lock states cannot drift from the configured graph. Phase 5 progression can update completion without duplicating unlock decisions throughout the UI.
+
+## ADR-010: Demo seed dates are reference-relative
+
+**Status:** Accepted
+
+**Context:** Fixed activity dates make the established demo account appear stale after the seed was authored.
+
+**Decision:** Every seed declares a `referenceDate`. When a seed is first applied or reset, shift its activity dates by the whole-day difference from an injectable application clock. Persisted progress then ages normally.
+
+**Consequences:** Resetting the demo always produces current-week activity while tests remain deterministic. Existing persisted learner state is retained by the version 2 migration.
+
+## ADR-011: Surface navigation emits learner intent
+
+**Status:** Accepted
+
+**Decision:** Add `pathway_opened` and `challenge_opened` to the typed learner event taxonomy. Course details continue to emit `course_opened`; surfaces never invoke gamification mutations directly.
+
+**Consequences:** Future analytics and engines can observe discovery behavior without coupling routes to those systems.
+
+## ADR-012: Product presentation limits are configured
+
+**Status:** Accepted
+
+**Decision:** Store week start, revision mastery threshold/count, leaderboard window and recent-achievement count in the app configuration `product` block.
+
+**Consequences:** Surface behavior can be tuned for a deployment without editing React. Generic interface labels remain presentation copy.

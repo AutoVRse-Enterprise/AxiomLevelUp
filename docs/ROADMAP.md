@@ -3,8 +3,8 @@
 | Phase | Scope | Status | Exit signal |
 | --- | --- | --- | --- |
 | 1 | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
-| 2 | Application surfaces | Next | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3 | Core lesson engine | Planned | A configured lesson executes from start to completion |
+| 2 | Application surfaces | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
+| 3 | Core lesson engine | Next | A configured lesson executes from start to completion |
 | 4 | Standard primitives | Planned | Content, assessment and scenario primitives are playable and tested |
 | 5 | Gamification and mastery | Planned | Learner events update XP, levels, stars, streaks, badges, rank and mastery |
 | 6 | DICOM learning viewer | Planned | Explore, guide, identify, measure and reveal modes work on target devices |
@@ -19,4 +19,4 @@ The Phase 1 DICOM/PWA spike is deliberately early. Its code is isolated and is n
 
 Phase 1 closed with 19 automated tests passing across schema/loader behavior, IndexedDB state, events, selectors and route layouts. The DICOM verdict is a conditional go pending physical Android and iOS testing. See `docs/spikes/dicom-pwa-spike.md`.
 
-Phase 2 starts from `docs/phases/phase-02-app-surfaces.md`.
+Phase 2 closed with all learner-facing surfaces driven by validated configuration and persisted state, with 35 automated tests passing. Phase 3 should replace the immersive lesson and challenge placeholders with the configured execution engine.

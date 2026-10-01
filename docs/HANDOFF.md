@@ -2,16 +2,16 @@
 
 ## Current phase/task
 
-Phase 1 is complete. Phase 2 — Application surfaces — is next; no Phase 2 implementation has started.
+Phase 2 is complete. Phase 3 — Core lesson engine — is next; the lesson and challenge player routes remain deliberate immersive placeholders.
 
 ## Done
 
-- Built the React 19/Vite 8 strict-TypeScript PWA shell, Tailwind token system, Radix-based UI foundations and complete route structure.
-- Added Zod content contracts, JSON Schema export, runtime/CLI loading, cross-reference validation and seeded content for four courses and twelve lessons.
-- Added versioned Zustand state in IndexedDB, derived selectors, the typed learner-event bus, bounded event history and URL-only demo controls.
-- Added the web app manifest, generated icons, app/content precaching, online status and a verified DICOM CacheFirst runtime cache.
-- Completed the isolated Cornerstone3D spike with a 125-slice de-identified CT stack, desktop/touch bindings, presets, measurement, fullscreen, progress and data preparation/audit scripts.
-- Added 19 automated tests across content, persistence, events, selectors and route layouts. `npm run check` passes.
+- Phase 1 foundation remains green: validated content, IndexedDB learner state, event bus, PWA shell and isolated DICOM spike.
+- Replaced every Phase 1 learner placeholder with Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile surfaces.
+- Added pure view selectors for prerequisite locks, continuation, course/pathway progress, weekly activity, revision, rank, badges, stats and level progress.
+- Added shared accessible presentation components, content-derived route headers and responsive layouts.
+- Added reference-relative seed dates and an injectable clock so reset demo state remains current.
+- Added surface intent events and route-level behavior tests. `npm run check` passes with 7 files and 35 tests.
 
 ## In progress
 
@@ -19,9 +19,9 @@ Phase 1 is complete. Phase 2 — Application surfaces — is next; no Phase 2 im
 
 ## Next three steps
 
-1. Review and approve the Phase 2 outline in `docs/phases/phase-02-app-surfaces.md`.
-2. Map each application-surface field and state to `ContentRegistry`, learner state or a derived selector.
-3. Replace placeholder routes incrementally, starting with shared presentation components and Home.
+1. Draft the Phase 3 lesson-engine execution plan from PRD sections 12–14, 40–42 and 59–60.
+2. Define lesson session state and completion boundaries without mixing them into persisted aggregate state.
+3. Replace the immersive lesson and challenge placeholders with a configured primitive sequence and feedback shell.
 
 ## Blockers/questions for the user
 
@@ -45,4 +45,7 @@ Phase 1 is complete. Phase 2 — Application surfaces — is next; no Phase 2 im
 - Do not import Cornerstone outside the lazy spike module.
 - The PWA icon files are excluded from Workbox's glob because vite-plugin-pwa adds manifest icons separately; including both creates conflicting precache entries and breaks service-worker evaluation.
 - The DICOM route is a feasibility spike, not the Phase 6 production primitive.
+- Seed activity dates shift when a seed is applied; persisted dates intentionally age normally until the next reset.
+- At the start of a calendar week, only shifted activity dates within that week count toward the weekly strip.
+- Lifetime profile stats intentionally exceed the visible four-course catalog because they represent prior learning history.
 - `npm run format:check` currently reports the repository's existing line-ending/style baseline; the required `npm run check` gate is green.
