@@ -19,6 +19,7 @@
     "dicom:deidentify": "python scripts/dicom/deidentify-series.py",
     "dicom:prepare": "node scripts/dicom/prepare-series.mjs",
     "dicom:audit": "node scripts/dicom/audit-phi.mjs",
+    "dicom:preview": "python scripts/dicom/preview-series.py",
     "dicom:verify": "node scripts/dicom/verify-series.mjs",
     "dicom:serve": "node scripts/dicom/serve-series.mjs",
     "check": "npm run typecheck && npm run lint && npm run test && npm run validate:content && npm run build"

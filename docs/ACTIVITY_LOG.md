@@ -977,3 +977,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** All 125 instances and 65,894,350 bytes passed size and SHA-256
   verification. Type checking passed; lint identified Node-global declarations and was corrected.
 - **Follow-ups:** Author calibrated educational targets from the stack.
+
+### [2026-10-02 03:15] P6-T02 - Author DICOM teaching targets
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a dependency-light CT preview/geometry helper, inspected the curated stack and
+  authored a tracheal identification region and transverse air-column measurement.
+- **Files changed:** `scripts/dicom/preview-series.py`,
+  `docs/reference/dicom-teaching-targets.md`, `package.json`, phase documentation.
+- **Commands run:** Generated mediastinal/lung previews; inspected representative slices; derived
+  the slice-81 air component from HU thresholding; verified normalized line length.
+- **Result/verification:** The 18-column reference line evaluates to 17.578 mm at the declared
+  0.976562 mm spacing. The target is labelled educational-only and requires SME review.
+- **Follow-ups:** Encode the four DICOM modes as strict content contracts.
