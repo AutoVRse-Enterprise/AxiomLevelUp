@@ -15,7 +15,7 @@ Plan: `docs/phases/phase-04-standard-primitives.md`.
 
 ## In progress
 
-- Awaiting confirmation of the four open decisions in the Phase 4 plan (media fixtures, formula renderer, drag and drop, showcase delivery). Recommended defaults are assumed.
+- None. Phase 4 decisions are confirmed: synthetic ffmpeg media fixtures, lazy KaTeX + mhchem, `@dnd-kit` drag for ordering (with button/keyboard equivalents), and an internal hidden showcase course.
 
 ## Next three steps
 
@@ -25,7 +25,6 @@ Plan: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Blockers/questions for the user
 
-- Phase 4 open decisions (see plan).
 - The DICOM technical note referenced by the PRD is not present.
 - Real Android Chrome and iOS Safari DICOM/PWA checks still require an HTTPS host and physical devices.
 

@@ -72,7 +72,7 @@ step contributes to the activity score.
 | `true_false` | Assessment | Choose true or false | `answer` | Yes | `statement`, `answer` |
 | `classification` | Assessment | Tap item, then tap category | `answer` | Yes (all-or-nothing or partial) | `categories[]`, `items[]` with `categoryId` |
 | `match_pairs` | Assessment | Tap a left item, then its match | `answer` | Yes (all-or-nothing or partial) | `left[]`, `right[]` (distractors allowed), `pairs[]` |
-| `ordering` | Assessment | Move up/down or tap-to-place | `answer` | Yes (exact or partial) | `items[]` with IDs in correct order |
+| `ordering` | Assessment | Drag to reorder (`@dnd-kit`), or move up/down by button or keyboard | `answer` | Yes (exact or partial) | `items[]` with IDs in correct order |
 | `fill_blank` | Assessment | Type or choose per blank | `answer` | Yes | `text` with `{{blankId}}` tokens, `blanks[]` (accepted answers, case rule, optional choices) |
 | `numeric` | Assessment | Enter a number | `answer` | Yes | `answer`, `tolerance` (absolute/percent) or `range`, `unit` |
 | Timed response | Wrapper | Countdown on a compatible assessment | Inherited | Inherited | Existing base `timer` field |
@@ -203,8 +203,9 @@ interface EvaluationResult {
 ### Milestone B — Assessments
 
 - [ ] P4-T05 — Choice family: `multiple_select`, `true_false`, `multiple_choice` shuffle and review.
-- [ ] P4-T06 — Structured family: `classification`, `match_pairs` and `ordering` with tap-first,
-  keyboard-equivalent interaction and live move announcements; migrate `escalation-order`.
+- [ ] P4-T06 — Structured family: `classification` and `match_pairs` with tap-first,
+  keyboard-equivalent interaction; `ordering` with `@dnd-kit` drag (pointer, touch and keyboard
+  sensors, drag handle) plus move buttons; live move announcements; migrate `escalation-order`.
 - [ ] P4-T07 — Typed-response family: `fill_blank` (normalization, accepted variants, optional
   choices) and `numeric` (comma or point decimals, tolerance, range, units).
 - [ ] P4-T08 — Timed-response wrapper, configured warning thresholds and time-out feedback.
@@ -324,7 +325,8 @@ are PRD low priority.
 - Evaluators and the scenario engine are pure and deterministic, given primitive, response and seed.
 - Completion is decided by engine rules from reported interactions, never by a primitive alone.
 - No XP, stars or mastery are calculated or displayed.
-- Large dependencies (KaTeX, chart code, media components) live in lazy primitive chunks only.
+- Large dependencies (KaTeX, `@dnd-kit`, chart code, media components) live in lazy primitive
+  chunks only.
 - All thresholds, defaults and timer settings come from app configuration or content.
 
 ## Testing strategy
@@ -347,6 +349,7 @@ are PRD low priority.
 | iOS Safari: no element fullscreen, inline video, pinch conflicts | In-app overlay, `playsinline`, `touch-action` scoped to artifact surfaces, landscape QA |
 | Event-history flooding from continuous gestures | Semantic, per-gesture interactions; keyed completion |
 | KaTeX fonts enlarge the precache | Lazy chunk; measure in P4-T15; Phase 7 owns offline asset policy |
+| Touch drag conflicts with page scrolling on mobile | Drag handle only, touch activation delay/tolerance, `touch-action` on the handle; move buttons always available |
 | jsdom cannot exercise media and gestures | Pure-function tests plus documented browser QA |
 | Session v2 discards in-flight v1 sessions | Acceptable for transient state; documented in the ADR and handoff |
 | Authored scenario and showcase copy could be mistaken for clinical guidance | Educational demo framing; sources shown where cited; no patient data |
@@ -360,22 +363,22 @@ are PRD low priority.
 - ADR-022: Scenario graph model, convergence and path scoring.
 - ADR-023: In-house SVG charts.
 - ADR-024: Lazy KaTeX with mhchem for scientific notation.
-- ADR-025: Tap-first, keyboard-equivalent structured interactions; drag deferred.
+- ADR-025: `@dnd-kit` drag for ordering with button/keyboard equivalents; tap-first classification
+  and matching.
 - ADR-026: In-app artifact overlay instead of the Fullscreen API.
 - ADR-027: Formative embedded media questions and a native-open PDF reference.
 - ADR-028: Internal course visibility for the showcase.
 - ADR-029: Timed-response semantics.
 
-## Open decisions (recommended defaults are assumed until confirmed)
+## Resolved decisions (confirmed by the user on 2026-10-01)
 
-1. **Media fixtures:** generate synthetic video, audio, captions and a PDF with ffmpeg and local
-   scripts (recommended), or use user-supplied licensed clips.
-2. **Formula rendering:** KaTeX with mhchem (recommended), or Temml/native MathML (smaller, less
-   visually consistent).
-3. **Drag and drop:** tap-first with move buttons and no new dependency (recommended; PRD allows
-   "drag or tap"), or add `@dnd-kit` drag for ordering now.
-4. **Showcase delivery:** an internal course through the real lesson route (recommended), or a
-   sandboxed development-only player that records no progress.
+1. **Media fixtures:** synthetic video, audio, captions and PDF generated locally with ffmpeg and
+   scripts, with provenance notes.
+2. **Formula rendering:** lazy-loaded KaTeX with mhchem.
+3. **Drag and drop:** add `@dnd-kit` drag for `ordering` now, on top of button and keyboard
+   reordering. Classification and matching remain tap-first.
+4. **Showcase delivery:** an internal hidden course through the real lesson route, recording real
+   progress that the demo reset clears.
 
 ## Exit criteria
 

@@ -370,3 +370,12 @@ This file is append-only.
 - **Commands run:** `git status`, `git log`, `ffmpeg -version`, `python --version`.
 - **Result/verification:** The plan records gaps that must be closed before strict schemas land: duplicated support lists, boolean-only scoring, unvalidated challenge items and content asset references, and placeholder scenario/ordering/chart content. ffmpeg 7.1 is available for synthetic media fixtures.
 - **Follow-ups:** Confirm the four open decisions, then start P4-T01 primitive definitions.
+
+### [2026-10-01 21:06] P4-T00 - Phase 4 decisions confirmed
+
+- **Agent/session:** Cursor planning session
+- **Action:** Recorded the user's decisions: synthetic ffmpeg media fixtures, lazy KaTeX with mhchem, `@dnd-kit` drag for ordering on top of button/keyboard reordering, and an internal hidden showcase course. Updated the catalogue, P4-T06, constraints, risks and ADR-025 accordingly.
+- **Files changed:** `docs/phases/phase-04-standard-primitives.md`, `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** None.
+- **Result/verification:** No open Phase 4 product decisions remain.
+- **Follow-ups:** Start P4-T01 primitive definitions.
