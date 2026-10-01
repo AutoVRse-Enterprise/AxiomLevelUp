@@ -1,17 +1,17 @@
 # Delivery roadmap
 
-| Phase | Scope                          | Status      | Exit signal                                                                              |
-| ----- | ------------------------------ | ----------- | ---------------------------------------------------------------------------------------- |
-| 1     | Foundation and DICOM/PWA spike | Complete    | Validated content, persistent seed state, installable shell and documented DICOM verdict |
-| 2     | Application surfaces           | Complete    | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3     | Core lesson engine             | Complete    | A configured lesson executes from start to completion                                    |
-| 4     | Standard primitives            | Complete    | Content, assessment and scenario primitives are playable and tested                      |
-| 5     | Gamification and mastery       | Complete    | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
-| 6     | DICOM learning viewer          | In progress | Explore, guide, identify, measure and reveal modes work on target devices                |
-| 7     | Complete PWA/offline           | Planned     | Course assets can be downloaded, verified and removed                                    |
-| 8     | Product polish                 | Planned     | Responsive, accessible, animated, performant and resilient target flows                  |
-| 9     | Showcase and device QA         | Planned     | The 18-primitive fixture passes the browser/device matrix                                |
-| 10    | Sanofi demo course             | Planned     | Prospect-specific content runs without runtime code changes                              |
+| Phase | Scope                          | Status   | Exit signal                                                                              |
+| ----- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------- |
+| 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
+| 2     | Application surfaces           | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
+| 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                    |
+| 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
+| 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
+| 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                |
+| 7     | Complete PWA/offline           | Planned  | Course assets can be downloaded, verified and removed                                    |
+| 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
+| 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
+| 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
 
 ## Sequencing note
 
@@ -33,5 +33,10 @@ will subscribe gamification and mastery engines to the existing typed learner-ev
 Phase 5 closed with one ordered event pipeline, learner state v3, configuration-driven reward and
 mastery rules, replay-as-revision semantics and accessible reward summaries/celebrations. The
 quality gate passes with 29 test files and 211 tests; responsive QA found no document overflow at
-the four target viewports. Phase 6 is in progress; physical Android/iOS viewer checks are explicitly
-deferred to Phase 9.
+the four target viewports.
+
+Phase 6 closed with four strict configuration-driven DICOM primitives, a lazy Cornerstone boundary,
+externally hosted verified series assets, progressive loading and typed imaging events. The quality
+gate passes with 32 test files and 221 tests; desktop Chrome and mobile emulation pass, including a
+cross-origin cached-offline reload. Physical Android/iOS viewer checks remain explicitly deferred to
+Phase 9.

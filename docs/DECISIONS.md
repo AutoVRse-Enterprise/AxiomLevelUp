@@ -579,3 +579,148 @@ Dismissal is a learner input event. Keep Phase 5 motion minimal and honor reduce
 **Consequences:** Multiple rewards cannot overwrite each other, focus is trapped and restored, and
 an interrupted demo can resume its reward sequence. Richer animation, haptics and sound remain
 Phase 8 work.
+
+## ADR-040: Lazy Cornerstone imaging boundary
+
+**Status:** Accepted
+
+**Context:** Cornerstone3D is large, stateful and browser-specific, while primitive definitions,
+grading and content validation must remain deterministic and testable without a DOM or WebGL.
+
+**Decision:** Confine all `@cornerstonejs/*` imports to
+`src/imaging/cornerstone/createController.ts`. Expose a small viewer-controller interface and load
+the implementation dynamically from the shared React hook. Give each mounted viewer its own
+rendering engine, viewport and tool group, with StrictMode-safe teardown and CPU rendering fallback
+when WebGL is unavailable.
+
+**Consequences:** Standard routes do not pay the imaging bundle cost, pure DICOM behavior can be
+tested without Cornerstone, and an import-boundary test prevents accidental coupling. The lazy
+imaging chunk remains approximately 1.02 MB gzip and is a future optimization target.
+
+## ADR-041: Externally hosted immutable DICOM series
+
+**Status:** Accepted
+
+**Context:** The teaching stack is approximately 66 MB, should not be committed to Git or included
+in the application precache, and needs the same content URLs in local, preview and hosted
+environments.
+
+**Decision:** Resolve series paths against `VITE_DICOM_BASE_URL`, defaulting to
+`/assets/dicom/`. Host static de-identified Part-10 files with CORS and a manifest v0.2 containing
+geometry, provenance, byte sizes and SHA-256 hashes. Keep the provider unspecified and verify local
+or remote hosts with `dicom:verify`.
+
+**Consequences:** Deployments can move imaging assets without changing course JSON, integrity can be
+checked independently, and the binaries remain outside Git. A production URL and CORS-capable host
+are required before deployment.
+
+## ADR-042: Strict configuration-driven DICOM contracts
+
+**Status:** Accepted
+
+**Context:** The four deferred DICOM primitive types previously accepted record-shaped content with
+ad-hoc fields, which allowed invalid slices, presets and assets to reach runtime code.
+
+**Decision:** Define strict schemas for explore, guided, identify-region and measure. Use one-based
+inclusive slice ranges, normalized image coordinates, inline presets and typed DICOM asset
+references. Validate slice bounds, preset/tool references, geometry, calibration and reference-line
+length against asset metadata before constructing an activity plan.
+
+**Consequences:** Courses can author all four modes without React changes, malformed targets fail
+with source paths during content loading, and primitive components remain generic.
+
+## ADR-043: Physical-unit measurement grading
+
+**Status:** Accepted
+
+**Context:** Pixel distance is not a physical measurement without trustworthy spacing, and silently
+assuming millimetres could mark an uncalibrated response wrong.
+
+**Decision:** Require calibrated series metadata for graded measurement and treat Cornerstone's
+reported unit as authoritative. Accept percent or absolute-millimetre tolerances. Grade slice and
+value as separate items, but make any non-`mm` response ungradeable with score zero and an explicit
+calibration explanation.
+
+**Consequences:** Measurement results are deterministic and reviewable without making diagnostic
+claims. Content authors must provide calibration and a target tolerance; unsupported units never
+masquerade as learner error.
+
+## ADR-044: Ordered guidance with an embedded checkpoint
+
+**Status:** Accepted
+
+**Context:** Guided inspection must keep the image visible while sequencing observable learner
+actions, and some inspections need a scored comprehension check without becoming a separate player
+step.
+
+**Decision:** Model guidance as ordered conditions over slice range, preset, active tool,
+interaction count or explicit acknowledgement. Allow one optional configured choice checkpoint in
+the viewer panel. A guided primitive with a checkpoint uses answer completion; one without it uses
+explored or viewed completion.
+
+**Consequences:** Guidance remains configuration-driven and resumable, the viewer does not own
+player progression, and checkpoint scoring uses the same assessment and reward pipeline as other
+questions.
+
+## ADR-045: Typed DICOM interactions and debounced slice events
+
+**Status:** Accepted
+
+**Context:** Imaging interactions need activity context for analytics and gamification, but rapid
+scrolling can emit many slice changes and primitives must not mutate learner state directly.
+
+**Decision:** Report slice, window, tool, region, measurement, requirement and viewer-lifecycle
+interactions through primitive callbacks. The player maps them to typed learner events with activity
+context. Configure slice-event debounce and tap-movement thresholds in `product.dicom`; keep grading
+results separate from raw region events.
+
+**Consequences:** DICOM actions participate in the ordered event pipeline without UI/state coupling,
+high-frequency navigation is bounded, and product tuning requires configuration rather than
+component edits.
+
+## ADR-046: Nearby-first loading and reference-counted cache cleanup
+
+**Status:** Accepted
+
+**Context:** Loading all 125 slices concurrently delays useful work and can exceed mobile memory,
+while multiple viewers may share the same series and must not evict each other's images.
+
+**Decision:** Render the initial slice first, prefetch the configured radius by distance, then drain
+the remaining queue with bounded concurrency. Cap Cornerstone's cache from `product.dicom`, cancel
+work on unmount, reference-count series users and release cached image objects after the final
+viewer unmounts. Treat WebGL context loss as recoverable viewer failure.
+
+**Consequences:** The learner sees a useful image before full-stack loading, network pressure and
+memory are bounded, and cleanup is deterministic. Phase 7 remains responsible for durable
+download/quota management.
+
+## ADR-047: Responsive immersive viewer and explicit skip semantics
+
+**Status:** Accepted
+
+**Context:** Mobile inspection needs more canvas space, iOS may not support element fullscreen, and
+a failed external study must not dead-end a lesson or ambiguously affect its score.
+
+**Decision:** Use the Fullscreen API where available and a safe-area-aware fixed overlay otherwise.
+Keep prompt/actions in an accessible bottom sheet, resize on orientation changes and honor reduced
+motion. On unrecoverable load failure, Skip completes unscored steps and submits scored steps with
+zero; the summary already treats absent scores as zero.
+
+**Consequences:** One viewer works across desktop and mobile emulation with explicit recovery.
+Physical Android/iOS gesture, fullscreen and memory-pressure validation is deferred to Phase 9 and
+tracked in its device checklist.
+
+## ADR-048: Educational-only normal-anatomy ground truth
+
+**Status:** Accepted
+
+**Context:** Initial identify and measurement targets were not supplied by a subject-matter expert,
+but the phase needed concrete calibrated content to verify the complete learning runtime.
+
+**Decision:** Author targets from de-identified pixel data on unambiguous normal tracheal anatomy,
+derive the measurement from declared pixel spacing, label every DICOM primitive educational-only
+and document the target generation. Require later SME review before clinical or customer use.
+
+**Consequences:** The runtime has reproducible region and length fixtures without implying
+diagnostic validity. The current 17.6 mm reference and region remain explicitly provisional pending
+SME approval.

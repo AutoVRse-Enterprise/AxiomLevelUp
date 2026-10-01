@@ -1155,12 +1155,29 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   reload. Recorded the Phase 9 physical-device matrix.
 - **Files changed:** `docs/qa/phase-06-browser-qa.md`,
   `docs/qa/phase-09-device-checklist.md`, phase documentation and activity log.
-- **Commands run:** Cross-origin production builds, `npm run dicom:verify --
-http://127.0.0.1:4174/thoracic-ct/`, production preview, Chrome CDP viewport/touch/offline/heap
-  checks.
+- **Commands run:** Cross-origin production builds, remote `dicom:verify`, production preview and
+  Chrome CDP viewport/touch/offline/heap checks.
 - **Result/verification:** No document overflow at 375×812, 812×375, 768×900 or 1280×900. The
   125-instance external series verified, 126 study responses populated the runtime cache, and
   slice 81 rendered after a fully offline reload. First image was 236 ms cold and 45–83 ms warm;
   observed heap was about 249 MiB. The 1,014.74 kB gzip imaging chunk remains lazy and the 208.43 kB
   gzip entry contains no Cornerstone.
 - **Follow-ups:** Run the final gate, record Phase 6 ADRs and close documentation.
+
+### [2026-10-02 05:32] P6-T16 - Close Phase 6
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recorded ADR-040 through ADR-048, updated the architecture and generated content-schema
+  narrative, marked the roadmap and phase checklist complete, and rewrote the handoff for Phase 7.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/CONTENT_SCHEMA.md`, `docs/DECISIONS.md`,
+  `docs/HANDOFF.md`, `docs/ROADMAP.md`, `docs/phases/phase-06-dicom-viewer.md`,
+  `scripts/export-json-schema.ts` and activity log.
+- **Commands run:** `npm run schema:export`, Prettier and `npm run check`.
+- **Result/verification:** The first gate inherited the temporary cross-origin
+  `VITE_DICOM_BASE_URL` and correctly failed the default URL unit assertion. After clearing the QA
+  variable, the complete gate passed: typecheck and lint clean, 32 files / 221 tests passing, five
+  courses / thirteen lessons / zero content warnings, and a successful production build. The final
+  default entry is 690.68 kB raw / 208.45 kB gzip; the lazy imaging chunk is 3,704.96 kB raw /
+  1,014.72 kB gzip.
+- **Follow-ups:** Begin Phase 7 planning; supply a production DICOM host and complete physical-device
+  validation in Phase 9.

@@ -2,95 +2,87 @@
 
 ## Current phase/task
 
-Phase 6 — DICOM learning viewer. P6-T00 scope and implementation contract are complete; P6-T01 is
-next.
+Phase 6 — DICOM learning viewer is complete. P6-T00 through P6-T16 satisfy the phase exit criteria.
+Phase 7 — complete PWA/offline is next.
 
 ## Done
 
-- Phase 5 implemented P5-T00 through P5-T16 and satisfies its exit criteria.
-- Phase 5 implementation is committed at `6736a96`.
-- One queued learner-event subscriber reduces input events through learning progress,
-  gamification and mastery and commits learner state once. Informational output events are retained
-  in event history without being reduced again.
-- Learner state v3 persists reward idempotency, challenge periods, counters, active-run data,
-  activity/question results, a celebration queue and digital rewards. Version 2 snapshots migrate by
-  deriving completion/perfect reward ledgers.
-- XP is configuration/content driven. First-attempt fractional results award rounded question XP;
-  first lesson completion, first perfect result, revision, daily/weekly challenges, weekly goals and
-  badge unlocks follow distinct idempotent policies.
-- Replaying a completed lesson is a revision. It awards revision XP, updates mastery and qualifies
-  for streak/weekly activity without repaying completion or perfect bonuses.
-- Stars retain the best configured lesson result. Levels derive from lifetime XP, and the seeded
-  weekly leaderboard responds immediately to current-week XP.
-- Local-calendar helpers drive streaks, weekly activity, weekly XP rollover and daily/weekly
-  challenge periods using the configured week start.
-- First-attempt fractional assessment results update concept mastery through configured difficulty
-  weights, gain/loss amounts and a bounded history.
-- Badges use validated criteria for lesson/course completion, perfect lessons, streaks, weekly goals,
-  challenges, first-attempt answers and primitive rewards. Progress is derived rather than stored.
-- Weekly challenge progress uses the same criteria contract and resets by week.
-- Answer feedback shows XP. Completion shows XP, stars, mastery change, rank change and streak.
-- Persisted queued Radix dialogs present badge and level-up rewards with focus management, Escape,
-  click dismissal and reduced-motion support.
-- Home, Profile, Challenge and Pathway use derived streak, badge and period values.
-- Developer controls grant XP, unlock lessons and simulate badges/levels through typed demo events.
-- Strict content validation resolves all achievement references and reports five courses, thirteen
-  lessons and zero warnings.
-- ADR-034 through ADR-039 document the event pipeline, XP/revision policy, criteria, calendar,
-  mastery and celebration decisions.
-- The quality gate passes with 29 test files and 211 tests.
-- Browser QA found no document overflow at 375×812, 812×375, 768×900 or 1280×900. Reward dialogs
-  expose an accessible heading/description, focus Continue and reduce motion to 0.001 seconds.
-- The production entry is 674.74 kB raw / 204.44 kB gzip, 25.35 / 6.64 kB above Phase 4. The PWA
-  precache contains 98 entries totaling 5580.88 KiB.
+- All 25 primitive types are strictly parsed and playable in production, including
+  `dicom_explore`, `dicom_guided`, `dicom_identify_region` and `dicom_measure`.
+- DICOM courses own series references, presets, tools, one-based slice ranges, normalized targets,
+  guidance, expected measurements and tolerances.
+- The hosted-series manifest v0.2 contains geometry, attribution, sizes and SHA-256 hashes. Local
+  and remote verification checks all 125 files and 65,894,350 bytes.
+- `VITE_DICOM_BASE_URL` supports an external CORS host. DICOM binaries remain outside Git and the
+  application precache.
+- `src/imaging/cornerstone/createController.ts` is the only Cornerstone importer. It provides
+  WebGL/CPU initialization, per-viewer resources, nearby-first loading, bounded concurrency,
+  calibrated length tools, context-loss handling and reference-counted cleanup.
+- The responsive viewer provides loading/retry/skip states, slice/keyboard navigation, tools,
+  presets, fit/reset, overlays, instructions and Fullscreen/fixed-overlay immersive modes.
+- Explore requirements and ordered guidance are resumable. Guided inspection can retain the viewer
+  while presenting an embedded checkpoint.
+- Region and measurement grading are pure, slice-aware and reveal-policy controlled. Non-`mm`
+  measurements cannot be submitted as calibrated answers.
+- DICOM interactions and viewer lifecycle timings flow through typed player events. XP, mastery and
+  the first-DICOM badge remain central-pipeline outcomes.
+- Scientific Imaging contains the complete guided, identify and measure flow; the internal showcase
+  includes the three required DICOM examples and the gallery uses production components.
+- The old DICOM spike route/source is removed. Its findings and follow-ups remain documented.
+- ADR-040 through ADR-048 record the imaging, hosting, contracts, grading, guidance, event, loading,
+  immersive/skip and educational-ground-truth decisions.
+- Browser QA passes at 375×812, 812×375, 768×900 and 1280×900 with no document overflow. The
+  external-host production build reloads the fully cached series while offline.
+- First image measured 236 ms cold and 45–83 ms warm; observed loaded-stack heap was about 249 MiB.
+  The final default build entry is 690.68 kB raw / 208.45 kB gzip and the lazy imaging chunk is
+  3,704.96 kB raw / 1,014.72 kB gzip.
+- The final quality gate passes with 32 test files and 221 tests; five courses and thirteen lessons
+  validate with zero warnings.
 
 ## In progress
 
-- Phase 6 implementation.
+- None.
 
 ## Next three steps
 
-1. Add the hosted-series manifest, verification and configurable base-URL pipeline.
-2. Author calibrated normal-anatomy teaching targets from the curated stack.
-3. Add strict DICOM primitive contracts and semantic validation.
+1. Plan Phase 7 download, quota, integrity and removal behavior from the manifest v0.2 foundation.
+2. Add explicit per-course offline status and download controls without changing primitive UI.
+3. Test quota/eviction recovery and complete offline coverage for all configured course assets.
 
 ## Blockers/questions for the user
 
-- The DICOM technical note referenced by the PRD is still unavailable.
 - A production external DICOM host URL must be supplied before hosted deployment; local development
   falls back to `/assets/dicom/`.
-- Physical Android Chrome and iOS Safari checks are deferred to Phase 9 by product decision.
-- Physical Android Chrome and iOS Safari DICOM/PWA checks require an HTTPS host and devices.
+- The DICOM technical note referenced by the PRD remains unavailable.
+- The tracheal region and 17.6 mm educational reference require SME approval before customer or
+  clinical use.
+- Physical Android Chrome and iOS Safari DICOM/PWA checks require an HTTPS host and devices and are
+  deferred to Phase 9.
 
 ## Environment notes
 
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
+- Branch: `master`
 - Node: 24.19.0
 - npm: 11.17.0
-- Package manager: npm
 - Install/run: `npm install`, `npm run check`, then `npm run dev`.
+- Local cross-origin QA: `npm run dicom:serve`, set
+  `VITE_DICOM_BASE_URL=http://127.0.0.1:4174/`, then run the app.
 - Regenerate schemas with `npm run schema:export`.
-- ffmpeg 7.1 and Python 3.11.7 are available for fixture generation.
-- Local DICOM setup and attribution are documented in `public/assets/dicom/spike/README.md`.
+- Series provenance and hosting are documented in
+  `public/assets/dicom/thoracic-ct/README.md`.
 
 ## Gotchas
 
-- Output reward events are informational. Never feed `xp_awarded`, `badge_unlocked`, `level_up`,
-  `stars_awarded`, `streak_updated`, `weekly_goal_met`, `mastery_updated` or `reward_granted` back
-  into state reducers.
-- `course_completed` remains an input follow-up and relies on the handler's event queue.
-- First attempts remain authoritative for question XP, mastery and activity score.
-- Lesson reward ledgers prevent duplicate completion/perfect XP; revisions deliberately remain
-  repeatable.
-- Daily challenges award once per local date. Weekly progress and XP use
-  `appConfig.product.weekStartsOn`.
-- Badge progress is derived from criteria. Do not add mutable percentage updates to components.
-- A primitive reward enters the digital ledger before its matching badge criterion is evaluated.
-- Celebration dialogs are suppressed during an active immersive session and appear after completion
-  or on an ordinary route.
-- Seed period dates are rebased; weekly period anchors use the current local week start.
-- Internal showcase progress is ordinary learner state and reset clears it.
-- Production still skips only the four deferred DICOM types until P6-T11 removes that filter.
-- Do not import Cornerstone outside `src/imaging/cornerstone`; the production boundary is now in
-  place and remains dynamically loaded.
-- The Phase 4 bundle deviation remains; Phase 5 adds 6.47 kB gzip to the entry.
+- Never import `@cornerstonejs/*` outside `src/imaging/cornerstone`; the boundary test enforces this.
+- DICOM binaries are intentionally ignored. Do not commit them or add them to the PWA precache.
+- A new service worker may wait until activated; offline QA must confirm the current build controls
+  the page before warming `dicom-studies-v1`.
+- Hosted manifest geometry must match the validated asset manifest before rendering.
+- Cornerstone-reported measurement units are authoritative. Do not assume pixels or unknown units
+  are millimetres.
+- Primitive components emit callbacks only. They must not award XP, mutate mastery or bypass the
+  learner-event pipeline.
+- Slice events are debounced; requirement keys, not raw event counts, own explored completion.
+- Physical pinch, iOS fixed-overlay behavior and device memory pressure remain Phase 9 checks.
+- Output reward events remain informational and must never be reduced back into learner state.

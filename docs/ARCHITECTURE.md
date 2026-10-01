@@ -99,10 +99,11 @@ translated into typed learner events; the learning progress engine updates lesso
 and lifetime aggregates. Navigation away from an active session is blocked until the learner
 confirms the saved exit.
 
-Development plans preserve unsupported steps for diagnosis. Production plans skip only the four
-deferred DICOM types, retaining the fallback for other unsupported or malformed primitives. An
-activity with no implemented steps is unavailable. The player emits results only; the central
-pipeline awards XP, stars and mastery without primitive or learning-engine coupling.
+Development plans preserve unsupported steps for diagnosis. Production plans include all 25
+implemented primitive types, including the four DICOM modes, while retaining the fallback for
+unknown or malformed primitives. An activity with no implemented steps is unavailable. The player
+emits results only; the central pipeline awards XP, stars and mastery without primitive or
+learning-engine coupling.
 
 ## DICOM imaging boundary
 
@@ -112,3 +113,14 @@ import Cornerstone packages. Per-instance controllers load externally hosted sta
 through `wadouri:` image IDs, prefetch nearby slices first, cap the global image cache and release
 series resources after the last viewer unmounts. Pure geometry, requirement and evaluation modules
 remain independent from Cornerstone and React.
+
+The external manifest v0.2 supplies immutable file paths, byte sizes, SHA-256 hashes, geometry and
+attribution. Runtime loading compares its geometry with the already validated asset manifest before
+rendering. `VITE_DICOM_BASE_URL` selects the host; the service worker keeps visited responses in a
+separate runtime cache rather than the application precache.
+
+Explore and guided primitives reduce configured observations into requirement keys. Identify-region
+and measurement primitives keep normalized drafts and delegate fractional grading to pure
+evaluators. All components report typed slice, window, tool, region, measurement, requirement and
+viewer-lifecycle interactions to the player. The central event pipeline remains the only owner of
+XP, mastery and the first-DICOM reward.

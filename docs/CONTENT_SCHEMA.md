@@ -86,6 +86,27 @@ The four DICOM types require a typed DICOM series asset and strict mode-specific
 types are retained with a warning so development playback can render the unsupported fallback.
 Every lesson primitive and challenge item passes through the same parser and semantic validation.
 
+### DICOM primitive content
+
+All four modes require `seriesAssetId`, `prompt`, at least one inline
+`{ id, label, center, width }` preset and `educationalUseOnly: true`. They may set a one-based
+`initialSlice`, reference an `initialPresetId` and restrict tools to `scroll`, `window`, `zoom`,
+`pan` and `measure`.
+
+- `dicom_explore` may require a minimum interaction count, a visited one-based inclusive slice range
+  and configured preset IDs.
+- `dicom_guided` declares ordered steps whose condition is a slice range, preset, active tool,
+  interaction count or acknowledgement. Its optional checkpoint contains configured options,
+  correct option and explanation.
+- `dicom_identify_region` declares a slice range, reference slice and normalized circle, rectangle
+  or polygon. Responses are `{ slice, point: { x, y } }`.
+- `dicom_measure` declares a slice range, expected millimetre value and percent or
+  absolute-millimetre tolerance. An optional normalized reference line is available in review.
+  Responses are `{ slice, value, unit, start?, end? }`.
+
+Explore uses viewed, minimum-interactions or explored completion. Guided checkpoints and both graded
+target modes use answer completion.
+
 ## Shared primitive envelope
 
 - IDs use lowercase letters, digits, underscores and hyphens.
@@ -129,6 +150,17 @@ Asset types are `image`, `video`, `audio`, `dicom`, `document` and `text`. DICOM
 require slice count, matrix, pixel spacing, slice thickness and calibration metadata. Other entries
 may include `mimeType`, positive integer `width` and `height`, and non-negative
 `sizeBytes`.
+
+The hosted DICOM manifest is independently validated at runtime as schema version `0.2`. It contains
+series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets
+and ordered files with path, byte size and lowercase SHA-256. Hosted geometry must exactly match the
+course asset manifest.
+
+## DICOM product configuration
+
+`product.dicom` owns the nearby-slice prefetch radius, preload concurrency, Cornerstone cache limit
+in MiB, slice-event debounce interval and tap movement threshold. These runtime limits are not
+hard-coded in primitive components.
 
 ## Versioning
 

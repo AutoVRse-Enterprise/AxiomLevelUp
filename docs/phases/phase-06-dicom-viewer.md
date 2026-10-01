@@ -1,5 +1,7 @@
 # Phase 6: DICOM learning viewer
 
+**Status:** Complete
+
 ## Goal
 
 Turn the four deferred DICOM types into strict, configuration-driven learning primitives backed by
@@ -52,7 +54,7 @@ mobile emulation.
 - [x] P6-T13 — Replace the isolated spike route with the production DICOM sandbox.
 - [x] P6-T14 — Add schema, domain, component, player and import-boundary coverage.
 - [x] P6-T15 — Run responsive, interaction, cross-origin, offline, memory and bundle QA.
-- [ ] P6-T16 — Run the final gate, record ADRs and close Phase 6 documentation.
+- [x] P6-T16 — Run the final gate, record ADRs and close Phase 6 documentation.
 
 ## Rules
 
