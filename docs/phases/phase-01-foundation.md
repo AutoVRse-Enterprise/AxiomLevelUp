@@ -7,7 +7,7 @@ Deliver a mobile-first React PWA foundation that loads validated configuration, 
 ## Checklist
 
 - [x] P1-T00 — Repository, agent-handoff and documentation scaffolding
-- [ ] P1-T01 — React/Vite scaffold, strict TypeScript and quality commands
+- [x] P1-T01 — React/Vite scaffold, strict TypeScript and quality commands
 - [ ] P1-T02 — Tailwind tokens, accessible base UI and token preview
 - [ ] P1-T03 — Route tree, application shell and immersive layout
 - [ ] P1-T04 — Zod content schema v0.1 and JSON Schema export
