@@ -82,3 +82,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
 - **Result/verification:** Static checks and build pass. The store hydrates before routing and initializes once from the validated advanced seed.
 - **Follow-ups:** Route all learner actions through a typed event bus.
+
+### [2026-10-01 17:45] P1-T08 - Learner event system
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the complete PRD event taxonomy plus XP awards, a framework-independent publish/subscribe bus, generated event IDs/timestamps and an IndexedDB-persisted event history capped at 500 records.
+- **Files changed:** `src/events/types.ts`, `src/events/bus.ts`, `src/events/eventLogStore.ts`, `src/main.tsx`.
+- **Commands run:** `npm run typecheck`, `npm run lint`, `npm run build`.
+- **Result/verification:** Event infrastructure compiles, initializes before React and leaves subscriber failures isolated.
+- **Follow-ups:** Add the demo controls and the first event-to-state subscriber.
