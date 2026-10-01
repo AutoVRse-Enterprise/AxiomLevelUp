@@ -8,6 +8,8 @@ import manifest from '../../public/content/manifest.json'
 import advancedSeed from '../../public/content/seeds/advanced.json'
 
 import type { ContentBundleInput } from '@/content/loader'
+import { primitiveBaseSchema } from '@/content/schema'
+import type { ActivityDefinition } from '@/engines/learning/plan'
 
 const courseDocuments = [
   ['courses/scientific-imaging.json', scientificImaging],
@@ -37,3 +39,60 @@ export const contentResponses = new Map<string, unknown>([
   ['/content/seeds/advanced.json', advancedSeed],
   ...courseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
 ])
+
+const richText = primitiveBaseSchema.parse({
+  id: 'fixture-text',
+  type: 'rich_text',
+  conceptIds: ['thoracic-imaging'],
+  content: { heading: 'Observe', body: 'Review the evidence before answering.' },
+  completion: { mode: 'viewed' },
+})
+const question = primitiveBaseSchema.parse({
+  id: 'fixture-question',
+  type: 'multiple_choice',
+  conceptIds: ['thoracic-imaging'],
+  content: {
+    prompt: 'Which option is supported?',
+    options: [
+      { id: 'supported', label: 'Supported' },
+      { id: 'unsupported', label: 'Unsupported' },
+    ],
+    correctOptionId: 'supported',
+    explanation: 'The configured evidence supports this option.',
+  },
+  completion: { mode: 'answer' },
+  scoring: { weight: 1 },
+})
+const unsupported = primitiveBaseSchema.parse({
+  id: 'fixture-unsupported',
+  type: 'scenario',
+  conceptIds: ['thoracic-imaging'],
+  content: { startNodeId: 'start', nodes: [] },
+  completion: { mode: 'outcome' },
+})
+
+const activity = (
+  id: string,
+  primitives: ActivityDefinition['primitives'],
+): ActivityDefinition => ({
+  kind: 'lesson',
+  id,
+  courseId: 'fixture-course',
+  version: '1.0',
+  title: `Fixture ${id}`,
+  description: 'Player behavior fixture.',
+  estimatedMinutes: 3,
+  conceptIds: ['thoracic-imaging'],
+  primitives,
+})
+
+export const playerFixtures = {
+  allTyped: activity('all-typed', [richText, question]),
+  mixedUnsupported: activity('mixed-unsupported', [richText, unsupported, question]),
+  allUnsupported: activity('all-unsupported', [unsupported]),
+  emptyChallenge: {
+    ...activity('empty-challenge', []),
+    kind: 'challenge',
+    courseId: undefined,
+  } satisfies ActivityDefinition,
+}

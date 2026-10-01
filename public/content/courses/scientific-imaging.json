@@ -124,7 +124,12 @@
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "xp": 10, "difficulty": "intermediate" },
-          "feedback": { "retry": true }
+          "feedback": { "retry": true },
+          "source": {
+            "title": "CT display fundamentals",
+            "section": "Window width and level",
+            "page": 12
+          }
         },
         {
           "id": "showcase-dicom",

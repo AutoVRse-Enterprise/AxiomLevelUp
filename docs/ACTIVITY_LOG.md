@@ -334,3 +334,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, focused router tests.
 - **Result/verification:** Static checks and all six router tests pass; daily challenges share the same runtime while empty weekly challenges report unavailable.
 - **Follow-ups:** Add citation-bearing content and complete player fixtures.
+
+### [2026-10-01 21:12] P3-T10 - Player content fixtures
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a scientific source to the configured lesson assessment and reusable fixtures for typed, mixed, unsupported-only and empty activity plans.
+- **Files changed:** `public/content/courses/scientific-imaging.json`, `src/test/contentFixtures.ts`, `docs/phases/phase-03-lesson-engine.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run validate:content`, `npm run typecheck`.
+- **Result/verification:** All four courses and twelve lessons validate with no warnings; fixtures compile against the production contracts.
+- **Follow-ups:** Add comprehensive engine, primitive and route behavior tests and run responsive browser QA.
