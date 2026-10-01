@@ -6,25 +6,26 @@
 public/content JSON
         |
         v
-content loader + Zod validation
+content loader + strict Zod/semantic validation
         |
         v
-read-only ContentRegistry -----> React routes/components
-        |                             ^
-        |                             |
-        +----> pure view selectors <--+---- learner state + application clock
-                                      |
-                                      v
-                                typed event bus
-                                  /         \
-                                 v           v
-                           event history   learning progress engine
-                                             |
-                                             v
-                                     Zustand learner store
-                                             |
-                                             v
-                                          IndexedDB
+read-only ContentRegistry -----> routes -----> activity plan
+        |                                        |
+        |                               pure primitive definitions
+        |                               (support/family/layout/scoring/
+        |                                review/completion/evaluation)
+        |                                        |
+        |                                        v
+        +----> pure view selectors <----- activity player/session v2
+                        ^                  /                   \
+                        |                 v                     v
+          learner state + clock   lazy primitive UI      typed event bus
+                        ^                                      /       \
+                        |                                     v         v
+                    IndexedDB                         event history  progress engine
+                                                                      |
+                                                                      v
+                                                              learner store
 ```
 
 ## Boundaries
@@ -33,9 +34,16 @@ read-only ContentRegistry -----> React routes/components
 - `src/app`: providers, startup and routing.
 - `src/routes`, `src/layouts`, `src/components`: presentation and user intent.
 - `src/events`: framework-independent event taxonomy and transport.
-- `src/engines/learning`: pure activity planning, session, completion, scoring and event reduction.
-- `src/player`: activity lifecycle orchestration and shared player presentation.
-- `src/primitives`: lazy primitive registration, pure evaluators and isolated components.
+- `src/engines/learning`: pure activity planning, session v2, completion, scoring and event
+  reduction.
+- `src/player`: activity lifecycle orchestration, draft persistence, timers, review/reveal and
+  shared player presentation.
+- `src/primitives/definitions`: React-free source of truth for implemented support, family, scoring,
+  layout, review prompts, exploration keys and evaluation.
+- `src/primitives/components` and `src/primitives/componentRegistry.ts`: callback-only primitive UI
+  loaded through per-type lazy imports.
+- `src/primitives/shared`: reusable artifact overlay, image geometry, shuffle and review
+  infrastructure.
 - `src/state`: persisted learner state, reference-date rebasing and pure derived view selectors.
 - `src/lib/clock.ts`: the injectable source of current date/time for deterministic calendar views.
 - `src/pwa`: service worker registration and connectivity state.
@@ -43,7 +51,13 @@ read-only ContentRegistry -----> React routes/components
 
 ## Content loading
 
-The app fetches `public/content/manifest.json`, resolves the app configuration, courses and learner seed, validates every document, then performs cross-reference checks. UI receives a read-only registry indexed by identifier. Parse failures include source file and JSON path.
+The app fetches `public/content/manifest.json`, resolves the app configuration, courses, learner seed
+and asset manifest, validates every document, then performs cross-reference and per-primitive
+semantic checks. Lesson primitives and challenge items use the same strict parser. Typed asset
+references verify manifest existence and media type; scenario graphs and formula syntax receive
+content-layer validation. UI receives a read-only registry indexed by identifier, plus a
+learner-visible `catalogCourses` projection that excludes addressable internal courses. Parse
+failures include source file and JSON path.
 
 ## State and events
 
@@ -53,16 +67,24 @@ Application surfaces consume view models from `src/state/selectors/`. Effective 
 
 ## Lesson execution
 
-Routes adapt a configured lesson or challenge into an immutable activity plan. The player advances a
-pure session reducer and persists the single active session separately from aggregate learner state.
-Primitive components report interactions and responses through callbacks; pure evaluators and
-completion rules produce results. The player emits lifecycle events, and the learning progress engine
-updates lesson, course, challenge and lifetime aggregates. Navigation away from an active session is
-blocked until the learner confirms the saved exit.
+Routes adapt a configured lesson or challenge into an immutable activity plan. Planning first parses
+the strict primitive contract, then resolves its pure definition and derives support, family, scoring,
+layout, prompt, exploration keys and timer compatibility. The player advances a pure reducer and
+persists one version 2 activity session separately from aggregate learner state. Session progress
+stores resumable drafts, first/latest fractional scores, distinct interactions and monotonic media
+coverage; first-attempt scores remain authoritative.
 
-Unsupported steps render explicit fallbacks in development and are omitted from production plans. An
-activity with no implemented steps is unavailable. Gamification and mastery remain independent future
-subscribers to the same event stream.
+The player lazy-renders callback-only primitive components, debounces drafts, applies completion
+rules, owns per-attempt timers and renders submitted work read-only before feedback. It re-runs the
+pure evaluator for review and applies the configured reveal policy. Primitive interactions are
+translated into typed learner events; the learning progress engine updates lesson, course, challenge
+and lifetime aggregates. Navigation away from an active session is blocked until the learner
+confirms the saved exit.
+
+Development plans preserve unsupported steps for diagnosis. Production plans skip only the four
+deferred DICOM types, retaining the fallback for other unsupported or malformed primitives. An
+activity with no implemented steps is unavailable. Gamification and mastery remain independent
+future subscribers to the same event stream.
 
 ## DICOM spike isolation
 

@@ -2,11 +2,17 @@
 
 ## Current phase/task
 
-Phase 4 — Standard primitives. P4-T00 through P4-T15 are complete; P4-T16 is next.
-Phase file: `docs/phases/phase-04-standard-primitives.md`.
+Phase 4 — Standard primitives is complete. Phase 5 — Gamification and mastery is next; its detailed
+phase plan has not been created.
 
 ## Done
 
+- Phase 4 closed from clean commit `3520bbd` with all P4-T00 through P4-T16 tasks and every exit
+  criterion audited.
+- The canonical registry contains 25 types: 21 strict standard types with lazy components and four
+  deferred DICOM types. The internal showcase covers all 21 standard types in 22 ordered examples.
+- The final gate passes with 21 test files and 187 tests. Content validation reports five courses,
+  thirteen lessons and zero warnings; four courses and twelve lessons are learner-visible.
 - Phase 1 foundation, Phase 2 application surfaces and the Phase 3 lesson/challenge runtime remain
   green.
 - Primitive definitions are the source of truth for support, family, scoring, layout, review
@@ -106,9 +112,10 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   measured 6.91:1 contrast ratio on white.
 - The production entry is 649.39 kB raw / 197.80 kB gzip, 54.27 / 14.95 kB above baseline. The gzip
   increase exceeds the approved 10 kB target by 4.95 kB and is recorded as a Phase 4 deviation.
-- ADR-021 through ADR-033 record player lifecycle, scenarios, scientific data, structured
-  assessments, artifact viewport, semantic validation, assessment semantics, timed-response
-  lifecycle, normalized image regions and internal-course/gallery isolation.
+- ADR-001 through ADR-033 are unique. Phase 4 decisions occupy ADR-018 through ADR-033 and cover
+  definitions, fractional first-attempt scoring, session v2, review/reveal, scenarios, SVG charts,
+  lazy KaTeX, structured drag/tap interactions, artifact overlays, semantic validation, choice and
+  typed-response semantics, timers, image regions, media/references and internal visibility.
 - Type checking, lint, 21 test files with 187 tests, content validation and production build pass.
 
 ## In progress
@@ -117,15 +124,16 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
 
 ## Next three steps
 
-1. P4-T16: run the closing quality gate and finish Phase 4 documentation.
-2. Commit the Phase 4 closure as one logical change.
-3. Begin Phase 5 planning after Phase 4 closes.
+1. Define the Phase 5 scope, PRD traceability, acceptance criteria and task sequence.
+2. Audit the existing learner-event, product-configuration and progress-state contracts for
+   gamification and mastery inputs.
+3. Begin the first approved Phase 5 implementation task without coupling primitives to gamification.
 
 ## Blockers/questions for the user
 
-- The DICOM technical note referenced by the PRD is not present.
-- Real Android Chrome and iOS Safari DICOM/PWA checks still require an HTTPS host and physical
-  devices.
+- None for Phase 5 planning.
+- Later DICOM work still lacks the technical note referenced by the PRD, and physical Android Chrome
+  and iOS Safari DICOM/PWA checks still require an HTTPS host and devices.
 
 ## Environment notes
 
@@ -177,8 +185,8 @@ Phase file: `docs/phases/phase-04-standard-primitives.md`.
   at most once per mount.
 - Scenario graph warnings count decisions on every start-to-outcome path; authored demo paths must
   stay within two to four decisions to keep content validation warning-free.
-- ADR-027 was already allocated at the P4-T11 baseline, so the media decision is ADR-032.
-- ADR-028 was already allocated at the P4-T13 baseline, so the showcase decision is ADR-033.
+- Preserve the unique ADR-001 through ADR-033 sequence. Phase 4 uses ADR-018 through ADR-033;
+  media/reference behavior is ADR-032 and internal visibility/gallery isolation is ADR-033.
 - Learner-facing surfaces and selectors must receive `catalogCourses`; direct internal routes and
   progress resolution must continue using the complete registry maps.
 - Do not import Cornerstone outside the lazy spike module.

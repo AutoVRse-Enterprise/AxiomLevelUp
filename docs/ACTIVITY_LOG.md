@@ -720,3 +720,24 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   primitive chunks remain split; the PWA precache contains 98 entries totaling 5553.13 KiB.
   Existing Cornerstone browser-externalization and large-chunk warnings remain non-failing.
 - **Follow-ups:** Run P4-T16 closing quality gate and finish Phase 4 documentation.
+
+### [2026-10-02 00:56] P4-T16 - Close standard primitives phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Audited P4-T00 through P4-T15 and every Phase 4 exit criterion against the commit
+  sequence, implementation boundaries and automated/browser evidence. Verified the unique
+  ADR-001–ADR-033 sequence and reconciled the Phase 4 ADR-018–ADR-033 decision map without
+  renumbering history. Updated the definitions/player architecture, generated content-contract
+  summary, roadmap, Phase 5 handoff and final phase verification/deviations.
+- **Files changed:** `scripts/export-json-schema.ts`, `docs/ARCHITECTURE.md`,
+  `docs/CONTENT_SCHEMA.md`, `docs/ROADMAP.md`, `docs/HANDOFF.md`,
+  `docs/phases/phase-04-standard-primitives.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run schema:export`; `npm run check`; focused Prettier check/write;
+  IDE lint inspection; ADR, implementation, test and pending-claim searches; `git diff --check`.
+- **Result/verification:** Phase 4 is complete. Type checking and lint pass; 21 test files with 187
+  tests pass; content validation reports five courses, thirteen lessons and zero warnings; the
+  production build succeeds with 98 precache entries totaling 5553.13 KiB. The entry remains
+  649.39 kB raw / 197.80 kB gzip, 4.95 kB gzip above the approved growth target. The only browser
+  limitation is the blocked synthetic comparison-divider drag, covered by keyboard operation and
+  the pointer regression test.
+- **Follow-ups:** Commit the closeout, then begin Phase 5 planning.

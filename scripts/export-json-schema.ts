@@ -11,7 +11,12 @@ import {
   learnerSeedSchema,
   primitiveBaseSchema,
 } from '../src/content/schema/index.ts'
-import { primitiveTypes } from '../src/content/primitiveTypes.ts'
+import {
+  assessmentPrimitiveTypes,
+  contentPrimitiveTypes,
+  dicomPrimitiveTypes,
+  primitiveTypes,
+} from '../src/content/primitiveTypes.ts'
 import { primitiveContentSchemas } from '../src/content/schema/primitives/index.ts'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -49,19 +54,49 @@ ${Object.keys(schemas)
   .map((name) => `- \`schemas/${name}.schema.json\``)
   .join('\n')}
 
-## Primitive types
+These six JSON Schema documents describe the exported document envelopes. In particular,
+\`schemas/primitive.schema.json\` is the shared forward-compatible primitive envelope; the strict
+per-type content contracts are enforced by the runtime Zod schemas listed below and are not emitted
+as separate JSON Schema files.
 
-${primitiveTypes.map((type) => `- \`${type}\``).join('\n')}
+## Primitive registry
 
-## Strict primitive schemas
+The canonical registry contains ${primitiveTypes.length} types: ${
+  primitiveTypes.length - dicomPrimitiveTypes.length
+} strict standard types and ${dicomPrimitiveTypes.length} deferred DICOM types.
+
+### Content (${contentPrimitiveTypes.length})
+
+${contentPrimitiveTypes.map((type) => `- \`${type}\``).join('\n')}
+
+### Assessment (${assessmentPrimitiveTypes.length})
+
+${assessmentPrimitiveTypes.map((type) => `- \`${type}\``).join('\n')}
+
+### Domain
+
+- \`scenario\` (strict standard primitive)
+${dicomPrimitiveTypes.map((type) => `- \`${type}\` (deferred to Phase 6)`).join('\n')}
+
+## Strict standard primitive schemas (${Object.keys(primitiveContentSchemas).length})
 
 ${Object.keys(primitiveContentSchemas)
   .map((type) => `- \`${type}\``)
   .join('\n')}
 
-Registered future types retain record-shaped content until their implementation phase. Unknown types
-are retained with a warning so content can fail gracefully at rendering time. Every lesson primitive
-and challenge item passes through the same strict parser and semantic validation.
+The four registered DICOM types retain record-shaped content until Phase 6. Unknown types are
+retained with a warning so development playback can render the unsupported fallback. Every lesson
+primitive and challenge item passes through the same parser and semantic validation.
+
+## Shared primitive envelope
+
+- IDs use lowercase letters, digits, underscores and hyphens.
+- Completion supports \`viewed\`, \`answer\`, \`minimum_interactions\`, \`explored\`,
+  \`media_progress\`, \`measurement\`, \`outcome\`, \`interacted\` and \`correct_order\`, while
+  preserving unknown non-empty modes for forward-compatible fallback.
+- Scoring supports a positive weight plus optional non-negative XP and configured difficulty.
+- Feedback supports retry, maximum attempts, correct/incorrect copy and hints.
+- Rewards, sources and positive-duration countdown/elapsed timers are optional.
 
 ## Semantic validation
 
@@ -85,6 +120,7 @@ include \`mimeType\`, positive integer \`width\` and \`height\`, and non-negativ
 - Content schema: \`0.1\`
 - Course documents also include an independent \`courseVersion\`.
 - Persisted learner state uses an integer \`stateVersion\` and migrations.
+- In-flight activity sessions are persisted independently at version 2; version 1 sessions restart.
 `
 
 await writeFile(resolve(root, 'docs/CONTENT_SCHEMA.md'), document)

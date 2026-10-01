@@ -1,17 +1,17 @@
 # Delivery roadmap
 
-| Phase | Scope | Status | Exit signal |
-| --- | --- | --- | --- |
-| 1 | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
-| 2 | Application surfaces | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3 | Core lesson engine | Complete | A configured lesson executes from start to completion |
-| 4 | Standard primitives | Next | Content, assessment and scenario primitives are playable and tested |
-| 5 | Gamification and mastery | Planned | Learner events update XP, levels, stars, streaks, badges, rank and mastery |
-| 6 | DICOM learning viewer | Planned | Explore, guide, identify, measure and reveal modes work on target devices |
-| 7 | Complete PWA/offline | Planned | Course assets can be downloaded, verified and removed |
-| 8 | Product polish | Planned | Responsive, accessible, animated, performant and resilient target flows |
-| 9 | Showcase and device QA | Planned | The 18-primitive fixture passes the browser/device matrix |
-| 10 | Sanofi demo course | Planned | Prospect-specific content runs without runtime code changes |
+| Phase | Scope                          | Status   | Exit signal                                                                              |
+| ----- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------- |
+| 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
+| 2     | Application surfaces           | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
+| 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                    |
+| 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
+| 5     | Gamification and mastery       | Next     | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
+| 6     | DICOM learning viewer          | Planned  | Explore, guide, identify, measure and reveal modes work on target devices                |
+| 7     | Complete PWA/offline           | Planned  | Course assets can be downloaded, verified and removed                                    |
+| 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
+| 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
+| 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
 
 ## Sequencing note
 
@@ -23,5 +23,9 @@ Phase 2 closed with all learner-facing surfaces driven by validated configuratio
 
 Phase 3 closed with a shared resumable lesson/challenge engine, event-driven learning progress,
 immediate feedback and the first three typed primitives. The quality gate passes with 10 test files
-and 52 tests. Phase 4 should extend the registry with the remaining standard content, assessment and
-scenario primitives.
+and 52 tests.
+
+Phase 4 closed with all 21 standard primitive types strictly validated, lazy-rendered and exercised
+through a 22-step internal showcase lesson. The quality gate passes with 21 test files and 187 tests;
+content validation covers five courses and thirteen lessons with zero warnings. Phase 5 is next and
+will subscribe gamification and mastery engines to the existing typed learner-event stream.

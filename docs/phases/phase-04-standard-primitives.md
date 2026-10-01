@@ -94,7 +94,7 @@ cannot dead-end an ordering step.
 - [x] P4-T14 — Add integration, resume, partial-credit, timeout, production-skip, boundary and
       validation coverage.
 - [x] P4-T15 — Run responsive, keyboard, reduced-motion, contrast and bundle QA.
-- [ ] P4-T16 — Run the quality gate, record ADRs and close Phase 4 documentation.
+- [x] P4-T16 — Run the quality gate, record ADRs and close Phase 4 documentation.
 
 ## PRD traceability
 
@@ -223,7 +223,21 @@ cannot dead-end an ordering step.
   PWA precache contains 98 entries totaling 5553.13 KiB.
 - Type checking, lint, 21 test files with 187 tests, content validation, production build and
   `git diff --check` pass.
-- Runtime verification remains pending only for P4-T16.
+- P4-T16 audited P4-T00 through P4-T15 against their commits, implementation boundaries, focused
+  coverage and the full gate. All checked tasks remain implemented and all exit criteria are met:
+  21 strict standard types and their lazy components remain in parity; the 22-step showcase and
+  migrated production content validate; first-attempt scoring, review/reveal, timers and draft
+  resume are covered; production skips only four deferred DICOM types; and the P4-T15 responsive
+  and accessibility evidence remains current.
+- The ADR audit found one unique, contiguous range from ADR-001 through ADR-033. Phase 4 decisions
+  are ADR-018 through ADR-033: definitions (018), fractional first attempts (019), session v2
+  (020), review/reveal (021), scenario graphs (022), SVG scientific data (023), lazy KaTeX (024),
+  structured drag/tap interactions (025), artifact overlay math (026), content semantics (027),
+  choice semantics (028), typed responses (029), timed responses (030), image regions (031),
+  media/reference progression (032) and internal visibility/gallery isolation (033).
+- The closing `npm run check` passes with 21 test files and 187 tests, five courses, thirteen
+  lessons, zero content warnings and a successful production build. The generated schema summary,
+  architecture, roadmap and Phase 5 handoff are current; `git diff --check` passes.
 
 ## Deviations
 
@@ -234,6 +248,11 @@ ADR-032 to preserve unique, append-only ADR numbering.
 P4-T13 requested ADR-028 when available, but ADR-028 was already assigned to shared choice
 assessment semantics at the required starting commit. Internal-course visibility and gallery
 isolation are recorded as ADR-033, the next available append-only number.
+
+Browser automation approval blocked the synthetic image-comparison divider drag during P4-T15.
+Keyboard operation of the native comparison range passed, and the component regression test covers
+pointer capture, movement and release; physical pointer drag remains the only unperformed browser
+gesture in the Phase 4 QA record.
 
 The approved entry-growth target was at most 10 kB gzip over the 182.85 kB Phase 3 baseline. The
 P4-T15 entry is 197.80 kB gzip, a 14.95 kB increase that exceeds the target by 4.95 kB. Standard
