@@ -163,3 +163,12 @@ This file is append-only.
 - **Commands run:** `npm run typecheck`, `npm run lint`, `npm run test`.
 - **Result/verification:** TypeScript, lint and all 26 tests pass. Nested routes receive back navigation and content-derived document titles.
 - **Follow-ups:** Compose the complete Home dashboard from these view models and components.
+
+### [2026-10-01 19:57] P2-T03 - Home dashboard
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built all eight PRD Home sections from registry, learner state and selectors, including advanced and fresh-account states.
+- **Files changed:** `src/routes/home/HomePage.tsx`, `docs/phases/phase-02-app-surfaces.md`.
+- **Commands run:** `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Home compiles cleanly with configured challenges, pathways, badges, course assets and reward values; no course-specific copy remains in React.
+- **Follow-ups:** Build the filterable Learn catalog.
