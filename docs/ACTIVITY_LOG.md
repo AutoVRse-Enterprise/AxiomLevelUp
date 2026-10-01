@@ -741,3 +741,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   limitation is the blocked synthetic comparison-divider drag, covered by keyboard operation and
   the pointer regression test.
 - **Follow-ups:** Commit the closeout, then begin Phase 5 planning.
+
+### [2026-10-02 01:39] P4-T16 - Post-close documentation audit
+
+- **Agent/session:** Cursor documentation audit
+- **Action:** Re-audited the Phase 4 phase record, architecture, generated content-schema summary,
+  decision log, roadmap, handoff and activity history against the final implementation and commit
+  sequence. Corrected the handoff's stale pre-close commit reference.
+- **Files changed:** `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Documentation searches, `git status`, `git log`, `git diff --check`.
+- **Result/verification:** The phase checklist, verification and deviations are complete; ADR-001
+  through ADR-033 are unique; the roadmap points to Phase 5; architecture and schema documentation
+  reflect the runtime; and the handoff now references final Phase 4 close-out commit `3710374`.
+- **Follow-ups:** Begin Phase 5 planning.

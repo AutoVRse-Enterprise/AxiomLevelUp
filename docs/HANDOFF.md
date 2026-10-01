@@ -7,7 +7,7 @@ phase plan has not been created.
 
 ## Done
 
-- Phase 4 closed from clean commit `3520bbd` with all P4-T00 through P4-T16 tasks and every exit
+- Phase 4 closed from clean commit `3710374` with all P4-T00 through P4-T16 tasks and every exit
   criterion audited.
 - The canonical registry contains 25 types: 21 strict standard types with lazy components and four
   deferred DICOM types. The internal showcase covers all 21 standard types in 22 ordered examples.
