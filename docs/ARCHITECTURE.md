@@ -104,6 +104,11 @@ deferred DICOM types, retaining the fallback for other unsupported or malformed 
 activity with no implemented steps is unavailable. The player emits results only; the central
 pipeline awards XP, stars and mastery without primitive or learning-engine coupling.
 
-## DICOM spike isolation
+## DICOM imaging boundary
 
-The `/dev/dicom-spike` route dynamically imports all Cornerstone code. The normal application shell must not import Cornerstone modules. The spike loads a curated local manifest and DICOM files through `wadouri:` image IDs; it is evidence for the production design, not the final primitive.
+Strict DICOM primitive content resolves a validated series asset. The shared viewer dynamically
+imports `src/imaging/cornerstone/createController.ts`, the only production module permitted to
+import Cornerstone packages. Per-instance controllers load externally hosted static Part-10 files
+through `wadouri:` image IDs, prefetch nearby slices first, cap the global image cache and release
+series resources after the last viewer unmounts. Pure geometry, requirement and evaluation modules
+remain independent from Cornerstone and React.

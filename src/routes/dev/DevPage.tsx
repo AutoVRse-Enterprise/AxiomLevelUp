@@ -13,7 +13,7 @@ const tools = [
   {
     to: '/dev/primitives',
     title: 'Primitive gallery',
-    description: 'Every standard primitive with local-only controls',
+    description: 'Every standard and DICOM primitive with local-only controls',
   },
   {
     to: '/learn/courses/runtime-showcase/lessons/primitive-showcase',
@@ -21,9 +21,9 @@ const tools = [
     description: 'Exercise all standard primitives through the real lesson route',
   },
   {
-    to: '/dev/dicom-spike',
-    title: 'DICOM/PWA spike',
-    description: 'Lazy Cornerstone3D feasibility route',
+    to: '/dev/primitives#showcase-dicom-explore',
+    title: 'DICOM sandbox',
+    description: 'Production explore, identify and measurement primitives',
   },
 ]
 

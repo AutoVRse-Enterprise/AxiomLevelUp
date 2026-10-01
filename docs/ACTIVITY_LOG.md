@@ -1120,3 +1120,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   25-step showcase completes through a deterministic unavailable-viewer test boundary and emits
   ordered lifecycle events.
 - **Follow-ups:** Replace the legacy spike route with a production DICOM sandbox.
+
+### [2026-10-02 04:46] P6-T13 - Retire the DICOM spike
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Removed the isolated spike route/source and old tracked spike manifest, linked the
+  developer area to production DICOM primitives in the callback-only gallery, and documented the
+  production imaging boundary and superseded spike.
+- **Files changed:** router, developer surfaces/tests, `src/spikes/dicom/` removal, old spike asset
+  metadata removal and architecture/spike/handoff documentation.
+- **Commands run:** Prettier, typecheck and focused router/developer tests.
+- **Result/verification:** Ten focused tests pass; no application route imports the old spike.
+- **Follow-ups:** Complete DICOM unit, component, integration and import-boundary coverage.

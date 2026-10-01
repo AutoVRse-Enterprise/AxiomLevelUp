@@ -91,6 +91,6 @@ next.
 - Seed period dates are rebased; weekly period anchors use the current local week start.
 - Internal showcase progress is ordinary learner state and reset clears it.
 - Production still skips only the four deferred DICOM types until P6-T11 removes that filter.
-- Do not import Cornerstone outside `src/spikes/dicom` until P6-T06 establishes and tests the
-  `src/imaging/cornerstone` boundary.
+- Do not import Cornerstone outside `src/imaging/cornerstone`; the production boundary is now in
+  place and remains dynamically loaded.
 - The Phase 4 bundle deviation remains; Phase 5 adds 6.47 kB gzip to the entry.

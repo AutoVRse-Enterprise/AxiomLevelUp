@@ -1,28 +1,30 @@
 # DICOM/PWA spike
 
-**Status:** Complete — conditional go  
+**Status:** Complete — superseded by the Phase 6 production viewer
 **Purpose:** De-risk Cornerstone3D, mobile interaction, WebGL/memory, lazy bundle impact and offline caching before the production DICOM phase.
 
 ## Dataset
 
 The spike uses a central 125-slice, 65,894,350-byte CT subset from the public TCIA ACRIN-NSCLC-FDG-PET collection (CC BY 3.0, DOI `10.7937/tcia.2019.30ilqfcl`). The source series has 135 instances. Preparation sorts by Image Position Patient and Instance Number, selects a contiguous range, removes private tags and direct identifiers, renames files deterministically and emits the runtime manifest.
 
-`npm run dicom:audit` passed after de-identification. Provenance, attribution and reproduction steps are recorded in `public/assets/dicom/spike/README.md`. The `.dcm` binaries remain intentionally untracked.
+`npm run dicom:audit` passed after de-identification. Provenance, attribution and reproduction steps
+now live in `public/assets/dicom/thoracic-ct/README.md`. The `.dcm` binaries remain intentionally
+untracked.
 
 ## Measurements
 
-| Check | Result |
-| --- | --- |
-| Main shell imports Cornerstone | No. The route uses a dynamic import; imaging code is absent from the 526.77 kB main JS chunk (165.01 kB gzip). |
-| Lazy imaging chunk size | 3,707.41 kB minified, 1,015.43 kB gzip. Codec workers/WASM are emitted as separate assets. |
-| Time to first image | 47–90 ms in local production-preview runs. |
-| Full stack load time | 276–722 ms online for all 125 slices using four preload workers; 224 ms on a service-worker-backed offline reload. |
-| Heap/memory | Approximately 397 MB used JS heap at the observed loaded-stack peak. Cornerstone's cache is capped at 256 MiB. |
-| Desktop Chrome input | Passed: wheel slice navigation, primary-drag window/level and selectable zoom, pan and length tools; Lung, Mediastinal and Bone presets apply. |
-| Chrome mobile emulation | Responsive layout and touch bindings verified. One-finger interaction follows the selected tool; pinch zoom remains active. |
-| Android Chrome | Pending user/device |
-| iOS Safari | Pending user/device |
-| Offline reload | Passed in a production preview: 42 shell/content entries and all 125 DICOM responses were cached; with network emulation offline the route reloaded, rendered slice 63/125 and completed 125/125 loads. |
+| Check                          | Result                                                                                                                                                                                                  |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Main shell imports Cornerstone | No. The route uses a dynamic import; imaging code is absent from the 526.77 kB main JS chunk (165.01 kB gzip).                                                                                          |
+| Lazy imaging chunk size        | 3,707.41 kB minified, 1,015.43 kB gzip. Codec workers/WASM are emitted as separate assets.                                                                                                              |
+| Time to first image            | 47–90 ms in local production-preview runs.                                                                                                                                                              |
+| Full stack load time           | 276–722 ms online for all 125 slices using four preload workers; 224 ms on a service-worker-backed offline reload.                                                                                      |
+| Heap/memory                    | Approximately 397 MB used JS heap at the observed loaded-stack peak. Cornerstone's cache is capped at 256 MiB.                                                                                          |
+| Desktop Chrome input           | Passed: wheel slice navigation, primary-drag window/level and selectable zoom, pan and length tools; Lung, Mediastinal and Bone presets apply.                                                          |
+| Chrome mobile emulation        | Responsive layout and touch bindings verified. One-finger interaction follows the selected tool; pinch zoom remains active.                                                                             |
+| Android Chrome                 | Pending user/device                                                                                                                                                                                     |
+| iOS Safari                     | Pending user/device                                                                                                                                                                                     |
+| Offline reload                 | Passed in a production preview: 42 shell/content entries and all 125 DICOM responses were cached; with network emulation offline the route reloaded, rendered slice 63/125 and completed 125/125 loads. |
 
 Times are local development-machine observations, not production service-level targets. Later warm runs benefit from browser and service-worker caches.
 
@@ -38,7 +40,11 @@ Times are local development-machine observations, not production service-level t
 
 ## Verdict
 
-**Conditional go for Phase 6.** The stack proves that a custom, lazy educational viewer can render a representative CT series, support the scoped interaction model and reload offline without adding Cornerstone to the initial application route.
+**Accepted for Phase 6.** The spike proved that a custom, lazy educational viewer can render a
+representative CT series, support the scoped interaction model and reload offline without adding
+Cornerstone to the initial application route. Phase 6 moved the maintained implementation to
+`src/imaging/` and the four production primitive components; the spike route and source were
+removed.
 
 Before production use:
 

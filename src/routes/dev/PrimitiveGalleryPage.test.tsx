@@ -40,7 +40,7 @@ describe('primitive gallery', () => {
     renderGallery()
 
     const primitiveIds = screen.getAllByText(/^showcase-/u)
-    expect(primitiveIds).toHaveLength(22)
+    expect(primitiveIds).toHaveLength(25)
     expect(primitiveIds[0]).toHaveClass('text-neutral-600')
     expect(screen.getByRole('link', { name: 'Open the real showcase lesson' })).toHaveAttribute(
       'href',

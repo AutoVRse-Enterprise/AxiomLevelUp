@@ -1,8 +1,6 @@
-import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router'
 
 import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
-import { Skeleton } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { ChallengePage } from '@/routes/challenge/ChallengePage'
@@ -18,26 +16,6 @@ import { NotFoundPage } from '@/routes/NotFoundPage'
 import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
 import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
 import { ProfilePage } from '@/routes/profile/ProfilePage'
-
-const DicomSpikePage = lazy(async () => {
-  const module = await import('@/spikes/dicom/DicomSpikePage')
-  return { default: module.DicomSpikePage }
-})
-
-function LazyDicomSpike() {
-  return (
-    <Suspense
-      fallback={
-        <div className="space-y-4 p-5">
-          <Skeleton className="h-8 w-56" />
-          <Skeleton className="h-[60dvh] w-full" />
-        </div>
-      }
-    >
-      <DicomSpikePage />
-    </Suspense>
-  )
-}
 
 export const router = createBrowserRouter([
   {
@@ -83,7 +61,6 @@ export const router = createBrowserRouter([
         element: <ChallengePlayerPage />,
         handle: { title: 'Challenge' },
       },
-      { path: 'dev/dicom-spike', element: <LazyDicomSpike />, handle: { title: 'DICOM spike' } },
     ],
   },
 ])

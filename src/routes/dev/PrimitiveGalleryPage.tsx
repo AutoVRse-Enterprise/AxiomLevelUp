@@ -99,7 +99,7 @@ function PrimitiveGalleryCard({
       : resolved.definition.family
 
   return (
-    <Card className="min-w-0">
+    <Card className="min-w-0 scroll-mt-6" id={primitive.id}>
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-neutral-200 pb-4">
         <div>
           <p className="font-mono text-caption text-neutral-600">{primitive.id}</p>
