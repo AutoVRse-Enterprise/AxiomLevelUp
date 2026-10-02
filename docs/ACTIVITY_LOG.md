@@ -1267,3 +1267,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Only verified content enters `offline-courses-v1`; manager boundaries are
   injectable and TypeScript passes.
 - **Follow-ups:** Map download lifecycle outcomes into the typed learner event stream.
+
+### [2026-10-02 11:08] P7-T07 - Type download lifecycle events
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added typed start, complete, failure and removal events, wired the runtime download
+  manager to emit them, and made the learner-state pipeline explicitly ignore device-only events
+  while the event log continues to record them.
+- **Files changed:** event types/handlers, offline runtime, learner migration assertion, Phase 7
+  checklist and activity log.
+- **Commands run:** Typecheck and focused pipeline tests.
+- **Result/verification:** Typecheck passes. The focused suite identified and corrected its expected
+  learner-state version from 3 to 4.
+- **Follow-ups:** Install the custom service worker and verified-first request routing.

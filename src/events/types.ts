@@ -105,7 +105,13 @@ export interface EventPayloads {
     rewardType: 'badge' | 'certificate' | 'points' | 'recognition'
     rewardId: string
   }
+  course_download_started: { courseId: string; bytes: number }
   course_downloaded: { courseId: string; bytes: number }
+  course_download_failed: {
+    courseId: string
+    reason: 'network' | 'integrity' | 'quota' | 'cancelled'
+  }
+  course_download_removed: { courseId: string; bytes: number }
   xp_awarded: {
     amount: number
     reason:
