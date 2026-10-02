@@ -2,7 +2,7 @@ import type { AppConfig, Lesson, Primitive } from '@/content/schema'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 import type { PrimitiveLayout } from '@/primitives/definitions'
 
-export type ActivityKind = 'lesson' | 'challenge'
+export type ActivityKind = 'lesson' | 'challenge' | 'case'
 export type StepKind = 'content' | 'assessment' | 'domain' | 'unsupported'
 
 export interface ActivityDefinition {

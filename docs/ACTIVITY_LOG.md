@@ -1929,3 +1929,20 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   319 tests. Response-level evidence overrides fall back to step clues, and reopening an existing
   clue does not add a second open.
 - **Follow-ups:** Connect the clue context to the CasePlayer and ClueBoard in P10-T10.
+
+### [2026-10-03 04:53] P10-T10 - Add case player and session v3
+
+- **Agent/session:** Cursor implementation session with focused implementation subagents
+- **Action:** Added deterministic case-plan construction, entry-view overrides, a resumable case
+  shell with stage boundaries and clue gating, case-aware ActivityPlayer extension points, and
+  accessible clue, transition, results and comparison surfaces. Migrated active sessions to v3
+  with persisted case progress, timing and clue state.
+- **Files changed:** Case plan engine and tests, learning session schema/store and migration tests,
+  `ActivityPlayer`, case player components, active-elapsed integration, anatomy start-view
+  contract, semantic validation, Phase 10 checklist and activity log.
+- **Commands run:** Focused Vitest runs and `npm run typecheck`.
+- **Result/verification:** Seven focused plan/session tests pass, all pre-existing player and
+  lesson/challenge tests remain compatible, and TypeScript passes. Endoscopic case entries now
+  reach the controller as explicit endoscopic start views.
+- **Follow-ups:** Route case completion through the central learner pipeline and persist scored
+  attempt history in P10-T11.

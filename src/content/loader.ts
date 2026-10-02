@@ -428,7 +428,10 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         'anatomy structure',
       )
     }
-    if (primitive.content.startView.mode === 'waypoint') {
+    if (
+      primitive.content.startView.mode === 'waypoint' ||
+      primitive.content.startView.mode === 'endoscopic'
+    ) {
       requireRef(
         waypointIds,
         primitive.content.startView.waypointId,
@@ -484,7 +487,10 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         'anatomy structure',
       )
     }
-    if (primitive.content.startView.mode === 'waypoint') {
+    if (
+      primitive.content.startView.mode === 'waypoint' ||
+      primitive.content.startView.mode === 'endoscopic'
+    ) {
       requireRef(
         waypointIds,
         primitive.content.startView.waypointId,

@@ -8,6 +8,7 @@ export const anatomyStartViewSchema = z.discriminatedUnion('mode', [
   z.strictObject({ mode: z.literal('overview') }),
   z.strictObject({ mode: z.literal('marker'), structureId: idSchema }),
   z.strictObject({ mode: z.literal('waypoint'), waypointId: idSchema }),
+  z.strictObject({ mode: z.literal('endoscopic'), waypointId: idSchema }),
 ])
 
 export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both'])

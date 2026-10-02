@@ -9,17 +9,30 @@ import {
 } from '@/engines/learning/session'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
-export const ACTIVITY_SESSION_VERSION = 2
+export const ACTIVITY_SESSION_VERSION = 3
 
 export function migrateActivitySessionState(
   persistedState: unknown,
   version: number,
 ): { session: ActivitySession | null } {
-  if (version < ACTIVITY_SESSION_VERSION) return { session: null }
+  if (version < 2) return { session: null }
   if (typeof persistedState !== 'object' || persistedState === null) {
     return { session: null }
   }
   const session = (persistedState as { session?: ActivitySession | null }).session
+  if (version === 2 && session?.progress) {
+    return {
+      session: {
+        ...session,
+        progress: Object.fromEntries(
+          Object.entries(session.progress).map(([id, progress]) => [
+            id,
+            { ...progress, firstTimedOut: false, firstResponse: progress.response ?? null },
+          ]),
+        ),
+      },
+    }
+  }
   return { session: session ?? null }
 }
 

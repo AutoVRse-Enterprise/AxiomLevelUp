@@ -9,13 +9,22 @@ export interface PrimitiveProgress {
   lastCorrect: boolean | null
   firstScore: number | null
   lastScore: number | null
+  firstTimedOut: boolean
   lastTimedOut: boolean
+  firstResponse: unknown
   response: unknown
   draft: unknown
   interactions: number
   interactionKeys: string[]
   mediaProgress: number
   completed: boolean
+}
+
+export interface CaseProgress {
+  openedClueIds: string[]
+  stepElapsedMs: Record<string, number>
+  caseElapsedMs: number
+  caseClockExpired: boolean
 }
 
 export interface ActivitySession {
@@ -27,6 +36,7 @@ export interface ActivitySession {
   progress: Record<string, PrimitiveProgress>
   startedAt: string | null
   completedAt: string | null
+  caseProgress?: CaseProgress
 }
 
 export type SessionAction =
@@ -60,7 +70,9 @@ const emptyProgress = (): PrimitiveProgress => ({
   lastCorrect: null,
   firstScore: null,
   lastScore: null,
+  firstTimedOut: false,
   lastTimedOut: false,
+  firstResponse: null,
   response: null,
   draft: null,
   interactions: 0,
@@ -108,6 +120,7 @@ export function sessionReducer(state: ActivitySession, action: SessionAction): A
         ),
         startedAt: action.at,
         completedAt: null,
+        caseProgress: undefined,
       }
     case 'draft': {
       const current = state.progress[action.primitiveId] ?? emptyProgress()
@@ -160,7 +173,9 @@ export function sessionReducer(state: ActivitySession, action: SessionAction): A
             lastCorrect: correct,
             firstScore: attempts === 1 ? score : current.firstScore,
             lastScore: score,
+            firstTimedOut: attempts === 1 ? (action.timedOut ?? false) : current.firstTimedOut,
             lastTimedOut: action.timedOut ?? false,
+            firstResponse: attempts === 1 ? action.response : current.firstResponse,
             response: action.response,
             completed: action.completed,
           },

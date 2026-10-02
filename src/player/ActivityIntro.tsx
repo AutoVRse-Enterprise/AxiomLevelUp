@@ -21,7 +21,11 @@ export function ActivityIntro({
   return (
     <section className="mx-auto max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-small font-semibold text-brand-700">
-        {plan.activity.kind === 'lesson' ? 'Lesson' : 'Challenge'}
+        {plan.activity.kind === 'lesson'
+          ? 'Lesson'
+          : plan.activity.kind === 'challenge'
+            ? 'Challenge'
+            : 'Case'}
       </p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{plan.activity.title}</h1>
       <p className="mt-4 text-body text-neutral-700">{plan.activity.description}</p>

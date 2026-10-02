@@ -357,11 +357,24 @@ describe('activity planning and sessions', () => {
     expect(isPrimitiveComplete(ordering, { ...context, attempts: 2, correct: false })).toBe(true)
   })
 
-  it('discards version 1 activity sessions during version 2 migration', () => {
-    expect(ACTIVITY_SESSION_VERSION).toBe(2)
+  it('restarts v1 sessions and migrates v2 sessions into session v3', () => {
+    expect(ACTIVITY_SESSION_VERSION).toBe(3)
     expect(migrateActivitySessionState({ session: { activityId: 'legacy' } }, 1)).toEqual({
       session: null,
     })
+    const plan = buildActivityPlan(playerFixtures.allTyped, {
+      environment: 'development',
+      player: playerConfig,
+    })
+    const versionTwo = createActivitySession(plan)
+    const migrated = migrateActivitySessionState({ session: versionTwo }, 2).session
+    expect(migrated).toMatchObject({
+      activityId: versionTwo.activityId,
+      progress: {
+        'fixture-question': { firstTimedOut: false },
+      },
+    })
+    expect(migrated?.caseProgress).toBeUndefined()
   })
 
   it('validates known and forward-compatible completion modes', () => {

@@ -13,6 +13,8 @@ interface StepFrameProps {
   children: ReactNode
   footer?: ReactNode
   timer?: ReactNode
+  chromeHeader?: ReactNode
+  chromeAside?: ReactNode
 }
 
 export function StepFrame({
@@ -24,6 +26,8 @@ export function StepFrame({
   children,
   footer,
   timer,
+  chromeHeader,
+  chromeAside,
 }: StepFrameProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
 
@@ -38,34 +42,42 @@ export function StepFrame({
       }`}
       data-layout={layout}
     >
+      {chromeHeader ? <div className="mb-5">{chromeHeader}</div> : null}
       <div className="flex items-start gap-4">
         <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
         <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
       </div>
-      <section
-        className={`mt-8 animate-slide-up rounded-xl border border-neutral-200 bg-white shadow-card ${
-          layout === 'viewer' ? 'p-2 sm:p-4' : 'p-5 sm:p-8'
-        }`}
+      <div
+        className={
+          chromeAside ? 'mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]' : 'mt-8'
+        }
       >
-        <h1 ref={headingRef} tabIndex={-1} className="sr-only">
-          {title}
-        </h1>
-        <div className="mb-5 flex min-h-7 items-center justify-between gap-4">
-          <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
-            {definitionLabel}
-          </p>
-          {timer ? <div>{timer}</div> : null}
-        </div>
-        <div
-          className={
-            layout === 'split'
-              ? 'grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-start'
-              : undefined
-          }
+        <section
+          className={`animate-slide-up rounded-xl border border-neutral-200 bg-white shadow-card ${
+            layout === 'viewer' ? 'p-2 sm:p-4' : 'p-5 sm:p-8'
+          }`}
         >
-          {children}
-        </div>
-      </section>
+          <h1 ref={headingRef} tabIndex={-1} className="sr-only">
+            {title}
+          </h1>
+          <div className="mb-5 flex min-h-7 items-center justify-between gap-4">
+            <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
+              {definitionLabel}
+            </p>
+            {timer ? <div>{timer}</div> : null}
+          </div>
+          <div
+            className={
+              layout === 'split'
+                ? 'grid gap-6 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-start'
+                : undefined
+            }
+          >
+            {children}
+          </div>
+        </section>
+        {chromeAside ? <aside className="hidden lg:block">{chromeAside}</aside> : null}
+      </div>
       {footer ? <div className="mt-5 flex justify-end">{footer}</div> : null}
     </div>
   )

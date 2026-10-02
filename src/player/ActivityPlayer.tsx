@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useBlocker, useNavigate } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
@@ -14,6 +14,8 @@ import {
   selectProgressFraction,
   sessionReducer,
   type ActivitySession,
+  type ActivitySummary,
+  type PrimitiveProgress,
   type SessionAction,
 } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
@@ -38,13 +40,53 @@ export interface ActivityPlayerClueContext {
   onReopenClue: (clueId: string) => void
 }
 
-interface ActivityPlayerProps {
+export interface ActivityPlayerChromeContext {
+  plan: ActivityPlan
+  session: ActivitySession
+  stepIndex: number
+  step: ActivityPlan['steps'][number]
+  stepProgress: PrimitiveProgress
+}
+
+export interface ActivityPlayerStepBoundary {
+  fromStepIndex: number
+  toStepIndex: number | null
+  session: ActivitySession
+}
+
+export interface ActivityPlayerTimedAttempt {
+  primitiveId: string
+  stepIndex: number
+  attempt: number
+  elapsedMs: number
+  timedOut: boolean
+  score: number
+  correct: boolean
+  response: unknown
+}
+
+export interface ActivityPlayerCompletionContext {
+  plan: ActivityPlan
+  session: ActivitySession
+  summary: ActivitySummary
+  onContinue: () => void
+  onReplay: () => void
+}
+
+export interface ActivityPlayerProps {
   plan: ActivityPlan
   previousAttempts: number
   previousBestScore: number | null
   continuePath: string
   exitPath: string
   clueContext?: ActivityPlayerClueContext
+  renderChrome?: (context: ActivityPlayerChromeContext) => {
+    header?: ReactNode
+    aside?: ReactNode
+  }
+  onStepBoundary?: (boundary: ActivityPlayerStepBoundary) => void
+  onAttemptTimed?: (attempt: ActivityPlayerTimedAttempt) => void
+  renderCompletion?: (context: ActivityPlayerCompletionContext) => ReactNode
 }
 
 export function ActivityPlayer({
@@ -54,6 +96,10 @@ export function ActivityPlayer({
   continuePath,
   exitPath,
   clueContext,
+  renderChrome,
+  onStepBoundary,
+  onAttemptTimed,
+  renderCompletion,
 }: ActivityPlayerProps) {
   const navigate = useNavigate()
   const { appConfig } = useContent()
@@ -70,7 +116,15 @@ export function ActivityPlayer({
   const blocker = useBlocker(session.startedAt !== null && session.phase !== 'complete')
 
   const transition = useCallback((action: SessionAction) => {
-    const next = sessionReducer(sessionRef.current, action)
+    const reduced = sessionReducer(sessionRef.current, action)
+    const stored = useActivitySessionStore.getState().session
+    const next =
+      action.type !== 'restart' &&
+      stored?.activityKind === reduced.activityKind &&
+      stored.activityId === reduced.activityId &&
+      stored.caseProgress
+        ? { ...reduced, caseProgress: stored.caseProgress }
+        : reduced
     sessionRef.current = next
     setSession(next)
     useActivitySessionStore.getState().save(next)
@@ -107,7 +161,7 @@ export function ActivityPlayer({
           attempt: previousAttempts + (resumed ? 0 : 1),
           resumed,
         })
-      } else {
+      } else if (plan.activity.kind === 'challenge') {
         emitEvent({
           event: 'challenge_started',
           challengeId: plan.activity.id,
@@ -130,26 +184,30 @@ export function ActivityPlayer({
     if (awaitingResume || session.phase !== 'step' || !step) return
     if (viewed.current.has(step.primitive.id)) return
     viewed.current.add(step.primitive.id)
-    emitEvent({
-      event: 'primitive_viewed',
-      activityKind: plan.activity.kind,
-      activityId: plan.activity.id,
-      primitiveId: step.primitive.id,
-      primitiveType: step.primitive.type,
-    })
+    if (plan.activity.kind !== 'case') {
+      emitEvent({
+        event: 'primitive_viewed',
+        activityKind: plan.activity.kind,
+        activityId: plan.activity.id,
+        primitiveId: step.primitive.id,
+        primitiveType: step.primitive.type,
+      })
+    }
   }, [awaitingResume, plan.activity.id, plan.activity.kind, session.phase, step])
 
   const markComplete = useCallback(() => {
     if (!step || stepProgress?.completed) return
     transition({ type: 'complete_current', primitiveId: step.primitive.id })
-    emitEvent({
-      event: 'primitive_completed',
-      activityKind: plan.activity.kind,
-      activityId: plan.activity.id,
-      primitiveId: step.primitive.id,
-      primitiveType: step.primitive.type,
-      stepIndex: session.stepIndex,
-    })
+    if (plan.activity.kind !== 'case') {
+      emitEvent({
+        event: 'primitive_completed',
+        activityKind: plan.activity.kind,
+        activityId: plan.activity.id,
+        primitiveId: step.primitive.id,
+        primitiveType: step.primitive.type,
+        stepIndex: session.stepIndex,
+      })
+    }
   }, [
     plan.activity.id,
     plan.activity.kind,
@@ -194,30 +252,42 @@ export function ActivityPlayer({
         completed,
         timedOut,
       })
-      emitEvent({
-        event: 'question_answered',
-        activityKind: plan.activity.kind,
-        activityId: plan.activity.id,
-        questionId: step.primitive.id,
-        primitiveType: step.primitive.type,
-        conceptIds: step.primitive.conceptIds,
+      onAttemptTimed?.({
+        primitiveId: step.primitive.id,
+        stepIndex: session.stepIndex,
+        attempt: attempts,
+        elapsedMs,
+        timedOut,
         score: result.score,
         correct: result.correct,
-        attempt: attempts,
-        difficulty:
-          step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
-        timedOut,
-        elapsedMs,
+        response,
       })
-      if (completed) {
+      if (plan.activity.kind !== 'case') {
         emitEvent({
-          event: 'primitive_completed',
+          event: 'question_answered',
           activityKind: plan.activity.kind,
           activityId: plan.activity.id,
-          primitiveId: step.primitive.id,
+          questionId: step.primitive.id,
           primitiveType: step.primitive.type,
-          stepIndex: session.stepIndex,
+          conceptIds: step.primitive.conceptIds,
+          score: result.score,
+          correct: result.correct,
+          attempt: attempts,
+          difficulty:
+            step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
+          timedOut,
+          elapsedMs,
         })
+        if (completed) {
+          emitEvent({
+            event: 'primitive_completed',
+            activityKind: plan.activity.kind,
+            activityId: plan.activity.id,
+            primitiveId: step.primitive.id,
+            primitiveType: step.primitive.type,
+            stepIndex: session.stepIndex,
+          })
+        }
       }
     },
     [
@@ -227,6 +297,7 @@ export function ActivityPlayer({
       getAttemptElapsedMs,
       plan.activity.id,
       plan.activity.kind,
+      onAttemptTimed,
       session.stepIndex,
       step,
       stepProgress,
@@ -264,7 +335,7 @@ export function ActivityPlayer({
           ...summary,
           durationSeconds,
         })
-      } else {
+      } else if (plan.activity.kind === 'challenge') {
         emitEvent({
           event: 'challenge_completed',
           challengeId: plan.activity.id,
@@ -275,6 +346,18 @@ export function ActivityPlayer({
     },
     [plan],
   )
+
+  const replayActivity = useCallback(() => {
+    const restarted = sessionReducer(createActivitySession(plan), {
+      type: 'start',
+      at: new Date().toISOString(),
+    })
+    sessionRef.current = restarted
+    setSession(restarted)
+    useActivitySessionStore.getState().save(restarted)
+    viewed.current.clear()
+    emitStarted(false)
+  }, [emitStarted, plan])
 
   if (awaitingResume || session.phase === 'intro') {
     const conceptNames = plan.activity.conceptIds.map(
@@ -302,6 +385,18 @@ export function ActivityPlayer({
 
   if (session.phase === 'complete') {
     const summary = selectActivitySummary(session, plan)
+    if (renderCompletion) {
+      const CompletionOverride = renderCompletion
+      return (
+        <CompletionOverride
+          plan={plan}
+          session={session}
+          summary={summary}
+          onContinue={() => navigate(continuePath)}
+          onReplay={replayActivity}
+        />
+      )
+    }
     return (
       <CompletionSummary
         title={plan.activity.title}
@@ -313,17 +408,7 @@ export function ActivityPlayer({
             : null
         }
         onContinue={() => navigate(continuePath)}
-        onReplay={() => {
-          const restarted = sessionReducer(createActivitySession(plan), {
-            type: 'start',
-            at: new Date().toISOString(),
-          })
-          sessionRef.current = restarted
-          setSession(restarted)
-          useActivitySessionStore.getState().save(restarted)
-          viewed.current.clear()
-          emitStarted(false)
-        }}
+        onReplay={replayActivity}
       />
     )
   }
@@ -357,11 +442,29 @@ export function ActivityPlayer({
   const handleContinue = () => {
     flushDraft()
     if (session.stepIndex >= plan.steps.length - 1) {
+      onStepBoundary?.({
+        fromStepIndex: session.stepIndex,
+        toStepIndex: null,
+        session: sessionRef.current,
+      })
       finish(sessionRef.current)
     } else {
+      onStepBoundary?.({
+        fromStepIndex: session.stepIndex,
+        toStepIndex: session.stepIndex + 1,
+        session: sessionRef.current,
+      })
       transition({ type: 'continue', stepCount: plan.steps.length })
     }
   }
+
+  const chrome = renderChrome?.({
+    plan,
+    session,
+    stepIndex: session.stepIndex,
+    step,
+    stepProgress,
+  })
 
   return (
     <>
@@ -371,6 +474,8 @@ export function ActivityPlayer({
         definitionLabel={step.label}
         progress={selectProgressFraction(session, plan) * 100}
         layout={step.layout}
+        chromeHeader={chrome?.header}
+        chromeAside={chrome?.aside}
         onExit={() => navigate(exitPath)}
         timer={
           session.phase === 'step' && attemptTimer ? (
@@ -475,20 +580,21 @@ export function ActivityPlayer({
                 mediaProgress: nextReportedMediaProgress,
                 completed,
               })
-              const eventContext = {
-                activityKind: plan.activity.kind,
-                activityId: plan.activity.id,
-                primitiveId: step.primitive.id,
-                primitiveType: step.primitive.type,
+              if (plan.activity.kind !== 'case') {
+                for (const event of mapInteractionToEvents(
+                  {
+                    activityKind: plan.activity.kind,
+                    activityId: plan.activity.id,
+                    primitiveId: step.primitive.id,
+                    primitiveType: step.primitive.type,
+                  },
+                  interaction,
+                  previousMediaProgress,
+                )) {
+                  emitEvent(event)
+                }
               }
-              for (const event of mapInteractionToEvents(
-                eventContext,
-                interaction,
-                previousMediaProgress,
-              )) {
-                emitEvent(event)
-              }
-              if (completed && !currentProgress.completed) {
+              if (plan.activity.kind !== 'case' && completed && !currentProgress.completed) {
                 emitEvent({
                   event: 'primitive_completed',
                   activityKind: plan.activity.kind,

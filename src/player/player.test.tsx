@@ -11,7 +11,11 @@ import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
 import type { LearnerEvent } from '@/events/types'
 import { FeedbackPanel } from '@/player/FeedbackPanel'
-import { ActivityPlayer, type ActivityPlayerClueContext } from '@/player/ActivityPlayer'
+import {
+  ActivityPlayer,
+  type ActivityPlayerClueContext,
+  type ActivityPlayerProps,
+} from '@/player/ActivityPlayer'
 import { MultipleChoicePrimitive } from '@/primitives/components/MultipleChoicePrimitive'
 import { makeValidContentBundle, playerFixtures } from '@/test/contentFixtures'
 
@@ -58,7 +62,16 @@ function timedPlan(durationSeconds: number) {
   )
 }
 
-function renderPlayer(activityPlan = plan, clueContext?: ActivityPlayerClueContext) {
+function renderPlayer(
+  activityPlan = plan,
+  clueContext?: ActivityPlayerClueContext,
+  extensions: Partial<
+    Pick<
+      ActivityPlayerProps,
+      'renderChrome' | 'onStepBoundary' | 'onAttemptTimed' | 'renderCompletion'
+    >
+  > = {},
+) {
   const router = createMemoryRouter(
     [
       {
@@ -71,6 +84,7 @@ function renderPlayer(activityPlan = plan, clueContext?: ActivityPlayerClueConte
             continuePath="/done"
             exitPath="/exit"
             clueContext={clueContext}
+            {...extensions}
           />
         ),
       },
@@ -395,6 +409,43 @@ describe('activity player', () => {
     expect(screen.queryByText('Fallback evidence')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Reopen clue: Override evidence' }))
     expect(onReopenClue).toHaveBeenCalledWith('clue-override')
+  })
+
+  it('supports chrome, boundary, timing and completion extension points', async () => {
+    const user = userEvent.setup()
+    const onStepBoundary = vi.fn()
+    const onAttemptTimed = vi.fn()
+    renderPlayer(plan, undefined, {
+      renderChrome: ({ stepIndex }) => ({
+        header: <p>Header slot {stepIndex + 1}</p>,
+        aside: <p>Aside slot</p>,
+      }),
+      onStepBoundary,
+      onAttemptTimed,
+      renderCompletion: ({ summary }) => <p>Custom completion {summary.score}</p>,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(screen.getByText('Header slot 1')).toBeVisible()
+    expect(screen.getByText('Aside slot')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(onStepBoundary).toHaveBeenLastCalledWith(
+      expect.objectContaining({ fromStepIndex: 0, toStepIndex: 1 }),
+    )
+    await user.click(screen.getByRole('radio', { name: 'Supported' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    expect(onAttemptTimed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        primitiveId: 'fixture-question',
+        attempt: 1,
+        score: 1,
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(onStepBoundary).toHaveBeenLastCalledWith(
+      expect.objectContaining({ fromStepIndex: 1, toStepIndex: null }),
+    )
+    expect(screen.getByText('Custom completion 100')).toBeVisible()
   })
 
   it('keeps primitive modules independent from events and stores', () => {
