@@ -4,7 +4,7 @@ import { useMatches, useNavigate, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { OfflineIndicator } from '@/components/feedback/OfflineIndicator'
-import { IconButton } from '@/components/ui'
+import { AnimatedNumber, IconButton } from '@/components/ui'
 import { useLearnerStore } from '@/state/learnerStore'
 
 interface RouteHandle {
@@ -58,13 +58,17 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
           </div>
         </div>
         {!immersive ? (
-          <div className="flex items-center gap-3 text-small font-semibold" aria-label="Learner status">
+          <div
+            aria-label="Learner status"
+            aria-live="polite"
+            className="flex items-center gap-3 text-small font-semibold"
+          >
             <OfflineIndicator />
             <span className="flex items-center gap-1 text-xp">
-              <Medal aria-hidden="true" size={17} /> {xp.toLocaleString()}
+              <Medal aria-hidden="true" size={17} /> <AnimatedNumber value={xp} />
             </span>
             <span className="flex items-center gap-1 text-streak">
-              <Flame aria-hidden="true" size={17} /> {streak}
+              <Flame aria-hidden="true" size={17} /> <AnimatedNumber value={streak} />
             </span>
           </div>
         ) : null}

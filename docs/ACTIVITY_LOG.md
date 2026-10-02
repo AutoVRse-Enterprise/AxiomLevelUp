@@ -1499,3 +1499,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Completion effects respect resolved reduced motion; confetti is guarded,
   deduplicated and dynamically imported.
 - **Follow-ups:** Apply the same presentation language to queued badge and level celebrations.
+
+### [2026-10-02 12:54] P8-T08 - Polish milestone celebrations
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Rebuilt queued badge and level dialogs with entrance/icon motion, configured optional
+  confetti and XP bonus count-up; animated persistent header XP and streak values.
+- **Files changed:** celebration host, page header, Phase 8 checklist and activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Existing FIFO, focus trap, dismissal and session-suppression behavior is
+  retained while visual effects follow the resolved motion preference.
+- **Follow-ups:** Animate pathway and general progress surfaces.

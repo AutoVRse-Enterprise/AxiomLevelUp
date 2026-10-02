@@ -45,7 +45,7 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T05 — Add reusable animated-number, loading and notice UI.
 - [x] P8-T06 — Animate answer selection, feedback, XP and player transitions.
 - [x] P8-T07 — Add staged activity-completion presentation.
-- [ ] P8-T08 — Polish badge/level celebrations and persistent XP/streak chrome.
+- [x] P8-T08 — Polish badge/level celebrations and persistent XP/streak chrome.
 - [ ] P8-T09 — Animate pathway and progress surfaces.
 - [ ] P8-T10 — Add route transitions, scroll restoration, focus management and skip navigation.
 - [ ] P8-T11 — Add designed boot, primitive, media and DICOM loading states.
