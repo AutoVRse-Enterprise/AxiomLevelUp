@@ -1,0 +1,18 @@
+{
+  "entry": {
+    "pattern": "^AxiomLevelUp-.*\\.js$",
+    "maxRawBytes": 770000,
+    "maxGzipBytes": 230000
+  },
+  "imaging": {
+    "pattern": "^createController-.*\\.js$",
+    "maxRawBytes": 3708000,
+    "maxGzipBytes": 1010000
+  },
+  "confetti": {
+    "pattern": "confetti.*\\.js$",
+    "maxRawBytes": 14000,
+    "maxGzipBytes": 8000,
+    "optional": true
+  }
+}

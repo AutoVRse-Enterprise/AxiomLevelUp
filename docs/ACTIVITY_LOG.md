@@ -1414,3 +1414,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** P8-T00 is complete with 21 sequenced tasks and explicit ownership for
   Motion, haptics, loading/error resilience, responsive refinement, accessibility and budgets.
 - **Follow-ups:** Capture and enforce the pre-motion bundle and browser baselines.
+
+### [2026-10-02 11:52] P8-T01 - Establish polish budgets
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Captured the pre-motion bundle and mobile Lighthouse baselines, documented existing
+  responsive limitations and added an enforced role-based bundle budget.
+- **Files changed:** `scripts/budget/check-bundle.ts`, `scripts/budget/bundle-budget.json`,
+  `package.json`, `docs/qa/phase-08-baseline.md`, raw Lighthouse JSON, Phase 8 checklist and log.
+- **Commands run:** `npm run build`, `npm run budget`, production preview and Lighthouse 13 mobile.
+- **Result/verification:** Entry is 214,583 gzip bytes against a 230,000-byte limit; imaging is
+  1,006,573 against 1,010,000; Lighthouse scored 86 performance, 96 accessibility, 100 best
+  practices and 92 SEO. The bundle budget passes and now runs in `npm run check`.
+- **Follow-ups:** Add the motion runtime while retaining the entry and imaging budgets.

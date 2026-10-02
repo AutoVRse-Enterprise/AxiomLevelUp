@@ -38,7 +38,7 @@ automated accessibility and bundle-budget protection.
 ## Checklist
 
 - [x] P8-T00 — Formalize scope, architecture, decisions, task sequence and PRD traceability.
-- [ ] P8-T01 — Establish bundle, visual and Lighthouse baselines and enforce budgets.
+- [x] P8-T01 — Establish bundle, visual and Lighthouse baselines and enforce budgets.
 - [ ] P8-T02 — Add the motion runtime, tokens, provider and device preferences.
 - [ ] P8-T03 — Add validated presentation configuration.
 - [ ] P8-T04 — Add event-driven haptics and Profile experience controls.
