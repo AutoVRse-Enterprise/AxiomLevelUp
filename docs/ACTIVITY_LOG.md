@@ -1611,3 +1611,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Four WCAG A/AA axe checks pass; route focus and skip links are already
   active in both shell layouts.
 - **Follow-ups:** Profile the completed motion/loading work and enforce final budgets.
+
+### [2026-10-02 14:18] P8-T17 - Profile and split polish runtime
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Split every learner surface behind its route boundary, moved progress animation to
+  transform-only `scaleX`, measured all protected chunks and documented runtime loading boundaries.
+- **Files changed:** router, progress bar, performance report, Phase 8 checklist and activity log.
+- **Commands run:** Production build and enforced bundle budget.
+- **Result/verification:** Entry is 130,031 gzip bytes (84,552 below baseline); imaging is unchanged
+  at 1,006,572; confetti is isolated at 4,244. Every budget passes.
+- **Follow-ups:** Complete focused coverage for preferences, effects and route focus.

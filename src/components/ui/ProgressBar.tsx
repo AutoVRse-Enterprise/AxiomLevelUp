@@ -29,9 +29,9 @@ export function ProgressBar({ value, max = 100, label, className }: ProgressBarP
         role="progressbar"
       >
         <m.div
-          animate={{ width: `${percentage}%` }}
-          className="h-full rounded-full bg-brand-600"
-          initial={{ width: 0 }}
+          animate={{ scaleX: percentage / 100 }}
+          className="h-full w-full origin-left rounded-full bg-brand-600"
+          initial={{ scaleX: 0 }}
           transition={{ type: 'spring', stiffness: 180, damping: 26 }}
         />
       </div>

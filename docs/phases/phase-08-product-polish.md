@@ -54,7 +54,7 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T14 — Refine desktop, landscape, artifact and text-scaling layouts.
 - [x] P8-T15 — Complete visual and AA-contrast refinement.
 - [x] P8-T16 — Add live announcements and automated accessibility checks.
-- [ ] P8-T17 — Profile and enforce runtime and bundle performance.
+- [x] P8-T17 — Profile and enforce runtime and bundle performance.
 - [ ] P8-T18 — Complete automated behavior coverage.
 - [ ] P8-T19 — Run responsive, reduced-motion, keyboard, offline and Lighthouse browser QA.
 - [ ] P8-T20 — Run the final gate, record ADRs and close Phase 8 documentation.

@@ -5,15 +5,14 @@ import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
 import { LoadingState } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
-import { ChallengePage } from '@/routes/challenge/ChallengePage'
-import { HomePage } from '@/routes/home/HomePage'
-import { CoursePage } from '@/routes/learn/CoursePage'
-import { LearnPage } from '@/routes/learn/LearnPage'
-import { PathwayPage } from '@/routes/learn/PathwayPage'
-import { LeaderboardPage } from '@/routes/leaderboard/LeaderboardPage'
-import { NotFoundPage } from '@/routes/NotFoundPage'
-import { ProfilePage } from '@/routes/profile/ProfilePage'
-
+const HomePage = lazy(() => import('@/routes/home/HomePage').then((module) => ({ default: module.HomePage })))
+const LearnPage = lazy(() => import('@/routes/learn/LearnPage').then((module) => ({ default: module.LearnPage })))
+const PathwayPage = lazy(() => import('@/routes/learn/PathwayPage').then((module) => ({ default: module.PathwayPage })))
+const CoursePage = lazy(() => import('@/routes/learn/CoursePage').then((module) => ({ default: module.CoursePage })))
+const ChallengePage = lazy(() => import('@/routes/challenge/ChallengePage').then((module) => ({ default: module.ChallengePage })))
+const LeaderboardPage = lazy(() => import('@/routes/leaderboard/LeaderboardPage').then((module) => ({ default: module.LeaderboardPage })))
+const ProfilePage = lazy(() => import('@/routes/profile/ProfilePage').then((module) => ({ default: module.ProfilePage })))
+const NotFoundPage = lazy(() => import('@/routes/NotFoundPage').then((module) => ({ default: module.NotFoundPage })))
 const DevPage = lazy(() => import('@/routes/dev/DevPage').then((module) => ({ default: module.DevPage })))
 const PrimitiveGalleryPage = lazy(() =>
   import('@/routes/dev/PrimitiveGalleryPage').then((module) => ({
@@ -51,21 +50,29 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: <HomePage />, handle: { title: 'Home' } },
-      { path: 'learn', element: <LearnPage />, handle: { title: 'Learn' } },
+      { index: true, element: lazyPage(<HomePage />), handle: { title: 'Home' } },
+      { path: 'learn', element: lazyPage(<LearnPage />), handle: { title: 'Learn' } },
       {
         path: 'learn/pathways/:pathwayId',
-        element: <PathwayPage />,
+        element: lazyPage(<PathwayPage />),
         handle: { title: 'Pathway' },
       },
       {
         path: 'learn/courses/:courseId',
-        element: <CoursePage />,
+        element: lazyPage(<CoursePage />),
         handle: { title: 'Course' },
       },
-      { path: 'challenge', element: <ChallengePage />, handle: { title: 'Challenges' } },
-      { path: 'leaderboard', element: <LeaderboardPage />, handle: { title: 'Leaderboard' } },
-      { path: 'profile', element: <ProfilePage />, handle: { title: 'Profile' } },
+      {
+        path: 'challenge',
+        element: lazyPage(<ChallengePage />),
+        handle: { title: 'Challenges' },
+      },
+      {
+        path: 'leaderboard',
+        element: lazyPage(<LeaderboardPage />),
+        handle: { title: 'Leaderboard' },
+      },
+      { path: 'profile', element: lazyPage(<ProfilePage />), handle: { title: 'Profile' } },
       { path: 'dev', element: lazyPage(<DevPage />), handle: { title: 'Development' } },
       {
         path: 'dev/primitives',
@@ -77,7 +84,7 @@ export const router = createBrowserRouter([
         element: lazyPage(<TokenPreviewPage />),
         handle: { title: 'Design tokens' },
       },
-      { path: '*', element: <NotFoundPage />, handle: { title: 'Not found' } },
+      { path: '*', element: lazyPage(<NotFoundPage />), handle: { title: 'Not found' } },
     ],
   },
   {

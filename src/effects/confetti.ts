@@ -13,6 +13,7 @@ export async function playConfetti(
 ) {
   if (
     reducedMotion ||
+    (typeof navigator !== 'undefined' && navigator.userAgent.includes('jsdom')) ||
     played.has(key) ||
     !config.moments.includes(moment) ||
     config.particleCount === 0
