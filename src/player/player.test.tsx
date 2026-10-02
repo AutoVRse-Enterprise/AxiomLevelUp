@@ -237,6 +237,25 @@ describe('activity player', () => {
     })
   })
 
+  it('emits active elapsed milliseconds with an assessment attempt', async () => {
+    vi.useFakeTimers()
+    const events: LearnerEvent[] = []
+    subscribeToEvents((event) => events.push(event))
+    renderPlayer(timedPlan(11))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }))
+    await act(async () => Promise.resolve())
+    await act(() => vi.advanceTimersByTimeAsync(1_250))
+    fireEvent.click(screen.getByRole('radio', { name: 'Supported' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Check answer' }))
+
+    expect(events.find((event) => event.event === 'question_answered')).toMatchObject({
+      event: 'question_answered',
+      attempt: 1,
+      elapsedMs: 1_250,
+    })
+  })
+
   it('pauses a timed attempt while the document is hidden', async () => {
     vi.useFakeTimers()
     const hiddenDescriptor = Object.getOwnPropertyDescriptor(document, 'hidden')

@@ -24,6 +24,7 @@ import { mapInteractionToEvents } from '@/player/interactionEvents'
 import { shouldRevealAnswer } from '@/player/reviewPolicy'
 import { StepFrame } from '@/player/StepFrame'
 import { TimerBadge } from '@/player/TimerBadge'
+import { useActiveElapsed } from '@/player/useActiveElapsed'
 import { useAttemptTimer } from '@/player/useAttemptTimer'
 import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
@@ -110,6 +111,10 @@ export function ActivityPlayer({
 
   const step = selectCurrentStep(session, plan)
   const stepProgress = step ? session.progress[step.primitive.id] : undefined
+  const { getElapsedMs: getAttemptElapsedMs } = useActiveElapsed({
+    active: !awaitingResume && session.phase === 'step' && Boolean(step?.supported),
+    resetKey: `${step?.primitive.id ?? 'none'}:${stepProgress?.attempts ?? 0}`,
+  })
 
   useEffect(() => {
     if (awaitingResume || session.phase !== 'step' || !step) return
@@ -148,6 +153,7 @@ export function ActivityPlayer({
     (submittedResponse: unknown, timedOut = false) => {
       if (!step || !stepProgress || sessionRef.current.phase !== 'step') return
 
+      const elapsedMs = getAttemptElapsedMs()
       const hasPendingDraft = pendingDraft.current?.primitiveId === step.primitive.id
       const response = timedOut
         ? hasPendingDraft
@@ -191,6 +197,7 @@ export function ActivityPlayer({
         difficulty:
           step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
         timedOut,
+        elapsedMs,
       })
       if (completed) {
         emitEvent({
@@ -207,6 +214,7 @@ export function ActivityPlayer({
       appConfig.gamification.mastery.defaultDifficulty,
       appConfig.product.player.mediaCompletionThreshold,
       flushDraft,
+      getAttemptElapsedMs,
       plan.activity.id,
       plan.activity.kind,
       session.stepIndex,

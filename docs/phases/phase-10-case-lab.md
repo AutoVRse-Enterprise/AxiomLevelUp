@@ -167,7 +167,7 @@ case
       inputs, per-level partial credit, review reveal, showcase and gallery entries.
 - [ ] P10-T07 — Clue-linked feedback: `clueIds` on steps, per-response overrides, validation and
       feedback-panel presentation with a reopen-clue action.
-- [ ] P10-T08 — Timing: active per-step elapsed time, `elapsedMs` on events and tier timing modes
+- [x] P10-T08 — Timing: active per-step elapsed time, `elapsedMs` on events and tier timing modes
       (none, stopwatch, countdown).
 - [ ] P10-T09 — Pure case scoring engine: components, speed blend, clue penalty, weight
       redistribution and configuration.

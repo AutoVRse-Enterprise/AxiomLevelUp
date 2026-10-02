@@ -44,6 +44,7 @@ export interface EventPayloads {
     attempt: number
     difficulty: 'foundation' | 'intermediate' | 'advanced'
     timedOut?: boolean
+    elapsedMs?: number
   }
   scenario_decision_made: {
     activityKind: 'lesson' | 'challenge'

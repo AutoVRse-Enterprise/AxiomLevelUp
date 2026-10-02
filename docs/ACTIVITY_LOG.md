@@ -1820,3 +1820,18 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   P10-T15 registers demo content.
 - **Follow-ups:** Replace the minimal anatomy-map envelope with the strict P10-T03 contract and use
   the case contracts in P10-T10.
+
+### [2026-10-03 03:26] P10-T08 - Add active case timing
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added a visibility-aware active elapsed-time hook, emitted per-attempt `elapsedMs`
+  from assessment events and implemented a pure resumable case clock for none, stopwatch and
+  countdown modes.
+- **Files changed:** Event payloads, activity player, active-time hook and tests, case clock module
+  and tests, Phase 10 checklist and activity log.
+- **Commands run:** Focused Vitest run, `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Three focused test files and 17 tests pass. Hidden time is not charged,
+  assessment attempts carry active milliseconds, and restored countdowns preserve accumulated
+  active time and expiry.
+- **Follow-ups:** Persist the case clock in session v3 and render it through the case player in
+  P10-T10.
