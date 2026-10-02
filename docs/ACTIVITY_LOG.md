@@ -1427,3 +1427,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   1,006,573 against 1,010,000; Lighthouse scored 86 performance, 96 accessibility, 100 best
   practices and 92 SEO. The bundle budget passes and now runs in `npm run check`.
 - **Follow-ups:** Add the motion runtime while retaining the entry and imaging budgets.
+
+### [2026-10-02 12:10] P8-T02 - Add motion foundation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Installed Motion and canvas-confetti, added LazyMotion/MotionConfig, centralized
+  variants, expanded duration/layer tokens, connected CSS to resolved motion preference, migrated
+  preferences to a device store and split player/developer routes to preserve the entry budget.
+- **Files changed:** package manifests, `src/design/motion/`, preferences, app/provider/router,
+  PWA prompt host, global styles/tokens, Phase 8 checklist and activity log.
+- **Commands run:** dependency install, typecheck, lint, production build and bundle budget.
+- **Result/verification:** TypeScript and lint pass. The split entry is 225,380 gzip bytes under the
+  230,000 budget; imaging remains 1,006,576 gzip bytes. Motion is globally preference-aware.
+- **Follow-ups:** Validate presentation effect configuration and connect haptics.

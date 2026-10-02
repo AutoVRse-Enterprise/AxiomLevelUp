@@ -9,7 +9,7 @@ import {
   useServiceWorkerStatus,
 } from '@/pwa/registerSW'
 import { installPromptEligible } from '@/pwa/installPrompt'
-import { readPreferences, writePreferences } from '@/state/preferences'
+import { usePreferencesStore } from '@/state/preferences'
 import { useLearnerStore } from '@/state/learnerStore'
 
 interface InstallPromptEvent extends Event {
@@ -34,7 +34,8 @@ export function PwaPromptHost() {
   const completedLessons = useLearnerStore((state) => state.stats.lessonsCompleted)
   const serviceWorker = useServiceWorkerStatus()
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null)
-  const [dismissedAt, setDismissedAt] = useState(() => readPreferences().installPromptDismissedAt)
+  const dismissedAt = usePreferencesStore((state) => state.installPromptDismissedAt)
+  const setDismissedAt = usePreferencesStore((state) => state.setInstallPromptDismissedAt)
   const promptConfig = appConfig.product.offline.installPrompt
   const engaged = installPromptEligible(
     completedLessons,
@@ -56,8 +57,6 @@ export function PwaPromptHost() {
 
   function dismissInstall() {
     const value = new Date().toISOString()
-    const preferences = readPreferences()
-    writePreferences({ ...preferences, installPromptDismissedAt: value })
     setDismissedAt(value)
     setInstallEvent(null)
   }

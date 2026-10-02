@@ -1,21 +1,54 @@
 import { createBrowserRouter } from 'react-router'
+import { lazy, Suspense, type ReactNode } from 'react'
 
 import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
+import { Skeleton } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { ChallengePage } from '@/routes/challenge/ChallengePage'
-import { DevPage } from '@/routes/dev/DevPage'
-import { PrimitiveGalleryPage } from '@/routes/dev/PrimitiveGalleryPage'
-import { TokenPreviewPage } from '@/routes/dev/TokenPreviewPage'
 import { HomePage } from '@/routes/home/HomePage'
 import { CoursePage } from '@/routes/learn/CoursePage'
 import { LearnPage } from '@/routes/learn/LearnPage'
 import { PathwayPage } from '@/routes/learn/PathwayPage'
 import { LeaderboardPage } from '@/routes/leaderboard/LeaderboardPage'
 import { NotFoundPage } from '@/routes/NotFoundPage'
-import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
-import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
 import { ProfilePage } from '@/routes/profile/ProfilePage'
+
+const DevPage = lazy(() => import('@/routes/dev/DevPage').then((module) => ({ default: module.DevPage })))
+const PrimitiveGalleryPage = lazy(() =>
+  import('@/routes/dev/PrimitiveGalleryPage').then((module) => ({
+    default: module.PrimitiveGalleryPage,
+  })),
+)
+const TokenPreviewPage = lazy(() =>
+  import('@/routes/dev/TokenPreviewPage').then((module) => ({ default: module.TokenPreviewPage })),
+)
+const LessonPlayerPage = lazy(() =>
+  import('@/routes/play/LessonPlayerPage').then((module) => ({ default: module.LessonPlayerPage })),
+)
+const ChallengePlayerPage = lazy(() =>
+  import('@/routes/play/ChallengePlayerPage').then((module) => ({
+    default: module.ChallengePlayerPage,
+  })),
+)
+
+function lazyPage(page: ReactNode) {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto w-full max-w-3xl space-y-5 p-5 sm:p-8">
+          <Skeleton className="h-8 w-52" />
+          <Skeleton className="h-48 w-full" />
+          <span className="sr-only" role="status">
+            Loading screen
+          </span>
+        </main>
+      }
+    >
+      {page}
+    </Suspense>
+  )
+}
 
 export const router = createBrowserRouter([
   {
@@ -37,13 +70,17 @@ export const router = createBrowserRouter([
       { path: 'challenge', element: <ChallengePage />, handle: { title: 'Challenges' } },
       { path: 'leaderboard', element: <LeaderboardPage />, handle: { title: 'Leaderboard' } },
       { path: 'profile', element: <ProfilePage />, handle: { title: 'Profile' } },
-      { path: 'dev', element: <DevPage />, handle: { title: 'Development' } },
+      { path: 'dev', element: lazyPage(<DevPage />), handle: { title: 'Development' } },
       {
         path: 'dev/primitives',
-        element: <PrimitiveGalleryPage />,
+        element: lazyPage(<PrimitiveGalleryPage />),
         handle: { title: 'Primitive gallery' },
       },
-      { path: 'dev/tokens', element: <TokenPreviewPage />, handle: { title: 'Design tokens' } },
+      {
+        path: 'dev/tokens',
+        element: lazyPage(<TokenPreviewPage />),
+        handle: { title: 'Design tokens' },
+      },
       { path: '*', element: <NotFoundPage />, handle: { title: 'Not found' } },
     ],
   },
@@ -53,12 +90,12 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'learn/courses/:courseId/lessons/:lessonId',
-        element: <LessonPlayerPage />,
+        element: lazyPage(<LessonPlayerPage />),
         handle: { title: 'Lesson' },
       },
       {
         path: 'challenge/:challengeId/play',
-        element: <ChallengePlayerPage />,
+        element: lazyPage(<ChallengePlayerPage />),
         handle: { title: 'Challenge' },
       },
     ],

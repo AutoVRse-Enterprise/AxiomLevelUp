@@ -71,17 +71,30 @@
 
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --animate-fade-in: fade-in 150ms var(--ease-standard);
-  --animate-slide-up: slide-up 250ms var(--ease-emphasized);
-  --animate-celebrate: celebrate 400ms var(--ease-emphasized);
+  --duration-fast: 150ms;
+  --duration-standard: 250ms;
+  --duration-emphasized: 400ms;
+  --duration-celebration: 700ms;
+  --animate-fade-in: fade-in var(--duration-fast) var(--ease-standard);
+  --animate-slide-up: slide-up var(--duration-standard) var(--ease-emphasized);
+  --animate-celebrate: celebrate var(--duration-emphasized) var(--ease-emphasized);
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  --z-index-base: 0;
+  --z-index-header: 20;
+  --z-index-nav: 30;
+  --z-index-overlay: 50;
+  --z-index-toast: 60;
+  --z-index-celebration: 70;
 }
 
 :root {
-  --layer-base: 0;
-  --layer-header: 20;
-  --layer-nav: 30;
-  --layer-overlay: 50;
-  --layer-toast: 60;
+  --layer-base: var(--z-index-base);
+  --layer-header: var(--z-index-header);
+  --layer-nav: var(--z-index-nav);
+  --layer-overlay: var(--z-index-overlay);
+  --layer-toast: var(--z-index-toast);
+  --layer-celebration: var(--z-index-celebration);
 }
 
 @keyframes fade-in {
@@ -104,5 +117,14 @@
   }
   70% {
     transform: scale(1.03);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
