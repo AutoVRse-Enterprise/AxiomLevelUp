@@ -4,6 +4,8 @@
   "modelAssetId": "lung-model",
   "levels": [
     { "id": "system", "label": "Respiratory system" },
+    { "id": "lobe", "label": "Lobe" },
+    { "id": "segment", "label": "Segment" },
     { "id": "structure", "label": "Structure" }
   ],
   "structures": [
@@ -45,35 +47,35 @@
     },
     {
       "id": "right-upper-lobe",
-      "levelId": "structure",
+      "levelId": "lobe",
       "parentId": "respiratory-system",
       "label": "Right upper lobe",
       "meshNames": ["right_upper_lobe"]
     },
     {
       "id": "right-middle-lobe",
-      "levelId": "structure",
+      "levelId": "lobe",
       "parentId": "respiratory-system",
       "label": "Right middle lobe",
       "meshNames": ["right_middle_lobe"]
     },
     {
       "id": "right-lower-lobe",
-      "levelId": "structure",
+      "levelId": "lobe",
       "parentId": "respiratory-system",
       "label": "Right lower lobe",
       "meshNames": ["right_lower_lobe"]
     },
     {
       "id": "left-upper-lobe",
-      "levelId": "structure",
+      "levelId": "lobe",
       "parentId": "respiratory-system",
       "label": "Left upper lobe",
       "meshNames": ["left_upper_lobe"]
     },
     {
       "id": "left-lower-lobe",
-      "levelId": "structure",
+      "levelId": "lobe",
       "parentId": "respiratory-system",
       "label": "Left lower lobe",
       "meshNames": ["left_lower_lobe"]

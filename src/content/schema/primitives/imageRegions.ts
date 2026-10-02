@@ -11,6 +11,7 @@ const regionDetailsSchema = z.strictObject({
   id: idSchema,
   label: z.string().min(1),
   description: z.string().min(1).optional(),
+  clueIds: z.array(idSchema).min(1).optional(),
 })
 
 const circleRegionSchema = regionDetailsSchema

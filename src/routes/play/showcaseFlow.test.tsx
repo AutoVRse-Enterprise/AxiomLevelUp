@@ -179,7 +179,7 @@ describe('showcase lesson integration', () => {
     })
   })
 
-  it('plays all 27 showcase steps through the real route and emits ordered completion events', async () => {
+  it('plays all 28 showcase steps through the real route and emits ordered completion events', async () => {
     const user = userEvent.setup()
     const events: LearnerEvent[] = []
     subscribeToEvents((event) => events.push(event))
@@ -305,6 +305,14 @@ describe('showcase lesson integration', () => {
     await user.click(screen.getByRole('button', { name: 'Carina' }))
     await continueCompletedStep(user)
 
+    await user.click(await screen.findByRole('button', { name: 'Right lower lobe' }))
+    await user.click(screen.getByRole('button', { name: 'Next level' }))
+    await user.click(await screen.findByRole('radio', { name: 'Lateral region' }))
+    await user.click(screen.getByRole('button', { name: 'Next level' }))
+    await user.click(await screen.findByRole('radio', { name: 'Distal airway' }))
+    await user.click(screen.getByRole('button', { name: 'Check locations' }))
+    await continueCompletedStep(user)
+
     await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
     await continueCompletedStep(user)
 
@@ -316,8 +324,8 @@ describe('showcase lesson integration', () => {
     }
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
-    expect(screen.getByText('73%')).toBeVisible()
-    expect(screen.getByText('9 of 13 correct on the first attempt')).toBeVisible()
+    expect(screen.getByText('75%')).toBeVisible()
+    expect(screen.getByText('10 of 14 correct on the first attempt')).toBeVisible()
 
     const lifecycleEvents = events.filter(({ event }) =>
       ['lesson_started', 'primitive_viewed', 'primitive_completed', 'lesson_completed'].includes(
@@ -337,8 +345,8 @@ describe('showcase lesson integration', () => {
     expect(events.at(-1)).toMatchObject({
       event: 'lesson_completed',
       lessonId: 'primitive-showcase',
-      score: 73,
-      accuracy: 69,
+      score: 75,
+      accuracy: 71,
     })
     expect(useActivitySessionStore.getState().session).toBeNull()
   }, 30_000)

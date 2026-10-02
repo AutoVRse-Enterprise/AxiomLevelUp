@@ -163,7 +163,7 @@ case
       endoscopic camera, list alternative, reduced motion, disposal and budget role.
 - [x] P10-T05 — `anatomy_explore` primitive: definition, schema, component, completion, events,
       showcase and gallery entries.
-- [ ] P10-T06 — `anatomy_locate` primitive: drill-down levels across model, image-region and choice
+- [x] P10-T06 — `anatomy_locate` primitive: drill-down levels across model, image-region and choice
       inputs, per-level partial credit, review reveal, showcase and gallery entries.
 - [ ] P10-T07 — Clue-linked feedback: `clueIds` on steps, per-response overrides, validation and
       feedback-panel presentation with a reopen-clue action.

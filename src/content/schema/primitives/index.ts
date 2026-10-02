@@ -1,6 +1,6 @@
 import type { Primitive } from '../primitiveBase'
-import type { AnatomyExplorePrimitive } from './anatomy'
-import { anatomyExploreContentSchema } from './anatomy'
+import type { AnatomyExplorePrimitive, AnatomyLocatePrimitive } from './anatomy'
+import { anatomyExploreContentSchema, anatomyLocateContentSchema } from './anatomy'
 import type { AudioPrimitive } from './audio'
 import { audioContentSchema } from './audio'
 import type { CarouselPrimitive } from './carousel'
@@ -60,9 +60,15 @@ import { zoomableImageContentSchema } from './zoomableImage'
 export { audioPrimitiveSchema, type AudioPrimitive } from './audio'
 export {
   anatomyExplorePrimitiveSchema,
+  anatomyLocateChoiceOptionSchema,
+  anatomyLocateLevelSchema,
+  anatomyLocatePrimitiveSchema,
   anatomyNavigationSchema,
   anatomyStartViewSchema,
   type AnatomyExplorePrimitive,
+  type AnatomyLocateChoiceOption,
+  type AnatomyLocateLevel,
+  type AnatomyLocatePrimitive,
   type AnatomyNavigation,
   type AnatomyStartViewContent,
 } from './anatomy'
@@ -129,6 +135,7 @@ export type { PrimitiveAssetRef, PrimitiveAssetType, PrimitiveContentSchema } fr
 
 export const primitiveContentSchemas = {
   anatomy_explore: anatomyExploreContentSchema,
+  anatomy_locate: anatomyLocateContentSchema,
   rich_text: richTextContentSchema,
   image: imageContentSchema,
   zoomable_image: zoomableImageContentSchema,
@@ -158,6 +165,7 @@ export const primitiveContentSchemas = {
 
 export type TypedPrimitive =
   | AnatomyExplorePrimitive
+  | AnatomyLocatePrimitive
   | RichTextPrimitive
   | ImagePrimitive
   | ZoomableImagePrimitive

@@ -1,4 +1,12 @@
-import type { AnatomyExplorePrimitive } from '@/content/schema/primitives'
+import { z } from 'zod'
+
+import { timerCompatibleTypeSet } from '@/content/primitiveTypes'
+import { idSchema } from '@/content/schema'
+import type {
+  AnatomyExplorePrimitive,
+  AnatomyLocateLevel,
+  AnatomyLocatePrimitive,
+} from '@/content/schema/primitives'
 import { definePrimitive } from '@/primitives/definitions/types'
 
 export interface AnatomyExploreObservation {
@@ -51,4 +59,104 @@ export const anatomyExploreDefinition = definePrimitive<AnatomyExplorePrimitive>
   scored: () => false,
   reviewPrompt: (primitive) => primitive.content.prompt,
   explorableKeys: anatomyExploreRequirementKeys,
+})
+
+export type AnatomyLocateResponse = Record<string, string>
+
+export const anatomyLocateResponseSchema = z.record(idSchema, idSchema)
+
+export function anatomyLocateTargetId(level: AnatomyLocateLevel): string {
+  switch (level.input) {
+    case 'model':
+      return level.targetStructureId
+    case 'image':
+      return level.targetRegionId
+    case 'choice':
+      return level.correctOptionId
+  }
+}
+
+function isKnownSelection(level: AnatomyLocateLevel, selectionId: string): boolean {
+  switch (level.input) {
+    case 'model':
+      return true
+    case 'image':
+      return level.regions.some(({ id }) => id === selectionId)
+    case 'choice':
+      return level.options.some(({ id }) => id === selectionId)
+  }
+}
+
+export function parseAnatomyLocateResponse(
+  primitive: AnatomyLocatePrimitive,
+  response: unknown,
+): AnatomyLocateResponse | null {
+  const parsed = anatomyLocateResponseSchema.safeParse(response)
+  if (!parsed.success) return null
+
+  const expectedLevelIds = new Set(primitive.content.levels.map(({ levelId }) => levelId))
+  const entries = Object.entries(parsed.data)
+  if (
+    entries.length !== expectedLevelIds.size ||
+    entries.some(([levelId]) => !expectedLevelIds.has(levelId)) ||
+    primitive.content.levels.some(
+      (level) =>
+        !(level.levelId in parsed.data) ||
+        !isKnownSelection(level, parsed.data[level.levelId] as string),
+    )
+  ) {
+    return null
+  }
+
+  return parsed.data
+}
+
+export function anatomyLocateCorrectResponse(
+  primitive: AnatomyLocatePrimitive,
+): AnatomyLocateResponse {
+  return Object.fromEntries(
+    primitive.content.levels.map((level) => [level.levelId, anatomyLocateTargetId(level)]),
+  )
+}
+
+export const anatomyLocateDefinition = definePrimitive<AnatomyLocatePrimitive>({
+  type: 'anatomy_locate',
+  family: 'assessment',
+  label: 'Anatomy localisation',
+  layout: 'viewer',
+  timerCompatible: timerCompatibleTypeSet.has('anatomy_locate'),
+  scored: () => true,
+  evaluate: (primitive, response) => {
+    const selections = parseAnatomyLocateResponse(primitive, response)
+    const totalWeight = primitive.content.levels.reduce(
+      (total, level) => total + (level.weight ?? 1),
+      0,
+    )
+    const earnedWeight = selections
+      ? primitive.content.levels.reduce(
+          (total, level) =>
+            total +
+            (selections[level.levelId] === anatomyLocateTargetId(level) ? (level.weight ?? 1) : 0),
+          0,
+        )
+      : 0
+    const score = totalWeight > 0 ? earnedWeight / totalWeight : 0
+
+    return {
+      score,
+      correct: score === 1,
+      explanation: primitive.content.explanation ?? null,
+      items: Object.fromEntries(
+        primitive.content.levels.map((level) => [
+          level.levelId,
+          selections
+            ? selections[level.levelId] === anatomyLocateTargetId(level)
+              ? 'correct'
+              : 'incorrect'
+            : 'missed',
+        ]),
+      ),
+    }
+  },
+  reviewPrompt: (primitive) => primitive.content.prompt,
 })

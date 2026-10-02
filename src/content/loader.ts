@@ -11,6 +11,7 @@ import {
   type AppConfig,
   type AchievementCriterion,
   type AnatomyExplorePrimitive,
+  type AnatomyLocatePrimitive,
   type AnatomyMap,
   type AssetManifest,
   type CaseDocument,
@@ -406,6 +407,101 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     )
   }
 
+  const validateAnatomyLocateSemantics = (
+    primitive: AnatomyLocatePrimitive,
+    file: string,
+    path: string,
+  ) => {
+    const mapId = primitive.content.anatomyMapId
+    requireRef(anatomyMapIds, mapId, file, `${path}.content.anatomyMapId`, 'anatomy map')
+    const anatomyMap = anatomyMapById.get(mapId)
+    if (!anatomyMap) return
+
+    const levelOrder = new Map(anatomyMap.levels.map(({ id }, index) => [id, index]))
+    const levelIds = new Set(levelOrder.keys())
+    const structureById = new Map(
+      anatomyMap.structures.map((structure) => [structure.id, structure]),
+    )
+    const structureIds = new Set(structureById.keys())
+    const waypointIds = new Set(anatomyMap.waypoints.map(({ id }) => id))
+
+    if (primitive.content.startView.mode === 'marker') {
+      requireRef(
+        structureIds,
+        primitive.content.startView.structureId,
+        file,
+        `${path}.content.startView.structureId`,
+        'anatomy structure',
+      )
+    }
+    if (primitive.content.startView.mode === 'waypoint') {
+      requireRef(
+        waypointIds,
+        primitive.content.startView.waypointId,
+        file,
+        `${path}.content.startView.waypointId`,
+        'anatomy waypoint',
+      )
+    }
+
+    let previousLevelOrder = -1
+    let previousModelTarget: string | null = null
+    primitive.content.levels.forEach((level, index) => {
+      const levelPath = `${path}.content.levels.${index}`
+      requireRef(levelIds, level.levelId, file, `${levelPath}.levelId`, 'anatomy level')
+      const order = levelOrder.get(level.levelId)
+      if (order !== undefined) {
+        if (order <= previousLevelOrder) {
+          issues.push({
+            file,
+            path: `${levelPath}.levelId`,
+            message: 'Anatomy locate levels must follow the anatomy map level order.',
+            severity: 'error',
+          })
+        }
+        previousLevelOrder = Math.max(previousLevelOrder, order)
+      }
+
+      if (level.input !== 'model') return
+      requireRef(
+        structureIds,
+        level.targetStructureId,
+        file,
+        `${levelPath}.targetStructureId`,
+        'anatomy structure',
+      )
+      const target = structureById.get(level.targetStructureId)
+      if (target && target.levelId !== level.levelId) {
+        issues.push({
+          file,
+          path: `${levelPath}.targetStructureId`,
+          message: `Anatomy structure "${target.id}" belongs to level "${target.levelId}", not "${level.levelId}".`,
+          severity: 'error',
+        })
+      }
+      if (target && previousModelTarget) {
+        let ancestorId = target.parentId
+        let descendsFromPrevious = false
+        while (ancestorId) {
+          if (ancestorId === previousModelTarget) {
+            descendsFromPrevious = true
+            break
+          }
+          ancestorId = structureById.get(ancestorId)?.parentId
+        }
+        if (!descendsFromPrevious) {
+          issues.push({
+            file,
+            path: `${levelPath}.targetStructureId`,
+            message: `Anatomy structure "${target.id}" must descend from the previous model target "${previousModelTarget}".`,
+            severity: 'error',
+          })
+        }
+      }
+      if (target) previousModelTarget = target.id
+    })
+  }
+
   const validateCriterion = (criterion: AchievementCriterion, file: string, path: string) => {
     if ('lessonIds' in criterion) {
       criterion.lessonIds?.forEach((id, index) =>
@@ -508,6 +604,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       }
       if (result.primitive.type === 'anatomy_explore') {
         validateAnatomyExploreSemantics(result.primitive as AnatomyExplorePrimitive, file, path)
+      }
+      if (result.primitive.type === 'anatomy_locate') {
+        validateAnatomyLocateSemantics(result.primitive as AnatomyLocatePrimitive, file, path)
       }
     }
   }

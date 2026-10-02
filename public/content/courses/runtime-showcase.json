@@ -661,6 +661,69 @@
           "feedback": {}
         },
         {
+          "id": "showcase-anatomy-locate",
+          "type": "anatomy_locate",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Localise the finding from lobe to named structure.",
+            "startView": { "mode": "overview" },
+            "levels": [
+              {
+                "levelId": "lobe",
+                "input": "model",
+                "targetStructureId": "right-lower-lobe",
+                "weight": 2
+              },
+              {
+                "levelId": "segment",
+                "input": "image",
+                "assetId": "showcase-cell-map",
+                "alt": "Synthetic localisation image with sparse and dense candidate regions.",
+                "caption": "Select the region corresponding to the finding.",
+                "regions": [
+                  {
+                    "id": "segment-medial",
+                    "label": "Medial region",
+                    "shape": "rect",
+                    "x": 0.08,
+                    "y": 0.2,
+                    "width": 0.24,
+                    "height": 0.3
+                  },
+                  {
+                    "id": "segment-lateral",
+                    "label": "Lateral region",
+                    "shape": "circle",
+                    "x": 0.72,
+                    "y": 0.4,
+                    "radius": 0.14
+                  }
+                ],
+                "targetRegionId": "segment-lateral",
+                "weight": 1
+              },
+              {
+                "levelId": "structure",
+                "input": "choice",
+                "options": [
+                  { "id": "distal-airway", "label": "Distal airway" },
+                  { "id": "pleural-space", "label": "Pleural space" },
+                  { "id": "pulmonary-vein", "label": "Pulmonary vein" }
+                ],
+                "correctOptionId": "distal-airway",
+                "weight": 1
+              }
+            ],
+            "explanation": "The configured model, image region and named structure identify the localisation."
+          },
+          "assets": ["showcase-cell-map"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "intermediate" },
+          "feedback": { "retry": true, "maxAttempts": 2 },
+          "timer": { "durationSeconds": 90, "mode": "countdown" }
+        },
+        {
           "id": "showcase-dicom-explore",
           "type": "dicom_explore",
           "conceptIds": ["thoracic-imaging", "image-windowing"],

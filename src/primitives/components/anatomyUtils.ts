@@ -1,5 +1,5 @@
 import { useContent } from '@/app/contentContext'
-import type { AnatomyExplorePrimitive } from '@/content/schema/primitives'
+import type { AnatomyExplorePrimitive, AnatomyLocatePrimitive } from '@/content/schema/primitives'
 
 export class AnatomyAssetUnavailableError extends Error {
   constructor(message: string) {
@@ -8,7 +8,9 @@ export class AnatomyAssetUnavailableError extends Error {
   }
 }
 
-export function useAnatomyPrimitiveContext(primitive: AnatomyExplorePrimitive) {
+export function useAnatomyPrimitiveContext(
+  primitive: AnatomyExplorePrimitive | AnatomyLocatePrimitive,
+) {
   const { anatomyMapById, appConfig, assetById } = useContent()
   const map = anatomyMapById.get(primitive.content.anatomyMapId)
   if (!map) {

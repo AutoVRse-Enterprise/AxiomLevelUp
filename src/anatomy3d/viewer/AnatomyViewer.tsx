@@ -23,6 +23,7 @@ export interface AnatomyViewerProps {
   disabled?: boolean
   startView?: AnatomyStartView
   selectedStructureIds?: readonly string[]
+  selectableLevelIds?: readonly string[]
   markerStructureId?: string | null
   onStructureSelected?: (structureId: string) => void
   onWaypointReached?: (waypointId: string) => void
@@ -40,6 +41,7 @@ export function AnatomyViewer({
   disabled = false,
   startView,
   selectedStructureIds,
+  selectableLevelIds,
   markerStructureId,
   onStructureSelected,
   onWaypointReached,
@@ -90,13 +92,14 @@ export function AnatomyViewer({
   const selectStructure = useCallback(
     (structureId: string, focusListAlternative = false) => {
       if (disabled) return
-      if (!selectedStructureIds) setLocalSelection([structureId])
       const structure = map.structures.find(({ id }) => id === structureId)
+      if (selectableLevelIds && !selectableLevelIds.includes(structure?.levelId ?? '')) return
+      if (!selectedStructureIds) setLocalSelection([structureId])
       setAnnouncement(`${structure?.label ?? structureId} selected`)
       onStructureSelected?.(structureId)
       if (focusListAlternative) structureButtons.current.get(structureId)?.focus()
     },
-    [disabled, map.structures, onStructureSelected, selectedStructureIds],
+    [disabled, map.structures, onStructureSelected, selectableLevelIds, selectedStructureIds],
   )
 
   const flyTo = (waypointId: string) => {
@@ -192,36 +195,38 @@ export function AnatomyViewer({
             This list provides the same selection without using the 3D canvas.
           </p>
           <div className="mt-4 space-y-4">
-            {map.levels.map((level) => {
-              const structures = map.structures.filter(({ levelId }) => levelId === level.id)
-              if (structures.length === 0) return null
-              return (
-                <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
-                  <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
-                    {level.label}
-                  </h3>
-                  <ul className="mt-2 grid gap-2">
-                    {structures.map((structure) => (
-                      <li key={structure.id}>
-                        <button
-                          aria-pressed={selection.includes(structure.id)}
-                          className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
-                          disabled={disabled}
-                          ref={(button) => {
-                            if (button) structureButtons.current.set(structure.id, button)
-                            else structureButtons.current.delete(structure.id)
-                          }}
-                          type="button"
-                          onClick={() => selectStructure(structure.id)}
-                        >
-                          {structure.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )
-            })}
+            {map.levels
+              .filter((level) => !selectableLevelIds || selectableLevelIds.includes(level.id))
+              .map((level) => {
+                const structures = map.structures.filter(({ levelId }) => levelId === level.id)
+                if (structures.length === 0) return null
+                return (
+                  <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
+                    <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
+                      {level.label}
+                    </h3>
+                    <ul className="mt-2 grid gap-2">
+                      {structures.map((structure) => (
+                        <li key={structure.id}>
+                          <button
+                            aria-pressed={selection.includes(structure.id)}
+                            className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
+                            disabled={disabled}
+                            ref={(button) => {
+                              if (button) structureButtons.current.set(structure.id, button)
+                              else structureButtons.current.delete(structure.id)
+                            }}
+                            type="button"
+                            onClick={() => selectStructure(structure.id)}
+                          >
+                            {structure.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )
+              })}
           </div>
         </aside>
       </div>

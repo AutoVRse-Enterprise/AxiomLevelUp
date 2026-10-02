@@ -8,6 +8,7 @@ import { Button, Card, Chip } from '@/components/ui'
 import type { Primitive } from '@/content/schema'
 import type { TypedPrimitive } from '@/content/schema/primitives'
 import { evaluatePrimitive, resolvePrimitiveDefinition } from '@/primitives/definitions'
+import { anatomyLocateCorrectResponse } from '@/primitives/definitions/anatomy'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import type { PrimitiveInteraction } from '@/primitives/types'
@@ -16,6 +17,8 @@ type GalleryMode = 'interactive' | 'review'
 
 function correctResponse(primitive: TypedPrimitive): unknown {
   switch (primitive.type) {
+    case 'anatomy_locate':
+      return anatomyLocateCorrectResponse(primitive)
     case 'image_hotspot':
       if (primitive.content.mode !== 'assess') return undefined
       {

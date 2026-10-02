@@ -35,6 +35,9 @@ const schemas: Record<string, ZodType> = {
   'asset-manifest': assetManifestSchema,
   primitive: primitiveBaseSchema,
 }
+const domainAnatomyPrimitiveTypes = anatomyPrimitiveTypes.filter(
+  (type) => !assessmentPrimitiveTypes.some((assessmentType) => assessmentType === type),
+)
 
 await mkdir(outputDirectory, { recursive: true })
 
@@ -115,7 +118,7 @@ ${assessmentPrimitiveTypes.map((type) => `- \`${type}\``).join('\n')}
 
 - \`scenario\` (strict standard primitive)
 ${dicomPrimitiveTypes.map((type) => `- \`${type}\` (strict DICOM primitive)`).join('\n')}
-${anatomyPrimitiveTypes.map((type) => `- \`${type}\` (strict anatomy primitive)`).join('\n')}
+${domainAnatomyPrimitiveTypes.map((type) => `- \`${type}\` (strict anatomy primitive)`).join('\n')}
 
 ## Strict primitive schemas (${Object.keys(primitiveContentSchemas).length})
 
@@ -124,9 +127,12 @@ ${Object.keys(primitiveContentSchemas)
   .join('\n')}
 
 The four DICOM types require a typed DICOM series asset and strict mode-specific content.
-\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset. Unknown types
-are retained with a warning so development playback can render the unsupported fallback. Every
-lesson primitive and challenge item passes through the same parser and semantic validation.
+\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset.
+\`anatomy_locate\` adds ordered model, image-region and choice levels, optional positive weights and
+stable level-keyed responses. The loader resolves its map levels, model targets and typed image
+assets. Unknown types are retained with a warning so development playback can render the
+unsupported fallback. Every lesson primitive and challenge item passes through the same parser and
+semantic validation.
 
 ### DICOM primitive content
 

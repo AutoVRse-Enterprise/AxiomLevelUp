@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { idSchema, primitiveBaseSchema } from '../primitiveBase'
+import { hasUniqueRegionIds, imageRegionSchema } from './imageRegions'
 import type { PrimitiveContentSchema } from './types'
 
 export const anatomyStartViewSchema = z.discriminatedUnion('mode', [
@@ -10,6 +11,65 @@ export const anatomyStartViewSchema = z.discriminatedUnion('mode', [
 ])
 
 export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both'])
+
+const anatomyLocateLevelBase = {
+  levelId: idSchema,
+  weight: z.number().positive().optional(),
+  clueIds: z.array(idSchema).min(1).optional(),
+}
+
+const anatomyLocateModelLevelSchema = z.strictObject({
+  ...anatomyLocateLevelBase,
+  input: z.literal('model'),
+  targetStructureId: idSchema,
+})
+
+const anatomyLocateImageLevelSchema = z
+  .strictObject({
+    ...anatomyLocateLevelBase,
+    input: z.literal('image'),
+    assetId: idSchema,
+    alt: z.string().trim().min(1),
+    caption: z.string().trim().min(1).optional(),
+    regions: z.array(imageRegionSchema).min(2),
+    targetRegionId: idSchema,
+  })
+  .refine(({ regions }) => hasUniqueRegionIds(regions), {
+    path: ['regions'],
+    message: 'Anatomy image region IDs must be unique.',
+  })
+  .refine(({ regions, targetRegionId }) => regions.some(({ id }) => id === targetRegionId), {
+    path: ['targetRegionId'],
+    message: 'targetRegionId must reference one of the configured regions.',
+  })
+
+export const anatomyLocateChoiceOptionSchema = z.strictObject({
+  id: idSchema,
+  label: z.string().trim().min(1),
+  clueIds: z.array(idSchema).min(1).optional(),
+})
+
+const anatomyLocateChoiceLevelSchema = z
+  .strictObject({
+    ...anatomyLocateLevelBase,
+    input: z.literal('choice'),
+    options: z.array(anatomyLocateChoiceOptionSchema).min(2),
+    correctOptionId: idSchema,
+  })
+  .refine(({ options }) => new Set(options.map(({ id }) => id)).size === options.length, {
+    path: ['options'],
+    message: 'Anatomy choice option IDs must be unique.',
+  })
+  .refine(({ correctOptionId, options }) => options.some(({ id }) => id === correctOptionId), {
+    path: ['correctOptionId'],
+    message: 'correctOptionId must reference one of the configured options.',
+  })
+
+export const anatomyLocateLevelSchema = z.discriminatedUnion('input', [
+  anatomyLocateModelLevelSchema,
+  anatomyLocateImageLevelSchema,
+  anatomyLocateChoiceLevelSchema,
+])
 
 export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
   .extend({
@@ -80,7 +140,66 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
     }
   })
 
+export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
+  .extend({
+    type: z.literal('anatomy_locate'),
+    content: z
+      .strictObject({
+        anatomyMapId: idSchema,
+        prompt: z.string().trim().min(1),
+        startView: anatomyStartViewSchema.default({ mode: 'overview' }),
+        levels: z.array(anatomyLocateLevelSchema).min(1),
+        explanation: z.string().trim().min(1).optional(),
+      })
+      .refine(
+        ({ levels }) => new Set(levels.map(({ levelId }) => levelId)).size === levels.length,
+        {
+          path: ['levels'],
+          message: 'Anatomy locate level IDs must be unique.',
+        },
+      ),
+  })
+  .superRefine((primitive, context) => {
+    if (primitive.completion.mode !== 'answer') {
+      context.addIssue({
+        code: 'custom',
+        path: ['completion'],
+        message: 'Anatomy localisation requires answer completion.',
+      })
+    }
+    primitive.content.levels.forEach((level, levelIndex) => {
+      if (level.clueIds && new Set(level.clueIds).size !== level.clueIds.length) {
+        context.addIssue({
+          code: 'custom',
+          path: ['content', 'levels', levelIndex, 'clueIds'],
+          message: 'Anatomy level clue IDs must be unique.',
+        })
+      }
+      const responses =
+        level.input === 'image' ? level.regions : level.input === 'choice' ? level.options : []
+      responses.forEach((response, responseIndex) => {
+        if (response.clueIds && new Set(response.clueIds).size !== response.clueIds.length) {
+          context.addIssue({
+            code: 'custom',
+            path: [
+              'content',
+              'levels',
+              levelIndex,
+              level.input === 'image' ? 'regions' : 'options',
+              responseIndex,
+              'clueIds',
+            ],
+            message: 'Anatomy response clue IDs must be unique.',
+          })
+        }
+      })
+    })
+  })
+
 export type AnatomyExplorePrimitive = z.infer<typeof anatomyExplorePrimitiveSchema>
+export type AnatomyLocatePrimitive = z.infer<typeof anatomyLocatePrimitiveSchema>
+export type AnatomyLocateLevel = z.infer<typeof anatomyLocateLevelSchema>
+export type AnatomyLocateChoiceOption = z.infer<typeof anatomyLocateChoiceOptionSchema>
 export type AnatomyNavigation = z.infer<typeof anatomyNavigationSchema>
 export type AnatomyStartViewContent = z.infer<typeof anatomyStartViewSchema>
 
@@ -88,3 +207,19 @@ export const anatomyExploreContentSchema = {
   schema: anatomyExplorePrimitiveSchema,
   assetRefs: () => [],
 } satisfies PrimitiveContentSchema<AnatomyExplorePrimitive>
+
+export const anatomyLocateContentSchema = {
+  schema: anatomyLocatePrimitiveSchema,
+  assetRefs: (primitive) =>
+    primitive.content.levels.flatMap((level, index) =>
+      level.input === 'image'
+        ? [
+            {
+              assetId: level.assetId,
+              type: 'image' as const,
+              path: `content.levels.${index}.assetId`,
+            },
+          ]
+        : [],
+    ),
+} satisfies PrimitiveContentSchema<AnatomyLocatePrimitive>

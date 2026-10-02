@@ -53,7 +53,7 @@ used by a case must resolve.
 
 ## Primitive registry
 
-The canonical registry contains 26 strict primitive types: 22 standard types and 4 DICOM types.
+The canonical registry contains 27 strict primitive types: 23 standard types and 4 DICOM types.
 
 ### Content (12)
 
@@ -70,7 +70,7 @@ The canonical registry contains 26 strict primitive types: 22 standard types and
 - `formula`
 - `pdf_reference`
 
-### Assessment (8)
+### Assessment (9)
 
 - `multiple_choice`
 - `multiple_select`
@@ -80,6 +80,7 @@ The canonical registry contains 26 strict primitive types: 22 standard types and
 - `ordering`
 - `fill_blank`
 - `numeric`
+- `anatomy_locate`
 
 ### Domain
 
@@ -90,9 +91,10 @@ The canonical registry contains 26 strict primitive types: 22 standard types and
 - `dicom_measure` (strict DICOM primitive)
 - `anatomy_explore` (strict anatomy primitive)
 
-## Strict primitive schemas (26)
+## Strict primitive schemas (27)
 
 - `anatomy_explore`
+- `anatomy_locate`
 - `rich_text`
 - `image`
 - `zoomable_image`
@@ -120,9 +122,12 @@ The canonical registry contains 26 strict primitive types: 22 standard types and
 - `dicom_measure`
 
 The four DICOM types require a typed DICOM series asset and strict mode-specific content.
-`anatomy_explore` resolves a configured anatomy map and its online-only model asset. Unknown types
-are retained with a warning so development playback can render the unsupported fallback. Every
-lesson primitive and challenge item passes through the same parser and semantic validation.
+`anatomy_explore` resolves a configured anatomy map and its online-only model asset.
+`anatomy_locate` adds ordered model, image-region and choice levels, optional positive weights and
+stable level-keyed responses. The loader resolves its map levels, model targets and typed image
+assets. Unknown types are retained with a warning so development playback can render the
+unsupported fallback. Every lesson primitive and challenge item passes through the same parser and
+semantic validation.
 
 ### DICOM primitive content
 

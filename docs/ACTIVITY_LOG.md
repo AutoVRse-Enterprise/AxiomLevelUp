@@ -1897,3 +1897,19 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   and zero warnings. Showcase parity is 26 types across 27 steps. The emitted anatomy chunk is
   680,835 raw / 171,975 gzip, below budget.
 - **Follow-ups:** Add assessed drill-down localisation and bring parity to 27 types in P10-T06.
+
+### [2026-10-03 04:34] P10-T06 - Add anatomy localisation primitive
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added `anatomy_locate` with model, image-region and choice levels, weighted
+  fractional grading, structured responses, review reveal, keyboard paths and timer compatibility.
+  Added semantic map/asset validation and gallery/showcase coverage.
+- **Files changed:** Anatomy primitive schema, validation, definition and component; anatomy viewer
+  filtering; image-region clue metadata; showcase/map content; gallery, parity and assessment
+  tests; content documentation, Phase 10 checklist and activity log.
+- **Commands run:** Schema export, focused tests, `npm run validate:content`,
+  `npm run typecheck`, `npm run lint`, `npm run build`, `npm run budget`.
+- **Result/verification:** Forty-eight focused tests pass, including weighted partial credit.
+  Showcase parity is now 27 types across 28 steps. Content validates with zero warnings and all
+  bundle roles pass.
+- **Follow-ups:** Resolve case clue references into evidence-linked feedback in P10-T07.
