@@ -1333,3 +1333,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Configured shell-only activities remain playable; required uncached media
   and DICOM content are gated before the player mounts.
 - **Follow-ups:** Add profile storage reporting and download removal management.
+
+### [2026-10-02 12:01] P7-T12 - Add offline storage management
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a profile section showing browser usage/quota, persistence status and every
+  device download with per-course and remove-all actions. Added startup reconciliation after the
+  content registry and offline store hydrate.
+- **Files changed:** offline storage manager/reconciler, content provider, Profile route, Phase 7
+  checklist and activity log.
+- **Commands run:** Typecheck and ten route-surface tests.
+- **Result/verification:** TypeScript and focused surface tests pass; stale versions and browser
+  eviction are now checked on application startup.
+- **Follow-ups:** Add install eligibility, iOS guidance and worker update feedback.

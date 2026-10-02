@@ -10,6 +10,7 @@ import {
   WeeklyActivityStrip,
 } from '@/components/learning'
 import { getBadgeIcon } from '@/components/learning/badgeIconRegistry'
+import { OfflineStorageManager } from '@/components/offline/OfflineStorageManager'
 import { Card, ProgressBar } from '@/components/ui'
 import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -172,6 +173,14 @@ export function ProfilePage() {
         <Card className="mt-4">
           <WeeklyActivityStrip {...activity} />
         </Card>
+      </section>
+
+      <section aria-label="Offline downloads">
+        <SectionHeader
+          description="Manage courses saved to this browser."
+          title="Offline downloads"
+        />
+        <OfflineStorageManager />
       </section>
     </div>
   )

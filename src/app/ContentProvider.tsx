@@ -4,6 +4,7 @@ import { ContentContext } from '@/app/contentContext'
 import { ContentErrorScreen } from '@/components/feedback/ContentErrorScreen'
 import { Skeleton } from '@/components/ui'
 import { loadContent, type ContentRegistry } from '@/content/loader'
+import { OfflineReconciler } from '@/offline/OfflineReconciler'
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [registry, setRegistry] = useState<ContentRegistry | null>(null)
@@ -37,5 +38,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  return <ContentContext value={registry}>{children}</ContentContext>
+  return (
+    <ContentContext value={registry}>
+      <OfflineReconciler />
+      {children}
+    </ContentContext>
+  )
 }
