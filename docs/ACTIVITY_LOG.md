@@ -1675,3 +1675,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   physical-device acceptance gates. ADR-064 reconciles the PRD's 18 categories with 25 implemented
   primitive types.
 - **Follow-ups:** Add the missing guided DICOM showcase step and enforce registry parity.
+
+### [2026-10-02 15:29] P9-T01 - Audit showcase coverage
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Compared the internal showcase with canonical primitive types, schemas, definitions,
+  components and PRD section 75; added the missing guided DICOM flow.
+- **Files changed:** Runtime showcase content, content regression expectation, showcase audit,
+  Phase 9 checklist and activity log.
+- **Commands run:** `npm run validate:content`.
+- **Result/verification:** Validated 5 courses and 13 lessons with zero warnings. The showcase now
+  has 26 steps covering all 25 registered types plus both hotspot modes.
+- **Follow-ups:** Replace count-only regression coverage with an exhaustive parity assertion and
+  extend the complete real-player flow to the guided DICOM step.

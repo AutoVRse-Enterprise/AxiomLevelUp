@@ -666,6 +666,54 @@
           "feedback": {}
         },
         {
+          "id": "showcase-dicom-guided",
+          "type": "dicom_guided",
+          "conceptIds": ["thoracic-imaging", "image-windowing"],
+          "content": {
+            "seriesAssetId": "thoracic-ct-series",
+            "prompt": "Follow the inspection sequence and identify the central airway.",
+            "presets": [
+              { "id": "lung", "label": "Lung", "center": -600, "width": 1500 },
+              { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+            ],
+            "initialSlice": 65,
+            "initialPresetId": "lung",
+            "tools": ["scroll", "window", "zoom", "pan"],
+            "educationalUseOnly": true,
+            "steps": [
+              {
+                "id": "choose-mediastinal",
+                "instruction": "Switch to the Mediastinal preset.",
+                "condition": { "type": "preset", "presetId": "mediastinal" }
+              },
+              {
+                "id": "navigate-trachea",
+                "instruction": "Navigate to slices 78–86 and locate the central air-filled trachea.",
+                "condition": { "type": "slice_range", "range": { "from": 78, "to": 86 } }
+              },
+              {
+                "id": "confirm-continuity",
+                "instruction": "Inspect adjacent slices, then confirm that the structure is continuous.",
+                "condition": { "type": "acknowledge" }
+              }
+            ],
+            "checkpoint": {
+              "prompt": "Which structure is the central dark oval anterior to the oesophagus?",
+              "options": [
+                { "id": "trachea", "label": "Trachea" },
+                { "id": "aorta", "label": "Descending aorta" },
+                { "id": "vertebra", "label": "Thoracic vertebra" }
+              ],
+              "correctOptionId": "trachea",
+              "explanation": "Air in the trachea appears dark and remains continuous through adjacent superior thoracic slices."
+            }
+          },
+          "assets": ["thoracic-ct-series"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "advanced" },
+          "feedback": { "retry": true, "maxAttempts": 2 }
+        },
+        {
           "id": "showcase-dicom-identify",
           "type": "dicom_identify_region",
           "conceptIds": ["thoracic-imaging"],
