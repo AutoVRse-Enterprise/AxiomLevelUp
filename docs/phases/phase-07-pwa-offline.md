@@ -50,7 +50,7 @@ integrity and recovery UX.
 - [x] P7-T08 — Replace generated service-worker routing with an inject-manifest worker.
 - [x] P7-T09 — Add real and simulated connectivity state.
 - [x] P7-T10 — Add course, catalog and lesson offline download status controls.
-- [ ] P7-T11 — Gate unavailable lessons and challenges while offline.
+- [x] P7-T11 — Gate unavailable lessons and challenges while offline.
 - [ ] P7-T12 — Add profile storage and download management.
 - [ ] P7-T13 — Add engagement-gated install and service-worker update prompts.
 - [ ] P7-T14 — Add schema, domain, manager, store, component, route and worker coverage.

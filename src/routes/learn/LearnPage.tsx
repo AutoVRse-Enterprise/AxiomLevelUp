@@ -8,14 +8,16 @@ import { cn } from '@/lib/cn'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import { buildCoursePackage } from '@/offline/package'
 import { isCourseOfflineReady } from '@/offline/readiness'
+import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 import { today } from '@/lib/clock'
 import { selectCourseSummary, selectPathwayView, type LearningStatus } from '@/state/selectors'
 
-type Filter = 'all' | 'in_progress' | 'not_started' | 'completed' | 'new'
+type Filter = 'all' | 'offline' | 'in_progress' | 'not_started' | 'completed' | 'new'
 
 const filters: Array<{ id: Filter; label: string }> = [
   { id: 'all', label: 'All' },
+  { id: 'offline', label: 'Available offline' },
   { id: 'in_progress', label: 'In progress' },
   { id: 'not_started', label: 'Not started' },
   { id: 'completed', label: 'Completed' },
@@ -24,6 +26,7 @@ const filters: Array<{ id: Filter; label: string }> = [
 
 export function LearnPage() {
   const registry = useContent()
+  const { online } = useConnectivity()
   const { appConfig, catalogCourses, courseById, lessonById, assetById } = registry
   const [searchParams, setSearchParams] = useSearchParams()
   const learner = useLearnerStore((state) => state.learner)
@@ -43,12 +46,30 @@ export function LearnPage() {
   const summaries = catalogCourses.map((course) =>
     selectCourseSummary({ lessonProgress }, course, lessonById, courseById),
   )
-  const matchesFilter = (status: LearningStatus) => {
+  const offlineReadyByCourse = new Map(
+    catalogCourses.map((course) => {
+      const coursePackage = buildCoursePackage(
+        course,
+        registry,
+        import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+      )
+      return [course.id, isCourseOfflineReady(coursePackage, offlineRecords[course.id])]
+    }),
+  )
+  const matchesFilter = (courseId: string, status: LearningStatus) => {
     if (activeFilter === 'all') return true
+    if (activeFilter === 'offline') return offlineReadyByCourse.get(courseId) === true
     if (activeFilter === 'not_started') return status === 'available' || status === 'locked'
     return status === activeFilter
   }
-  const visible = summaries.filter(({ status }) => matchesFilter(status))
+  const visible = summaries
+    .filter(({ course, status }) => matchesFilter(course.id, status))
+    .sort((left, right) =>
+      online
+        ? 0
+        : Number(offlineReadyByCourse.get(right.course.id)) -
+          Number(offlineReadyByCourse.get(left.course.id)),
+    )
   const groups = Object.entries(
     visible.reduce<Record<string, typeof visible>>((result, summary) => {
       result[summary.course.category] ??= []
@@ -158,14 +179,7 @@ export function LearnPage() {
                       key={summary.course.id}
                       lessonCount={summary.totalCount}
                       lockReasons={summary.unmetCoursePrerequisites}
-                      offlineReady={isCourseOfflineReady(
-                        buildCoursePackage(
-                          summary.course,
-                          registry,
-                            import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
-                        ),
-                        offlineRecords[summary.course.id],
-                      )}
+                      offlineReady={offlineReadyByCourse.get(summary.course.id)}
                       status={summary.status}
                       title={summary.course.title}
                     />

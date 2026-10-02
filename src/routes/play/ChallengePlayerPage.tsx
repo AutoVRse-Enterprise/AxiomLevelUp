@@ -1,16 +1,21 @@
-import { Puzzle } from 'lucide-react'
+import { Puzzle, WifiOff } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { buildActivityPlan, challengeActivity } from '@/engines/learning/plan'
+import { challengePackage } from '@/offline/package'
+import { isChallengeOfflineReady } from '@/offline/readiness'
 import { ActivityPlayer } from '@/player/ActivityPlayer'
+import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 
 export function ChallengePlayerPage() {
   const { challengeId } = useParams()
-  const { appConfig } = useContent()
+  const registry = useContent()
+  const { appConfig } = registry
+  const { online } = useConnectivity()
   const challengeProgress = useLearnerStore((state) => state.challenges)
   const challenge = appConfig.challenges.find(({ id }) => id === challengeId)
   const plan = useMemo(
@@ -40,6 +45,22 @@ export function ChallengePlayerPage() {
         icon={<Puzzle aria-hidden="true" size={30} />}
         title="Challenge unavailable"
         message={plan.unavailableReason ?? 'This challenge is not playable yet.'}
+        action={<Link to="/challenge">Return to challenges</Link>}
+      />
+    )
+  }
+
+  const offlinePackage = challengePackage(
+    challenge.id,
+    registry,
+    import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+  )
+  if (!online && offlinePackage && !isChallengeOfflineReady(offlinePackage)) {
+    return (
+      <EmptyState
+        icon={<WifiOff aria-hidden="true" size={30} />}
+        title="This challenge is not available offline"
+        message="Connect to the internet or choose an offline lesson."
         action={<Link to="/challenge">Return to challenges</Link>}
       />
     )

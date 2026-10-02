@@ -1,11 +1,15 @@
-import { LockKeyhole, Puzzle } from 'lucide-react'
+import { LockKeyhole, Puzzle, WifiOff } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { buildActivityPlan, lessonActivity } from '@/engines/learning/plan'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
+import { buildCoursePackage } from '@/offline/package'
+import { isLessonOfflineReady } from '@/offline/readiness'
 import { ActivityPlayer } from '@/player/ActivityPlayer'
+import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCourseSummary, selectLessonAvailability } from '@/state/selectors'
 
@@ -18,7 +22,11 @@ const backLink = (courseId: string) => (
 export function LessonPlayerPage() {
   const { courseId, lessonId } = useParams()
   const registry = useContent()
+  const { online } = useConnectivity()
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const offlineRecord = useOfflineLibraryStore((state) =>
+    courseId ? state.records[courseId] : undefined,
+  )
   const course = courseId ? registry.courseById.get(courseId) : undefined
   const lesson = course?.lessons.find(({ id }) => id === lessonId)
   const plan = useMemo(
@@ -74,6 +82,29 @@ export function LessonPlayerPage() {
         title="Lesson unavailable"
         message={plan.unavailableReason ?? 'This lesson is not playable yet.'}
         action={backLink(course.id)}
+      />
+    )
+  }
+
+  const offlinePackage = buildCoursePackage(
+    course,
+    registry,
+    import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+  )
+  if (!online && !isLessonOfflineReady(offlinePackage, lesson.id, offlineRecord)) {
+    return (
+      <EmptyState
+        icon={<WifiOff aria-hidden="true" size={30} />}
+        title="This lesson has not been downloaded"
+        message="Connect to the internet or choose an offline lesson."
+        action={
+          <span className="flex flex-wrap justify-center gap-4">
+            {backLink(course.id)}
+            <Link className="font-semibold text-brand-700 underline" to="/learn">
+              Choose an offline lesson
+            </Link>
+          </span>
+        }
       />
     )
   }

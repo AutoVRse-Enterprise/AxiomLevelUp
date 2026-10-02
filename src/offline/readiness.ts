@@ -1,5 +1,5 @@
 import type { OfflineDownloadRecord } from '@/offline/offlineLibraryStore'
-import type { CourseOfflinePackage } from '@/offline/package'
+import type { ChallengeOfflinePackage, CourseOfflinePackage } from '@/offline/package'
 
 export function isCourseOfflineReady(
   coursePackage: CourseOfflinePackage,
@@ -7,6 +7,10 @@ export function isCourseOfflineReady(
 ) {
   if (coursePackage.totalBytes === 0) return true
   return record?.status === 'available' && record.fingerprint === coursePackage.fingerprint
+}
+
+export function isChallengeOfflineReady(challengePackage: ChallengeOfflinePackage) {
+  return challengePackage.assets.every(({ delivery }) => delivery === 'shell')
 }
 
 export function isLessonOfflineReady(

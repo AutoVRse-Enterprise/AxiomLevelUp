@@ -1320,3 +1320,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** TypeScript and all focused surface tests pass; controls remain driven by
   package and download-store state.
 - **Follow-ups:** Gate lessons and challenges while disconnected and surface offline courses first.
+
+### [2026-10-02 11:52] P7-T11 - Gate unavailable offline activities
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added content-derived lesson and challenge gates for disconnected sessions, the PRD
+  recovery message and links, an Available offline catalog filter, and offline-first catalog
+  ordering while disconnected.
+- **Files changed:** readiness selectors, lesson/challenge player routes, Learn catalog, Phase 7
+  checklist and activity log.
+- **Commands run:** Typecheck and ten route-surface tests.
+- **Result/verification:** Configured shell-only activities remain playable; required uncached media
+  and DICOM content are gated before the player mounts.
+- **Follow-ups:** Add profile storage reporting and download removal management.
