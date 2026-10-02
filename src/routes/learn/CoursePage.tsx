@@ -5,16 +5,24 @@ import { Link, useParams } from 'react-router'
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { LessonRow, SectionHeader, StatusBadge } from '@/components/learning'
+import { CourseOfflineControl } from '@/components/offline/CourseOfflineControl'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { emitEvent } from '@/events/bus'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
+import { buildCoursePackage } from '@/offline/package'
+import { isLessonOfflineReady } from '@/offline/readiness'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCourseSummary } from '@/state/selectors'
 
 export function CoursePage() {
   const { courseId } = useParams()
-  const { courseById, lessonById } = useContent()
+  const registry = useContent()
+  const { courseById, lessonById } = registry
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const offlineRecord = useOfflineLibraryStore((state) =>
+    courseId ? state.records[courseId] : undefined,
+  )
   const course = courseId ? courseById.get(courseId) : undefined
   const imageUrl = useAssetUrl(course?.imageAssetId)
 
@@ -27,6 +35,11 @@ export function CoursePage() {
   }
 
   const summary = selectCourseSummary({ lessonProgress }, course, lessonById, courseById)
+  const offlinePackage = buildCoursePackage(
+    course,
+    registry,
+    import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+  )
   const requirement =
     course.completionRequirement.mode === 'all_lessons'
       ? `Complete all ${course.lessons.length} lessons`
@@ -75,6 +88,7 @@ export function CoursePage() {
                 {primaryLabel} <ArrowRight aria-hidden="true" size={17} />
               </Link>
             ) : null}
+            <CourseOfflineControl course={course} />
           </div>
         </div>
       </section>
@@ -102,6 +116,7 @@ export function CoursePage() {
               estimatedMinutes={lesson.estimatedMinutes}
               key={lesson.id}
               lockReasons={unmetPrerequisites}
+              offlineReady={isLessonOfflineReady(offlinePackage, lesson.id, offlineRecord)}
               stars={progress?.stars ?? 0}
               status={status}
               title={lesson.title}

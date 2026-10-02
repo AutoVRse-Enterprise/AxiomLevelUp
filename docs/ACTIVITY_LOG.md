@@ -1307,3 +1307,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** TypeScript and the developer-route test pass; worker state changes are
   broadcast to open application clients.
 - **Follow-ups:** Add course download controls and offline readiness status.
+
+### [2026-10-02 11:43] P7-T10 - Add course offline controls
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure course/lesson readiness selectors and a course control covering estimates,
+  download progress, cancel, retry, update, repair and confirmed removal. Added compact offline
+  badges to course cards and lesson rows.
+- **Files changed:** offline readiness, course offline component, Learn/Course routes, shared
+  learning cards, Phase 7 checklist and activity log.
+- **Commands run:** Typecheck and ten route-surface tests.
+- **Result/verification:** TypeScript and all focused surface tests pass; controls remain driven by
+  package and download-store state.
+- **Follow-ups:** Gate lessons and challenges while disconnected and surface offline courses first.

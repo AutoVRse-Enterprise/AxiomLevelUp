@@ -5,6 +5,9 @@ import { useContent } from '@/app/contentContext'
 import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
+import { buildCoursePackage } from '@/offline/package'
+import { isCourseOfflineReady } from '@/offline/readiness'
 import { useLearnerStore } from '@/state/learnerStore'
 import { today } from '@/lib/clock'
 import { selectCourseSummary, selectPathwayView, type LearningStatus } from '@/state/selectors'
@@ -20,7 +23,8 @@ const filters: Array<{ id: Filter; label: string }> = [
 ]
 
 export function LearnPage() {
-  const { appConfig, catalogCourses, courseById, lessonById, assetById } = useContent()
+  const registry = useContent()
+  const { appConfig, catalogCourses, courseById, lessonById, assetById } = registry
   const [searchParams, setSearchParams] = useSearchParams()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
@@ -31,6 +35,7 @@ export function LearnPage() {
   const mastery = useLearnerStore((state) => state.mastery)
   const stats = useLearnerStore((state) => state.stats)
   const gamification = useLearnerStore((state) => state.gamification)
+  const offlineRecords = useOfflineLibraryStore((state) => state.records)
   const requestedFilter = searchParams.get('status')
   const activeFilter = filters.some(({ id }) => id === requestedFilter)
     ? (requestedFilter as Filter)
@@ -153,6 +158,14 @@ export function LearnPage() {
                       key={summary.course.id}
                       lessonCount={summary.totalCount}
                       lockReasons={summary.unmetCoursePrerequisites}
+                      offlineReady={isCourseOfflineReady(
+                        buildCoursePackage(
+                          summary.course,
+                          registry,
+                            import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+                        ),
+                        offlineRecords[summary.course.id],
+                      )}
                       status={summary.status}
                       title={summary.course.title}
                     />

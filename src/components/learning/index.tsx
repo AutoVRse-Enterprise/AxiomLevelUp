@@ -1,5 +1,6 @@
 import {
   Check,
+  Download,
   LockKeyhole,
   Sparkles,
   Star,
@@ -175,6 +176,7 @@ export function CourseCard({
   lessonCount,
   status,
   lockReasons = [],
+  offlineReady = false,
 }: {
   id: string
   title: string
@@ -187,6 +189,7 @@ export function CourseCard({
   lessonCount: number
   status: LearningStatus
   lockReasons?: string[]
+  offlineReady?: boolean
 }) {
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0 sm:p-0">
@@ -195,6 +198,12 @@ export function CourseCard({
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone="brand">{category}</Chip>
           <StatusBadge status={status} />
+          {offlineReady ? (
+            <Chip tone="success">
+              <Download aria-hidden="true" className="mr-1" size={13} />
+              Offline
+            </Chip>
+          ) : null}
         </div>
         <h3 className="mt-4 text-heading font-bold">{title}</h3>
         <p className="mt-2 line-clamp-2 text-small text-neutral-600">{description}</p>
@@ -226,6 +235,7 @@ export function LessonRow({
   bestScore,
   lockReasons,
   to,
+  offlineReady = false,
 }: {
   title: string
   description: string
@@ -236,11 +246,18 @@ export function LessonRow({
   bestScore: number | null
   lockReasons: string[]
   to: string
+  offlineReady?: boolean
 }) {
   const content = (
     <>
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge status={status} />
+        {offlineReady ? (
+          <Chip tone="success">
+            <Download aria-hidden="true" className="mr-1" size={13} />
+            Offline
+          </Chip>
+        ) : null}
         <span className="text-caption text-neutral-600">
           {difficulty} · {estimatedMinutes} min
         </span>
