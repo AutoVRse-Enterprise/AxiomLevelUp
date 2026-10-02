@@ -26,8 +26,11 @@ export function VideoPrimitive({
     videoUrl ? 'loading' : 'error',
   )
   const [loadAttempt, setLoadAttempt] = useState(0)
-  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
-    useImmersiveArtifact<HTMLElement>()
+  const {
+    ref: immersiveRef,
+    immersive,
+    toggle: toggleImmersive,
+  } = useImmersiveArtifact<HTMLElement>()
   const activeCheckpoint = primitive.content.checkpoints?.find(
     ({ id }) => id === activeCheckpointId,
   )
@@ -58,8 +61,7 @@ export function VideoPrimitive({
     <figure
       className={cn(
         'space-y-4',
-        immersive &&
-          'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
+        immersive && 'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
       )}
       data-video-artifact=""
       ref={immersiveRef}
@@ -69,9 +71,11 @@ export function VideoPrimitive({
           <h2 className={cn('text-title font-bold text-neutral-950', immersive && 'text-white')}>
             {primitive.content.title}
           </h2>
-        {primitive.content.description ? (
-          <p className={cn('mt-1 text-small text-neutral-600', immersive && 'text-neutral-300')}>{primitive.content.description}</p>
-        ) : null}
+          {primitive.content.description ? (
+            <p className={cn('mt-1 text-small text-neutral-600', immersive && 'text-neutral-300')}>
+              {primitive.content.description}
+            </p>
+          ) : null}
         </div>
         <Button
           leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
@@ -83,7 +87,12 @@ export function VideoPrimitive({
         </Button>
       </div>
       {videoUrl && mediaState !== 'error' ? (
-        <div className={cn('relative aspect-video overflow-hidden rounded-xl bg-neutral-950', immersive && 'min-h-0 flex-1')}>
+        <div
+          className={cn(
+            'relative aspect-video overflow-hidden rounded-xl bg-neutral-950',
+            immersive && 'min-h-0 flex-1',
+          )}
+        >
           <video
             ref={videoRef}
             aria-label={primitive.content.title}

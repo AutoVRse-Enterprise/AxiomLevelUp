@@ -161,7 +161,7 @@ case
       waypoint graph, validation against model metadata and a GLB preparation script.
 - [x] P10-T04 — Lazy 3D viewer boundary: orbit, zoom, pan, picking, highlight, fly-through,
       endoscopic camera, list alternative, reduced motion, disposal and budget role.
-- [ ] P10-T05 — `anatomy_explore` primitive: definition, schema, component, completion, events,
+- [x] P10-T05 — `anatomy_explore` primitive: definition, schema, component, completion, events,
       showcase and gallery entries.
 - [ ] P10-T06 — `anatomy_locate` primitive: drill-down levels across model, image-region and choice
       inputs, per-level partial credit, review reveal, showcase and gallery entries.

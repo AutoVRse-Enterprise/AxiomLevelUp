@@ -19,6 +19,8 @@ export interface AnatomyViewerProps {
   map: AnatomyMap
   config: AppConfig['product']['anatomy3d']
   prompt?: string
+  navigation?: 'orbit' | 'flythrough' | 'both'
+  disabled?: boolean
   startView?: AnatomyStartView
   selectedStructureIds?: readonly string[]
   markerStructureId?: string | null
@@ -34,6 +36,8 @@ export function AnatomyViewer({
   map,
   config,
   prompt = 'Explore the configured anatomy model.',
+  navigation = 'both',
+  disabled = false,
   startView,
   selectedStructureIds,
   markerStructureId,
@@ -85,16 +89,18 @@ export function AnatomyViewer({
 
   const selectStructure = useCallback(
     (structureId: string, focusListAlternative = false) => {
+      if (disabled) return
       if (!selectedStructureIds) setLocalSelection([structureId])
       const structure = map.structures.find(({ id }) => id === structureId)
       setAnnouncement(`${structure?.label ?? structureId} selected`)
       onStructureSelected?.(structureId)
       if (focusListAlternative) structureButtons.current.get(structureId)?.focus()
     },
-    [map.structures, onStructureSelected, selectedStructureIds],
+    [disabled, map.structures, onStructureSelected, selectedStructureIds],
   )
 
   const flyTo = (waypointId: string) => {
+    if (disabled) return
     controller?.flyTo(waypointId, { animate: motion === 'full' })
     setCurrentWaypointId(waypointId)
     setAnnouncement(
@@ -103,7 +109,7 @@ export function AnatomyViewer({
     onWaypointReached?.(waypointId)
   }
 
-  const branches = controller?.availableBranches() ?? []
+  const branches = navigation === 'orbit' ? [] : (controller?.availableBranches() ?? [])
   const failed = state.status === 'error'
 
   return (
@@ -123,6 +129,7 @@ export function AnatomyViewer({
         </div>
         <Button
           aria-label={immersive ? 'Exit fullscreen anatomy viewer' : 'Expand anatomy viewer'}
+          disabled={disabled}
           leadingIcon={<Expand aria-hidden="true" size={16} />}
           size="sm"
           variant="secondary"
@@ -138,6 +145,7 @@ export function AnatomyViewer({
           className={cn(
             'relative h-[52dvh] min-h-72 w-full touch-none overflow-hidden bg-black outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
             immersive && 'min-h-0 flex-1 md:h-full',
+            (disabled || navigation === 'flythrough') && 'pointer-events-none',
           )}
           ref={setElement}
           role="img"
@@ -198,6 +206,7 @@ export function AnatomyViewer({
                         <button
                           aria-pressed={selection.includes(structure.id)}
                           className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
+                          disabled={disabled}
                           ref={(button) => {
                             if (button) structureButtons.current.set(structure.id, button)
                             else structureButtons.current.delete(structure.id)
@@ -225,6 +234,7 @@ export function AnatomyViewer({
         ) : null}
         <div className="flex flex-wrap gap-2">
           <Button
+            disabled={disabled}
             leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
             size="sm"
             variant="secondary"
@@ -237,6 +247,7 @@ export function AnatomyViewer({
           </Button>
           {currentWaypointId ? (
             <Button
+              disabled={disabled}
               size="sm"
               variant="secondary"
               onClick={() => controller?.enterEndoscopic(currentWaypointId)}
@@ -245,7 +256,13 @@ export function AnatomyViewer({
             </Button>
           ) : null}
           {branches.map((branchId) => (
-            <Button key={branchId} size="sm" variant="secondary" onClick={() => flyTo(branchId)}>
+            <Button
+              disabled={disabled}
+              key={branchId}
+              size="sm"
+              variant="secondary"
+              onClick={() => flyTo(branchId)}
+            >
               {map.waypoints.find(({ id }) => id === branchId)?.label ?? branchId}
             </Button>
           ))}

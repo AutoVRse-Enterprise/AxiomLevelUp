@@ -1,4 +1,5 @@
 import type { Primitive } from '@/content/schema'
+import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
 
 export type PrimitiveInteraction =
   | { name: string; key?: string }
@@ -11,6 +12,23 @@ export type PrimitiveInteraction =
   | { name: 'dicom_requirement'; key: string }
   | { name: 'dicom_viewer_loaded'; firstImageMs: number; sliceCount: number }
   | { name: 'dicom_viewer_failed'; reason: string }
+  | { name: 'anatomy_structure_selected'; structureId: string; key: string }
+  | { name: 'anatomy_waypoint_reached'; waypointId: string; key: string }
+  | {
+      name: 'anatomy_view_changed'
+      position: AnatomyVector3
+      target: AnatomyVector3
+      waypointId: string | null
+      endoscopic: boolean
+      key: string
+    }
+  | {
+      name: 'anatomy_viewer_loaded'
+      loadMs: number
+      meshCount: number
+      triangleCount: number
+    }
+  | { name: 'anatomy_viewer_failed'; reason: string }
   | {
       name: 'scenario_decision'
       nodeId: string

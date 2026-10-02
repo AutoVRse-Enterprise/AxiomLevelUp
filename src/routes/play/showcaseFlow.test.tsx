@@ -33,6 +33,27 @@ vi.mock('@/imaging/viewer/useDicomViewer', () => ({
   }),
 }))
 
+vi.mock('@/anatomy3d/viewer/useAnatomyViewer', () => ({
+  useAnatomyViewer: () => ({
+    state: {
+      status: 'ready',
+      message: 'Interactive anatomy ready',
+      loadResult: { meshNames: ['trachea'], triangleCount: 12 },
+      warning: null,
+    },
+    controller: {
+      highlight: vi.fn(),
+      setMarker: vi.fn(),
+      pick: vi.fn(),
+      flyTo: vi.fn(),
+      availableBranches: () => ['carina'],
+      enterEndoscopic: vi.fn(),
+      resetView: vi.fn(),
+    },
+    retry: vi.fn(),
+  }),
+}))
+
 const registry = validateContentBundle(makeValidContentBundle())
 const showcaseCourse = registry.courseById.get('runtime-showcase')!
 const showcaseLesson = registry.lessonById.get('primitive-showcase')!
@@ -158,7 +179,7 @@ describe('showcase lesson integration', () => {
     })
   })
 
-  it('plays all 26 showcase steps through the real route and emits ordered completion events', async () => {
+  it('plays all 27 showcase steps through the real route and emits ordered completion events', async () => {
     const user = userEvent.setup()
     const events: LearnerEvent[] = []
     subscribeToEvents((event) => events.push(event))
@@ -278,6 +299,10 @@ describe('showcase lesson integration', () => {
     )
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     await user.click(screen.getByRole('button', { name: 'Complete scenario' }))
+    await continueCompletedStep(user)
+
+    await user.click(await screen.findByRole('button', { name: 'Trachea' }))
+    await user.click(screen.getByRole('button', { name: 'Carina' }))
     await continueCompletedStep(user)
 
     await user.click(await screen.findByRole('button', { name: 'Skip activity' }))

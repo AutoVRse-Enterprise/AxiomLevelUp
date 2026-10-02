@@ -10,6 +10,7 @@ import {
   parsePrimitive,
   type AppConfig,
   type AchievementCriterion,
+  type AnatomyExplorePrimitive,
   type AnatomyMap,
   type AssetManifest,
   type CaseDocument,
@@ -355,6 +356,56 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
   }
 
+  const validateAnatomyExploreSemantics = (
+    primitive: AnatomyExplorePrimitive,
+    file: string,
+    path: string,
+  ) => {
+    const mapId = primitive.content.anatomyMapId
+    requireRef(anatomyMapIds, mapId, file, `${path}.content.anatomyMapId`, 'anatomy map')
+    const anatomyMap = anatomyMapById.get(mapId)
+    if (!anatomyMap) return
+
+    const structureIds = new Set(anatomyMap.structures.map(({ id }) => id))
+    const waypointIds = new Set(anatomyMap.waypoints.map(({ id }) => id))
+    if (primitive.content.startView.mode === 'marker') {
+      requireRef(
+        structureIds,
+        primitive.content.startView.structureId,
+        file,
+        `${path}.content.startView.structureId`,
+        'anatomy structure',
+      )
+    }
+    if (primitive.content.startView.mode === 'waypoint') {
+      requireRef(
+        waypointIds,
+        primitive.content.startView.waypointId,
+        file,
+        `${path}.content.startView.waypointId`,
+        'anatomy waypoint',
+      )
+    }
+    primitive.content.requiredStructureIds?.forEach((id, index) =>
+      requireRef(
+        structureIds,
+        id,
+        file,
+        `${path}.content.requiredStructureIds.${index}`,
+        'anatomy structure',
+      ),
+    )
+    primitive.content.requiredWaypointIds?.forEach((id, index) =>
+      requireRef(
+        waypointIds,
+        id,
+        file,
+        `${path}.content.requiredWaypointIds.${index}`,
+        'anatomy waypoint',
+      ),
+    )
+  }
+
   const validateCriterion = (criterion: AchievementCriterion, file: string, path: string) => {
     if ('lessonIds' in criterion) {
       criterion.lessonIds?.forEach((id, index) =>
@@ -454,6 +505,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       )
       if (result.primitive.type.startsWith('dicom_')) {
         validateDicomSemantics(result.primitive as DicomPrimitive, file, path)
+      }
+      if (result.primitive.type === 'anatomy_explore') {
+        validateAnatomyExploreSemantics(result.primitive as AnatomyExplorePrimitive, file, path)
       }
     }
   }

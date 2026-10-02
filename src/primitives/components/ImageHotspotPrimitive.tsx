@@ -55,8 +55,11 @@ export function ImageHotspotPrimitive({
   const [selectedPoint, setSelectedPoint] = useState<NormalizedPoint | null>(
     isNormalizedPoint(draft) ? draft : null,
   )
-  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
-    useImmersiveArtifact<HTMLElement>()
+  const {
+    ref: immersiveRef,
+    immersive,
+    toggle: toggleImmersive,
+  } = useImmersiveArtifact<HTMLElement>()
   const responsePoint =
     mode === 'review' && isNormalizedPoint(review?.response) ? review.response : selectedPoint
   const readOnly = disabled || mode === 'review'
@@ -137,8 +140,7 @@ export function ImageHotspotPrimitive({
     <figure
       className={cn(
         'space-y-3',
-        immersive &&
-          'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
+        immersive && 'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
       )}
       ref={immersiveRef}
     >
@@ -147,7 +149,9 @@ export function ImageHotspotPrimitive({
           <p className={cn('text-lg font-semibold text-neutral-950', immersive && 'text-white')}>
             {primitive.content.prompt}
           </p>
-        ) : <span />}
+        ) : (
+          <span />
+        )}
         <Button
           leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
           onClick={() => void toggleImmersive()}

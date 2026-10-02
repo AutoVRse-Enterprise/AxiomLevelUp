@@ -1,4 +1,5 @@
 import type { PrimitiveInteraction } from '@/primitives/types'
+import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
 
@@ -76,6 +77,20 @@ export interface EventPayloads {
   }
   dicom_viewer_loaded: DicomEventContext & { firstImageMs: number; sliceCount: number }
   dicom_viewer_failed: DicomEventContext & { reason: string }
+  anatomy_structure_selected: AnatomyEventContext & { structureId: string }
+  anatomy_waypoint_reached: AnatomyEventContext & { waypointId: string }
+  anatomy_view_changed: AnatomyEventContext & {
+    position: AnatomyVector3
+    target: AnatomyVector3
+    waypointId: string | null
+    endoscopic: boolean
+  }
+  anatomy_viewer_loaded: AnatomyEventContext & {
+    loadMs: number
+    meshCount: number
+    triangleCount: number
+  }
+  anatomy_viewer_failed: AnatomyEventContext & { reason: string }
   lesson_exited: { courseId: string; lessonId: string; stepIndex: number }
   lesson_completed: {
     courseId: string
@@ -141,6 +156,8 @@ interface DicomEventContext {
   primitiveId: string
   primitiveType: string
 }
+
+type AnatomyEventContext = DicomEventContext
 
 export type LearnerEventName = keyof EventPayloads
 

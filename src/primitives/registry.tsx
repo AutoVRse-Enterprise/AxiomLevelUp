@@ -11,6 +11,7 @@ import type { TypedPrimitive } from '@/content/schema/primitives'
 import { LoadingState } from '@/components/ui'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { primitiveComponents } from '@/primitives/componentRegistry'
+import { AnatomyAssetUnavailableError } from '@/primitives/components/anatomyUtils'
 import { DicomAssetUnavailableError } from '@/primitives/components/dicomUtils'
 import { UnsupportedPrimitive } from '@/primitives/components/UnsupportedPrimitive'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
@@ -49,12 +50,17 @@ export function PrimitiveRenderer(props: PrimitiveComponentProps) {
   return (
     <PrimitiveErrorBoundary
       fallback={(error, retry) =>
-        error instanceof DicomAssetUnavailableError ? (
+        error instanceof DicomAssetUnavailableError ||
+        error instanceof AnatomyAssetUnavailableError ? (
           <ErrorState
             actionLabel="Continue"
             message={error.message}
             onAction={props.onComplete}
-            title="Imaging study unavailable"
+            title={
+              error instanceof AnatomyAssetUnavailableError
+                ? 'Anatomy model unavailable'
+                : 'Imaging study unavailable'
+            }
             titleAs="h2"
           />
         ) : (

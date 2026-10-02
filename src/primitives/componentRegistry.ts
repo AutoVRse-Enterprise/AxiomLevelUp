@@ -1,5 +1,10 @@
 import { lazy } from 'react'
 
+const AnatomyExplorePrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/AnatomyExplorePrimitive')
+  return { default: module.AnatomyExplorePrimitive }
+})
+
 const RichTextPrimitive = lazy(async () => {
   const module = await import('@/primitives/components/RichTextPrimitive')
   return { default: module.RichTextPrimitive }
@@ -126,6 +131,7 @@ const DicomMeasurePrimitive = lazy(async () => {
 })
 
 export const primitiveComponents = {
+  anatomy_explore: AnatomyExplorePrimitive,
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
   zoomable_image: ZoomableImagePrimitive,

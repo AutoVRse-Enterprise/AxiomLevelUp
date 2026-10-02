@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "0.1",
+  "id": "lung-map",
+  "modelAssetId": "lung-model",
+  "levels": [
+    { "id": "system", "label": "Respiratory system" },
+    { "id": "structure", "label": "Structure" }
+  ],
+  "structures": [
+    {
+      "id": "respiratory-system",
+      "levelId": "system",
+      "label": "Respiratory system",
+      "meshNames": [
+        "right_upper_lobe",
+        "right_middle_lobe",
+        "right_lower_lobe",
+        "left_upper_lobe",
+        "left_lower_lobe",
+        "trachea",
+        "right_main_bronchus",
+        "left_main_bronchus"
+      ]
+    },
+    {
+      "id": "trachea",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Trachea",
+      "meshNames": ["trachea"]
+    },
+    {
+      "id": "right-main-bronchus",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Right main bronchus",
+      "meshNames": ["right_main_bronchus"]
+    },
+    {
+      "id": "left-main-bronchus",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Left main bronchus",
+      "meshNames": ["left_main_bronchus"]
+    },
+    {
+      "id": "right-upper-lobe",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Right upper lobe",
+      "meshNames": ["right_upper_lobe"]
+    },
+    {
+      "id": "right-middle-lobe",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Right middle lobe",
+      "meshNames": ["right_middle_lobe"]
+    },
+    {
+      "id": "right-lower-lobe",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Right lower lobe",
+      "meshNames": ["right_lower_lobe"]
+    },
+    {
+      "id": "left-upper-lobe",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Left upper lobe",
+      "meshNames": ["left_upper_lobe"]
+    },
+    {
+      "id": "left-lower-lobe",
+      "levelId": "structure",
+      "parentId": "respiratory-system",
+      "label": "Left lower lobe",
+      "meshNames": ["left_lower_lobe"]
+    }
+  ],
+  "waypoints": [
+    {
+      "id": "trachea-mid",
+      "label": "Trachea",
+      "position": [0, -48, 1280],
+      "lookAt": [0, -72, 1265],
+      "next": ["carina"],
+      "radius": 8
+    },
+    {
+      "id": "carina",
+      "label": "Carina",
+      "position": [0, -72, 1265],
+      "lookAt": [0, -90, 1250],
+      "next": ["right-main-airway", "left-main-airway"],
+      "radius": 7
+    },
+    {
+      "id": "right-main-airway",
+      "label": "Right main airway",
+      "position": [-22, -90, 1248],
+      "lookAt": [-45, -108, 1235],
+      "next": [],
+      "radius": 5
+    },
+    {
+      "id": "left-main-airway",
+      "label": "Left main airway",
+      "position": [22, -90, 1248],
+      "lookAt": [45, -108, 1235],
+      "next": [],
+      "radius": 5
+    }
+  ]
+}

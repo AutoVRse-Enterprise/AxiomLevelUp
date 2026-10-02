@@ -2,6 +2,7 @@ import type { ZodType } from 'zod'
 
 import type { Primitive } from '@/content/schema'
 import { primitiveContentSchemas, type TypedPrimitive } from '@/content/schema/primitives'
+import { anatomyExploreDefinition } from '@/primitives/definitions/anatomy'
 import { audioDefinition } from '@/primitives/definitions/audio'
 import { carouselDefinition } from '@/primitives/definitions/carousel'
 import { chartDefinition } from '@/primitives/definitions/chart'
@@ -35,6 +36,7 @@ import type { EvaluationResult } from '@/primitives/types'
 export * from '@/primitives/definitions/types'
 
 export const primitiveDefinitions = {
+  anatomy_explore: anatomyExploreDefinition,
   rich_text: richTextDefinition,
   image: imageDefinition,
   zoomable_image: zoomableImageDefinition,

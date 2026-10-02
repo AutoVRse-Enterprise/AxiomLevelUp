@@ -1881,3 +1881,19 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   below its 850,000 / 220,000 limits. The role remains optional until a primitive consumes it.
 - **Follow-ups:** Integrate the boundary through `anatomy_explore` and `anatomy_locate`, then perform
   real Chromium and disposal checks in P10-T16.
+
+### [2026-10-03 04:18] P10-T05 - Add anatomy exploration primitive
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added the `anatomy_explore` schema, definition, lazy component, completion rules and
+  typed interactions. Promoted the prepared BodyParts3D model and anatomy map into validated
+  content, and added showcase/gallery coverage including unavailable-model behavior.
+- **Files changed:** Primitive schemas, definitions, registry and component; anatomy viewer/event
+  integration; public model, anatomy map, manifest and assets; showcase, gallery/player tests,
+  generated schemas and content documentation; Phase 10 checklist and activity log.
+- **Commands run:** Asset hashing, schema export, focused tests, `npm run typecheck`,
+  `npm run lint`, `npm run validate:content`, `npm run build`, `npm run budget`.
+- **Result/verification:** Forty-eight focused tests pass. Content validates with one anatomy map
+  and zero warnings. Showcase parity is 26 types across 27 steps. The emitted anatomy chunk is
+  680,835 raw / 171,975 gzip, below budget.
+- **Follow-ups:** Add assessed drill-down localisation and bring parity to 27 types in P10-T06.

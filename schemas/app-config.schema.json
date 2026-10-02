@@ -172,6 +172,7 @@
             "pixelRatioCap": 1.5,
             "maxTriangleCountWarning": 150000,
             "cameraAnimationDurationMs": 650,
+            "viewEventDebounceMs": 250,
             "tapMaxMovementPx": 8,
             "flyThroughEasing": "ease_in_out",
             "backgroundColor": "#050709",
@@ -202,6 +203,11 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 10000
+            },
+            "viewEventDebounceMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
             },
             "tapMaxMovementPx": {
               "type": "number",
@@ -273,6 +279,7 @@
             "pixelRatioCap",
             "maxTriangleCountWarning",
             "cameraAnimationDurationMs",
+            "viewEventDebounceMs",
             "tapMaxMovementPx",
             "flyThroughEasing",
             "backgroundColor",

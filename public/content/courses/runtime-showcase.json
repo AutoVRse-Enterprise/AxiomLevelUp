@@ -644,6 +644,23 @@
           "feedback": {}
         },
         {
+          "id": "showcase-anatomy-explore",
+          "type": "anatomy_explore",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Select the trachea, then follow the airway to the carina.",
+            "startView": { "mode": "waypoint", "waypointId": "trachea-mid" },
+            "navigation": "both",
+            "requiredStructureIds": ["trachea"],
+            "requiredWaypointIds": ["carina"]
+          },
+          "assets": [],
+          "completion": { "mode": "explored" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        },
+        {
           "id": "showcase-dicom-explore",
           "type": "dicom_explore",
           "conceptIds": ["thoracic-imaging", "image-windowing"],

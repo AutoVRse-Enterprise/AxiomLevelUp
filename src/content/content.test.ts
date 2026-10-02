@@ -23,9 +23,10 @@ import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures
 function withCaseFixture(caseDocument: unknown = caseFixture) {
   const bundle = makeValidContentBundle()
   bundle.caseFiles = [{ file: 'fixtures/case.json', data: structuredClone(caseDocument) }]
-  bundle.anatomyMapFiles = [
-    { file: 'fixtures/anatomy-map.json', data: structuredClone(anatomyMapFixture) },
-  ]
+  bundle.anatomyMapFiles.push({
+    file: 'fixtures/anatomy-map.json',
+    data: structuredClone(anatomyMapFixture),
+  })
   const assetManifest = bundle.assetManifest as { assets: unknown[] }
   assetManifest.assets.push({
     assetId: 'fixture-anatomy-model',
@@ -237,11 +238,12 @@ describe('content loader', () => {
     expect(registry.catalogCourses.map(({ id }) => id)).not.toContain('runtime-showcase')
     expect(registry.lessonById).toHaveLength(13)
     expect(registry.courseById.get('runtime-showcase')?.visibility).toBe('internal')
-    expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(26)
+    expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(27)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
     expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
     expect(registry.cases).toEqual([])
-    expect(registry.anatomyMaps).toEqual([])
+    expect(registry.anatomyMapById.get('lung-map')?.modelAssetId).toBe('lung-model')
+    expect(registry.anatomyMaps).toHaveLength(1)
     expect(registry.warnings).toEqual([])
   })
 
@@ -251,7 +253,7 @@ describe('content loader', () => {
       anatomyMaps: string[]
     }
     manifest.cases = ['fixtures/case.json']
-    manifest.anatomyMaps = ['fixtures/anatomy-map.json']
+    manifest.anatomyMaps = ['anatomy/lung-map.json', 'fixtures/anatomy-map.json']
     const caseBundle = withCaseFixture()
     const appConfig = caseBundle.appConfig
     const responses = new Map(contentResponses)
@@ -350,7 +352,9 @@ describe('content loader', () => {
 
   it('validates anatomy hierarchy, mesh bindings, and waypoint graphs', () => {
     const bundle = withCaseFixture()
-    const anatomyMap = bundle.anatomyMapFiles[0]!.data as {
+    const anatomyMap = bundle.anatomyMapFiles.find(
+      ({ file }) => file === 'fixtures/anatomy-map.json',
+    )!.data as {
       levels: Array<{ id: string; label: string }>
       structures: Array<{
         id: string

@@ -1,5 +1,6 @@
 import appConfig from '../../public/content/app-config.json'
 import assets from '../../public/content/assets.json'
+import lungMap from '../../public/content/anatomy/lung-map.json'
 import clinicalResearch from '../../public/content/courses/clinical-research.json'
 import dataInterpretation from '../../public/content/courses/data-interpretation.json'
 import runtimeShowcase from '../../public/content/courses/runtime-showcase.json'
@@ -28,7 +29,7 @@ export function makeValidContentBundle(): ContentBundleInput {
     appConfig,
     courseFiles: courseDocuments.map(([file, data]) => ({ file, data })),
     caseFiles: [],
-    anatomyMapFiles: [],
+    anatomyMapFiles: [{ file: 'anatomy/lung-map.json', data: lungMap }],
     seedFile: 'seeds/advanced.json',
     seed: advancedSeed,
     assetManifestFile: 'assets.json',
@@ -40,6 +41,7 @@ export const contentResponses = new Map<string, unknown>([
   ['/content/manifest.json', manifest],
   ['/content/app-config.json', appConfig],
   ['/content/assets.json', assets],
+  ['/content/anatomy/lung-map.json', lungMap],
   ['/content/seeds/advanced.json', advancedSeed],
   ...courseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
 ])

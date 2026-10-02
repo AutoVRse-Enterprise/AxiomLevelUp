@@ -98,9 +98,7 @@ describe('DICOM primitive components', () => {
 
     withContent(<PrimitiveRenderer {...props(missing)} onComplete={onComplete} />)
 
-    expect(
-      await screen.findByRole('heading', { name: 'Imaging study unavailable' }),
-    ).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Imaging study unavailable' })).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     expect(onComplete).toHaveBeenCalledOnce()
   })

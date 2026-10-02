@@ -18,8 +18,11 @@ export function ImageComparePrimitive({
   const [position, setPosition] = useState(primitive.content.initialPosition)
   const comparisonRef = useRef<HTMLDivElement>(null)
   const draggingDivider = useRef(false)
-  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
-    useImmersiveArtifact<HTMLElement>()
+  const {
+    ref: immersiveRef,
+    immersive,
+    toggle: toggleImmersive,
+  } = useImmersiveArtifact<HTMLElement>()
 
   useEffect(onComplete, [onComplete])
 
@@ -54,8 +57,7 @@ export function ImageComparePrimitive({
     <figure
       className={cn(
         'space-y-4',
-        immersive &&
-          'fixed inset-0 z-overlay h-dvh overflow-y-auto bg-neutral-950 p-4 text-white',
+        immersive && 'fixed inset-0 z-overlay h-dvh overflow-y-auto bg-neutral-950 p-4 text-white',
       )}
       ref={immersiveRef}
     >

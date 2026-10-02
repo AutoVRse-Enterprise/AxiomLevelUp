@@ -33,7 +33,13 @@ export const dicomPrimitiveTypes = [
   'dicom_measure',
 ] as const
 
-export const domainPrimitiveTypes = ['scenario', ...dicomPrimitiveTypes] as const
+export const anatomyPrimitiveTypes = ['anatomy_explore'] as const
+
+export const domainPrimitiveTypes = [
+  'scenario',
+  ...dicomPrimitiveTypes,
+  ...anatomyPrimitiveTypes,
+] as const
 
 export const primitiveTypes = [
   ...contentPrimitiveTypes,
@@ -46,4 +52,5 @@ export type PrimitiveType = (typeof primitiveTypes)[number]
 export const primitiveTypeSet: ReadonlySet<string> = new Set(primitiveTypes)
 export const contentPrimitiveTypeSet: ReadonlySet<string> = new Set(contentPrimitiveTypes)
 export const dicomPrimitiveTypeSet: ReadonlySet<string> = new Set(dicomPrimitiveTypes)
+export const anatomyPrimitiveTypeSet: ReadonlySet<string> = new Set(anatomyPrimitiveTypes)
 export const timerCompatibleTypeSet: ReadonlySet<string> = new Set(timerCompatibleTypes)

@@ -9,7 +9,7 @@
     "courses/runtime-showcase.json"
   ],
   "cases": [],
-  "anatomyMaps": [],
+  "anatomyMaps": ["anatomy/lung-map.json"],
   "seeds": {
     "advanced": "seeds/advanced.json",
     "fresh": "seeds/fresh.json"

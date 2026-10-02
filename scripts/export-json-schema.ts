@@ -14,6 +14,7 @@ import {
   primitiveBaseSchema,
 } from '../src/content/schema/index.ts'
 import {
+  anatomyPrimitiveTypes,
   assessmentPrimitiveTypes,
   contentPrimitiveTypes,
   dicomPrimitiveTypes,
@@ -114,6 +115,7 @@ ${assessmentPrimitiveTypes.map((type) => `- \`${type}\``).join('\n')}
 
 - \`scenario\` (strict standard primitive)
 ${dicomPrimitiveTypes.map((type) => `- \`${type}\` (strict DICOM primitive)`).join('\n')}
+${anatomyPrimitiveTypes.map((type) => `- \`${type}\` (strict anatomy primitive)`).join('\n')}
 
 ## Strict primitive schemas (${Object.keys(primitiveContentSchemas).length})
 
@@ -121,9 +123,10 @@ ${Object.keys(primitiveContentSchemas)
   .map((type) => `- \`${type}\``)
   .join('\n')}
 
-The four DICOM types require a typed DICOM series asset and strict mode-specific content. Unknown
-types are retained with a warning so development playback can render the unsupported fallback.
-Every lesson primitive and challenge item passes through the same parser and semantic validation.
+The four DICOM types require a typed DICOM series asset and strict mode-specific content.
+\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset. Unknown types
+are retained with a warning so development playback can render the unsupported fallback. Every
+lesson primitive and challenge item passes through the same parser and semantic validation.
 
 ### DICOM primitive content
 

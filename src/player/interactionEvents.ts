@@ -110,5 +110,50 @@ export function mapInteractionToEvents(
     })
   }
 
+  if (interaction.name === 'anatomy_structure_selected' && 'structureId' in interaction) {
+    events.push({
+      event: 'anatomy_structure_selected',
+      ...context,
+      structureId: interaction.structureId,
+    })
+  }
+
+  if (interaction.name === 'anatomy_waypoint_reached' && 'waypointId' in interaction) {
+    events.push({
+      event: 'anatomy_waypoint_reached',
+      ...context,
+      waypointId: interaction.waypointId,
+    })
+  }
+
+  if (interaction.name === 'anatomy_view_changed' && 'position' in interaction) {
+    events.push({
+      event: 'anatomy_view_changed',
+      ...context,
+      position: interaction.position,
+      target: interaction.target,
+      waypointId: interaction.waypointId,
+      endoscopic: interaction.endoscopic,
+    })
+  }
+
+  if (interaction.name === 'anatomy_viewer_loaded' && 'loadMs' in interaction) {
+    events.push({
+      event: 'anatomy_viewer_loaded',
+      ...context,
+      loadMs: interaction.loadMs,
+      meshCount: interaction.meshCount,
+      triangleCount: interaction.triangleCount,
+    })
+  }
+
+  if (interaction.name === 'anatomy_viewer_failed' && 'reason' in interaction) {
+    events.push({
+      event: 'anatomy_viewer_failed',
+      ...context,
+      reason: interaction.reason,
+    })
+  }
+
   return events
 }

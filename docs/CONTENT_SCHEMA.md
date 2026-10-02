@@ -53,7 +53,7 @@ used by a case must resolve.
 
 ## Primitive registry
 
-The canonical registry contains 25 strict primitive types: 21 standard types and 4 DICOM types.
+The canonical registry contains 26 strict primitive types: 22 standard types and 4 DICOM types.
 
 ### Content (12)
 
@@ -88,9 +88,11 @@ The canonical registry contains 25 strict primitive types: 21 standard types and
 - `dicom_guided` (strict DICOM primitive)
 - `dicom_identify_region` (strict DICOM primitive)
 - `dicom_measure` (strict DICOM primitive)
+- `anatomy_explore` (strict anatomy primitive)
 
-## Strict primitive schemas (25)
+## Strict primitive schemas (26)
 
+- `anatomy_explore`
 - `rich_text`
 - `image`
 - `zoomable_image`
@@ -117,9 +119,10 @@ The canonical registry contains 25 strict primitive types: 21 standard types and
 - `dicom_identify_region`
 - `dicom_measure`
 
-The four DICOM types require a typed DICOM series asset and strict mode-specific content. Unknown
-types are retained with a warning so development playback can render the unsupported fallback.
-Every lesson primitive and challenge item passes through the same parser and semantic validation.
+The four DICOM types require a typed DICOM series asset and strict mode-specific content.
+`anatomy_explore` resolves a configured anatomy map and its online-only model asset. Unknown types
+are retained with a warning so development playback can render the unsupported fallback. Every
+lesson primitive and challenge item passes through the same parser and semantic validation.
 
 ### DICOM primitive content
 
