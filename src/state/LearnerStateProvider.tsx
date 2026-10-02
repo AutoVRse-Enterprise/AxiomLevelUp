@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 
 import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
-import { Skeleton } from '@/components/ui'
+import { LoadingState } from '@/components/ui'
 import { initializeHapticEffects } from '@/effects/haptics'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { initializeLearningProgressHandlers } from '@/events/handlers'
@@ -55,12 +55,11 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
 
   if (!ready) {
     return (
-      <main className="mx-auto max-w-3xl space-y-5 p-5 sm:p-8">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-44 w-full" />
-        <span className="sr-only" role="status">
-          Restoring learner progress
-        </span>
+      <main className="mx-auto max-w-3xl p-5 sm:p-8">
+        <LoadingState
+          message="Restoring your progress and active learning session."
+          title="Preparing your learning space"
+        />
       </main>
     )
   }

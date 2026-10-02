@@ -2,7 +2,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 
 import { ContentContext } from '@/app/contentContext'
 import { ContentErrorScreen } from '@/components/feedback/ContentErrorScreen'
-import { Skeleton } from '@/components/ui'
+import { LoadingState } from '@/components/ui'
 import { loadContent, type ContentRegistry } from '@/content/loader'
 import { OfflineReconciler } from '@/offline/OfflineReconciler'
 
@@ -28,12 +28,11 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   if (error) return <ContentErrorScreen error={error} />
   if (!registry) {
     return (
-      <main className="mx-auto max-w-3xl space-y-5 p-5 sm:p-8">
-        <Skeleton className="h-8 w-52" />
-        <Skeleton className="h-44 w-full" />
-        <span className="sr-only" role="status">
-          Loading course content
-        </span>
+      <main className="mx-auto max-w-3xl p-5 sm:p-8">
+        <LoadingState
+          message="Validating courses, activities and scientific assets."
+          title="Loading learning content"
+        />
       </main>
     )
   }

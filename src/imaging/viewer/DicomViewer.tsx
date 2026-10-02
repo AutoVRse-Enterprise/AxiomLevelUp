@@ -250,7 +250,10 @@ export function DicomViewer({
         {state.status !== 'ready' ? (
           <div className="absolute inset-0 z-10 grid place-items-center bg-clinical-950/95 p-6 text-center">
             <div className="w-full max-w-md">
-              <p className="font-semibold">{state.message}</p>
+              <p className="font-semibold">
+                {failed ? 'Imaging study unavailable' : 'Preparing imaging study'}
+              </p>
+              <p className="mt-2 text-small text-neutral-300">{state.message}</p>
               {state.total > 0 && !failed ? (
                 <ProgressBar
                   className="mt-5 [&_span]:text-neutral-200"

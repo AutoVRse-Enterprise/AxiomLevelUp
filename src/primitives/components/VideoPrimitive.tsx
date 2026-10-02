@@ -1,6 +1,7 @@
+import { RotateCcw } from 'lucide-react'
 import { useRef, useState, type SyntheticEvent } from 'react'
 
-import { Button } from '@/components/ui'
+import { Button, InlineNotice, LoadingState } from '@/components/ui'
 import type { VideoPrimitive as VideoPrimitiveConfig } from '@/content/schema/primitives'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { calculatePlayedCoverage, crossedCoverageSteps } from '@/primitives/mediaProgress'
@@ -19,12 +20,17 @@ export function VideoPrimitive({
   const completedCheckpoints = useRef(new Set<string>())
   const [activeCheckpointId, setActiveCheckpointId] = useState<string | null>(null)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
+  const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>(
+    videoUrl ? 'loading' : 'error',
+  )
+  const [loadAttempt, setLoadAttempt] = useState(0)
   const activeCheckpoint = primitive.content.checkpoints?.find(
     ({ id }) => id === activeCheckpointId,
   )
 
   const handleTimeUpdate = (event: SyntheticEvent<HTMLVideoElement>) => {
     const video = event.currentTarget
+    setMediaState('ready')
     const coverage = calculatePlayedCoverage(video.played, video.duration)
     for (const fraction of crossedCoverageSteps(reportedCoverage.current, coverage)) {
       onInteract({ name: 'media_progress', fraction })
@@ -52,35 +58,64 @@ export function VideoPrimitive({
           <p className="mt-1 text-small text-neutral-600">{primitive.content.description}</p>
         ) : null}
       </div>
-      {videoUrl ? (
-        <video
-          ref={videoRef}
-          className="aspect-video w-full rounded-xl bg-neutral-950"
-          aria-label={primitive.content.title}
-          controls
-          playsInline
-          preload="metadata"
-          poster={posterUrl}
-          onTimeUpdate={handleTimeUpdate}
-          onProgress={handleTimeUpdate}
-        >
-          <source src={videoUrl} type="video/mp4" />
-          <track
-            kind="captions"
-            src={captionsUrl}
-            srcLang="en"
-            label={primitive.content.captionsLabel}
-            default
-          />
-          Your browser does not support embedded video.
-        </video>
-      ) : (
-        <div
-          className="grid aspect-video place-items-center rounded-xl bg-neutral-100"
-          role="status"
-        >
-          Video unavailable
+      {videoUrl && mediaState !== 'error' ? (
+        <div className="relative aspect-video overflow-hidden rounded-xl bg-neutral-950">
+          <video
+            ref={videoRef}
+            aria-label={primitive.content.title}
+            className="size-full"
+            controls
+            key={loadAttempt}
+            onError={() => setMediaState('error')}
+            onLoadedData={() => setMediaState('ready')}
+            onPlaying={() => setMediaState('ready')}
+            onProgress={handleTimeUpdate}
+            onTimeUpdate={handleTimeUpdate}
+            onWaiting={() => setMediaState('loading')}
+            playsInline
+            poster={posterUrl}
+            preload="metadata"
+          >
+            <source src={videoUrl} type="video/mp4" />
+            <track
+              default
+              kind="captions"
+              label={primitive.content.captionsLabel}
+              src={captionsUrl}
+              srcLang="en"
+            />
+            Your browser does not support embedded video.
+          </video>
+          {mediaState === 'loading' ? (
+            <LoadingState
+              className="absolute inset-0 rounded-none border-0 bg-neutral-950/90 text-white shadow-none [&_p]:text-neutral-200"
+              compact
+              message="Preparing playback and captions."
+              title="Loading video"
+            />
+          ) : null}
         </div>
+      ) : (
+        <InlineNotice
+          action={
+            videoUrl ? (
+              <Button
+                leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
+                onClick={() => {
+                  setLoadAttempt((attempt) => attempt + 1)
+                  setMediaState('loading')
+                }}
+                size="sm"
+                variant="secondary"
+              >
+                Retry video
+              </Button>
+            ) : null
+          }
+          message="The lesson can continue, but this video could not be loaded."
+          title="Video unavailable"
+          tone="warning"
+        />
       )}
       {primitive.content.markers?.length ? (
         <nav aria-label="Video markers" className="flex flex-wrap gap-2">

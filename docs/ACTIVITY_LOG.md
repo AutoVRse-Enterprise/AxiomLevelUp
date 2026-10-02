@@ -1534,3 +1534,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Both route trees share one transition/focus implementation and retain
   their existing shell and celebration boundaries.
 - **Follow-ups:** Replace generic boot and artifact placeholders with designed loading states.
+
+### [2026-10-02 13:15] P8-T11 - Design loading states
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced generic boot/route/primitive skeletons with contextual loading states; added
+  image fade/shimmer and retry, video buffering/poster/error handling, audio preparation/error
+  handling and explicit DICOM study/slice copy.
+- **Files changed:** providers, router fallback, primitive registry, image/video/audio primitives,
+  DICOM viewer, Phase 8 checklist and activity log.
+- **Commands run:** Typecheck, lint and focused media/DICOM tests.
+- **Result/verification:** Two focused files with ten tests pass. Substantial artifacts now reserve
+  space, explain current work and surface recoverable media failures.
+- **Follow-ups:** Complete the shared error contract and required PRD error variants.

@@ -8,19 +8,22 @@ import {
 } from 'react'
 
 import type { TypedPrimitive } from '@/content/schema/primitives'
+import { LoadingState } from '@/components/ui'
+import { ErrorState } from '@/components/feedback/ErrorState'
 import { primitiveComponents } from '@/primitives/componentRegistry'
+import { DicomAssetUnavailableError } from '@/primitives/components/dicomUtils'
 import { UnsupportedPrimitive } from '@/primitives/components/UnsupportedPrimitive'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 class PrimitiveErrorBoundary extends Component<
-  { fallback: ReactNode; children: ReactNode },
-  { failed: boolean }
+  { fallback: (error: Error, retry: () => void) => ReactNode; children: ReactNode },
+  { error: Error | null }
 > {
-  state = { failed: false }
+  state: { error: Error | null } = { error: null }
 
-  static getDerivedStateFromError() {
-    return { failed: true }
+  static getDerivedStateFromError(error: Error) {
+    return { error }
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -28,7 +31,9 @@ class PrimitiveErrorBoundary extends Component<
   }
 
   render() {
-    return this.state.failed ? this.props.fallback : this.props.children
+    return this.state.error
+      ? this.props.fallback(this.state.error, () => this.setState({ error: null }))
+      : this.props.children
   }
 }
 
@@ -42,12 +47,36 @@ export function PrimitiveRenderer(props: PrimitiveComponentProps) {
   >
 
   return (
-    <PrimitiveErrorBoundary fallback={fallback}>
+    <PrimitiveErrorBoundary
+      fallback={(error, retry) =>
+        error instanceof DicomAssetUnavailableError ? (
+          <ErrorState
+            actionLabel="Continue"
+            message={error.message}
+            onAction={props.onComplete}
+            title="Imaging study unavailable"
+            titleAs="h2"
+          />
+        ) : (
+          <ErrorState
+            actionLabel="Retry activity"
+            message="The activity renderer encountered an unexpected problem. Try again or continue."
+            onAction={retry}
+            onSecondaryAction={props.onComplete}
+            secondaryActionLabel="Continue"
+            title="Activity could not load"
+            titleAs="h2"
+          />
+        )
+      }
+    >
       <Suspense
         fallback={
-          <div className="min-h-48 animate-pulse rounded-xl bg-neutral-100" role="status">
-            <span className="sr-only">Loading activity</span>
-          </div>
+          <LoadingState
+            className={resolved.definition.layout === 'viewer' ? 'min-h-[55dvh]' : 'min-h-48'}
+            message={`Preparing ${resolved.definition.label.toLowerCase()}.`}
+            title="Loading activity"
+          />
         }
       >
         <Registered {...props} primitive={resolved.primitive} />

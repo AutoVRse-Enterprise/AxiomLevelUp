@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState, type SyntheticEvent } from 'react'
 
+import { RotateCcw } from 'lucide-react'
+
+import { Button, InlineNotice, LoadingState } from '@/components/ui'
 import type { AudioPrimitive as AudioPrimitiveConfig } from '@/content/schema/primitives'
 import { useAsset, useAssetUrl } from '@/content/useAssetUrl'
 import { calculatePlayedCoverage, crossedCoverageSteps } from '@/primitives/mediaProgress'
@@ -13,6 +16,10 @@ export function AudioPrimitive({
   const transcriptAsset = useAsset(primitive.content.transcriptAssetId)
   const reportedCoverage = useRef(0)
   const [transcript, setTranscript] = useState(primitive.content.transcript ?? '')
+  const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>(
+    audioUrl ? 'loading' : 'error',
+  )
+  const [loadAttempt, setLoadAttempt] = useState(0)
 
   useEffect(() => {
     if (!transcriptAsset) return
@@ -45,24 +52,49 @@ export function AudioPrimitive({
           <p className="mt-1 text-small text-neutral-600">{primitive.content.description}</p>
         ) : null}
       </div>
-      {audioUrl ? (
-        // An adjacent, authored transcript is the accessible alternative for audio-only media.
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <audio
-          className="w-full"
-          aria-label={primitive.content.title}
-          controls
-          preload="metadata"
-          onTimeUpdate={reportProgress}
-          onProgress={reportProgress}
-        >
-          <source src={audioUrl} type="audio/mp4" />
-          Your browser does not support embedded audio.
-        </audio>
-      ) : (
-        <div className="rounded-lg bg-neutral-100 p-4 text-neutral-600" role="status">
-          Audio unavailable
+      {audioUrl && mediaState !== 'error' ? (
+        <div className="space-y-3">
+          {mediaState === 'loading' ? (
+            <LoadingState compact title="Loading audio" message="Preparing audio and transcript." />
+          ) : null}
+          {/* An adjacent, authored transcript is the accessible alternative for audio-only media. */}
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio
+            aria-label={primitive.content.title}
+            className="w-full"
+            controls
+            key={loadAttempt}
+            onCanPlay={() => setMediaState('ready')}
+            onError={() => setMediaState('error')}
+            onProgress={reportProgress}
+            onTimeUpdate={reportProgress}
+            preload="metadata"
+          >
+            <source src={audioUrl} type="audio/mp4" />
+            Your browser does not support embedded audio.
+          </audio>
         </div>
+      ) : (
+        <InlineNotice
+          action={
+            audioUrl ? (
+              <Button
+                leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
+                onClick={() => {
+                  setLoadAttempt((attempt) => attempt + 1)
+                  setMediaState('loading')
+                }}
+                size="sm"
+                variant="secondary"
+              >
+                Retry audio
+              </Button>
+            ) : null
+          }
+          message="Use the transcript below while the audio is unavailable."
+          title="Audio unavailable"
+          tone="warning"
+        />
       )}
       <details
         className="rounded-lg border border-neutral-200 bg-white p-4"

@@ -2,7 +2,7 @@ import { createBrowserRouter } from 'react-router'
 import { lazy, Suspense, type ReactNode } from 'react'
 
 import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
-import { Skeleton } from '@/components/ui'
+import { LoadingState } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { ChallengePage } from '@/routes/challenge/ChallengePage'
@@ -36,12 +36,8 @@ function lazyPage(page: ReactNode) {
   return (
     <Suspense
       fallback={
-        <main className="mx-auto w-full max-w-3xl space-y-5 p-5 sm:p-8">
-          <Skeleton className="h-8 w-52" />
-          <Skeleton className="h-48 w-full" />
-          <span className="sr-only" role="status">
-            Loading screen
-          </span>
+        <main className="mx-auto w-full max-w-3xl p-5 sm:p-8">
+          <LoadingState message="Loading this part of the learning runtime." title="Opening screen" />
         </main>
       }
     >
