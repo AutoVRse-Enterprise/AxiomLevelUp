@@ -1757,3 +1757,31 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   entry 130,029 gzip bytes, imaging 1,006,573 and confetti 4,244.
 - **Follow-ups:** P9-M01 and P9-M02 require the hosted URLs and physical devices; use the prepared
   scripts and result template, then triage findings under P9-M03.
+
+### [2026-10-03 02:20] P10-T00 - Plan Case Lab capability demo
+
+- **Agent/session:** Cursor planning session
+- **Action:** Analysed the prospect's example brief (`docs/reference docs/Sanofi artifact
+requirement.pdf` plus three images sent separately in chat) against the runtime. Agreed scope in
+  three clarification rounds, then wrote the Phase 10 plan, proposed ADR-066 through ADR-073,
+  redefined the Phase 10 roadmap row and refreshed the handoff.
+- **Files changed:** `docs/phases/phase-10-case-lab.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md`,
+  `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Repository and schema inspection; autovrse.com page fetch for palette and
+  typography.
+- **Result/verification:** Documentation only; no runtime code changed. The plan and decisions are
+  marked Proposed pending user review.
+- **Follow-ups:** After approval, mark ADR-066 through ADR-073 Accepted and start P10-T01 (asset and
+  3D feasibility spike).
+
+### [2026-10-03 02:33] P10-T00 - Approve Case Lab implementation plan
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Adopted the detailed Phase 10 implementation plan, marked ADR-066 through ADR-073
+  Accepted, activated the roadmap phase and aligned the phase and handoff snapshots.
+- **Files changed:** `docs/phases/phase-10-case-lab.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md`,
+  `docs/HANDOFF.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Documentation formatting and focused diff review.
+- **Result/verification:** The approved defaults, task dependencies and acceptance criteria are now
+  the execution baseline. No runtime code changed.
+- **Follow-ups:** Start P10-T01 and the parallel contract/scoring workstreams.

@@ -2,48 +2,38 @@
 
 ## Current phase/task
 
-Phase 9 — all agent-executable showcase and browser QA is complete. Physical Android/iOS release
-gates P9-M01 through P9-M03 are pending.
+Phase 10 (Case Lab capability demo): P10-T00 planning is approved and complete; P10-T01 is next.
+Phase 9 remains open only for its physical Android/iOS gates (P9-M01 through P9-M03).
 
 ## Done
 
-- Phase 9 scope, PRD traceability and the physical-device release boundary are documented.
-- The internal showcase now has 26 steps covering all 25 registered primitive types plus both
-  exploratory and assessed hotspot modes.
-- `dicom_guided` was added to the showcase with preset, slice-range, acknowledgement and scored
-  checkpoint requirements.
-- Automated parity coverage fails if a registered primitive type is absent. The real route
-  completes all 26 steps and verifies ordered lifecycle events, retries, summary and session cleanup.
-- Production Chromium QA passes 375×812, 812×375, 768×900 and 1280×900 with no document overflow;
-  review, missing assets, reduced motion, keyboard zoom and resume recovery were exercised.
-- A separate CORS host verified 125 DICOM instances and 65,894,350 bytes. All four viewers loaded,
-  `dicom-studies-v1` held 126 responses and an offline hard reload restored every viewer.
-- Android/iOS execution scripts, hosted-environment prerequisites and a shared result template are
-  ready in `docs/qa/`.
-- ADR-064 and ADR-065 record registry-defined showcase completeness and the non-substitutable
-  physical-device gate.
-- `npm run check` passes with 38 test files and 248 tests, zero content warnings, entry 130,029 gzip
-  bytes, imaging 1,006,573 and confetti 4,244.
+- Analysed the prospect's example brief (`docs/reference docs/Sanofi artifact requirement.pdf` plus
+  three images sent in chat). The brief is an example of possible requirements, not a contract.
+- Agreed the demo scope with the user in three clarification rounds. It is recorded in
+  `docs/phases/phase-10-case-lab.md`.
+- Accepted ADR-066 through ADR-073: the phase redefinition, case documents, clue-linked feedback,
+  composite scoring, the lazy three.js boundary, the anatomy hierarchy and drill-down localisation,
+  local attempt comparison and the branding scope.
+- Phase 10 roadmap row redefined. No runtime code changed.
+- Phase 9 agent-executable work is complete. `npm run check` last passed with 38 test files and 248
+  tests.
 
 ## In progress
 
-- P9-M01 — physical Android Chrome matrix: not started.
-- P9-M02 — physical iOS Safari and installed-app matrix: not started.
-- P9-M03 — device defect triage and release approval/waiver: blocked on M01 and M02.
+- P10-T01 — asset and 3D feasibility spike: ready to start.
+- P9-M01 through P9-M03: physical-device runs not started.
 
 ## Next three steps
 
-1. Supply an HTTPS app URL and CORS-capable DICOM URL; complete the hosting prerequisites.
-2. Execute `docs/qa/phase-09-android-script.md` and save a completed result record.
-3. Execute `docs/qa/phase-09-ios-script.md`, triage findings and close or explicitly waive Phase 9.
+1. Start P10-T01: source a free lung GLB and clue assets, test lobe separation, endoscopic interior
+   rendering, chunk size and frame rate, and record provenance.
+2. Begin the non-3D contracts in parallel: P10-T02 (case schema) and P10-T09 (pure scoring engine).
+3. Implement P10-T03 and P10-T04 after the spike selects the model and 3D approach.
 
 ## Blockers/questions for the user
 
-- Physical Android and iOS hardware or an approved remote-device service is required.
-- A production HTTPS app URL and external CORS-capable DICOM host URL must be supplied.
-- The DICOM technical note referenced by the PRD remains unavailable.
-- The tracheal region and 17.6 mm educational reference require SME approval before customer or
-  clinical use.
+- Phase 9 still needs physical Android/iOS hardware, a production HTTPS URL and a CORS-capable DICOM
+  host.
 
 ## Environment notes
 
@@ -55,26 +45,23 @@ gates P9-M01 through P9-M03 are pending.
 - Refresh asset integrity metadata with `npm run assets:hash`.
 - Local cross-origin QA: `npm run dicom:serve`, set
   `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview on another origin.
-- Phase 9 browser and runtime evidence is in `docs/qa/phase-09-browser-qa.md` and
-  `docs/qa/phase-09-runtime-evidence.md`.
-- Physical setup and evidence collection starts at
-  `docs/qa/phase-09-hosting-prerequisites.md`.
+- The user has an unrelated staged change to `AGENTS.md`, and `docs/reference docs/` is untracked.
+  Phase 10 planning commits must not sweep these in.
+- autovrse.com palette observed: `#5C4ACF`, `#8564D4`, `#7E48B7`, accent `#C46DD2`; typography is
+  Inter.
 
 ## Gotchas
 
-- Never import `@cornerstonejs/*` outside `src/imaging/cornerstone`.
+- Never import `@cornerstonejs/*` outside `src/imaging/cornerstone`. Under the Phase 10 plan,
+  `three` is likewise restricted to `src/anatomy3d/three`.
+- New primitives (`anatomy_explore`, `anatomy_locate`) must be added to the showcase or the parity
+  test fails (ADR-064).
+- Widening the activity kind to `case` touches plans, sessions, events and learner-state schemas;
+  learner state moves to v5 with a migration.
 - DICOM binaries remain ignored and outside the application precache.
 - `offline-courses-v1` is the only source of verified readiness; `dicom-studies-v1` is best effort.
-- A worker update may wait. Activate it before judging current cache behavior.
-- Asset content changes require `npm run assets:hash`; stale sizes or hashes fail validation.
-- Downloads are foreground work and pause when the application loses connectivity.
-- A simulated-offline flag persists in service-worker IndexedDB; restore it after manual QA.
 - A waiting service worker can make a preview tab look stale; activate the update or use a clean
   origin before comparing bundles.
-- Motion tests should assert semantic presence unless they explicitly advance animation frames;
-  initial opacity is intentionally zero in full-motion mode.
-- The showcase count is 26 steps but 25 unique types; `image_hotspot` intentionally appears twice.
-- `offline-courses-v1` being empty during passive revisit QA is correct; only explicit downloads
-  populate it.
-- Chromium emulation does not satisfy physical install, pinch, haptic, Safari safe-area or
-  memory-pressure acceptance.
+- Motion tests should assert semantic presence unless they explicitly advance animation frames.
+- Chromium emulation does not satisfy physical install, pinch, haptic, Safari safe-area,
+  memory-pressure or (for Phase 10) 3D GPU acceptance.

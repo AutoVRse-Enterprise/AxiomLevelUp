@@ -8,6 +8,7 @@
 4. The latest entries in `docs/ACTIVITY_LOG.md`
 5. `docs/DECISIONS.md`
 6. `PRD.md` when product intent or acceptance criteria are unclear
+7. `docs/qa/` 
 
 ## Architectural rules
 

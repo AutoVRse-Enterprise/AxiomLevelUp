@@ -11,7 +11,7 @@
 | 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                    |
 | 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
-| 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
+| 10    | Case Lab capability demo       | Active   | Three respiratory cases play through the case player; new cases need content only        |
 
 ## Sequencing note
 
@@ -58,3 +58,9 @@ a 26-step internal showcase, a complete real-player integration flow, production
 cross-origin/offline DICOM verification. Android Chrome and iOS Safari/installed-app scripts and
 evidence templates are ready; the phase remains active until those physical runs pass or are
 explicitly waived.
+
+Phase 10 was redefined on 2026-10-03 (ADR-066). Instead of a prospect-specific course, it builds a
+reusable case-game capability: case documents, a staged case player, clue-linked feedback,
+composite anatomy/diagnosis/speed scoring, lazy three.js anatomy and drill-down localisation. Three
+respiratory sample cases and a daily quick case demonstrate it. The implementation plan was
+approved on 2026-10-03, and Phase 9 physical-device gates continue in parallel.

@@ -963,3 +963,141 @@ authorized release approver records an explicit waiver.
 **Consequences:** Agent-executable work can finish without creating false device confidence. Phase 9
 stays active with P9-M01 through P9-M03 open, and each physical run uses the shared evidence template
 so defects and waivers are auditable.
+
+## ADR-066: Phase 10 is a case-game capability demo
+
+**Status:** Accepted
+
+**Context:** The roadmap defined Phase 10 as a prospect-specific Sanofi course that runs without
+runtime code changes. A prospect's example brief instead describes a case-based diagnostic game:
+3D anatomy, clue layers, drill-down localisation, composite scoring with speed, difficulty tiers,
+multiplayer and segmented analytics. It is an example of possible future requirements, not a
+contract, and the immediate goal is a demo of relevant capabilities using sample internet assets.
+
+**Decision:** Redefine Phase 10 as the Case Lab capability demo. It adds runtime capabilities (a case
+content type, a case player, 3D anatomy, drill-down localisation, clue-linked feedback, timing and
+composite scoring) and demonstrates them with three respiratory sample cases plus a daily quick
+case. Multiplayer, segmented leaderboards, a backend, DICOM inside cases, offline 3D and clinical
+review are excluded.
+
+**Consequences:** The "no runtime code changes" exit signal no longer applies to Phase 10. It now
+applies to adding a further case once the capability exists. Phase 9 physical-device gates stay
+open in parallel, and 3D device evidence joins them.
+
+## ADR-067: Cases are first-class documents composed of primitive stages
+
+**Status:** Accepted
+
+**Context:** A case needs a patient profile, a clue catalogue, staged progression, tier rules and
+an expert benchmark. Modelling it as an ordinary lesson would hide those concepts in conventions
+that cannot be validated, while a bespoke case screen would violate the configuration-driven rule.
+
+**Decision:** Add a validated case document listed in the content manifest, and a `caseLab`
+section in app configuration. A case contains ordered stages (orient, observe, interpret,
+diagnose), and each stage contains ordinary primitives plus references to the clues it exposes.
+Clues are themselves primitives. Play uses a new `case` activity kind that wraps the existing step
+player with a stage shell, clue board and resumable case session.
+
+**Consequences:** All 25 existing primitives are reusable inside cases, and case structure is
+validated before UI. Activity-kind unions in plans, sessions, events and state widen, and the
+event pipeline gains case events.
+
+## ADR-068: Clue catalogue with clue-linked feedback
+
+**Status:** Accepted
+
+**Context:** The brief requires every wrong answer to point to the specific clue that should have
+been read. Existing feedback has one explanation per step; only scenario choices carry
+per-response text.
+
+**Decision:** Scored steps inside a case may declare `clueIds` as their default evidence. Choice
+options, image or anatomy regions and scenario choices may override this per response. References
+must resolve to clues in the same case; outside a case they are a validation error. The feedback
+panel names the missed clues and offers to reopen them.
+
+**Consequences:** Feedback becomes evidence-oriented without new per-primitive UI. Authors carry
+extra reference work, which semantic validation keeps consistent.
+
+## ADR-069: Configured composite case scoring
+
+**Status:** Accepted
+
+**Context:** Case scoring combines anatomical precision, diagnostic precision and speed, and the
+agreed design penalises opening optional clues. Tiers differ in timing: none, a stopwatch or a
+countdown.
+
+**Decision:** A pure case scoring engine computes anatomy and diagnosis from first-attempt
+fractional step scores grouped by stage component. Speed blends active per-step elapsed time with
+total case time against configured targets. The clue penalty is applied per optional clue opened.
+Weights default to 40/40/20, and when a tier has no timer, the speed weight is redistributed
+proportionally. Weights, targets, penalty, cap and tier presets live in `caseLab` configuration.
+Active elapsed time pauses while the page is hidden, consistent with ADR-030.
+
+**Consequences:** Scores are deterministic, testable and explainable in the results breakdown.
+`question_answered` gains optional `elapsedMs`. XP remains a pipeline rule fed by `case_completed`
+rather than a component calculation.
+
+## ADR-070: Lazy three.js anatomy boundary with online-only models
+
+**Status:** Accepted
+
+**Context:** The demo needs real 3D anatomy with orbit, picking, fly-through and an endoscopic camera
+on phones, tablets and desktops. A 3D runtime is large, and the existing Cornerstone boundary has
+proven the lazy imperative-controller pattern.
+
+**Decision:** Use plain three.js (GLTF loading, orbit controls, raycast picking) behind
+`src/anatomy3d/three/createAnatomyController.ts`, the only module allowed to import `three`. Do not use
+React Three Fiber. Add a `model` asset type for GLB files, a reference-counted model cache and
+explicit disposal, and a dedicated bundle-budget role. Models are online-only for this phase.
+
+**Consequences:** The entry chunk is unaffected, and 3D follows the same review, testing and cleanup
+rules as imaging. Offline packaging and physical-device 3D evidence are deferred.
+
+## ADR-071: Configured anatomy hierarchy, waypoints and drill-down localisation
+
+**Status:** Accepted
+
+**Context:** Localisation must drill through anatomical levels with partial credit, and the engine
+must remain organ-agnostic for future systems. Free models rarely provide bronchopulmonary segments
+or airway centrelines.
+
+**Decision:** An anatomy map document declares the model, ordered hierarchy levels with configured
+labels, structures bound to mesh names and an authored airway waypoint graph. `anatomy_explore`
+provides orbit and branch-by-branch fly-through. `anatomy_locate` grades each configured level
+independently with configurable level weights. Levels accept model picks, normalised image regions
+(reusing ADR-031) or choices, so 3D stops at lobe depth and finer levels use 2D. Every 3D selection
+also has a keyboard and list alternative.
+
+**Consequences:** A new organ system needs only a new map, model and content. Partial credit works
+with the existing fractional scoring. Fly-through quality depends on authored waypoints rather
+than geometry extraction.
+
+## ADR-072: Local case attempts and benchmark comparison
+
+**Status:** Accepted
+
+**Context:** The Compare step needs something to compare against, but multiplayer and backends are
+out of scope.
+
+**Decision:** Each case document carries a seeded expert benchmark (path, clues opened, time and
+score breakdown). Learner state v5 keeps a bounded per-case attempt history for own-history
+comparison and migrates v4 snapshots. The advanced demo seed includes one prior attempt so
+comparison is visible immediately.
+
+**Consequences:** Compare works offline and deterministically. The attempt record defines a format
+a future backend could store for asynchronous duels without changing the results UI.
+
+## ADR-073: Autovrse LevelUp branding is limited to identity tokens
+
+**Status:** Accepted
+
+**Context:** The demo should present as an Autovrse product. A full re-theme would risk the Phase 8
+contrast, motion and layout evidence.
+
+**Decision:** Rename the application to "Autovrse LevelUp" in configuration and the PWA manifest,
+add the Autovrse logo, regenerate icons and map accent tokens to the autovrse.com purple palette
+(observed `#5C4ACF`, `#8564D4`, `#7E48B7`, with `#C46DD2` limited to large or decorative use unless
+it passes AA). Typography stays Inter, which autovrse.com also uses.
+
+**Consequences:** Branding changes are confined to configuration, tokens and static assets. Contrast
+is re-audited only for changed tokens.
