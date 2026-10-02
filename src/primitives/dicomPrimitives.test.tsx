@@ -16,6 +16,7 @@ import { DicomExplorePrimitive } from '@/primitives/components/DicomExplorePrimi
 import { DicomGuidedPrimitive } from '@/primitives/components/DicomGuidedPrimitive'
 import { DicomIdentifyRegionPrimitive } from '@/primitives/components/DicomIdentifyRegionPrimitive'
 import { DicomMeasurePrimitive } from '@/primitives/components/DicomMeasurePrimitive'
+import { PrimitiveRenderer } from '@/primitives/registry'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
@@ -87,6 +88,23 @@ function withContent(node: ReactNode) {
 }
 
 describe('DICOM primitive components', () => {
+  it('routes a missing series to the imaging recovery state', async () => {
+    const user = userEvent.setup()
+    const onComplete = vi.fn()
+    const missing = {
+      ...explore,
+      content: { ...explore.content, seriesAssetId: 'missing-series' },
+    }
+
+    withContent(<PrimitiveRenderer {...props(missing)} onComplete={onComplete} />)
+
+    expect(
+      await screen.findByRole('heading', { name: 'Imaging study unavailable' }),
+    ).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(onComplete).toHaveBeenCalledOnce()
+  })
+
   it('reports exploration requirements and viewer lifecycle', async () => {
     const user = userEvent.setup()
     const componentProps = props(explore)

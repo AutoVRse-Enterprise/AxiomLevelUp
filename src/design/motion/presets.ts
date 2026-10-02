@@ -20,7 +20,7 @@ export const riseVariants: Variants = {
 }
 
 export const celebrateVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9, y: 12 },
+  hidden: { opacity: 1, scale: 0.9, y: 12 },
   visible: {
     opacity: 1,
     scale: 1,

@@ -1622,3 +1622,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Entry is 130,031 gzip bytes (84,552 below baseline); imaging is unchanged
   at 1,006,572; confetti is isolated at 4,244. Every budget passes.
 - **Follow-ups:** Complete focused coverage for preferences, effects and route focus.
+
+### [2026-10-02 14:30] P8-T18 - Cover polish behavior
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added coverage for legacy preference migration, system/explicit motion resolution,
+  designed loading/error/empty contracts, route-heading focus and the missing-DICOM recovery path;
+  re-ran existing haptic and celebration sequencing coverage.
+- **Files changed:** polish, route-transition and DICOM tests plus small animation testability
+  fixes, Phase 8 checklist and activity log.
+- **Commands run:** Five focused test files, typecheck and lint.
+- **Result/verification:** Five files and twelve focused tests pass with clean TypeScript and ESLint.
+- **Follow-ups:** Run final browser QA across all target viewports and preferences.
