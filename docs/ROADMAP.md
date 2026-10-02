@@ -8,7 +8,7 @@
 | 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
 | 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
 | 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                |
-| 7     | Complete PWA/offline           | Planned  | Course assets can be downloaded, verified and removed                                    |
+| 7     | Complete PWA/offline           | In progress | Course assets can be downloaded, verified and removed                                 |
 | 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
 | 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |

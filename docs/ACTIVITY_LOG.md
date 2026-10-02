@@ -1181,3 +1181,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   1,014.72 kB gzip.
 - **Follow-ups:** Begin Phase 7 planning; supply a production DICOM host and complete physical-device
   validation in Phase 9.
+
+### [2026-10-02 10:06] P7-T00 - Start complete offline phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Formalized the complete PWA/offline scope, resolved cache and simulated-offline
+  policies, added the Phase 7 task sequence and PRD traceability, and marked the roadmap in progress.
+- **Files changed:** `docs/phases/phase-07-pwa-offline.md`, `docs/ROADMAP.md`, activity log.
+- **Commands run:** Repository status inspection.
+- **Result/verification:** Phase 7 now has explicit rules and exit criteria for verified course
+  downloads, passive DICOM caching, offline gating, install/update UX and browser QA.
+- **Follow-ups:** Implement asset-manifest v0.2 and local integrity tooling.
