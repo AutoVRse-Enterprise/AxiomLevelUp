@@ -2,6 +2,7 @@ import { ArrowRight, Award, BookOpen, Flame, Target, Trophy } from 'lucide-react
 import { Link } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
+import { EmptyState } from '@/components/feedback/EmptyState'
 import {
   BadgeTile,
   MasteryBar,
@@ -159,15 +160,19 @@ export function HomePage() {
             </div>
           </Card>
         ) : (
-          <Card className="mt-4">
-            <h2 id="continue-heading" className="font-bold">
-              You are all caught up
-            </h2>
-            <p className="mt-1 text-neutral-600">Explore the catalog to find your next course.</p>
-            <Link className="mt-4 inline-flex font-semibold text-brand-700" to="/learn">
-              Browse learning
-            </Link>
-          </Card>
+          <div className="mt-4">
+            <EmptyState
+              action={
+                <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+                  Browse learning
+                </Link>
+              }
+              message="Explore the catalog to find your next course."
+              title="You are all caught up"
+              titleAs="h2"
+              titleId="continue-heading"
+            />
+          </div>
         )}
       </section>
 
@@ -281,15 +286,20 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <Card className="mt-4">
-              <Award aria-hidden="true" className="text-neutral-400" size={28} />
-              <h2 id="achievements-heading" className="mt-3 font-bold">
-                Your first achievement awaits
-              </h2>
-              <p className="mt-1 text-neutral-600">
-                Complete lessons to start your badge collection.
-              </p>
-            </Card>
+            <div className="mt-4">
+              <EmptyState
+                action={
+                  <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+                    Start a lesson
+                  </Link>
+                }
+                icon={<Award aria-hidden="true" size={28} />}
+                message="Complete lessons to start your badge collection."
+                title="Your first achievement awaits"
+                titleAs="h2"
+                titleId="achievements-heading"
+              />
+            </div>
           )}
         </section>
 

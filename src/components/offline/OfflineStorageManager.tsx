@@ -1,8 +1,9 @@
 import { HardDrive, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
-import { Button, Card, ProgressBar } from '@/components/ui'
+import { Button, Card, InlineNotice, ProgressBar } from '@/components/ui'
 import { formatBytes } from '@/offline/format'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import { browserStorageAdapter, type StorageEstimate } from '@/offline/platform'
@@ -88,9 +89,16 @@ export function OfflineStorageManager() {
           })}
         </ul>
       ) : (
-        <p className="mt-5 text-small text-neutral-600">
-          No courses have been downloaded on this device.
-        </p>
+        <InlineNotice
+          action={
+            <Link className="font-semibold underline underline-offset-4" to="/learn">
+              Browse courses
+            </Link>
+          }
+          className="mt-5"
+          message="Download a course to learn without a connection."
+          title="No offline courses yet"
+        />
       )}
     </Card>
   )

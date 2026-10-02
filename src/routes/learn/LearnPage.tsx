@@ -2,6 +2,7 @@ import { ArrowRight, Route } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
+import { EmptyState } from '@/components/feedback/EmptyState'
 import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
@@ -189,10 +190,22 @@ export function LearnPage() {
             ))}
           </div>
         ) : (
-          <Card className="mt-6 text-center">
-            <h2 className="font-bold">No courses match this filter</h2>
-            <p className="mt-1 text-neutral-600">Choose another status to see more learning.</p>
-          </Card>
+          <div className="mt-6">
+            <EmptyState
+              action={
+                <button
+                  className="font-semibold text-brand-700 underline underline-offset-4"
+                  onClick={() => setSearchParams({})}
+                  type="button"
+                >
+                  Show all courses
+                </button>
+              }
+              message="Choose another status to see more learning."
+              title="No courses match this filter"
+              titleAs="h2"
+            />
+          </div>
         )}
       </section>
     </div>

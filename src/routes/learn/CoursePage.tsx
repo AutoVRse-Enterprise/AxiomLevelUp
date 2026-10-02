@@ -31,7 +31,17 @@ export function CoursePage() {
   }, [course])
 
   if (!course) {
-    return <EmptyState title="Course not found" message="This course is not configured." />
+    return (
+      <EmptyState
+        action={
+          <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+            Browse courses
+          </Link>
+        }
+        message="This course is not configured or may have moved."
+        title="Course not found"
+      />
+    )
   }
 
   const summary = selectCourseSummary({ lessonProgress }, course, lessonById, courseById)

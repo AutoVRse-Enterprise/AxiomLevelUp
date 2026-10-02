@@ -1,6 +1,7 @@
 import { BookOpenCheck, CircleHelp, Flame, RadioTower, Sparkles, Trophy, Vibrate } from 'lucide-react'
 
 import { useContent } from '@/app/contentContext'
+import { EmptyState } from '@/components/feedback/EmptyState'
 import {
   Avatar,
   BadgeTile,
@@ -131,11 +132,21 @@ export function ProfilePage() {
           description="Mastery reflects demonstrated understanding, separately from XP."
           title="Mastery"
         />
-        <Card className="mt-4 grid gap-5 md:grid-cols-2">
-          {masteryViews.map((concept) => (
-            <MasteryBar key={concept.id} label={concept.title} value={concept.score} />
-          ))}
-        </Card>
+        {masteryViews.some(({ score }) => score > 0) ? (
+          <Card className="mt-4 grid gap-5 md:grid-cols-2">
+            {masteryViews.map((concept) => (
+              <MasteryBar key={concept.id} label={concept.title} value={concept.score} />
+            ))}
+          </Card>
+        ) : (
+          <div className="mt-4">
+            <EmptyState
+              message="Complete a scored activity to begin building concept mastery."
+              title="No mastery evidence yet"
+              titleAs="h3"
+            />
+          </div>
+        )}
       </section>
 
       <section aria-label="Achievements">
@@ -176,9 +187,19 @@ export function ProfilePage() {
 
       <section aria-label="Weekly activity">
         <SectionHeader title="Activity" />
-        <Card className="mt-4">
-          <WeeklyActivityStrip {...activity} />
-        </Card>
+        {activity.completedCount > 0 ? (
+          <Card className="mt-4">
+            <WeeklyActivityStrip {...activity} />
+          </Card>
+        ) : (
+          <div className="mt-4">
+            <EmptyState
+              message="Start a lesson or challenge to add your first active day."
+              title="Your week is ready"
+              titleAs="h3"
+            />
+          </div>
+        )}
       </section>
 
       <section aria-label="Experience preferences">

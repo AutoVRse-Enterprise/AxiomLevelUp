@@ -80,7 +80,17 @@ export function PathwayPage() {
   }, [pathway])
 
   if (!pathway) {
-    return <EmptyState title="Pathway not found" message="This pathway is not configured." />
+    return (
+      <EmptyState
+        action={
+          <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+            Browse learning
+          </Link>
+        }
+        message="This pathway is not configured or may have moved."
+        title="Pathway not found"
+      />
+    )
   }
 
   const view = selectPathwayView(

@@ -1560,3 +1560,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Asset, unsupported primitive, corrupted specification, DICOM, offline and
   quota failures now explain the issue and expose an appropriate recovery route.
 - **Follow-ups:** Standardize empty states across learner surfaces.
+
+### [2026-10-02 13:34] P8-T13 - Standardize empty states
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Expanded the shared empty-state contract with tone, semantic heading and multiple
+  actions, then applied it to filtered learning, missing course/pathway, fresh Home, zero-mastery,
+  zero-activity and empty offline-storage states.
+- **Files changed:** shared EmptyState and Home, Learn, Course, Pathway, Profile and offline storage
+  surfaces plus Phase 8 documentation.
+- **Commands run:** Surface tests, typecheck and lint.
+- **Result/verification:** Empty experiences now retain heading hierarchy and offer a useful next
+  action rather than passive placeholder copy.
+- **Follow-ups:** Refine desktop and landscape layouts and artifact immersion.
