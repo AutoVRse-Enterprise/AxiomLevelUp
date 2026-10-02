@@ -9,22 +9,29 @@ import { evaluateCriterion } from '@/engines/gamification/criteria'
 import { levelForXp, xpToNextLevel } from '@/engines/gamification/levels'
 import { starsForScore } from '@/engines/gamification/stars'
 import { nextStreak } from '@/engines/gamification/streak'
-import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
+import type { EventActivityKind, LearnerEvent, LearnerEventDraft } from '@/events/types'
 import type { LearnerData } from '@/state/learnerStore'
 
 type XpReason = Extract<LearnerEventDraft, { event: 'xp_awarded' }>['reason']
 
 function findPrimitive(
   registry: ContentRegistry,
-  activityKind: 'lesson' | 'challenge',
+  activityKind: EventActivityKind,
   activityId: string,
   primitiveId: string,
 ): Primitive | undefined {
-  return activityKind === 'lesson'
-    ? registry.lessonById.get(activityId)?.primitives.find(({ id }) => id === primitiveId)
-    : registry.appConfig.challenges
+  if (activityKind === 'lesson') {
+    return registry.lessonById.get(activityId)?.primitives.find(({ id }) => id === primitiveId)
+  }
+  if (activityKind === 'challenge') {
+    return registry.appConfig.challenges
         .find(({ id }) => id === activityId)
         ?.items.find(({ id }) => id === primitiveId)
+  }
+  return registry.caseById
+    .get(activityId)
+    ?.stages.flatMap(({ steps }) => steps)
+    .find(({ id }) => id === primitiveId)
 }
 
 function leaderboardRank(state: LearnerData, config: AppConfig) {
@@ -305,25 +312,47 @@ export function applyGamificationEvent(
       }
       state.gamification.lastActivityResult = null
       break
+    case 'case_started':
+      state.gamification.activeRun = {
+        activityKind: 'case',
+        activityId: event.caseId,
+        revision: (previous.caseProgress[event.caseId]?.completions ?? 0) > 0,
+        xpEarned: 0,
+        masteryBefore: Object.fromEntries(
+          Object.entries(state.mastery).map(([id, value]) => [id, value.score]),
+        ),
+        weeklyXpBefore: state.xp.weekly,
+        startedAt: event.occurredAt,
+      }
+      state.gamification.lastActivityResult = null
+      break
     case 'question_answered': {
       if (event.attempt !== 1) break
-      const primitive = findPrimitive(
-        registry,
-        event.activityKind,
-        event.activityId,
-        event.questionId,
-      )
-      const baseXp =
-        primitive?.scoring.xp ??
-        (event.difficulty === 'advanced'
-          ? config.gamification.xp.correctDifficult
-          : config.gamification.xp.correctStandard)
-      const amount = Math.round(baseXp * event.score)
-      awardXp(state, amount, 'question', event.questionId, followUps)
-      state.gamification.lastQuestionReward = {
-        questionId: event.questionId,
-        xp: amount,
-        at: event.occurredAt,
+      if (event.activityKind === 'case') {
+        state.gamification.lastQuestionReward = {
+          questionId: event.questionId,
+          xp: 0,
+          at: event.occurredAt,
+        }
+      } else {
+        const primitive = findPrimitive(
+          registry,
+          event.activityKind,
+          event.activityId,
+          event.questionId,
+        )
+        const baseXp =
+          primitive?.scoring.xp ??
+          (event.difficulty === 'advanced'
+            ? config.gamification.xp.correctDifficult
+            : config.gamification.xp.correctStandard)
+        const amount = Math.round(baseXp * event.score)
+        awardXp(state, amount, 'question', event.questionId, followUps)
+        state.gamification.lastQuestionReward = {
+          questionId: event.questionId,
+          xp: amount,
+          at: event.occurredAt,
+        }
       }
       if (event.correct) {
         const counters = state.gamification.counters
@@ -396,6 +425,43 @@ export function applyGamificationEvent(
       state.gamification.lessonRewards[event.lessonId] = reward
       applyQualifyingActivity(state, date, weekStart, event.lessonId, config, followUps)
       progressWeeklyChallenges(state, previous, event.lessonId, weekStart, registry, followUps)
+      break
+    }
+    case 'case_completed': {
+      const caseLab = config.caseLab
+      if (!caseLab) break
+      const reward = state.gamification.caseRewards[event.caseId] ?? {
+        completionAwarded: false,
+        perfectAwarded: false,
+        rewardedAttemptIds: [],
+      }
+      if (reward.rewardedAttemptIds.includes(event.attemptId)) break
+
+      if (!reward.completionAwarded) {
+        awardXp(state, caseLab.xp.caseComplete, 'case_complete', event.caseId, followUps)
+        reward.completionAwarded = true
+      } else {
+        awardXp(
+          state,
+          config.gamification.xp.revisionComplete,
+          'revision',
+          event.caseId,
+          followUps,
+        )
+      }
+      if (event.breakdown.total === 100 && !reward.perfectAwarded) {
+        awardXp(
+          state,
+          caseLab.xp.perfectCaseBonus,
+          'case_perfect',
+          event.caseId,
+          followUps,
+        )
+        reward.perfectAwarded = true
+      }
+      reward.rewardedAttemptIds.push(event.attemptId)
+      state.gamification.caseRewards[event.caseId] = reward
+      applyQualifyingActivity(state, date, weekStart, event.caseId, config, followUps)
       break
     }
     case 'challenge_completed': {
@@ -476,9 +542,20 @@ export function finalizeActivityResult(
   event: LearnerEvent,
   registry: ContentRegistry,
 ) {
-  if (event.event !== 'lesson_completed' && event.event !== 'challenge_completed') return
+  if (
+    event.event !== 'lesson_completed' &&
+    event.event !== 'challenge_completed' &&
+    event.event !== 'case_completed'
+  ) {
+    return
+  }
   const run = state.gamification.activeRun
-  const activityId = event.event === 'lesson_completed' ? event.lessonId : event.challengeId
+  const activityId =
+    event.event === 'lesson_completed'
+      ? event.lessonId
+      : event.event === 'challenge_completed'
+        ? event.challengeId
+        : event.caseId
   if (!run || run.activityId !== activityId) return
   const levelTo = levelForXp(state.xp.total, registry.appConfig.gamification.levels)
   const levelFrom = levelForXp(

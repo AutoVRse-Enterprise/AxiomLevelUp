@@ -244,7 +244,10 @@ export function selectRevisionRecommendations(
 }
 
 export function selectBadgeViews(
-  state: Pick<LearnerStore, 'badges' | 'lessonProgress' | 'gamification' | 'streak'>,
+  state: Pick<
+    LearnerStore,
+    'badges' | 'lessonProgress' | 'caseProgress' | 'caseAttempts' | 'gamification' | 'streak'
+  >,
   badges: AppConfig['badges'],
   registry: ContentRegistry,
 ) {

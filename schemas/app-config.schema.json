@@ -1349,6 +1349,89 @@
                   "rewardId"
                 ],
                 "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "cases_completed"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "tiers": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "foundation",
+                        "intermediate",
+                        "advanced"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "count"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "case_component_score"
+                  },
+                  "component": {
+                    "type": "string",
+                    "enum": [
+                      "anatomy",
+                      "diagnosis",
+                      "speed",
+                      "total"
+                    ]
+                  },
+                  "min": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "maxOptionalClues": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "type",
+                  "component",
+                  "min"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "case_duration"
+                  },
+                  "maxRatioOfTarget": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "type",
+                  "maxRatioOfTarget"
+                ],
+                "additionalProperties": false
               }
             ]
           }
@@ -1980,6 +2063,89 @@
                 "required": [
                   "type",
                   "rewardId"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "cases_completed"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "tiers": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "foundation",
+                        "intermediate",
+                        "advanced"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "count"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "case_component_score"
+                  },
+                  "component": {
+                    "type": "string",
+                    "enum": [
+                      "anatomy",
+                      "diagnosis",
+                      "speed",
+                      "total"
+                    ]
+                  },
+                  "min": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "maxOptionalClues": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "type",
+                  "component",
+                  "min"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "case_duration"
+                  },
+                  "maxRatioOfTarget": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "type",
+                  "maxRatioOfTarget"
                 ],
                 "additionalProperties": false
               }

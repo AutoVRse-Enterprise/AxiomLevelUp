@@ -1,7 +1,18 @@
 import type { PrimitiveInteraction } from '@/primitives/types'
 import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
+import type { CaseDocument } from '@/content/schema'
+import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
+export type EventActivityKind = 'lesson' | 'challenge' | 'case'
+
+export interface CaseEventStepResult {
+  primitiveId: string
+  firstAttemptScore: number
+  elapsedMs?: number
+  timedOut: boolean
+  response: unknown
+}
 
 export interface EventPayloads {
   app_opened: { source: 'client' }
@@ -14,28 +25,52 @@ export interface EventPayloads {
     resumed: boolean
   }
   challenge_started: { challengeId: string; attempt: number; resumed: boolean }
+  case_opened: { caseId: string }
+  case_started: {
+    caseId: string
+    attempt: number
+    resumed: boolean
+    tier: CaseDocument['tier']
+  }
+  case_clue_opened: {
+    caseId: string
+    clueId: string
+    essential: boolean
+    stageId: string
+  }
+  case_stage_completed: { caseId: string; stageId: string; stageIndex: number }
+  case_completed: {
+    caseId: string
+    attemptId: string
+    tier: CaseDocument['tier']
+    breakdown: CaseScoreBreakdown
+    durationSeconds: number
+    openedClueIds: string[]
+    stepResults: CaseEventStepResult[]
+    challengeId?: string
+  }
   primitive_viewed: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     primitiveId: string
     primitiveType: string
   }
   primitive_completed: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     primitiveId: string
     primitiveType: string
     stepIndex: number
   }
   artifact_interacted: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     primitiveId: string
     primitiveType: string
     interaction: PrimitiveInteraction
   }
   question_answered: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     questionId: string
     primitiveType: string
@@ -48,7 +83,7 @@ export interface EventPayloads {
     elapsedMs?: number
   }
   scenario_decision_made: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     primitiveId: string
     primitiveType: string
@@ -57,7 +92,7 @@ export interface EventPayloads {
     decisionIndex: number
   }
   media_progressed: {
-    activityKind: 'lesson' | 'challenge'
+    activityKind: EventActivityKind
     activityId: string
     primitiveId: string
     primitiveType: string
@@ -137,6 +172,8 @@ export interface EventPayloads {
       | 'revision'
       | 'challenge_complete'
       | 'challenge_perfect'
+      | 'case_complete'
+      | 'case_perfect'
       | 'weekly_target'
       | 'badge'
       | 'demo'
@@ -151,7 +188,7 @@ export interface EventPayloads {
 }
 
 interface DicomEventContext {
-  activityKind: 'lesson' | 'challenge'
+  activityKind: EventActivityKind
   activityId: string
   primitiveId: string
   primitiveType: string

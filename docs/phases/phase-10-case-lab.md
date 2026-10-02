@@ -173,7 +173,7 @@ case
       redistribution and configuration.
 - [x] P10-T10 — Case session and player: entry views, stage shell, clue board, gating, resume,
       results and compare screens.
-- [ ] P10-T11 — Events, pipeline and learner state v5: case events, XP rules, mastery, case badge
+- [x] P10-T11 — Events, pipeline and learner state v5: case events, XP rules, mastery, case badge
       criteria, attempt history and migration.
 - [ ] P10-T12 — Case Lab surfaces: Learn section, Home headline card, case intro route and
       developer gallery support.

@@ -1,14 +1,70 @@
 import freshSeedData from '../../public/content/seeds/fresh.json'
+import caseFixtureData from '../../public/content/fixtures/case.json'
 import { describe, expect, it } from 'vitest'
 
 import { validateContentBundle } from '@/content/loader'
-import { learnerSeedSchema } from '@/content/schema'
+import {
+  appConfigSchema,
+  caseDocumentSchema,
+  learnerSeedSchema,
+  type AppConfig,
+} from '@/content/schema'
 import { reduceLearnerEvent } from '@/engines/pipeline'
 import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
 import { migrateLearnerState, type LearnerData } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
+const caseDocument = caseDocumentSchema.parse(caseFixtureData)
+
+function registryWithCase(historyLimit = 2, badges: AppConfig['badges'] = []) {
+  const appConfig = appConfigSchema.parse({
+    ...structuredClone(registry.appConfig),
+    badges,
+    caseLab: {
+      title: 'Case Lab',
+      featuredCaseId: caseDocument.id,
+      caseIds: [caseDocument.id],
+      dailyQuickCaseId: caseDocument.id,
+      clueCategories: [{ id: 'evidence', label: 'Evidence' }],
+      tiers: {
+        foundation: {
+          label: 'Basic',
+          timing: 'none',
+          hints: 'full',
+          labelEssentialClues: true,
+        },
+        intermediate: {
+          label: 'Intermediate',
+          timing: 'stopwatch',
+          hints: 'full',
+          labelEssentialClues: true,
+        },
+        advanced: {
+          label: 'Advanced',
+          timing: 'countdown',
+          hints: 'reduced',
+          labelEssentialClues: false,
+        },
+      },
+      scoring: {
+        weights: { anatomy: 0.4, diagnosis: 0.4, speed: 0.2 },
+        speedBlend: { perStep: 0.5, perCase: 0.5 },
+        defaultStepTargetSeconds: 20,
+        defaultStepMaxSeconds: 90,
+        cluePenalty: { perOptionalClue: 2, cap: 10 },
+      },
+      xp: { caseComplete: 100, perfectCaseBonus: 40 },
+      historyLimit,
+    },
+  })
+  return {
+    ...registry,
+    appConfig,
+    cases: [caseDocument],
+    caseById: new Map([[caseDocument.id, caseDocument]]),
+  }
+}
 
 function freshState(): LearnerData {
   const state = structuredClone(learnerSeedSchema.parse(freshSeedData))
@@ -23,6 +79,40 @@ function event(draft: LearnerEventDraft, occurredAt = '2026-10-02T09:00:00+05:30
 
 function reduce(state: LearnerData, draft: LearnerEventDraft, occurredAt?: string) {
   return reduceLearnerEvent(state, event(draft, occurredAt), registry)
+}
+
+const perfectBreakdown = {
+  anatomy: 1,
+  diagnosis: 1,
+  speed: 0,
+  perStepSpeed: 0,
+  caseSpeed: 0,
+  penalty: 0,
+  total: 100,
+  weights: { anatomy: 0.5, diagnosis: 0.5, speed: 0 },
+  durationSeconds: 100,
+  openedClueIds: ['clue-context'],
+}
+
+function caseCompletion(attemptId: string, total = 100): LearnerEventDraft {
+  return {
+    event: 'case_completed',
+    caseId: caseDocument.id,
+    attemptId,
+    tier: 'foundation',
+    breakdown: { ...perfectBreakdown, total },
+    durationSeconds: 100,
+    openedClueIds: ['clue-context'],
+    stepResults: [
+      {
+        primitiveId: 'identify-location',
+        firstAttemptScore: 1,
+        elapsedMs: 10_000,
+        timedOut: false,
+        response: 'target',
+      },
+    ],
+  }
 }
 
 describe('learner event pipeline', () => {
@@ -111,6 +201,122 @@ describe('learner event pipeline', () => {
     }).state
     expect(state.xp.total).toBe(registry.appConfig.gamification.xp.revisionComplete)
     expect(state.gamification.lastActivityResult?.revision).toBe(true)
+  })
+
+  it('routes case mastery without question XP and rewards case attempts idempotently', () => {
+    const caseRegistry = registryWithCase()
+    let state = freshState()
+    const reduceCase = (draft: LearnerEventDraft) =>
+      reduceLearnerEvent(state, event(draft), caseRegistry)
+
+    state = reduceCase({
+      event: 'case_started',
+      caseId: caseDocument.id,
+      attempt: 1,
+      resumed: false,
+      tier: 'foundation',
+    }).state
+    const answer = reduceCase({
+      event: 'question_answered',
+      activityKind: 'case',
+      activityId: caseDocument.id,
+      questionId: 'identify-location',
+      primitiveType: 'multiple_choice',
+      conceptIds: ['thoracic-imaging'],
+      score: 1,
+      correct: true,
+      attempt: 1,
+      difficulty: 'foundation',
+    })
+    state = answer.state
+    expect(state.xp.total).toBe(0)
+    expect(state.mastery['thoracic-imaging']?.score).toBe(53)
+    expect(answer.followUps.some(({ event }) => event === 'xp_awarded')).toBe(false)
+
+    const first = reduceCase(caseCompletion('attempt-1'))
+    state = first.state
+    expect(state.xp.total).toBe(140)
+    expect(state.caseProgress[caseDocument.id]).toMatchObject({
+      completions: 1,
+      bestTotal: 100,
+    })
+    expect(state.caseAttempts[caseDocument.id]).toHaveLength(1)
+    expect(state.stats.casesCompleted).toBe(1)
+    expect(state.gamification.lastActivityResult).toMatchObject({
+      activityKind: 'case',
+      activityId: caseDocument.id,
+      masteryDelta: { 'thoracic-imaging': 3 },
+      revision: false,
+    })
+
+    state = reduceCase(caseCompletion('attempt-1')).state
+    expect(state.xp.total).toBe(140)
+    expect(state.caseAttempts[caseDocument.id]).toHaveLength(1)
+
+    state = reduceCase({
+      event: 'case_started',
+      caseId: caseDocument.id,
+      attempt: 2,
+      resumed: false,
+      tier: 'foundation',
+    }).state
+    state = reduceCase(caseCompletion('attempt-2', 80)).state
+    expect(state.xp.total).toBe(170)
+    expect(state.caseProgress[caseDocument.id]?.completions).toBe(2)
+    expect(state.gamification.lastActivityResult?.revision).toBe(true)
+
+    state = reduceCase(caseCompletion('attempt-3', 70)).state
+    expect(state.caseAttempts[caseDocument.id]?.map(({ attemptId }) => attemptId)).toEqual([
+      'attempt-2',
+      'attempt-3',
+    ])
+  })
+
+  it('derives and unlocks configured case badges from attempt facts', () => {
+    const badges: AppConfig['badges'] = [
+      {
+        id: 'case-finisher',
+        title: 'Case finisher',
+        description: 'Complete a basic case.',
+        category: 'performance',
+        icon: 'brain',
+        rewardXp: 0,
+        criteria: { type: 'cases_completed', count: 1, tiers: ['foundation'] },
+      },
+      {
+        id: 'case-diagnosis',
+        title: 'Case diagnosis',
+        description: 'Diagnose perfectly.',
+        category: 'performance',
+        icon: 'brain',
+        rewardXp: 0,
+        criteria: {
+          type: 'case_component_score',
+          component: 'diagnosis',
+          min: 1,
+          maxOptionalClues: 0,
+        },
+      },
+      {
+        id: 'case-speed',
+        title: 'Case speed',
+        description: 'Finish within the target.',
+        category: 'performance',
+        icon: 'brain',
+        rewardXp: 0,
+        criteria: { type: 'case_duration', maxRatioOfTarget: 1 },
+      },
+    ]
+    const caseRegistry = registryWithCase(2, badges)
+    const result = reduceLearnerEvent(
+      freshState(),
+      event(caseCompletion('badge-attempt')),
+      caseRegistry,
+    )
+
+    expect(
+      badges.map(({ id }) => result.state.badges[id]?.unlockedAt),
+    ).toEqual([expect.any(String), expect.any(String), expect.any(String)])
   })
 
   it('pays a daily challenge reward once per local day', () => {
@@ -269,7 +475,7 @@ describe('learner event pipeline', () => {
     }
 
     const migrated = migrateLearnerState(legacy)
-    expect(migrated.stateVersion).toBe(4)
+    expect(migrated.stateVersion).toBe(5)
     expect(migrated.gamification.lessonRewards['imaging-orientation']).toEqual({
       completionAwarded: true,
       perfectAwarded: true,

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { primitiveTypeSet } from '../primitiveTypes'
-import { caseLabConfigSchema } from './case'
+import { caseLabConfigSchema, caseTierSchema } from './case'
 import {
   primitiveContentSchemas,
   validateScenarioGraph,
@@ -179,6 +179,21 @@ export const badgeSchema = z.object({
     z.object({
       type: z.literal('primitive_reward'),
       rewardId: idSchema,
+    }),
+    z.object({
+      type: z.literal('cases_completed'),
+      count: z.number().int().positive(),
+      tiers: z.array(caseTierSchema).min(1).optional(),
+    }),
+    z.object({
+      type: z.literal('case_component_score'),
+      component: z.enum(['anatomy', 'diagnosis', 'speed', 'total']),
+      min: z.number().min(0).max(100),
+      maxOptionalClues: z.number().int().nonnegative().optional(),
+    }),
+    z.object({
+      type: z.literal('case_duration'),
+      maxRatioOfTarget: z.number().positive(),
     }),
   ]),
 })
@@ -395,7 +410,7 @@ export const masteryStateSchema = z.object({
 })
 
 const activityResultSchema = z.object({
-  activityKind: z.enum(['lesson', 'challenge']),
+  activityKind: z.enum(['lesson', 'challenge', 'case']),
   activityId: idSchema,
   xpEarned: z.number().int().nonnegative(),
   stars: z.number().int().min(0).max(3),
@@ -434,6 +449,14 @@ export const gamificationStateSchema = z.object({
       perfectAwarded: z.boolean(),
     }),
   ),
+  caseRewards: z.record(
+    idSchema,
+    z.object({
+      completionAwarded: z.boolean(),
+      perfectAwarded: z.boolean(),
+      rewardedAttemptIds: z.array(z.string().min(1)),
+    }),
+  ),
   challengePeriods: z.record(
     idSchema,
     z.object({
@@ -449,10 +472,12 @@ export const gamificationStateSchema = z.object({
     firstAttemptCorrect: z.number().int().nonnegative(),
     firstAttemptCorrectByType: z.record(z.string(), z.number().int().nonnegative()),
     firstAttemptCorrectByConcept: z.record(idSchema, z.number().int().nonnegative()),
+    caseCompletions: z.record(idSchema, z.number().int().nonnegative()),
+    caseCompletionsByTier: z.record(caseTierSchema, z.number().int().nonnegative()),
   }),
   activeRun: z
     .object({
-      activityKind: z.enum(['lesson', 'challenge']),
+      activityKind: z.enum(['lesson', 'challenge', 'case']),
       activityId: idSchema,
       revision: z.boolean(),
       xpEarned: z.number().int().nonnegative(),
@@ -479,6 +504,33 @@ export const gamificationStateSchema = z.object({
   ),
 })
 
+export const caseProgressStateSchema = z.object({
+  completions: z.number().int().nonnegative(),
+  bestTotal: z.number().min(0).max(100).nullable(),
+  lastCompletedAt: isoDateSchema.nullable(),
+})
+
+export const caseAttemptRecordSchema = z.strictObject({
+  attemptId: z.string().min(1),
+  tier: caseTierSchema,
+  total: z.number().min(0).max(100),
+  anatomy: z.number().min(0).max(1),
+  diagnosis: z.number().min(0).max(1),
+  speed: z.number().min(0).max(1),
+  durationSeconds: z.number().nonnegative(),
+  openedClueIds: z.array(idSchema),
+  stepResults: z.array(
+    z.strictObject({
+      primitiveId: idSchema,
+      firstAttemptScore: z.number().min(0).max(1),
+      elapsedMs: z.number().nonnegative().optional(),
+      timedOut: z.boolean(),
+      response: z.unknown(),
+    }),
+  ),
+  completedAt: isoDateSchema,
+})
+
 export const learnerSeedSchema = z.object({
   schemaVersion: z.literal('0.1'),
   stateVersion: z.number().int().positive(),
@@ -503,6 +555,8 @@ export const learnerSeedSchema = z.object({
     completedDays: z.array(z.string()),
   }),
   lessonProgress: z.record(idSchema, lessonProgressSchema),
+  caseProgress: z.record(idSchema, caseProgressStateSchema),
+  caseAttempts: z.record(idSchema, z.array(caseAttemptRecordSchema)),
   challenges: z.record(
     idSchema,
     z.object({
@@ -524,6 +578,7 @@ export const learnerSeedSchema = z.object({
     coursesCompleted: z.number().int().nonnegative(),
     lessonsCompleted: z.number().int().nonnegative(),
     challengesCompleted: z.number().int().nonnegative(),
+    casesCompleted: z.number().int().nonnegative(),
     questionsAnswered: z.number().int().nonnegative(),
     correctAnswers: z.number().int().nonnegative(),
   }),
@@ -631,5 +686,6 @@ export type Course = z.infer<typeof courseSchema>
 export type Lesson = z.infer<typeof lessonSchema>
 export type AppConfig = z.infer<typeof appConfigSchema>
 export type LearnerSeed = z.infer<typeof learnerSeedSchema>
+export type CaseAttemptRecord = z.infer<typeof caseAttemptRecordSchema>
 export type ContentManifest = z.infer<typeof contentManifestSchema>
 export type AssetManifest = z.infer<typeof assetManifestSchema>

@@ -23,6 +23,7 @@ import {
 import { calculateCaseScore } from '@/engines/cases/scoring'
 import type { ActivitySession, CaseProgress } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { emitEvent } from '@/events/bus'
 import {
   ActivityPlayer,
   type ActivityPlayerCompletionContext,
@@ -56,6 +57,7 @@ export interface CasePlayerProps {
   previousBestScore: number | null
   continuePath: string
   exitPath: string
+  challengeId?: string
   attemptHistory?: readonly CaseAttemptHistoryItem[]
   onClueOpened?: (opened: CaseClueOpened) => void
   onComplete?: (result: CaseAttemptResult) => void
@@ -226,6 +228,7 @@ function buildResult(
 
   return {
     caseId: caseDoc.id,
+    attemptId: `${caseDoc.id}:${session.startedAt ?? session.completedAt ?? 'attempt'}`,
     breakdown,
     stepResults,
     completedAt: session.completedAt ?? new Date().toISOString(),
@@ -298,6 +301,7 @@ export function CasePlayer({
   previousBestScore,
   continuePath,
   exitPath,
+  challengeId,
   attemptHistory = [],
   onClueOpened,
   onComplete,
@@ -313,12 +317,21 @@ export function CasePlayer({
   const [selectedClueId, setSelectedClueId] = useState<string | null>(null)
   const [pendingStage, setPendingStage] = useState<CaseStageBoundary | null>(null)
   const entryHandled = useRef(false)
+  const openedEventSent = useRef(false)
+  const completedStageIds = useRef(new Set<string>())
   const completedAttemptRef = useRef<string | null>(null)
   const startedAtRef = useRef(initialSession.startedAt)
+  const attemptNumberRef = useRef(previousAttempts + (initialSession.startedAt ? 1 : 0))
   const categoryLabels = useMemo(
     () => new Map(config.caseLab?.clueCategories.map(({ id, label }) => [id, label]) ?? []),
     [config.caseLab?.clueCategories],
   )
+
+  useEffect(() => {
+    if (openedEventSent.current) return
+    openedEventSent.current = true
+    emitEvent({ event: 'case_opened', caseId: caseDoc.id })
+  }, [caseDoc.id])
 
   const persistProgress = useCallback(
     (patch: Partial<CaseProgress>) => {
@@ -368,12 +381,14 @@ export function CasePlayer({
       setSelectedClueId(clueId)
       if (!result.newlyOpened) return
       persistProgress({ openedClueIds: [...result.openedClueIds] })
-      onClueOpened?.({
+      const opened = {
         caseId: caseDoc.id,
         clueId,
         essential: clue.essential,
         stageId,
-      })
+      }
+      emitEvent({ event: 'case_clue_opened', ...opened })
+      onClueOpened?.(opened)
     },
     [caseDoc.id, onClueOpened, persistProgress, plan],
   )
@@ -410,6 +425,7 @@ export function CasePlayer({
   const resetProgress = useCallback(() => {
     entryHandled.current = false
     completedAttemptRef.current = null
+    completedStageIds.current.clear()
     setSelectedClueId(null)
     persistProgress({ ...EMPTY_CASE_PROGRESS, stepElapsedMs: {}, openedClueIds: [] })
   }, [persistProgress])
@@ -419,9 +435,37 @@ export function CasePlayer({
       const key = `${result.caseId}:${result.completedAt}`
       if (completedAttemptRef.current === key) return
       completedAttemptRef.current = key
+      emitEvent({
+        event: 'case_completed',
+        caseId: result.caseId,
+        attemptId: result.attemptId,
+        tier: caseDoc.tier,
+        breakdown: result.breakdown,
+        durationSeconds: result.breakdown.durationSeconds,
+        openedClueIds: result.breakdown.openedClueIds,
+        stepResults: result.stepResults,
+        ...(challengeId ? { challengeId } : {}),
+      })
+      if (challengeId) {
+        const correctCount = result.stepResults.filter(
+          ({ firstAttemptScore }) => firstAttemptScore === 1,
+        ).length
+        emitEvent({
+          event: 'challenge_completed',
+          challengeId,
+          score: result.breakdown.total,
+          accuracy:
+            result.stepResults.length === 0
+              ? 100
+              : Math.round((correctCount / result.stepResults.length) * 100),
+          correctCount,
+          scoredCount: result.stepResults.length,
+          durationSeconds: result.breakdown.durationSeconds,
+        })
+      }
       onComplete?.(result)
     },
-    [onComplete],
+    [caseDoc.tier, challengeId, onComplete],
   )
 
   const caseLab = config.caseLab
@@ -440,11 +484,36 @@ export function CasePlayer({
           anatomyMap,
           onReopenClue: handleOpenClue,
         }}
+        onStarted={(resumed) => {
+          if (!resumed) attemptNumberRef.current += 1
+          else if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
+          emitEvent({
+            event: 'case_started',
+            caseId: caseDoc.id,
+            attempt: attemptNumberRef.current,
+            resumed,
+            tier: caseDoc.tier,
+          })
+        }}
         onAttemptTimed={handleAttempt}
         onStepBoundary={({ fromStepIndex, toStepIndex }) => {
-          if (toStepIndex === null) return
           const from = stageForStep(plan, fromStepIndex)
-          const to = stageForStep(plan, toStepIndex)
+          const to = toStepIndex === null ? null : stageForStep(plan, toStepIndex)
+          if (
+            from &&
+            from.stageId !== to?.stageId &&
+            !completedStageIds.current.has(from.stageId)
+          ) {
+            completedStageIds.current.add(from.stageId)
+            emitEvent({
+              event: 'case_stage_completed',
+              caseId: caseDoc.id,
+              stageId: from.stageId,
+              stageIndex: plan.stageBoundaries.findIndex(
+                ({ stageId }) => stageId === from.stageId,
+              ),
+            })
+          }
           if (from?.stageId !== to?.stageId && to) setPendingStage(to)
         }}
         renderChrome={({ stepIndex }) => {

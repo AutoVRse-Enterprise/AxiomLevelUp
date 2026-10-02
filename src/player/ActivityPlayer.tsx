@@ -84,6 +84,7 @@ export interface ActivityPlayerProps {
     header?: ReactNode
     aside?: ReactNode
   }
+  onStarted?: (resumed: boolean) => void
   onStepBoundary?: (boundary: ActivityPlayerStepBoundary) => void
   onAttemptTimed?: (attempt: ActivityPlayerTimedAttempt) => void
   renderCompletion?: (context: ActivityPlayerCompletionContext) => ReactNode
@@ -97,6 +98,7 @@ export function ActivityPlayer({
   exitPath,
   clueContext,
   renderChrome,
+  onStarted,
   onStepBoundary,
   onAttemptTimed,
   renderCompletion,
@@ -169,8 +171,9 @@ export function ActivityPlayer({
           resumed,
         })
       }
+      onStarted?.(resumed)
     },
-    [plan.activity, previousAttempts],
+    [onStarted, plan.activity, previousAttempts],
   )
 
   const step = selectCurrentStep(session, plan)
@@ -184,30 +187,26 @@ export function ActivityPlayer({
     if (awaitingResume || session.phase !== 'step' || !step) return
     if (viewed.current.has(step.primitive.id)) return
     viewed.current.add(step.primitive.id)
-    if (plan.activity.kind !== 'case') {
-      emitEvent({
-        event: 'primitive_viewed',
-        activityKind: plan.activity.kind,
-        activityId: plan.activity.id,
-        primitiveId: step.primitive.id,
-        primitiveType: step.primitive.type,
-      })
-    }
+    emitEvent({
+      event: 'primitive_viewed',
+      activityKind: plan.activity.kind,
+      activityId: plan.activity.id,
+      primitiveId: step.primitive.id,
+      primitiveType: step.primitive.type,
+    })
   }, [awaitingResume, plan.activity.id, plan.activity.kind, session.phase, step])
 
   const markComplete = useCallback(() => {
     if (!step || stepProgress?.completed) return
     transition({ type: 'complete_current', primitiveId: step.primitive.id })
-    if (plan.activity.kind !== 'case') {
-      emitEvent({
-        event: 'primitive_completed',
-        activityKind: plan.activity.kind,
-        activityId: plan.activity.id,
-        primitiveId: step.primitive.id,
-        primitiveType: step.primitive.type,
-        stepIndex: session.stepIndex,
-      })
-    }
+    emitEvent({
+      event: 'primitive_completed',
+      activityKind: plan.activity.kind,
+      activityId: plan.activity.id,
+      primitiveId: step.primitive.id,
+      primitiveType: step.primitive.type,
+      stepIndex: session.stepIndex,
+    })
   }, [
     plan.activity.id,
     plan.activity.kind,
@@ -262,32 +261,30 @@ export function ActivityPlayer({
         correct: result.correct,
         response,
       })
-      if (plan.activity.kind !== 'case') {
+      emitEvent({
+        event: 'question_answered',
+        activityKind: plan.activity.kind,
+        activityId: plan.activity.id,
+        questionId: step.primitive.id,
+        primitiveType: step.primitive.type,
+        conceptIds: step.primitive.conceptIds,
+        score: result.score,
+        correct: result.correct,
+        attempt: attempts,
+        difficulty:
+          step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
+        timedOut,
+        elapsedMs,
+      })
+      if (completed) {
         emitEvent({
-          event: 'question_answered',
+          event: 'primitive_completed',
           activityKind: plan.activity.kind,
           activityId: plan.activity.id,
-          questionId: step.primitive.id,
+          primitiveId: step.primitive.id,
           primitiveType: step.primitive.type,
-          conceptIds: step.primitive.conceptIds,
-          score: result.score,
-          correct: result.correct,
-          attempt: attempts,
-          difficulty:
-            step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
-          timedOut,
-          elapsedMs,
+          stepIndex: session.stepIndex,
         })
-        if (completed) {
-          emitEvent({
-            event: 'primitive_completed',
-            activityKind: plan.activity.kind,
-            activityId: plan.activity.id,
-            primitiveId: step.primitive.id,
-            primitiveType: step.primitive.type,
-            stepIndex: session.stepIndex,
-          })
-        }
       }
     },
     [
@@ -580,21 +577,19 @@ export function ActivityPlayer({
                 mediaProgress: nextReportedMediaProgress,
                 completed,
               })
-              if (plan.activity.kind !== 'case') {
-                for (const event of mapInteractionToEvents(
-                  {
-                    activityKind: plan.activity.kind,
-                    activityId: plan.activity.id,
-                    primitiveId: step.primitive.id,
-                    primitiveType: step.primitive.type,
-                  },
-                  interaction,
-                  previousMediaProgress,
-                )) {
-                  emitEvent(event)
-                }
+              for (const event of mapInteractionToEvents(
+                {
+                  activityKind: plan.activity.kind,
+                  activityId: plan.activity.id,
+                  primitiveId: step.primitive.id,
+                  primitiveType: step.primitive.type,
+                },
+                interaction,
+                previousMediaProgress,
+              )) {
+                emitEvent(event)
               }
-              if (plan.activity.kind !== 'case' && completed && !currentProgress.completed) {
+              if (completed && !currentProgress.completed) {
                 emitEvent({
                   event: 'primitive_completed',
                   activityKind: plan.activity.kind,

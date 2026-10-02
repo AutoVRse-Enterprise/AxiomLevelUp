@@ -2,7 +2,10 @@ import type { AchievementCriterion } from '@/content/schema'
 import type { ContentRegistry } from '@/content/loader'
 import type { LearnerData } from '@/state/learnerStore'
 
-type CriterionState = Pick<LearnerData, 'lessonProgress' | 'gamification' | 'streak'>
+type CriterionState = Pick<
+  LearnerData,
+  'lessonProgress' | 'caseProgress' | 'caseAttempts' | 'gamification' | 'streak'
+>
 
 export interface CriterionProgress {
   current: number
@@ -47,13 +50,43 @@ function completedCourses(
   }).length
 }
 
+function completedCases(
+  state: CriterionState,
+  registry: ContentRegistry,
+  criterion: Extract<AchievementCriterion, { type: 'cases_completed' }>,
+) {
+  return [...registry.caseById.values()].filter((caseDocument) => {
+    if ((state.caseProgress[caseDocument.id]?.completions ?? 0) === 0) return false
+    return !criterion.tiers || criterion.tiers.includes(caseDocument.tier)
+  }).length
+}
+
+function openedOptionalClueCount(
+  registry: ContentRegistry,
+  caseId: string,
+  openedClueIds: readonly string[],
+) {
+  const optionalIds = new Set(
+    registry.caseById
+      .get(caseId)
+      ?.clues.filter(({ essential }) => !essential)
+      .map(({ id }) => id) ?? [],
+  )
+  return new Set(openedClueIds.filter((id) => optionalIds.has(id))).size
+}
+
 export function evaluateCriterion(
   criterion: AchievementCriterion,
   state: CriterionState,
   registry: ContentRegistry,
 ): CriterionProgress {
   let current = 0
-  const target = criterion.type === 'primitive_reward' ? 1 : criterion.count
+  const target =
+    criterion.type === 'primitive_reward' || criterion.type === 'case_duration'
+      ? 1
+      : criterion.type === 'case_component_score'
+        ? criterion.min
+        : criterion.count
   switch (criterion.type) {
     case 'lessons_completed':
       current = completedLessons(state, registry, criterion)
@@ -103,11 +136,43 @@ export function evaluateCriterion(
         ? 1
         : 0
       break
+    case 'cases_completed':
+      current = completedCases(state, registry, criterion)
+      break
+    case 'case_component_score':
+      current = Math.max(
+        0,
+        ...Object.entries(state.caseAttempts).flatMap(([caseId, attempts]) =>
+          attempts
+            .filter(
+              (attempt) =>
+                criterion.maxOptionalClues === undefined ||
+                openedOptionalClueCount(registry, caseId, attempt.openedClueIds) <=
+                  criterion.maxOptionalClues,
+            )
+            .map((attempt) => attempt[criterion.component]),
+        ),
+      )
+      break
+    case 'case_duration':
+      current = Object.entries(state.caseAttempts).some(([caseId, attempts]) => {
+        const targetSeconds = registry.caseById.get(caseId)?.timing?.caseTargetSeconds
+        return (
+          targetSeconds !== undefined &&
+          attempts.some(
+            ({ durationSeconds }) =>
+              durationSeconds / targetSeconds <= criterion.maxRatioOfTarget,
+          )
+        )
+      })
+        ? 1
+        : 0
+      break
   }
   return {
     current,
     target,
-    percentage: Math.min(100, Math.round((current / target) * 100)),
+    percentage: target === 0 ? 100 : Math.min(100, Math.round((current / target) * 100)),
     complete: current >= target,
   }
 }

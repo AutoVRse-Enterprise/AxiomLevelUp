@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 4,
+  "stateVersion": 5,
   "seedProfile": "advanced",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -27,6 +27,29 @@
     "dose-response-curves": { "status": "new", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
     "signal-detection": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
     "escalation-decisions": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null }
+  },
+  "caseProgress": {
+    "asthma-foundation": {
+      "completions": 1,
+      "bestTotal": 84,
+      "lastCompletedAt": "2026-09-27T10:30:00+05:30"
+    }
+  },
+  "caseAttempts": {
+    "asthma-foundation": [
+      {
+        "attemptId": "seed-asthma-foundation-1",
+        "tier": "foundation",
+        "total": 84,
+        "anatomy": 0.76,
+        "diagnosis": 0.92,
+        "speed": 0,
+        "durationSeconds": 360,
+        "openedClueIds": ["history", "anatomy"],
+        "stepResults": [],
+        "completedAt": "2026-09-27T10:30:00+05:30"
+      }
+    ]
   },
   "challenges": {
     "daily-imaging-interpretation": { "completed": false, "progress": 0, "bestScore": null },
@@ -63,6 +86,13 @@
       "trial-design-basics": { "completionAwarded": true, "perfectAwarded": false },
       "confidence-and-effect": { "completionAwarded": true, "perfectAwarded": false }
     },
+    "caseRewards": {
+      "asthma-foundation": {
+        "completionAwarded": true,
+        "perfectAwarded": false,
+        "rewardedAttemptIds": ["seed-asthma-foundation-1"]
+      }
+    },
     "challengePeriods": {
       "daily-imaging-interpretation": { "progressPeriod": "2026-10-01", "lastCompletedPeriod": null, "periodProgress": 0 },
       "weekly-imaging-sprint": { "progressPeriod": "2026-09-28", "lastCompletedPeriod": null, "periodProgress": 2 }
@@ -73,7 +103,13 @@
       "challengeCompletions": { "daily-imaging-interpretation": 6 },
       "firstAttemptCorrect": 156,
       "firstAttemptCorrectByType": {},
-      "firstAttemptCorrectByConcept": {}
+      "firstAttemptCorrectByConcept": {},
+      "caseCompletions": { "asthma-foundation": 1 },
+      "caseCompletionsByTier": {
+        "foundation": 1,
+        "intermediate": 0,
+        "advanced": 0
+      }
     },
     "activeRun": null,
     "lastQuestionReward": null,
@@ -85,6 +121,7 @@
     "coursesCompleted": 1,
     "lessonsCompleted": 24,
     "challengesCompleted": 6,
+    "casesCompleted": 1,
     "questionsAnswered": 184,
     "correctAnswers": 156
   },

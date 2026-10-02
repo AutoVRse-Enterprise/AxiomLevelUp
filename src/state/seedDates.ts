@@ -70,6 +70,16 @@ export function rebaseSeedDates(seed: LearnerSeed, targetDate: string): LearnerS
   Object.values(rebased.lessonProgress).forEach((progress) => {
     if (progress.completedAt) progress.completedAt = shiftTimestamp(progress.completedAt, days)
   })
+  Object.values(rebased.caseProgress).forEach((progress) => {
+    if (progress.lastCompletedAt) {
+      progress.lastCompletedAt = shiftTimestamp(progress.lastCompletedAt, days)
+    }
+  })
+  Object.values(rebased.caseAttempts).forEach((attempts) => {
+    attempts.forEach((attempt) => {
+      attempt.completedAt = shiftTimestamp(attempt.completedAt, days)
+    })
+  })
   Object.values(rebased.badges).forEach((badge) => {
     if (badge.unlockedAt) badge.unlockedAt = shiftTimestamp(badge.unlockedAt, days)
   })

@@ -13,6 +13,8 @@ describe('gamification selectors', () => {
       {
         badges: state.badges,
         lessonProgress: state.lessonProgress,
+        caseProgress: state.caseProgress,
+        caseAttempts: state.caseAttempts,
         gamification: state.gamification,
         streak: state.streak,
       },

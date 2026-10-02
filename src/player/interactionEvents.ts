@@ -1,10 +1,14 @@
-import type { LearnerEventDraft, MediaProgressMilestone } from '@/events/types'
+import type {
+  EventActivityKind,
+  LearnerEventDraft,
+  MediaProgressMilestone,
+} from '@/events/types'
 import type { PrimitiveInteraction } from '@/primitives/types'
 
 const MEDIA_MILESTONES = [25, 50, 75, 100] as const
 
 interface InteractionEventContext {
-  activityKind: 'lesson' | 'challenge'
+  activityKind: EventActivityKind
   activityId: string
   primitiveId: string
   primitiveType: string

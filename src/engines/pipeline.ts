@@ -1,4 +1,5 @@
 import type { ContentRegistry } from '@/content/loader'
+import { applyCaseProgressEvent } from '@/engines/cases/progress'
 import { applyGamificationEvent, finalizeActivityResult } from '@/engines/gamification'
 import { applyLearningEvent } from '@/engines/learning/progress'
 import { applyMasteryEvent } from '@/engines/mastery/mastery'
@@ -28,6 +29,9 @@ export function reduceLearnerEvent(
   state.lessonProgress = learning.state.lessonProgress
   state.challenges = learning.state.challenges
   state.stats = learning.state.stats
+
+  const historyLimit = registry.appConfig.caseLab?.historyLimit
+  if (historyLimit) applyCaseProgressEvent(state, event, historyLimit)
 
   const gamificationFollowUps = applyGamificationEvent(state, current, event, registry)
   const masteryFollowUps = applyMasteryEvent(state, event, registry.appConfig.gamification.mastery)

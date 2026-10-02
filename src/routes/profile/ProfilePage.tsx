@@ -55,11 +55,13 @@ export function ProfilePage() {
   const setHapticsEnabled = usePreferencesStore((state) => state.setHapticsEnabled)
   const badges = useLearnerStore((state) => state.badges)
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const gamification = useLearnerStore((state) => state.gamification)
   const level = selectLevelProgress({ xp }, appConfig.gamification.levels)
   const profileStats = selectProfileStats({ stats })
   const badgeViews = selectBadgeViews(
-    { badges, lessonProgress, gamification, streak },
+    { badges, lessonProgress, caseProgress, caseAttempts, gamification, streak },
     appConfig.badges,
     registry,
   )

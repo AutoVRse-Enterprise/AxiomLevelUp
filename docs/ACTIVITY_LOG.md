@@ -1946,3 +1946,21 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   reach the controller as explicit endoscopic start views.
 - **Follow-ups:** Route case completion through the central learner pipeline and persist scored
   attempt history in P10-T11.
+
+### [2026-10-03 05:02] P10-T11 - Integrate cases with learner progression
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added typed case lifecycle events and connected the CasePlayer to the central event
+  bus. Added first-completion, perfect-case and replay XP through an idempotent reward ledger,
+  retained case-question mastery without per-question XP, tracked per-case completion totals and
+  bounded attempt history, and added derived case badge criteria. Migrated learner state and seeds
+  to v5, including the configured prior foundation-case attempt in the advanced seed.
+- **Files changed:** Event contracts, case progress reducer, gamification pipeline and criteria,
+  learner state/schema/migrations/seeds, CasePlayer integration, selectors, generated schemas and
+  focused tests.
+- **Commands run:** Focused and full Vitest runs, `npm run schema:export`,
+  `npm run validate:content`, `npm run typecheck`, `npm run lint`, `git diff --check`.
+- **Result/verification:** All 331 tests pass; 22 focused pipeline, migration, badge and player
+  tests pass independently. TypeScript, lint, content validation and generated schemas pass.
+- **Follow-ups:** Expose the case catalogue, intro/player/history routes and home/learn entry
+  surfaces in P10-T12.

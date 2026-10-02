@@ -16,6 +16,8 @@ import {
 import { buildCasePlan } from '@/engines/cases/plan'
 import { createActivitySession, sessionReducer } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
+import type { LearnerEvent } from '@/events/types'
 import { CasePlayer, type CasePlayerProps } from '@/player/case/CasePlayer'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
@@ -102,6 +104,7 @@ function renderCase(
 describe('case player integration', () => {
   beforeEach(async () => {
     cleanup()
+    clearEventSubscribersForTests()
     useActivitySessionStore.getState().clear()
     await useActivitySessionStore.persist.clearStorage()
   })
@@ -112,6 +115,8 @@ describe('case player integration', () => {
     const config = caseConfig('none')
     const onComplete = vi.fn()
     const onClueOpened = vi.fn()
+    const events: LearnerEvent[] = []
+    subscribeToEvents((event) => events.push(event))
     renderCase(caseDoc, config, { onComplete, onClueOpened })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
@@ -139,6 +144,35 @@ describe('case player integration', () => {
         caseId: 'case-contract-fixture',
         breakdown: expect.objectContaining({ anatomy: 1, diagnosis: 1, total: 100 }),
       }),
+    )
+    expect(events).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ event: 'case_opened', caseId: caseDoc.id }),
+        expect.objectContaining({
+          event: 'case_started',
+          caseId: caseDoc.id,
+          attempt: 1,
+          resumed: false,
+        }),
+        expect.objectContaining({
+          event: 'question_answered',
+          activityKind: 'case',
+          activityId: caseDoc.id,
+        }),
+        expect.objectContaining({
+          event: 'case_stage_completed',
+          caseId: caseDoc.id,
+          stageId: 'stage-diagnose',
+          stageIndex: 1,
+        }),
+        expect.objectContaining({
+          event: 'case_completed',
+          caseId: caseDoc.id,
+          attemptId: expect.any(String),
+          tier: 'foundation',
+          breakdown: expect.objectContaining({ total: 100 }),
+        }),
+      ]),
     )
 
     await user.click(screen.getByRole('button', { name: 'Compare' }))
@@ -177,6 +211,8 @@ describe('case player integration', () => {
       },
     })
 
+    const events: LearnerEvent[] = []
+    subscribeToEvents((event) => events.push(event))
     renderCase(caseDoc, config)
     await user.click(screen.getByRole('button', { name: 'Resume' }))
 
@@ -187,6 +223,14 @@ describe('case player integration', () => {
       openedClueIds: ['clue-context'],
       caseElapsedMs: expect.any(Number),
     })
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        event: 'case_started',
+        attempt: 1,
+        resumed: true,
+        tier: 'foundation',
+      }),
+    )
   })
 
   it('automatically opens the configured clue-first evidence once', async () => {

@@ -18,6 +18,8 @@ describe('seed date rebasing', () => {
       '2026-10-08',
     ])
     expect(rebased.lessonProgress['imaging-orientation']?.completedAt).toContain('2026-09-29')
+    expect(rebased.caseProgress['asthma-foundation']?.lastCompletedAt).toContain('2026-10-04')
+    expect(rebased.caseAttempts['asthma-foundation']?.[0]?.completedAt).toContain('2026-10-04')
     expect(seed.referenceDate).toBe('2026-10-01')
   })
 })

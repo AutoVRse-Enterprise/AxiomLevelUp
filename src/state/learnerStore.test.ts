@@ -3,7 +3,11 @@ import freshSeedData from '../../public/content/seeds/fresh.json'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { learnerSeedSchema } from '@/content/schema'
-import { learnerDataSnapshot, useLearnerStore } from '@/state/learnerStore'
+import {
+  learnerDataSnapshot,
+  migrateLearnerState,
+  useLearnerStore,
+} from '@/state/learnerStore'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
 const advancedSeed = learnerSeedSchema.parse(advancedSeedData)
@@ -91,5 +95,33 @@ describe('learner store persistence', () => {
 
     useLearnerStore.getState().replaceWithSeed(advancedSeed)
     expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
+  })
+
+  it.each([3, 4])('migrates learner state v%i to empty v5 case state', (stateVersion) => {
+    const legacy = structuredClone(freshSeed) as unknown as Record<string, unknown>
+    legacy.stateVersion = stateVersion
+    delete legacy.caseProgress
+    delete legacy.caseAttempts
+    const gamification = legacy.gamification as Record<string, unknown>
+    delete gamification.caseRewards
+    const counters = gamification.counters as Record<string, unknown>
+    delete counters.caseCompletions
+    delete counters.caseCompletionsByTier
+    const stats = legacy.stats as Record<string, unknown>
+    delete stats.casesCompleted
+
+    const migrated = migrateLearnerState(legacy)
+
+    expect(migrated.stateVersion).toBe(5)
+    expect(migrated.caseProgress).toEqual({})
+    expect(migrated.caseAttempts).toEqual({})
+    expect(migrated.gamification.caseRewards).toEqual({})
+    expect(migrated.gamification.counters.caseCompletions).toEqual({})
+    expect(migrated.gamification.counters.caseCompletionsByTier).toEqual({
+      foundation: 0,
+      intermediate: 0,
+      advanced: 0,
+    })
+    expect(migrated.stats.casesCompleted).toBe(0)
   })
 })

@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 4
+export const LEARNER_STATE_VERSION = 5
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -25,6 +25,7 @@ export function createEmptyGamificationState(date = today()): LearnerData['gamif
     xpWeekStart: date,
     weeklyTargetRewardedWeek: null,
     lessonRewards: {},
+    caseRewards: {},
     challengePeriods: {},
     counters: {
       perfectLessons: 0,
@@ -33,6 +34,12 @@ export function createEmptyGamificationState(date = today()): LearnerData['gamif
       firstAttemptCorrect: 0,
       firstAttemptCorrectByType: {},
       firstAttemptCorrectByConcept: {},
+      caseCompletions: {},
+      caseCompletionsByTier: {
+        foundation: 0,
+        intermediate: 0,
+        advanced: 0,
+      },
     },
     activeRun: null,
     lastQuestionReward: null,
@@ -51,6 +58,8 @@ const emptyData: LearnerData = {
   streak: { currentDays: 0, lastQualifyingDate: null },
   weeklyGoal: { targetDays: 5, completedDays: [] },
   lessonProgress: {},
+  caseProgress: {},
+  caseAttempts: {},
   challenges: {},
   badges: {},
   mastery: {},
@@ -59,6 +68,7 @@ const emptyData: LearnerData = {
     coursesCompleted: 0,
     lessonsCompleted: 0,
     challengesCompleted: 0,
+    casesCompleted: 0,
     questionsAnswered: 0,
     correctAnswers: 0,
   },
@@ -78,9 +88,22 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
   const completedLessonEntries = Object.entries(state.lessonProgress ?? {}).filter(
     ([, progress]) => progress.status === 'completed',
   )
-  const gamification =
-    state.gamification ??
-    ({
+  const emptyGamification = createEmptyGamificationState(state.referenceDate ?? today())
+  const gamification = state.gamification
+    ? {
+        ...state.gamification,
+        caseRewards: state.gamification.caseRewards ?? {},
+        counters: {
+          ...emptyGamification.counters,
+          ...state.gamification.counters,
+          caseCompletions: state.gamification.counters.caseCompletions ?? {},
+          caseCompletionsByTier: {
+            ...emptyGamification.counters.caseCompletionsByTier,
+            ...state.gamification.counters.caseCompletionsByTier,
+          },
+        },
+      }
+    : ({
       ...createEmptyGamificationState(state.referenceDate ?? today()),
       lessonRewards: Object.fromEntries(
         completedLessonEntries.map(([id, progress]) => [
@@ -101,7 +124,13 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
     ...state,
     stateVersion: LEARNER_STATE_VERSION,
     referenceDate: state.referenceDate ?? today(),
+    caseProgress: state.caseProgress ?? {},
+    caseAttempts: state.caseAttempts ?? {},
     gamification,
+    stats: {
+      ...state.stats,
+      casesCompleted: state.stats?.casesCompleted ?? 0,
+    },
   }
 }
 
@@ -147,6 +176,8 @@ export function learnerDataSnapshot(state: LearnerStore): LearnerData {
     streak: state.streak,
     weeklyGoal: state.weeklyGoal,
     lessonProgress: state.lessonProgress,
+    caseProgress: state.caseProgress,
+    caseAttempts: state.caseAttempts,
     challenges: state.challenges,
     badges: state.badges,
     mastery: state.mastery,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 4,
+  "stateVersion": 5,
   "seedProfile": "fresh",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -25,6 +25,8 @@
     "signal-detection": { "status": "available", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null },
     "escalation-decisions": { "status": "locked", "stars": 0, "bestScore": null, "attempts": 0, "lastPrimitiveIndex": 0, "completedAt": null }
   },
+  "caseProgress": {},
+  "caseAttempts": {},
   "challenges": {
     "daily-imaging-interpretation": { "completed": false, "progress": 0, "bestScore": null },
     "weekly-imaging-sprint": { "completed": false, "progress": 0, "bestScore": null }
@@ -55,6 +57,7 @@
     "xpWeekStart": "2026-09-28",
     "weeklyTargetRewardedWeek": null,
     "lessonRewards": {},
+    "caseRewards": {},
     "challengePeriods": {},
     "counters": {
       "perfectLessons": 0,
@@ -62,7 +65,13 @@
       "challengeCompletions": {},
       "firstAttemptCorrect": 0,
       "firstAttemptCorrectByType": {},
-      "firstAttemptCorrectByConcept": {}
+      "firstAttemptCorrectByConcept": {},
+      "caseCompletions": {},
+      "caseCompletionsByTier": {
+        "foundation": 0,
+        "intermediate": 0,
+        "advanced": 0
+      }
     },
     "activeRun": null,
     "lastQuestionReward": null,
@@ -74,6 +83,7 @@
     "coursesCompleted": 0,
     "lessonsCompleted": 0,
     "challengesCompleted": 0,
+    "casesCompleted": 0,
     "questionsAnswered": 0,
     "correctAnswers": 0
   },

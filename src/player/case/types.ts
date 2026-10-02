@@ -1,15 +1,11 @@
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
+import type { CaseEventStepResult } from '@/events/types'
 
-export interface CaseStepResult {
-  primitiveId: string
-  firstAttemptScore: number
-  elapsedMs?: number
-  timedOut: boolean
-  response: unknown
-}
+export type CaseStepResult = CaseEventStepResult
 
 export interface CaseAttemptResult {
   caseId: string
+  attemptId: string
   breakdown: CaseScoreBreakdown
   stepResults: CaseStepResult[]
   completedAt: string

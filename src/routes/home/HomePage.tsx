@@ -36,6 +36,8 @@ export function HomePage() {
   const streak = useLearnerStore((state) => state.streak)
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const challenges = useLearnerStore((state) => state.challenges)
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
@@ -82,7 +84,7 @@ export function HomePage() {
       )
     : null
   const recentBadges = selectBadgeViews(
-    { badges, lessonProgress, gamification, streak },
+    { badges, lessonProgress, caseProgress, caseAttempts, gamification, streak },
     appConfig.badges,
     registry,
   )
