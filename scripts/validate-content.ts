@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -50,6 +51,63 @@ async function main() {
   }
 
   const registry = validateContentBundle(input)
+  const assetIssues = await Promise.all(
+    registry.assetManifest.assets.map(async (asset, assetIndex) => {
+      const path =
+        asset.type === 'dicom'
+          ? resolve(root, 'public/assets/dicom', asset.path)
+          : resolve(root, 'public', asset.path.replace(/^\/+/, ''))
+      try {
+        const bytes = await readFile(path)
+        if (asset.type === 'dicom') {
+          const hostedManifest = JSON.parse(bytes.toString('utf8')) as { totalBytes?: unknown }
+          return hostedManifest.totalBytes === asset.sizeBytes
+            ? []
+            : [
+                {
+                  file: input.assetManifestFile,
+                  path: `assets.${assetIndex}.sizeBytes`,
+                  message: `DICOM asset "${asset.assetId}" size does not match the hosted manifest totalBytes.`,
+                  severity: 'error' as const,
+                },
+              ]
+        }
+
+        const issues = []
+        if (bytes.byteLength !== asset.sizeBytes) {
+          issues.push({
+            file: input.assetManifestFile,
+            path: `assets.${assetIndex}.sizeBytes`,
+            message: `Asset "${asset.assetId}" declares ${asset.sizeBytes} bytes but the file contains ${bytes.byteLength}.`,
+            severity: 'error' as const,
+          })
+        }
+        const sha256 = createHash('sha256').update(bytes).digest('hex')
+        if (sha256 !== asset.sha256) {
+          issues.push({
+            file: input.assetManifestFile,
+            path: `assets.${assetIndex}.sha256`,
+            message: `Asset "${asset.assetId}" SHA-256 does not match its local file.`,
+            severity: 'error' as const,
+          })
+        }
+        return issues
+      } catch (error) {
+        return [
+          {
+            file: input.assetManifestFile,
+            path: `assets.${assetIndex}.path`,
+            message: `Asset "${asset.assetId}" could not be read at ${path}: ${
+              error instanceof Error ? error.message : 'unknown error'
+            }`,
+            severity: 'error' as const,
+          },
+        ]
+      }
+    }),
+  )
+  const flatAssetIssues = assetIssues.flat()
+  if (flatAssetIssues.length > 0) throw new ContentValidationError(flatAssetIssues)
   const formulaIssues = registry.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) =>
       lesson.primitives.flatMap((primitive, primitiveIndex) => {
