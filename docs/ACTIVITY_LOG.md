@@ -1864,3 +1864,20 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   meshes, reduced the fixture to 96,152 triangles and 514,852 bytes and emitted matching bounds and
   SHA-256 metadata. Content validates with zero warnings.
 - **Follow-ups:** Build the lazy controller against this contract in P10-T04.
+
+### [2026-10-03 04:02] P10-T04 - Build lazy anatomy viewer boundary
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added the sole Three.js importer and framework-free anatomy controller, safe model
+  reuse and disposal, picking/highlighting/markers, waypoint movement, procedural-lumen
+  endoscopy, a lazy React hook and an accessible list-based viewer alternative. Added anatomy
+  configuration, import enforcement and a dedicated optional bundle role.
+- **Files changed:** `src/anatomy3d/`, app configuration and schema, ESLint configuration, bundle
+  budget, generated app-config schema, tests, Phase 10 checklist and activity log.
+- **Commands run:** Focused anatomy tests, `npm run typecheck`, `npm run lint`,
+  `npm run validate:content`, `npm run build`, `npm run budget`.
+- **Result/verification:** Nine focused tests pass. Production build and budgets pass; entry remains
+  133,086 gzip bytes. The measured standalone anatomy controller is 804,722 raw / 182,665 gzip,
+  below its 850,000 / 220,000 limits. The role remains optional until a primitive consumes it.
+- **Follow-ups:** Integrate the boundary through `anatomy_explore` and `anatomy_locate`, then perform
+  real Chromium and disposal checks in P10-T16.

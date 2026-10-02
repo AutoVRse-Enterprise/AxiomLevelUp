@@ -238,6 +238,43 @@ export const appConfigSchema = z.object({
       sliceEventDebounceMs: z.number().int().nonnegative(),
       tapMaxMovementPx: z.number().positive(),
     }),
+    anatomy3d: z
+      .strictObject({
+        pixelRatioCap: z.number().positive().max(3),
+        maxTriangleCountWarning: z.number().int().positive(),
+        cameraAnimationDurationMs: z.number().int().nonnegative().max(10_000),
+        tapMaxMovementPx: z.number().positive(),
+        flyThroughEasing: z.enum(['linear', 'ease_out', 'ease_in_out']),
+        backgroundColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        highlightColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        highlightOpacity: z.number().min(0).max(1),
+        markerColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        lumen: z.strictObject({
+          defaultRadius: z.number().positive(),
+          radialSegments: z.number().int().min(6).max(64),
+          tubularSegmentsPerConnection: z.number().int().min(1).max(128),
+          color: z.string().regex(/^#[0-9a-f]{6}$/i),
+          opacity: z.number().positive().max(1),
+        }),
+      })
+      .default({
+        pixelRatioCap: 1.5,
+        maxTriangleCountWarning: 150_000,
+        cameraAnimationDurationMs: 650,
+        tapMaxMovementPx: 8,
+        flyThroughEasing: 'ease_in_out',
+        backgroundColor: '#050709',
+        highlightColor: '#f6c453',
+        highlightOpacity: 1,
+        markerColor: '#f97316',
+        lumen: {
+          defaultRadius: 0.06,
+          radialSegments: 20,
+          tubularSegmentsPerConnection: 12,
+          color: '#b7675c',
+          opacity: 1,
+        },
+      }),
     offline: z.strictObject({
       downloadConcurrency: z.number().int().positive().max(8),
       quotaSafetyMarginRatio: z.number().min(0).max(0.5),

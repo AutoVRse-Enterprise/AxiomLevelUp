@@ -167,6 +167,122 @@
           ],
           "additionalProperties": false
         },
+        "anatomy3d": {
+          "default": {
+            "pixelRatioCap": 1.5,
+            "maxTriangleCountWarning": 150000,
+            "cameraAnimationDurationMs": 650,
+            "tapMaxMovementPx": 8,
+            "flyThroughEasing": "ease_in_out",
+            "backgroundColor": "#050709",
+            "highlightColor": "#f6c453",
+            "highlightOpacity": 1,
+            "markerColor": "#f97316",
+            "lumen": {
+              "defaultRadius": 0.06,
+              "radialSegments": 20,
+              "tubularSegmentsPerConnection": 12,
+              "color": "#b7675c",
+              "opacity": 1
+            }
+          },
+          "type": "object",
+          "properties": {
+            "pixelRatioCap": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 3
+            },
+            "maxTriangleCountWarning": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "cameraAnimationDurationMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "tapMaxMovementPx": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "flyThroughEasing": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "ease_out",
+                "ease_in_out"
+              ]
+            },
+            "backgroundColor": {
+              "type": "string",
+              "pattern": "^#[0-9a-f]{6}$"
+            },
+            "highlightColor": {
+              "type": "string",
+              "pattern": "^#[0-9a-f]{6}$"
+            },
+            "highlightOpacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "markerColor": {
+              "type": "string",
+              "pattern": "^#[0-9a-f]{6}$"
+            },
+            "lumen": {
+              "type": "object",
+              "properties": {
+                "defaultRadius": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "radialSegments": {
+                  "type": "integer",
+                  "minimum": 6,
+                  "maximum": 64
+                },
+                "tubularSegmentsPerConnection": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 128
+                },
+                "color": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-f]{6}$"
+                },
+                "opacity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "defaultRadius",
+                "radialSegments",
+                "tubularSegmentsPerConnection",
+                "color",
+                "opacity"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "pixelRatioCap",
+            "maxTriangleCountWarning",
+            "cameraAnimationDurationMs",
+            "tapMaxMovementPx",
+            "flyThroughEasing",
+            "backgroundColor",
+            "highlightColor",
+            "highlightOpacity",
+            "markerColor",
+            "lumen"
+          ],
+          "additionalProperties": false
+        },
         "offline": {
           "type": "object",
           "properties": {
@@ -345,6 +461,7 @@
         "home",
         "player",
         "dicom",
+        "anatomy3d",
         "offline",
         "presentation"
       ],

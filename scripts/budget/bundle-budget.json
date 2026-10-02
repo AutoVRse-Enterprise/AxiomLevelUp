@@ -9,6 +9,12 @@
     "maxRawBytes": 3708000,
     "maxGzipBytes": 1010000
   },
+  "anatomy3d": {
+    "pattern": "^createAnatomyController-.*\\.js$",
+    "maxRawBytes": 850000,
+    "maxGzipBytes": 220000,
+    "optional": true
+  },
   "confetti": {
     "pattern": "confetti.*\\.js$",
     "maxRawBytes": 14000,

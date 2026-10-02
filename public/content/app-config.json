@@ -30,6 +30,24 @@
       "sliceEventDebounceMs": 250,
       "tapMaxMovementPx": 8
     },
+    "anatomy3d": {
+      "pixelRatioCap": 1.5,
+      "maxTriangleCountWarning": 150000,
+      "cameraAnimationDurationMs": 650,
+      "tapMaxMovementPx": 8,
+      "flyThroughEasing": "ease_in_out",
+      "backgroundColor": "#050709",
+      "highlightColor": "#f6c453",
+      "highlightOpacity": 1,
+      "markerColor": "#f97316",
+      "lumen": {
+        "defaultRadius": 0.06,
+        "radialSegments": 20,
+        "tubularSegmentsPerConnection": 12,
+        "color": "#b7675c",
+        "opacity": 1
+      }
+    },
     "offline": {
       "downloadConcurrency": 3,
       "quotaSafetyMarginRatio": 0.1,

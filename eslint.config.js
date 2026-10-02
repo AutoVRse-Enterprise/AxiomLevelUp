@@ -25,6 +25,23 @@ export default tseslint.config(
       ...reactHooks.configs.flat.recommended.rules,
       ...reactRefresh.configs.vite.rules,
       '@typescript-eslint/consistent-type-imports': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^three(?:/|$)',
+              message: 'Import Three.js only from src/anatomy3d/three/createAnatomyController.ts.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/anatomy3d/three/createAnatomyController.ts', 'src/spikes/anatomy3d/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': 'off',
     },
   },
   {

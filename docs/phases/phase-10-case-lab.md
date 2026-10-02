@@ -159,7 +159,7 @@ case
       export and invalid fixtures.
 - [x] P10-T03 — Anatomy map and `model` asset type: hierarchy levels, structure-to-mesh bindings,
       waypoint graph, validation against model metadata and a GLB preparation script.
-- [ ] P10-T04 — Lazy 3D viewer boundary: orbit, zoom, pan, picking, highlight, fly-through,
+- [x] P10-T04 — Lazy 3D viewer boundary: orbit, zoom, pan, picking, highlight, fly-through,
       endoscopic camera, list alternative, reduced motion, disposal and budget role.
 - [ ] P10-T05 — `anatomy_explore` primitive: definition, schema, component, completion, events,
       showcase and gallery entries.

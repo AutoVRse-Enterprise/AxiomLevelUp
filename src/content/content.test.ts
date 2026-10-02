@@ -96,14 +96,23 @@ describe('content schemas', () => {
   it('defaults presentation effects for older product configuration', () => {
     const bundle = makeValidContentBundle()
     const appConfig = structuredClone(bundle.appConfig) as {
-      product: { presentation?: unknown }
+      product: { presentation?: unknown; anatomy3d?: unknown }
     }
     delete appConfig.product.presentation
+    delete appConfig.product.anatomy3d
 
-    expect(appConfigSchema.parse(appConfig).product.presentation).toEqual(
+    const product = appConfigSchema.parse(appConfig).product
+    expect(product.presentation).toEqual(
       expect.objectContaining({
         confetti: expect.objectContaining({ particleCount: 80 }),
         haptics: expect.objectContaining({ correctAnswer: [15] }),
+      }),
+    )
+    expect(product.anatomy3d).toEqual(
+      expect.objectContaining({
+        pixelRatioCap: 1.5,
+        maxTriangleCountWarning: 150_000,
+        lumen: expect.objectContaining({ defaultRadius: 0.06 }),
       }),
     )
   })
