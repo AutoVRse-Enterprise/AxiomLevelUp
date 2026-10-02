@@ -95,6 +95,12 @@ describe('content schemas', () => {
     expect(courseSchema.parse(course).visibility).toBe('learner')
   })
 
+  it('loads the Autovrse LevelUp product name from configuration', () => {
+    const bundle = makeValidContentBundle()
+
+    expect(appConfigSchema.parse(bundle.appConfig).app.name).toBe('Autovrse LevelUp')
+  })
+
   it('supports either challenge items or one referenced case while preserving item counts', () => {
     const common = {
       id: 'quick-case',

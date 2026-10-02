@@ -235,5 +235,10 @@ describe('application surfaces', () => {
 
     expect(screen.getByText('Alex Morgan')).toBeVisible()
     expect(screen.getByText('0%', { selector: '.text-title' })).toBeVisible()
+    expect(screen.getByRole('contentinfo', { name: 'About Autovrse LevelUp' })).toBeVisible()
+    expect(screen.getByRole('img', { name: 'Autovrse logo' })).toHaveAttribute(
+      'src',
+      '/brand/autovrse-logo.svg',
+    )
   })
 })

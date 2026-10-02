@@ -1995,3 +1995,21 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   TypeScript, lint, schema generation and diff checks pass.
 - **Follow-ups:** Add the configured quick-case document and daily challenge entry with the rest
   of the respiratory demo content in P10-T15.
+
+### [2026-10-03 05:37] P10-T14 - Apply Autovrse LevelUp branding
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Renamed the product and PWA, sourced the official Autovrse SVG mark, applied the
+  approved purple token palette, placed the mark in the shell and profile footer, regenerated the
+  PWA icon set, expanded the token preview, and documented WCAG contrast results and restrictions.
+- **Files changed:** App config, HTML/PWA metadata, brand and icon assets, design tokens, header,
+  profile and token preview surfaces, route/content tests, and
+  `docs/qa/phase-10-contrast-audit.md`.
+- **Commands run:** `npx pwa-assets-generator --preset minimal public/assets/icons/app-icon.svg`,
+  focused Vitest run, `npm run typecheck`, `npm run lint`, `npm run validate:content`,
+  `npm run build`, manifest assertions, browser smoke checks and `git diff --check`.
+- **Result/verification:** Sixty focused tests pass, including axe coverage. Production build,
+  TypeScript, lint, content validation and generated manifest checks pass. Primary and accent
+  normal-text pairs meet AA; the lighter purple tokens are explicitly restricted.
+- **Follow-ups:** Populate the branded Case Lab with the three respiratory cases and daily quick
+  case in P10-T15.

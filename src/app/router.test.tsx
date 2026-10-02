@@ -66,4 +66,13 @@ describe('router layouts', () => {
       expect(link).not.toHaveClass('text-neutral-600')
     }
   })
+
+  it('shows the official Autovrse logo in the shell header', () => {
+    renderRouter('/')
+
+    expect(screen.getByRole('img', { name: 'Autovrse logo' })).toHaveAttribute(
+      'src',
+      '/brand/autovrse-logo.svg',
+    )
+  })
 })

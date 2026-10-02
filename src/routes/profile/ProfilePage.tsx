@@ -267,6 +267,20 @@ export function ProfilePage() {
         />
         <OfflineStorageManager />
       </section>
+
+      <footer
+        aria-label={`About ${appConfig.app.name}`}
+        className="flex items-center justify-center gap-3 border-t border-neutral-200 pt-6 text-small text-neutral-600"
+      >
+        <img
+          alt="Autovrse logo"
+          className="size-8 rounded-sm"
+          height="32"
+          src="/brand/autovrse-logo.svg"
+          width="32"
+        />
+        <span>{appConfig.app.name}</span>
+      </footer>
     </div>
   )
 }

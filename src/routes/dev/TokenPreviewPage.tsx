@@ -13,16 +13,52 @@ import {
   Skeleton,
 } from '@/components/ui'
 
-const colorGroups = [
-  { name: 'Brand', classes: ['bg-brand-100', 'bg-brand-300', 'bg-brand-500', 'bg-brand-700'] },
+interface ColorPreview {
+  className: string
+  label: string
+  value?: string
+}
+
+const colorGroups: Array<{ name: string; colors: ColorPreview[] }> = [
+  {
+    name: 'Autovrse accents',
+    colors: [
+      { className: 'bg-primary', label: 'Primary', value: '#5C4ACF' },
+      { className: 'bg-primary-strong', label: 'Primary strong', value: '#8564D4' },
+      { className: 'bg-accent', label: 'Accent', value: '#7E48B7' },
+      {
+        className: 'bg-accent-decorative',
+        label: 'Decorative only',
+        value: '#C46DD2',
+      },
+    ],
+  },
   {
     name: 'Semantic',
-    classes: ['bg-success-600', 'bg-warning-600', 'bg-danger-600', 'bg-info-600'],
+    colors: [
+      { className: 'bg-success-600', label: 'Success' },
+      { className: 'bg-warning-600', label: 'Warning' },
+      { className: 'bg-danger-600', label: 'Danger' },
+      { className: 'bg-info-600', label: 'Information' },
+    ],
   },
-  { name: 'Game', classes: ['bg-xp', 'bg-streak', 'bg-badge', 'bg-star'] },
+  {
+    name: 'Game',
+    colors: [
+      { className: 'bg-xp', label: 'XP' },
+      { className: 'bg-streak', label: 'Streak' },
+      { className: 'bg-badge', label: 'Badge' },
+      { className: 'bg-star', label: 'Star' },
+    ],
+  },
   {
     name: 'Clinical',
-    classes: ['bg-clinical-700', 'bg-clinical-800', 'bg-clinical-900', 'bg-clinical-950'],
+    colors: [
+      { className: 'bg-clinical-700', label: 'Clinical 700' },
+      { className: 'bg-clinical-800', label: 'Clinical 800' },
+      { className: 'bg-clinical-900', label: 'Clinical 900' },
+      { className: 'bg-clinical-950', label: 'Clinical 950' },
+    ],
   },
 ]
 
@@ -47,13 +83,18 @@ export function TokenPreviewPage() {
           {colorGroups.map((group) => (
             <Card interactive key={group.name}>
               <h3 className="font-semibold">{group.name}</h3>
-              <div className="mt-3 flex gap-2">
-                {group.classes.map((className) => (
-                  <div
-                    aria-label={`${group.name} color sample`}
-                    className={`aspect-square flex-1 rounded-md ${className}`}
-                    key={className}
-                  />
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                {group.colors.map(({ className, label, value }) => (
+                  <div key={className}>
+                    <div
+                      aria-label={`${label} color sample${value ? ` ${value}` : ''}`}
+                      className={`aspect-[2/1] rounded-md ${className}`}
+                    />
+                    <p className="mt-1 text-caption text-neutral-600">
+                      {label}
+                      {value ? ` · ${value}` : ''}
+                    </p>
+                  </div>
                 ))}
               </div>
             </Card>
@@ -104,7 +145,9 @@ export function TokenPreviewPage() {
         title="Accessible sheet"
         description="Focus is trapped and returned by Radix Dialog."
       >
-        <p className="text-neutral-700">This adapts from a mobile bottom sheet to a desktop panel.</p>
+        <p className="text-neutral-700">
+          This adapts from a mobile bottom sheet to a desktop panel.
+        </p>
       </Sheet>
     </div>
   )

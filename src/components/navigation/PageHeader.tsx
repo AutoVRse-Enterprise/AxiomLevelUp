@@ -50,10 +50,17 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
               onClick={() => navigate(-1)}
             />
           ) : null}
+          <img
+            alt="Autovrse logo"
+            className="size-8 shrink-0 rounded-sm"
+            height="32"
+            src="/brand/autovrse-logo.svg"
+            width="32"
+          />
           <div className="min-w-0">
             {!immersive ? (
               <p className="text-caption font-semibold tracking-wide text-brand-700 uppercase">
-                Axiom
+                {appConfig.app.name}
               </p>
             ) : null}
             <p className="truncate font-bold text-neutral-900">{title}</p>
