@@ -1464,3 +1464,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Supported browsers use configured patterns only when enabled; unsupported
   browsers receive explanatory copy. Two focused tests, TypeScript and ESLint pass.
 - **Follow-ups:** Build reusable animated and resilient UI primitives.
+
+### [2026-10-02 12:34] P8-T05 - Extend the UI kit
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added reduced-motion-aware number animation, designed loading and semantic inline
+  notice components; added button press, interactive card and spring progress treatments; and
+  exposed the additions in the token preview.
+- **Files changed:** `src/components/ui/`, token preview, Phase 8 checklist and activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Shared polish primitives compile and lint cleanly and preserve semantic
+  progress/status output.
+- **Follow-ups:** Apply the motion primitives to answer feedback and player transitions.

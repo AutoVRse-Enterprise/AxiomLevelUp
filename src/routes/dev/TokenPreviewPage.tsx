@@ -1,7 +1,17 @@
 import { FlaskConical, Plus } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button, Card, Chip, ProgressBar, Sheet, Skeleton } from '@/components/ui'
+import {
+  AnimatedNumber,
+  Button,
+  Card,
+  Chip,
+  InlineNotice,
+  LoadingState,
+  ProgressBar,
+  Sheet,
+  Skeleton,
+} from '@/components/ui'
 
 const colorGroups = [
   { name: 'Brand', classes: ['bg-brand-100', 'bg-brand-300', 'bg-brand-500', 'bg-brand-700'] },
@@ -35,7 +45,7 @@ export function TokenPreviewPage() {
         </h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {colorGroups.map((group) => (
-            <Card key={group.name}>
+            <Card interactive key={group.name}>
               <h3 className="font-semibold">{group.name}</h3>
               <div className="mt-3 flex gap-2">
                 {group.classes.map((className) => (
@@ -65,6 +75,17 @@ export function TokenPreviewPage() {
           <Chip>Locked</Chip>
         </div>
         <ProgressBar className="mt-6" label="Course progress" value={64} />
+        <p className="mt-5 text-title font-bold text-xp">
+          +<AnimatedNumber value={135} /> XP
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <InlineNotice
+            message="This reusable notice supports a recovery action."
+            title="Designed feedback"
+            tone="success"
+          />
+          <LoadingState compact title="Preparing artifact" />
+        </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           <Skeleton className="h-24" />
           <div className="rounded-lg bg-clinical-950 p-5 text-white">

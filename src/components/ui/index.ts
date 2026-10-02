@@ -1,4 +1,7 @@
+export { AnimatedNumber } from './AnimatedNumber'
 export { Button, type ButtonProps } from './Button'
+export { InlineNotice } from './InlineNotice'
+export { LoadingState } from './LoadingState'
 export { Card } from './Card'
 export { Chip } from './Chip'
 export { IconButton } from './IconButton'

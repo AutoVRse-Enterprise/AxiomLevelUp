@@ -1,3 +1,5 @@
+import { m } from 'motion/react'
+
 import { cn } from '@/lib/cn'
 
 interface ProgressBarProps {
@@ -26,9 +28,11 @@ export function ProgressBar({ value, max = 100, label, className }: ProgressBarP
         className="h-2 overflow-hidden rounded-full bg-neutral-200"
         role="progressbar"
       >
-        <div
-          className="h-full rounded-full bg-brand-600 transition-[width] duration-250"
-          style={{ width: `${percentage}%` }}
+        <m.div
+          animate={{ width: `${percentage}%` }}
+          className="h-full rounded-full bg-brand-600"
+          initial={false}
+          transition={{ type: 'spring', stiffness: 180, damping: 26 }}
         />
       </div>
     </div>
