@@ -3,6 +3,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { Skeleton } from '@/components/ui'
+import { initializeHapticEffects } from '@/effects/haptics'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { initializeLearningProgressHandlers } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -15,6 +16,7 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     initializeLearningProgressHandlers(registry)
+    const stopHaptics = initializeHapticEffects(registry.appConfig.product.presentation.haptics)
     let active = true
     void Promise.all([
       Promise.resolve(useLearnerStore.persist.rehydrate()),
@@ -34,6 +36,7 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
 
     return () => {
       active = false
+      stopHaptics()
     }
   }, [registry, seed])
 

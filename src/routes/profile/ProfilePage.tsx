@@ -1,4 +1,4 @@
-import { BookOpenCheck, CircleHelp, Flame, RadioTower, Trophy } from 'lucide-react'
+import { BookOpenCheck, CircleHelp, Flame, RadioTower, Sparkles, Trophy, Vibrate } from 'lucide-react'
 
 import { useContent } from '@/app/contentContext'
 import {
@@ -12,8 +12,10 @@ import {
 import { getBadgeIcon } from '@/components/learning/badgeIconRegistry'
 import { OfflineStorageManager } from '@/components/offline/OfflineStorageManager'
 import { Card, ProgressBar } from '@/components/ui'
+import { hapticsSupported } from '@/effects/haptics'
 import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
+import { usePreferencesStore } from '@/state/preferences'
 import {
   selectBadgeViews,
   describeCriterion,
@@ -38,6 +40,10 @@ export function ProfilePage() {
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
   const stats = useLearnerStore((state) => state.stats)
   const mastery = useLearnerStore((state) => state.mastery)
+  const motion = usePreferencesStore((state) => state.motion)
+  const setMotion = usePreferencesStore((state) => state.setMotion)
+  const hapticsEnabled = usePreferencesStore((state) => state.hapticsEnabled)
+  const setHapticsEnabled = usePreferencesStore((state) => state.setHapticsEnabled)
   const badges = useLearnerStore((state) => state.badges)
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
   const gamification = useLearnerStore((state) => state.gamification)
@@ -172,6 +178,59 @@ export function ProfilePage() {
         <SectionHeader title="Activity" />
         <Card className="mt-4">
           <WeeklyActivityStrip {...activity} />
+        </Card>
+      </section>
+
+      <section aria-label="Experience preferences">
+        <SectionHeader
+          description="These settings apply only to this device."
+          title="Experience"
+        />
+        <Card className="mt-4 grid gap-5 md:grid-cols-2">
+          <label className="grid gap-2">
+            <span className="flex items-center gap-2 font-bold">
+              <Sparkles aria-hidden="true" size={18} /> Motion
+            </span>
+            <span className="text-small text-neutral-600">
+              Follow your device or choose how interface movement behaves.
+            </span>
+            <select
+              className="min-h-11 rounded-md border border-neutral-300 bg-white px-3 text-body"
+              onChange={(event) =>
+                setMotion(event.target.value as 'system' | 'reduced' | 'full')
+              }
+              value={motion}
+            >
+              <option value="system">Use device setting</option>
+              <option value="reduced">Reduce motion</option>
+              <option value="full">Full motion</option>
+            </select>
+          </label>
+
+          {hapticsSupported() ? (
+            <div className="flex min-h-11 items-start gap-3 rounded-lg border border-neutral-200 p-4">
+              <input
+                aria-label="Haptic feedback"
+                checked={hapticsEnabled}
+                className="mt-1 size-5 accent-brand-700"
+                id="haptics-enabled"
+                onChange={(event) => setHapticsEnabled(event.target.checked)}
+                type="checkbox"
+              />
+              <span>
+                <span className="flex items-center gap-2 font-bold">
+                  <Vibrate aria-hidden="true" size={18} /> Haptic feedback
+                </span>
+                <span className="mt-1 block text-small text-neutral-600">
+                  Use subtle vibration for correct answers and milestones.
+                </span>
+              </span>
+            </div>
+          ) : (
+            <div className="rounded-lg bg-neutral-100 p-4 text-small text-neutral-600">
+              Haptic feedback is not supported by this browser.
+            </div>
+          )}
         </Card>
       </section>
 

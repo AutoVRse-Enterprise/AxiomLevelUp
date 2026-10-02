@@ -1452,3 +1452,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Older configurations receive safe defaults; configured content validates
   with five courses, thirteen lessons and zero warnings; 21 focused tests pass.
 - **Follow-ups:** Subscribe device haptics to the typed learner-event stream.
+
+### [2026-10-02 12:26] P8-T04 - Add haptic experience controls
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a throttled event-bus haptic subscriber for correct answers, badges and
+  challenge completion and added device-scoped Motion and Haptic controls to Profile.
+- **Files changed:** `src/effects/haptics.ts`, haptics tests, learner-state provider, Profile page,
+  Phase 8 checklist and activity log.
+- **Commands run:** Focused tests, typecheck and lint.
+- **Result/verification:** Supported browsers use configured patterns only when enabled; unsupported
+  browsers receive explanatory copy. Two focused tests, TypeScript and ESLint pass.
+- **Follow-ups:** Build reusable animated and resilient UI primitives.
