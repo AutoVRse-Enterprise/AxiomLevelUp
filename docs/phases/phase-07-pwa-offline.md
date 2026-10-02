@@ -47,7 +47,7 @@ integrity and recovery UX.
 - [x] P7-T05 — Add cache, storage, hashing and fetch platform adapters.
 - [x] P7-T06 — Add the verified course download manager and reconciliation.
 - [x] P7-T07 — Add typed course-download lifecycle events.
-- [ ] P7-T08 — Replace generated service-worker routing with an inject-manifest worker.
+- [x] P7-T08 — Replace generated service-worker routing with an inject-manifest worker.
 - [ ] P7-T09 — Add real and simulated connectivity state.
 - [ ] P7-T10 — Add course, catalog and lesson offline download status controls.
 - [ ] P7-T11 — Gate unavailable lessons and challenges while offline.

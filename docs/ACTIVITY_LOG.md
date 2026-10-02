@@ -1280,3 +1280,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Typecheck passes. The focused suite identified and corrected its expected
   learner-state version from 3 to 4.
 - **Follow-ups:** Install the custom service worker and verified-first request routing.
+
+### [2026-10-02 11:22] P7-T08 - Add verified-first service worker
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced generated Workbox routing with an inject-manifest worker that precaches the
+  shell, serves verified course assets first with byte-range support, retains the expiring passive
+  DICOM cache, persists simulated-offline mode in worker IndexedDB and accepts update/offline
+  messages. Added a separate worker TypeScript project and explicit Workbox dependencies.
+- **Files changed:** service worker, request/cache policy, Vite and TypeScript configuration,
+  package manifests, Phase 7 checklist and activity log.
+- **Commands run:** Workbox package install and `npm run build`.
+- **Result/verification:** Production build passes; the custom worker is emitted as `dist/sw.js`
+  with 104 precache entries / 5,646.55 KiB. Entry and imaging chunks remain separated.
+- **Follow-ups:** Connect service-worker simulated state to application connectivity and controls.
