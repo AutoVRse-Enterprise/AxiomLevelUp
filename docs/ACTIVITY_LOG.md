@@ -1476,3 +1476,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Shared polish primitives compile and lint cleanly and preserve semantic
   progress/status output.
 - **Follow-ups:** Apply the motion primitives to answer feedback and player transitions.
+
+### [2026-10-02 12:43] P8-T06 - Animate learner feedback
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added spring selection response, step entry transitions, success/error feedback
+  reveals and a count-up XP chip while preserving existing focus movement and semantics.
+- **Files changed:** choice list, feedback panel, step frame, activity player, Phase 8 checklist and
+  activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Feedback and player motion compile and lint cleanly and inherit the
+  global reduced-motion policy.
+- **Follow-ups:** Add staged completion and configured celebration effects.

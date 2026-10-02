@@ -1,3 +1,5 @@
+import { m } from 'motion/react'
+
 import { cn } from '@/lib/cn'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { EvaluationResult } from '@/primitives/types'
@@ -42,8 +44,11 @@ export function ChoiceList({
           const labelId = `${name}-${option.id}-label`
 
           return (
-            <label
+            <m.label
+              animate={{ scale: selected ? 1.01 : 1 }}
               key={option.id}
+              layout
+              transition={{ type: 'spring', stiffness: 420, damping: 30 }}
               className={cn(
                 'flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors',
                 selected
@@ -68,7 +73,7 @@ export function ChoiceList({
                 {option.label}
               </span>
               {visibleReviewStatus ? <ReviewMark status={visibleReviewStatus} /> : null}
-            </label>
+            </m.label>
           )
         })}
       </div>

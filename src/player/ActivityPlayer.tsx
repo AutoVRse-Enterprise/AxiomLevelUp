@@ -339,6 +339,7 @@ export function ActivityPlayer({
   return (
     <>
       <StepFrame
+        key={step.primitive.id}
         title={`${plan.activity.title}: ${step.primitive.type.replaceAll('_', ' ')}`}
         definitionLabel={step.label}
         progress={selectProgressFraction(session, plan) * 100}

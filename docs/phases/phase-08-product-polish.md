@@ -43,7 +43,7 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T03 — Add validated presentation configuration.
 - [x] P8-T04 — Add event-driven haptics and Profile experience controls.
 - [x] P8-T05 — Add reusable animated-number, loading and notice UI.
-- [ ] P8-T06 — Animate answer selection, feedback, XP and player transitions.
+- [x] P8-T06 — Animate answer selection, feedback, XP and player transitions.
 - [ ] P8-T07 — Add staged activity-completion presentation.
 - [ ] P8-T08 — Polish badge/level celebrations and persistent XP/streak chrome.
 - [ ] P8-T09 — Animate pathway and progress surfaces.

@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { m } from 'motion/react'
 import { type ReactNode, useEffect, useRef } from 'react'
 
 import { IconButton, ProgressBar } from '@/components/ui'
@@ -42,10 +43,13 @@ export function StepFrame({
         <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
         <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
       </div>
-      <section
+      <m.section
+        animate={{ opacity: 1, y: 0 }}
         className={`mt-8 rounded-xl border border-neutral-200 bg-white shadow-card ${
           layout === 'viewer' ? 'p-2 sm:p-4' : 'p-5 sm:p-8'
         }`}
+        initial={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
       >
         <h1 ref={headingRef} tabIndex={-1} className="sr-only">
           {title}
@@ -65,7 +69,7 @@ export function StepFrame({
         >
           {children}
         </div>
-      </section>
+      </m.section>
       {footer ? <div className="mt-5 flex justify-end">{footer}</div> : null}
     </div>
   )
