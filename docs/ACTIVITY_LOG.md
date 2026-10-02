@@ -1254,3 +1254,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Browser and in-memory implementations satisfy one typed platform
   boundary and TypeScript passes.
 - **Follow-ups:** Build the verified download lifecycle on the adapters.
+
+### [2026-10-02 10:58] P7-T06 - Add verified download manager
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added foreground course downloads with quota checks, persistent-storage requests,
+  DICOM manifest expansion and geometry validation, passive-cache promotion, bounded concurrency,
+  size/SHA-256 verification, progress, pause/resume, cancellation, reference-safe removal and
+  startup eviction/version reconciliation.
+- **Files changed:** `src/offline/downloadManager.ts`, Phase 7 checklist and activity log.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** Only verified content enters `offline-courses-v1`; manager boundaries are
+  injectable and TypeScript passes.
+- **Follow-ups:** Map download lifecycle outcomes into the typed learner event stream.
