@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { primitiveTypeSet } from '../primitiveTypes'
+import { caseLabConfigSchema } from './case'
 import {
   primitiveContentSchemas,
   validateScenarioGraph,
@@ -15,6 +16,8 @@ const isoDateSchema = z.string().datetime({ offset: true })
 
 export * from './primitiveBase'
 export * from './primitives'
+export * from './anatomyMap'
+export * from './case'
 
 export interface PrimitiveParseResult {
   primitive?: Primitive
@@ -320,6 +323,7 @@ export const appConfigSchema = z.object({
       historyLimit: z.number().int().positive(),
     }),
   }),
+  caseLab: caseLabConfigSchema.optional(),
   concepts: z.array(conceptSchema).min(1),
   pathways: z.array(pathwaySchema).min(1),
   badges: z.array(badgeSchema),
@@ -555,6 +559,8 @@ export const contentManifestSchema = z.object({
   schemaVersion: z.literal('0.1'),
   appConfig: pathSchema,
   courses: z.array(pathSchema).min(1),
+  cases: z.array(pathSchema).default([]),
+  anatomyMaps: z.array(pathSchema).default([]),
   seeds: z.object({
     advanced: pathSchema,
     fresh: pathSchema,

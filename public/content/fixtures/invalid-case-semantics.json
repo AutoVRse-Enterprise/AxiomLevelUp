@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "0.1",
+  "caseVersion": "1.0",
+  "id": "invalid-case-semantics",
+  "title": "Invalid semantic references",
+  "summary": "A structurally valid case with invalid references and ordering.",
+  "tier": "foundation",
+  "organSystem": "generic",
+  "estimatedMinutes": 2,
+  "conceptIds": ["missing-case-concept"],
+  "patient": {
+    "label": "Fixture",
+    "presentingComplaint": "Fixture complaint",
+    "history": [],
+    "imageAssetId": "missing-patient-image"
+  },
+  "anatomyMapId": "fixture-anatomy",
+  "entry": {
+    "mode": "overview_marker",
+    "markerStructureId": "missing-structure"
+  },
+  "clues": [
+    {
+      "id": "clue-context",
+      "category": "missing-category",
+      "title": "Context",
+      "essential": true,
+      "primitive": {
+        "id": "duplicate-primitive",
+        "type": "rich_text",
+        "conceptIds": ["missing-clue-concept"],
+        "content": {
+          "body": "A structurally valid clue."
+        },
+        "assets": ["missing-clue-asset"],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    }
+  ],
+  "stages": [
+    {
+      "id": "stage-diagnose",
+      "kind": "diagnose",
+      "component": "diagnosis",
+      "title": "Diagnose first",
+      "clueIds": ["missing-stage-clue"],
+      "steps": [
+        {
+          "id": "duplicate-primitive",
+          "type": "true_false",
+          "clueIds": ["missing-step-clue"],
+          "conceptIds": ["missing-step-concept"],
+          "content": {
+            "statement": "This fixture contains invalid references.",
+            "answer": true,
+            "explanation": "The semantic validator reports each reference."
+          },
+          "assets": ["missing-step-asset"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "stage-diagnose",
+      "kind": "orient",
+      "component": "anatomy",
+      "title": "Orient too late",
+      "clueIds": [],
+      "steps": []
+    }
+  ],
+  "expertBenchmark": {
+    "name": "Expert",
+    "durationSeconds": 60,
+    "openedClueIds": ["missing-benchmark-clue"],
+    "responses": {
+      "missing-step": true
+    },
+    "breakdown": {
+      "anatomy": 0,
+      "diagnosis": 1,
+      "speed": 1
+    }
+  },
+  "debrief": {
+    "summary": "Invalid fixture.",
+    "keyClueIds": ["missing-debrief-clue"]
+  }
+}

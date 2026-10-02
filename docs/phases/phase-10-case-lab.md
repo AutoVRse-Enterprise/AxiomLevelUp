@@ -154,7 +154,7 @@ case
       bronchoscopy and illustration assets; verify lobe and airway separation, interior
       (endoscopic) rendering, GLB size, three.js chunk size and mobile frame rate; record provenance;
       go or fallback decision.
-- [ ] P10-T02 — Case content contract: case document and `caseLab` configuration schemas, clue
+- [x] P10-T02 — Case content contract: case document and `caseLab` configuration schemas, clue
       catalogue, stage components, tier presets, manifest wiring, semantic validation, JSON Schema
       export and invalid fixtures.
 - [ ] P10-T03 — Anatomy map and `model` asset type: hierarchy levels, structure-to-mesh bindings,

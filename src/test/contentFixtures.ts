@@ -27,6 +27,8 @@ export function makeValidContentBundle(): ContentBundleInput {
     appConfigFile: 'app-config.json',
     appConfig,
     courseFiles: courseDocuments.map(([file, data]) => ({ file, data })),
+    caseFiles: [],
+    anatomyMapFiles: [],
     seedFile: 'seeds/advanced.json',
     seed: advancedSeed,
     assetManifestFile: 'assets.json',

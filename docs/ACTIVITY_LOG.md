@@ -1804,3 +1804,19 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   endoscopic view will use a configured procedural tube driven by the authored waypoint graph.
 - **Follow-ups:** Formalise anatomy maps/model assets in P10-T03 and keep all Three.js imports
   inside the production anatomy boundary in P10-T04.
+
+### [2026-10-03 03:18] P10-T02 - Add Case Lab content contracts
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added strict case and Case Lab configuration schemas, manifest paths, loader and
+  registry support, semantic reference validation, fixtures, tests and exported JSON Schemas. Added
+  a deliberately minimal anatomy-map envelope for P10-T03 to make strict.
+- **Files changed:** Content schemas, loader, content fixtures/tests, manifest, validation and schema
+  export scripts, generated schemas, `docs/CONTENT_SCHEMA.md`, Phase 10 checklist and activity log.
+- **Commands run:** `npm run typecheck`, `npm run lint`, focused content tests,
+  `npm run validate:content`, `npm run schema:export`.
+- **Result/verification:** 26 focused tests pass. Five courses and thirteen lessons validate with
+  zero warnings, and eight JSON Schema documents export successfully. Cases remain optional until
+  P10-T15 registers demo content.
+- **Follow-ups:** Replace the minimal anatomy-map envelope with the strict P10-T03 contract and use
+  the case contracts in P10-T10.

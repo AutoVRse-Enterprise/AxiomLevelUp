@@ -1,6 +1,8 @@
 import {
+  anatomyMapSchema,
   appConfigSchema,
   assetManifestSchema,
+  caseDocumentSchema,
   contentManifestSchema,
   courseSchema,
   getPrimitiveAssetRefs,
@@ -8,7 +10,9 @@ import {
   parsePrimitive,
   type AppConfig,
   type AchievementCriterion,
+  type AnatomyMap,
   type AssetManifest,
+  type CaseDocument,
   type ContentManifest,
   type Course,
   type DicomPrimitive,
@@ -18,7 +22,7 @@ import {
   type PrimitiveAssetType,
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
-import { primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
+import { contentPrimitiveTypeSet, primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
 
 export interface ContentIssue {
   file: string
@@ -33,6 +37,8 @@ export interface ContentBundleInput {
   appConfigFile: string
   appConfig: unknown
   courseFiles: Array<{ file: string; data: unknown }>
+  caseFiles: Array<{ file: string; data: unknown }>
+  anatomyMapFiles: Array<{ file: string; data: unknown }>
   seedFile: string
   seed: unknown
   assetManifestFile: string
@@ -44,10 +50,14 @@ export interface ContentRegistry {
   appConfig: AppConfig
   courses: readonly Course[]
   catalogCourses: readonly Course[]
+  cases: readonly CaseDocument[]
+  anatomyMaps: readonly AnatomyMap[]
   seed: LearnerSeed
   assetManifest: AssetManifest
   courseById: ReadonlyMap<string, Course>
   lessonById: ReadonlyMap<string, Lesson>
+  caseById: ReadonlyMap<string, CaseDocument>
+  anatomyMapById: ReadonlyMap<string, AnatomyMap>
   assetById: ReadonlyMap<string, AssetManifest['assets'][number]>
   warnings: readonly ContentIssue[]
 }
@@ -81,6 +91,14 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     file,
     result: courseSchema.safeParse(data),
   }))
+  const caseResults = input.caseFiles.map(({ file, data }) => ({
+    file,
+    result: caseDocumentSchema.safeParse(data),
+  }))
+  const anatomyMapResults = input.anatomyMapFiles.map(({ file, data }) => ({
+    file,
+    result: anatomyMapSchema.safeParse(data),
+  }))
 
   if (!manifestResult.success)
     issues.push(...zodIssues(input.manifestFile, manifestResult.error.issues))
@@ -92,13 +110,25 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   for (const course of courseResults) {
     if (!course.result.success) issues.push(...zodIssues(course.file, course.result.error.issues))
   }
+  for (const caseDocument of caseResults) {
+    if (!caseDocument.result.success) {
+      issues.push(...zodIssues(caseDocument.file, caseDocument.result.error.issues))
+    }
+  }
+  for (const anatomyMap of anatomyMapResults) {
+    if (!anatomyMap.result.success) {
+      issues.push(...zodIssues(anatomyMap.file, anatomyMap.result.error.issues))
+    }
+  }
 
   if (
     !manifestResult.success ||
     !appConfigResult.success ||
     !seedResult.success ||
     !assetManifestResult.success ||
-    courseResults.some(({ result }) => !result.success)
+    courseResults.some(({ result }) => !result.success) ||
+    caseResults.some(({ result }) => !result.success) ||
+    anatomyMapResults.some(({ result }) => !result.success)
   ) {
     throw new ContentValidationError(issues)
   }
@@ -109,6 +139,14 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const assetManifest = assetManifestResult.data
   const courses = courseResults.map(({ result }) => {
     if (!result.success) throw new Error('Unreachable invalid course result')
+    return result.data
+  })
+  const cases = caseResults.map(({ result }) => {
+    if (!result.success) throw new Error('Unreachable invalid case result')
+    return result.data
+  })
+  const anatomyMaps = anatomyMapResults.map(({ result }) => {
+    if (!result.success) throw new Error('Unreachable invalid anatomy map result')
     return result.data
   })
   const catalogCourses = courses.filter(({ visibility }) => visibility === 'learner')
@@ -154,8 +192,20 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     assetManifest.assets.map(({ assetId }) => assetId),
     input.assetManifestFile,
   )
+  duplicate(
+    'case',
+    cases.map(({ id }) => id),
+    input.manifestFile,
+  )
+  duplicate(
+    'anatomy map',
+    anatomyMaps.map(({ id }) => id),
+    input.manifestFile,
+  )
 
   const courseById = new Map(courses.map((course) => [course.id, course]))
+  const caseById = new Map(cases.map((caseDocument) => [caseDocument.id, caseDocument]))
+  const anatomyMapById = new Map(anatomyMaps.map((anatomyMap) => [anatomyMap.id, anatomyMap]))
   const lessons = courses.flatMap((course) => course.lessons)
   duplicate(
     'lesson',
@@ -168,6 +218,8 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const conceptIds = new Set(appConfig.concepts.map(({ id }) => id))
   const challengeIds = new Set(appConfig.challenges.map(({ id }) => id))
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
+  const caseIds = new Set(cases.map(({ id }) => id))
+  const anatomyMapIds = new Set(anatomyMaps.map(({ id }) => id))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
   assetManifest.assets.forEach((asset, index) => {
     if (asset.offlineRequired && !asset.offlineAvailable) {
@@ -469,6 +521,231 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     })
   })
 
+  anatomyMaps.forEach((anatomyMap, anatomyMapIndex) => {
+    if (anatomyMap.modelAssetId) {
+      requireAsset(
+        anatomyMap.modelAssetId,
+        input.anatomyMapFiles[anatomyMapIndex]?.file ?? `anatomy:${anatomyMap.id}`,
+        'modelAssetId',
+      )
+    }
+  })
+
+  const stageOrder = ['orient', 'observe', 'interpret', 'diagnose'] as const
+  cases.forEach((caseDocument, caseIndex) => {
+    const file = input.caseFiles[caseIndex]?.file ?? `case:${caseDocument.id}`
+    const clueIds = new Set(caseDocument.clues.map(({ id }) => id))
+    const clueCategoryIds = new Set(appConfig.caseLab?.clueCategories.map(({ id }) => id) ?? [])
+    const anatomyMap = anatomyMapById.get(caseDocument.anatomyMapId)
+
+    requireRef(anatomyMapIds, caseDocument.anatomyMapId, file, 'anatomyMapId', 'anatomy map')
+    caseDocument.conceptIds.forEach((id, conceptIndex) =>
+      requireRef(conceptIds, id, file, `conceptIds.${conceptIndex}`, 'concept'),
+    )
+    if (caseDocument.patient.imageAssetId) {
+      requireAsset(caseDocument.patient.imageAssetId, file, 'patient.imageAssetId', 'image')
+    }
+
+    const duplicateClueIds = new Set<string>()
+    const seenPrimitiveIds = new Set<string>()
+    const stepIds = new Set<string>()
+    caseDocument.clues.forEach((clue, clueIndex) => {
+      if (duplicateClueIds.has(clue.id)) {
+        issues.push({
+          file,
+          path: `clues.${clueIndex}.id`,
+          message: `Duplicate clue id "${clue.id}" within this case.`,
+          severity: 'error',
+        })
+      }
+      duplicateClueIds.add(clue.id)
+      if (seenPrimitiveIds.has(clue.primitive.id)) {
+        issues.push({
+          file,
+          path: `clues.${clueIndex}.primitive.id`,
+          message: `Duplicate primitive id "${clue.primitive.id}" across case clues and stages.`,
+          severity: 'error',
+        })
+      }
+      seenPrimitiveIds.add(clue.primitive.id)
+      requireRef(
+        clueCategoryIds,
+        clue.category,
+        file,
+        `clues.${clueIndex}.category`,
+        'clue category',
+      )
+      if (!contentPrimitiveTypeSet.has(clue.primitive.type)) {
+        issues.push({
+          file,
+          path: `clues.${clueIndex}.primitive.type`,
+          message: `Clue primitive type "${clue.primitive.type}" is not content-only.`,
+          severity: 'error',
+        })
+      }
+      if (
+        clue.primitive.reward ||
+        clue.primitive.timer ||
+        clue.primitive.scoring.xp !== undefined ||
+        clue.primitive.scoring.weight !== 1
+      ) {
+        issues.push({
+          file,
+          path: `clues.${clueIndex}.primitive.scoring`,
+          message: 'Clue primitives cannot carry scored, timed, or rewarded behavior.',
+          severity: 'error',
+        })
+      }
+      validatePrimitive(clue.primitive, file, `clues.${clueIndex}.primitive`)
+    })
+
+    const seenStageIds = new Set<string>()
+    const seenStageKinds = new Set<string>()
+    let priorStageOrder = -1
+
+    caseDocument.stages.forEach((stage, stageIndex) => {
+      if (seenStageIds.has(stage.id)) {
+        issues.push({
+          file,
+          path: `stages.${stageIndex}.id`,
+          message: `Duplicate case stage id "${stage.id}".`,
+          severity: 'error',
+        })
+      }
+      seenStageIds.add(stage.id)
+
+      const order = stageOrder.indexOf(stage.kind)
+      if (seenStageKinds.has(stage.kind)) {
+        issues.push({
+          file,
+          path: `stages.${stageIndex}.kind`,
+          message: `Duplicate case stage kind "${stage.kind}".`,
+          severity: 'error',
+        })
+      }
+      if (order <= priorStageOrder) {
+        issues.push({
+          file,
+          path: `stages.${stageIndex}.kind`,
+          message: 'Case stages must follow orient, observe, interpret, diagnose order.',
+          severity: 'error',
+        })
+      }
+      seenStageKinds.add(stage.kind)
+      priorStageOrder = Math.max(priorStageOrder, order)
+
+      stage.clueIds.forEach((id, clueIndex) =>
+        requireRef(clueIds, id, file, `stages.${stageIndex}.clueIds.${clueIndex}`, 'clue'),
+      )
+      stage.steps.forEach((step, stepIndex) => {
+        const path = `stages.${stageIndex}.steps.${stepIndex}`
+        if (seenPrimitiveIds.has(step.id)) {
+          issues.push({
+            file,
+            path: `${path}.id`,
+            message: `Duplicate primitive id "${step.id}" across case clues and stages.`,
+            severity: 'error',
+          })
+        }
+        seenPrimitiveIds.add(step.id)
+        stepIds.add(step.id)
+        step.clueIds.forEach((id, clueIndex) =>
+          requireRef(clueIds, id, file, `${path}.clueIds.${clueIndex}`, 'clue'),
+        )
+        validatePrimitive(step, file, path)
+      })
+    })
+
+    caseDocument.expertBenchmark.openedClueIds.forEach((id, clueIndex) =>
+      requireRef(clueIds, id, file, `expertBenchmark.openedClueIds.${clueIndex}`, 'clue'),
+    )
+    Object.keys(caseDocument.expertBenchmark.responses).forEach((id) =>
+      requireRef(stepIds, id, file, `expertBenchmark.responses.${id}`, 'case primitive'),
+    )
+    caseDocument.debrief.keyClueIds.forEach((id, clueIndex) =>
+      requireRef(clueIds, id, file, `debrief.keyClueIds.${clueIndex}`, 'clue'),
+    )
+
+    if (caseDocument.entry.mode === 'clue_first') {
+      requireRef(clueIds, caseDocument.entry.clueId, file, 'entry.clueId', 'clue')
+    }
+    if (caseDocument.entry.mode === 'overview_marker' && anatomyMap?.structures) {
+      requireRef(
+        new Set(anatomyMap.structures.map(({ id }) => id)),
+        caseDocument.entry.markerStructureId,
+        file,
+        'entry.markerStructureId',
+        'anatomy structure',
+      )
+    }
+    if (caseDocument.entry.mode === 'endoscopic' && anatomyMap?.waypoints) {
+      requireRef(
+        new Set(anatomyMap.waypoints.map(({ id }) => id)),
+        caseDocument.entry.waypointId,
+        file,
+        'entry.waypointId',
+        'anatomy waypoint',
+      )
+    }
+  })
+
+  if (appConfig.caseLab) {
+    const configuredCaseIds = new Set<string>()
+    appConfig.caseLab.caseIds.forEach((id, index) => {
+      if (configuredCaseIds.has(id)) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `caseLab.caseIds.${index}`,
+          message: `Duplicate configured case id "${id}".`,
+          severity: 'error',
+        })
+      }
+      configuredCaseIds.add(id)
+      requireRef(caseIds, id, input.appConfigFile, `caseLab.caseIds.${index}`, 'case')
+    })
+    if (!configuredCaseIds.has(appConfig.caseLab.featuredCaseId)) {
+      issues.push({
+        file: input.appConfigFile,
+        path: 'caseLab.featuredCaseId',
+        message: 'The featured case must also appear in caseLab.caseIds.',
+        severity: 'error',
+      })
+    }
+    const clueCategoryIds = new Set<string>()
+    appConfig.caseLab.clueCategories.forEach(({ id }, index) => {
+      if (clueCategoryIds.has(id)) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `caseLab.clueCategories.${index}.id`,
+          message: `Duplicate clue category id "${id}".`,
+          severity: 'error',
+        })
+      }
+      clueCategoryIds.add(id)
+    })
+    requireRef(
+      caseIds,
+      appConfig.caseLab.featuredCaseId,
+      input.appConfigFile,
+      'caseLab.featuredCaseId',
+      'case',
+    )
+    requireRef(
+      caseIds,
+      appConfig.caseLab.dailyQuickCaseId,
+      input.appConfigFile,
+      'caseLab.dailyQuickCaseId',
+      'case',
+    )
+  } else if (cases.length > 0) {
+    issues.push({
+      file: input.appConfigFile,
+      path: 'caseLab',
+      message: 'caseLab configuration is required when cases are present.',
+      severity: 'error',
+    })
+  }
+
   appConfig.challenges.forEach((challenge, challengeIndex) => {
     const itemPath = `challenges.${challengeIndex}.items`
     requireUniquePrimitiveIds(challenge.items, input.appConfigFile, itemPath)
@@ -636,10 +913,14 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     appConfig,
     courses: Object.freeze(courses),
     catalogCourses: Object.freeze(catalogCourses),
+    cases: Object.freeze(cases),
+    anatomyMaps: Object.freeze(anatomyMaps),
     seed,
     assetManifest,
     courseById,
     lessonById,
+    caseById,
+    anatomyMapById,
     assetById,
     warnings: Object.freeze(warnings),
   }
@@ -665,11 +946,17 @@ export async function loadContent(baseUrl = '/content'): Promise<ContentRegistry
   const seedFile = resolveContentPath(baseUrl, seedPath)
   const assetManifestFile = resolveContentPath(baseUrl, parsedManifest.assetManifest)
   const courseFiles = parsedManifest.courses.map((path) => resolveContentPath(baseUrl, path))
-  const [appConfig, seed, assetManifest, ...courses] = await Promise.all([
+  const caseFiles = parsedManifest.cases.map((path) => resolveContentPath(baseUrl, path))
+  const anatomyMapFiles = parsedManifest.anatomyMaps.map((path) =>
+    resolveContentPath(baseUrl, path),
+  )
+  const [appConfig, seed, assetManifest, courses, cases, anatomyMaps] = await Promise.all([
     fetchJson(appConfigFile),
     fetchJson(seedFile),
     fetchJson(assetManifestFile),
-    ...courseFiles.map(fetchJson),
+    Promise.all(courseFiles.map(fetchJson)),
+    Promise.all(caseFiles.map(fetchJson)),
+    Promise.all(anatomyMapFiles.map(fetchJson)),
   ])
 
   return validateContentBundle({
@@ -678,6 +965,11 @@ export async function loadContent(baseUrl = '/content'): Promise<ContentRegistry
     appConfigFile,
     appConfig,
     courseFiles: courseFiles.map((file, index) => ({ file, data: courses[index] })),
+    caseFiles: caseFiles.map((file, index) => ({ file, data: cases[index] })),
+    anatomyMapFiles: anatomyMapFiles.map((file, index) => ({
+      file,
+      data: anatomyMaps[index],
+    })),
     seedFile,
     seed,
     assetManifestFile,

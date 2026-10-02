@@ -1,4 +1,8 @@
+import anatomyMapFixture from '../../public/content/fixtures/anatomy-map.json'
+import caseFixture from '../../public/content/fixtures/case.json'
 import invalidChallengePrimitive from '../../public/content/fixtures/invalid-challenge-primitive.json'
+import invalidCaseCluePrimitive from '../../public/content/fixtures/invalid-case-clue-primitive.json'
+import invalidCaseSemantics from '../../public/content/fixtures/invalid-case-semantics.json'
 import invalidCourse from '../../public/content/fixtures/invalid-course.json'
 import unknownPrimitive from '../../public/content/fixtures/unknown-primitive.json'
 import advancedSeed from '../../public/content/seeds/advanced.json'
@@ -7,12 +11,60 @@ import { describe, expect, it, vi } from 'vitest'
 import { ContentValidationError, loadContent, validateContentBundle } from '@/content/loader'
 import {
   appConfigSchema,
+  anatomyMapSchema,
   assetManifestSchema,
+  caseDocumentSchema,
   courseSchema,
   learnerSeedSchema,
   parsePrimitive,
 } from '@/content/schema'
 import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures'
+
+function withCaseFixture(caseDocument: unknown = caseFixture) {
+  const bundle = makeValidContentBundle()
+  bundle.caseFiles = [{ file: 'fixtures/case.json', data: structuredClone(caseDocument) }]
+  bundle.anatomyMapFiles = [
+    { file: 'fixtures/anatomy-map.json', data: structuredClone(anatomyMapFixture) },
+  ]
+  const appConfig = bundle.appConfig as Record<string, unknown>
+  appConfig.caseLab = {
+    title: 'Case Lab',
+    featuredCaseId: 'case-contract-fixture',
+    caseIds: ['case-contract-fixture'],
+    dailyQuickCaseId: 'case-contract-fixture',
+    clueCategories: [{ id: 'evidence', label: 'Evidence' }],
+    tiers: {
+      foundation: {
+        label: 'Basic',
+        timing: 'none',
+        hints: 'full',
+        labelEssentialClues: true,
+      },
+      intermediate: {
+        label: 'Intermediate',
+        timing: 'stopwatch',
+        hints: 'full',
+        labelEssentialClues: true,
+      },
+      advanced: {
+        label: 'Advanced',
+        timing: 'countdown',
+        hints: 'reduced',
+        labelEssentialClues: false,
+      },
+    },
+    scoring: {
+      weights: { anatomy: 0.4, diagnosis: 0.4, speed: 0.2 },
+      speedBlend: { perStep: 0.5, perCase: 0.5 },
+      defaultStepTargetSeconds: 20,
+      defaultStepMaxSeconds: 90,
+      cluePenalty: { perOptionalClue: 2, cap: 10 },
+    },
+    xp: { caseComplete: 100, perfectCaseBonus: 40 },
+    historyLimit: 10,
+  }
+  return bundle
+}
 
 describe('content schemas', () => {
   it('accepts the advanced learner seed', () => {
@@ -88,6 +140,24 @@ describe('content schemas', () => {
     expect(result.primitive?.type).toBe('future_lab_simulation')
     expect(result.warnings[0]).toContain('runtime fallback')
   })
+
+  it('accepts the case document and anatomy-map fixture contracts', () => {
+    expect(caseDocumentSchema.parse(caseFixture).id).toBe('case-contract-fixture')
+    expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
+  })
+
+  it('rejects assessment primitives used as case clues with a useful path', () => {
+    expect(() => validateContentBundle(withCaseFixture(invalidCaseCluePrimitive))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: 'fixtures/case.json',
+            path: 'clues.0.primitive.type',
+          }),
+        ]),
+      }),
+    )
+  })
 })
 
 describe('content loader', () => {
@@ -116,7 +186,110 @@ describe('content loader', () => {
     expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(26)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
     expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
+    expect(registry.cases).toEqual([])
+    expect(registry.anatomyMaps).toEqual([])
     expect(registry.warnings).toEqual([])
+  })
+
+  it('fetches, validates, and indexes cases and anatomy maps', async () => {
+    const manifest = structuredClone(contentResponses.get('/content/manifest.json')) as {
+      cases: string[]
+      anatomyMaps: string[]
+    }
+    manifest.cases = ['fixtures/case.json']
+    manifest.anatomyMaps = ['fixtures/anatomy-map.json']
+    const appConfig = withCaseFixture().appConfig
+    const responses = new Map(contentResponses)
+    responses.set('/content/manifest.json', manifest)
+    responses.set('/content/app-config.json', appConfig)
+    responses.set('/content/fixtures/case.json', caseFixture)
+    responses.set('/content/fixtures/anatomy-map.json', anatomyMapFixture)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL) => {
+        const data = responses.get(String(input))
+        return {
+          ok: data !== undefined,
+          status: data === undefined ? 404 : 200,
+          statusText: data === undefined ? 'Not Found' : 'OK',
+          json: async () => structuredClone(data),
+        } as Response
+      }),
+    )
+
+    const registry = await loadContent()
+
+    expect(registry.caseById.get('case-contract-fixture')?.title).toBe('Contract fixture')
+    expect(registry.anatomyMapById.get('fixture-anatomy')?.structures).toHaveLength(1)
+  })
+
+  it('validates case semantics with source files and precise JSON paths', () => {
+    const bundle = withCaseFixture(invalidCaseSemantics)
+    const appConfig = bundle.appConfig as {
+      caseLab: { featuredCaseId: string; caseIds: string[]; dailyQuickCaseId: string }
+    }
+    appConfig.caseLab.featuredCaseId = 'invalid-case-semantics'
+    appConfig.caseLab.caseIds = ['invalid-case-semantics']
+    appConfig.caseLab.dailyQuickCaseId = 'invalid-case-semantics'
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: 'fixtures/case.json',
+            path: 'conceptIds.0',
+            message: expect.stringContaining('missing-case-concept'),
+          }),
+          expect.objectContaining({ path: 'patient.imageAssetId' }),
+          expect.objectContaining({ path: 'entry.markerStructureId' }),
+          expect.objectContaining({ path: 'clues.0.category' }),
+          expect.objectContaining({ path: 'clues.0.primitive.conceptIds.0' }),
+          expect.objectContaining({ path: 'clues.0.primitive.assets.0' }),
+          expect.objectContaining({ path: 'stages.0.clueIds.0' }),
+          expect.objectContaining({ path: 'stages.0.steps.0.id' }),
+          expect.objectContaining({ path: 'stages.0.steps.0.clueIds.0' }),
+          expect.objectContaining({ path: 'stages.0.steps.0.conceptIds.0' }),
+          expect.objectContaining({ path: 'stages.0.steps.0.assets.0' }),
+          expect.objectContaining({ path: 'stages.1.id' }),
+          expect.objectContaining({ path: 'stages.1.kind' }),
+          expect.objectContaining({ path: 'expertBenchmark.openedClueIds.0' }),
+          expect.objectContaining({ path: 'expertBenchmark.responses.missing-step' }),
+          expect.objectContaining({ path: 'debrief.keyClueIds.0' }),
+        ]),
+      }),
+    )
+  })
+
+  it('validates case-lab IDs and available anatomy entry references', () => {
+    const bundle = withCaseFixture()
+    const appConfig = bundle.appConfig as {
+      caseLab: { featuredCaseId: string; caseIds: string[] }
+    }
+    appConfig.caseLab.featuredCaseId = 'missing-case'
+    appConfig.caseLab.caseIds.push('missing-case')
+    const caseDocument = bundle.caseFiles[0]!.data as {
+      entry: { mode: string; waypointId?: string }
+    }
+    caseDocument.entry = { mode: 'endoscopic', waypointId: 'missing-waypoint' }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'caseLab.featuredCaseId',
+            message: expect.stringContaining('Unknown case reference'),
+          }),
+          expect.objectContaining({
+            path: 'caseLab.caseIds.1',
+            message: expect.stringContaining('Unknown case reference'),
+          }),
+          expect.objectContaining({
+            path: 'entry.waypointId',
+            message: expect.stringContaining('Unknown anatomy waypoint reference'),
+          }),
+        ]),
+      }),
+    )
   })
 
   it('reports unknown references with their source path', () => {

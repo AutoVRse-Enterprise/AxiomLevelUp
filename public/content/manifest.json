@@ -8,6 +8,8 @@
     "courses/safety-assessment.json",
     "courses/runtime-showcase.json"
   ],
+  "cases": [],
+  "anatomyMaps": [],
   "seeds": {
     "advanced": "seeds/advanced.json",
     "fresh": "seeds/fresh.json"

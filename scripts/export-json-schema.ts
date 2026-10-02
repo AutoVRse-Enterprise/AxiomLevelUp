@@ -4,8 +4,10 @@ import { fileURLToPath } from 'node:url'
 import { toJSONSchema, type ZodType } from 'zod'
 
 import {
+  anatomyMapSchema,
   appConfigSchema,
   assetManifestSchema,
+  caseDocumentSchema,
   contentManifestSchema,
   courseSchema,
   learnerSeedSchema,
@@ -26,6 +28,8 @@ const schemas: Record<string, ZodType> = {
   'content-manifest': contentManifestSchema,
   'app-config': appConfigSchema,
   course: courseSchema,
+  case: caseDocumentSchema,
+  'anatomy-map': anatomyMapSchema,
   'learner-seed': learnerSeedSchema,
   'asset-manifest': assetManifestSchema,
   primitive: primitiveBaseSchema,
@@ -54,10 +58,40 @@ ${Object.keys(schemas)
   .map((name) => `- \`schemas/${name}.schema.json\``)
   .join('\n')}
 
-These six JSON Schema documents describe the exported document envelopes. In particular,
+These ${Object.keys(schemas).length} JSON Schema documents describe the exported document envelopes. In particular,
 \`schemas/primitive.schema.json\` is the shared forward-compatible primitive envelope; the strict
 per-type content contracts are enforced by the runtime Zod schemas listed below and are not emitted
 as separate JSON Schema files.
+
+## Case documents and anatomy maps
+
+\`manifest.json\` carries \`cases\` and \`anatomyMaps\` path arrays alongside courses. The loader
+fetches and parses every listed document, then exposes ordered \`cases\` and \`anatomyMaps\`
+collections plus \`caseById\` and \`anatomyMapById\` registries.
+
+A case document contains patient context, a tier, an anatomy-map entry mode, a content-only clue
+catalogue, ordered stages of reusable primitives, timing targets, an expert benchmark and a
+debrief. Stage kinds are unique and follow \`orient\`, \`observe\`, \`interpret\`, \`diagnose\`
+order; a short case may omit stages without changing that order. Semantic validation resolves
+case, anatomy-map, clue, benchmark-step, concept and asset references. Primitive IDs are unique
+across clue content and stage steps.
+
+Clues accept only the registered content primitive types and cannot carry timers, XP, rewards or
+non-default score weights. Stage steps retain the normal strict primitive parsing, asset typing,
+timer compatibility and semantic checks.
+
+The P10-T02 anatomy-map envelope intentionally validates only \`schemaVersion\`, \`id\`, optional
+\`modelAssetId\`, and optional addressable \`structures\` and \`waypoints\`. It preserves additional
+fields for forward compatibility. P10-T03 owns the strict hierarchy, model metadata, mesh binding
+and waypoint-graph contract.
+
+## Case Lab configuration
+
+The optional \`caseLab\` app-config section becomes required by semantic validation whenever the
+manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
+clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
+defaults, clue penalties, XP and attempt-history limit. Every configured case ID and clue category
+used by a case must resolve.
 
 ## Primitive registry
 

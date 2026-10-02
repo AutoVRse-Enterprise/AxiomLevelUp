@@ -44,6 +44,12 @@ async function main() {
     courseFiles: await Promise.all(
       parsed.courses.map(async (file) => ({ file, data: await readJson(file) })),
     ),
+    caseFiles: await Promise.all(
+      parsed.cases.map(async (file) => ({ file, data: await readJson(file) })),
+    ),
+    anatomyMapFiles: await Promise.all(
+      parsed.anatomyMaps.map(async (file) => ({ file, data: await readJson(file) })),
+    ),
     seedFile: parsed.seeds[parsed.defaultSeed],
     seed: await readJson(parsed.seeds[parsed.defaultSeed]),
     assetManifestFile: parsed.assetManifest,
@@ -146,7 +152,7 @@ async function main() {
   if (formulaIssues.length > 0) throw new ContentValidationError(formulaIssues)
 
   console.log(
-    `Validated ${registry.courses.length} courses, ${registry.lessonById.size} lessons and ${registry.warnings.length} warnings.`,
+    `Validated ${registry.courses.length} courses, ${registry.lessonById.size} lessons, ${registry.cases.length} cases, ${registry.anatomyMaps.length} anatomy maps and ${registry.warnings.length} warnings.`,
   )
   for (const warning of registry.warnings) {
     console.warn(`WARN ${warning.file}:${warning.path} ${warning.message}`)

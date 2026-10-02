@@ -555,6 +555,295 @@
       ],
       "additionalProperties": false
     },
+    "caseLab": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "featuredCaseId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "caseIds": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          }
+        },
+        "dailyQuickCaseId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "clueCategories": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "tiers": {
+          "type": "object",
+          "properties": {
+            "foundation": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "timing": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "stopwatch",
+                    "countdown"
+                  ]
+                },
+                "hints": {
+                  "type": "string",
+                  "enum": [
+                    "full",
+                    "reduced"
+                  ]
+                },
+                "labelEssentialClues": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "label",
+                "timing",
+                "hints",
+                "labelEssentialClues"
+              ],
+              "additionalProperties": false
+            },
+            "intermediate": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "timing": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "stopwatch",
+                    "countdown"
+                  ]
+                },
+                "hints": {
+                  "type": "string",
+                  "enum": [
+                    "full",
+                    "reduced"
+                  ]
+                },
+                "labelEssentialClues": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "label",
+                "timing",
+                "hints",
+                "labelEssentialClues"
+              ],
+              "additionalProperties": false
+            },
+            "advanced": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "timing": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "stopwatch",
+                    "countdown"
+                  ]
+                },
+                "hints": {
+                  "type": "string",
+                  "enum": [
+                    "full",
+                    "reduced"
+                  ]
+                },
+                "labelEssentialClues": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "label",
+                "timing",
+                "hints",
+                "labelEssentialClues"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "foundation",
+            "intermediate",
+            "advanced"
+          ],
+          "additionalProperties": false
+        },
+        "scoring": {
+          "type": "object",
+          "properties": {
+            "weights": {
+              "type": "object",
+              "properties": {
+                "anatomy": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "diagnosis": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "speed": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "anatomy",
+                "diagnosis",
+                "speed"
+              ],
+              "additionalProperties": false
+            },
+            "speedBlend": {
+              "type": "object",
+              "properties": {
+                "perStep": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "perCase": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "perStep",
+                "perCase"
+              ],
+              "additionalProperties": false
+            },
+            "defaultStepTargetSeconds": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "defaultStepMaxSeconds": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "cluePenalty": {
+              "type": "object",
+              "properties": {
+                "perOptionalClue": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "cap": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              },
+              "required": [
+                "perOptionalClue",
+                "cap"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "weights",
+            "speedBlend",
+            "defaultStepTargetSeconds",
+            "defaultStepMaxSeconds",
+            "cluePenalty"
+          ],
+          "additionalProperties": false
+        },
+        "xp": {
+          "type": "object",
+          "properties": {
+            "caseComplete": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "perfectCaseBonus": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "caseComplete",
+            "perfectCaseBonus"
+          ],
+          "additionalProperties": false
+        },
+        "historyLimit": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "title",
+        "featuredCaseId",
+        "caseIds",
+        "dailyQuickCaseId",
+        "clueCategories",
+        "tiers",
+        "scoring",
+        "xp",
+        "historyLimit"
+      ],
+      "additionalProperties": false
+    },
     "concepts": {
       "minItems": 1,
       "type": "array",

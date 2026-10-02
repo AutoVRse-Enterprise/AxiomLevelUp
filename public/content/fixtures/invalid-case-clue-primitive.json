@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "0.1",
+  "caseVersion": "1.0",
+  "id": "invalid-case-clue-primitive",
+  "title": "Invalid clue primitive",
+  "summary": "A clue incorrectly uses an assessment primitive.",
+  "tier": "foundation",
+  "organSystem": "generic",
+  "estimatedMinutes": 2,
+  "conceptIds": ["thoracic-imaging"],
+  "patient": {
+    "label": "Fixture",
+    "presentingComplaint": "Fixture complaint",
+    "history": []
+  },
+  "anatomyMapId": "fixture-anatomy",
+  "entry": {
+    "mode": "clue_first",
+    "clueId": "clue-question"
+  },
+  "clues": [
+    {
+      "id": "clue-question",
+      "category": "evidence",
+      "title": "Scored clue",
+      "essential": true,
+      "primitive": {
+        "id": "scored-clue",
+        "type": "multiple_choice",
+        "conceptIds": ["thoracic-imaging"],
+        "content": {
+          "prompt": "This must not be used as a clue.",
+          "options": [
+            { "id": "one", "label": "One" },
+            { "id": "two", "label": "Two" }
+          ],
+          "correctOptionId": "one",
+          "explanation": "Assessment primitives belong in stages."
+        },
+        "assets": [],
+        "completion": { "mode": "answer" },
+        "scoring": { "weight": 1 },
+        "feedback": {}
+      }
+    }
+  ],
+  "stages": [
+    {
+      "id": "stage-diagnose",
+      "kind": "diagnose",
+      "component": "diagnosis",
+      "title": "Diagnose",
+      "clueIds": ["clue-question"],
+      "steps": []
+    }
+  ],
+  "expertBenchmark": {
+    "name": "Expert",
+    "durationSeconds": 60,
+    "openedClueIds": ["clue-question"],
+    "responses": {},
+    "breakdown": {
+      "anatomy": 0,
+      "diagnosis": 1,
+      "speed": 1
+    }
+  },
+  "debrief": {
+    "summary": "Invalid fixture.",
+    "keyClueIds": ["clue-question"]
+  }
+}

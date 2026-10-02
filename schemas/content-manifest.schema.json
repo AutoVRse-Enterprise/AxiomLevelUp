@@ -18,6 +18,22 @@
         "minLength": 1
       }
     },
+    "cases": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "anatomyMaps": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "seeds": {
       "type": "object",
       "properties": {
@@ -52,6 +68,8 @@
     "schemaVersion",
     "appConfig",
     "courses",
+    "cases",
+    "anatomyMaps",
     "seeds",
     "defaultSeed",
     "assetManifest"

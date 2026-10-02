@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "0.1",
+  "caseVersion": "1.0",
+  "id": "case-contract-fixture",
+  "title": "Contract fixture",
+  "summary": "A generic case used to verify the content contract.",
+  "tier": "foundation",
+  "organSystem": "generic",
+  "estimatedMinutes": 4,
+  "conceptIds": ["thoracic-imaging"],
+  "patient": {
+    "label": "Learner fixture",
+    "presentingComplaint": "A configured finding requires interpretation.",
+    "history": ["The history is intentionally non-clinical."],
+    "imageAssetId": "thorax-diagram"
+  },
+  "anatomyMapId": "fixture-anatomy",
+  "entry": {
+    "mode": "overview_marker",
+    "markerStructureId": "target-structure"
+  },
+  "clues": [
+    {
+      "id": "clue-context",
+      "category": "evidence",
+      "title": "Context",
+      "essential": true,
+      "primitive": {
+        "id": "clue-context-content",
+        "type": "rich_text",
+        "conceptIds": ["thoracic-imaging"],
+        "content": {
+          "heading": "Context",
+          "body": "Review this configured evidence before answering."
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    }
+  ],
+  "stages": [
+    {
+      "id": "stage-orient",
+      "kind": "orient",
+      "component": "anatomy",
+      "title": "Orient",
+      "clueIds": ["clue-context"],
+      "steps": [
+        {
+          "id": "identify-location",
+          "type": "multiple_choice",
+          "clueIds": ["clue-context"],
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "prompt": "Which configured location is highlighted?",
+            "options": [
+              { "id": "target", "label": "Target structure" },
+              { "id": "other", "label": "Other structure" }
+            ],
+            "correctOptionId": "target",
+            "explanation": "The fixture identifies the configured target structure."
+          },
+          "assets": ["thorax-diagram"],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        }
+      ]
+    },
+    {
+      "id": "stage-diagnose",
+      "kind": "diagnose",
+      "component": "diagnosis",
+      "title": "Conclude",
+      "clueIds": [],
+      "steps": [
+        {
+          "id": "select-conclusion",
+          "type": "true_false",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "statement": "The configured evidence supports the conclusion.",
+            "answer": true,
+            "explanation": "The fixture has one supported conclusion."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        }
+      ]
+    }
+  ],
+  "timing": {
+    "caseTargetSeconds": 120,
+    "caseMaxSeconds": 300
+  },
+  "expertBenchmark": {
+    "name": "Configured expert",
+    "durationSeconds": 90,
+    "openedClueIds": ["clue-context"],
+    "responses": {
+      "identify-location": "target",
+      "select-conclusion": true
+    },
+    "breakdown": {
+      "anatomy": 1,
+      "diagnosis": 1,
+      "speed": 1
+    }
+  },
+  "debrief": {
+    "summary": "The fixture verifies configured case loading and references.",
+    "keyClueIds": ["clue-context"]
+  }
+}
