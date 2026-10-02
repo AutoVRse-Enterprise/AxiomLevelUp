@@ -1440,3 +1440,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** TypeScript and lint pass. The split entry is 225,380 gzip bytes under the
   230,000 budget; imaging remains 1,006,576 gzip bytes. Motion is globally preference-aware.
 - **Follow-ups:** Validate presentation effect configuration and connect haptics.
+
+### [2026-10-02 12:18] P8-T03 - Configure presentation effects
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a backward-compatible product presentation contract for haptic patterns,
+  confetti moments/particle count and XP count-up thresholds, then exported the schema.
+- **Files changed:** app configuration, content schema/test, exported app-config schema, Phase 8
+  checklist and activity log.
+- **Commands run:** `npm run schema:export`, focused content tests, content validation and typecheck.
+- **Result/verification:** Older configurations receive safe defaults; configured content validates
+  with five courses, thirteen lessons and zero warnings; 21 focused tests pass.
+- **Follow-ups:** Subscribe device haptics to the typed learner-event stream.

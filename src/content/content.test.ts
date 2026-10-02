@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { ContentValidationError, loadContent, validateContentBundle } from '@/content/loader'
 import {
+  appConfigSchema,
   assetManifestSchema,
   courseSchema,
   learnerSeedSchema,
@@ -24,6 +25,21 @@ describe('content schemas', () => {
     delete course.visibility
 
     expect(courseSchema.parse(course).visibility).toBe('learner')
+  })
+
+  it('defaults presentation effects for older product configuration', () => {
+    const bundle = makeValidContentBundle()
+    const appConfig = structuredClone(bundle.appConfig) as {
+      product: { presentation?: unknown }
+    }
+    delete appConfig.product.presentation
+
+    expect(appConfigSchema.parse(appConfig).product.presentation).toEqual(
+      expect.objectContaining({
+        confetti: expect.objectContaining({ particleCount: 80 }),
+        haptics: expect.objectContaining({ correctAnswer: [15] }),
+      }),
+    )
   })
 
   it('rejects the invalid course with useful paths', () => {

@@ -244,6 +244,39 @@ export const appConfigSchema = z.object({
         dismissCooldownDays: z.number().int().nonnegative(),
       }),
     }),
+    presentation: z
+      .strictObject({
+        haptics: z.strictObject({
+          correctAnswer: z.array(z.number().int().positive().max(1000)).max(5),
+          badgeUnlocked: z.array(z.number().int().positive().max(1000)).max(5),
+          challengeCompleted: z.array(z.number().int().positive().max(1000)).max(5),
+        }),
+        confetti: z.strictObject({
+          moments: z
+            .array(z.enum(['three_star_lesson', 'challenge_complete', 'badge', 'level_up']))
+            .max(4),
+          particleCount: z.number().int().min(0).max(200),
+        }),
+        xpCountUp: z.strictObject({
+          minimumAmount: z.number().int().nonnegative(),
+          maxDurationMs: z.number().int().positive().max(3000),
+        }),
+      })
+      .default({
+        haptics: {
+          correctAnswer: [15],
+          badgeUnlocked: [25, 40, 25],
+          challengeCompleted: [30, 50, 30],
+        },
+        confetti: {
+          moments: ['three_star_lesson', 'challenge_complete'],
+          particleCount: 80,
+        },
+        xpCountUp: {
+          minimumAmount: 10,
+          maxDurationMs: 900,
+        },
+      }),
   }),
   gamification: z.object({
     xp: z.strictObject({

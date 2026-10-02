@@ -211,6 +211,131 @@
             "installPrompt"
           ],
           "additionalProperties": false
+        },
+        "presentation": {
+          "default": {
+            "haptics": {
+              "correctAnswer": [
+                15
+              ],
+              "badgeUnlocked": [
+                25,
+                40,
+                25
+              ],
+              "challengeCompleted": [
+                30,
+                50,
+                30
+              ]
+            },
+            "confetti": {
+              "moments": [
+                "three_star_lesson",
+                "challenge_complete"
+              ],
+              "particleCount": 80
+            },
+            "xpCountUp": {
+              "minimumAmount": 10,
+              "maxDurationMs": 900
+            }
+          },
+          "type": "object",
+          "properties": {
+            "haptics": {
+              "type": "object",
+              "properties": {
+                "correctAnswer": {
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "badgeUnlocked": {
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "challengeCompleted": {
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
+                }
+              },
+              "required": [
+                "correctAnswer",
+                "badgeUnlocked",
+                "challengeCompleted"
+              ],
+              "additionalProperties": false
+            },
+            "confetti": {
+              "type": "object",
+              "properties": {
+                "moments": {
+                  "maxItems": 4,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "three_star_lesson",
+                      "challenge_complete",
+                      "badge",
+                      "level_up"
+                    ]
+                  }
+                },
+                "particleCount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 200
+                }
+              },
+              "required": [
+                "moments",
+                "particleCount"
+              ],
+              "additionalProperties": false
+            },
+            "xpCountUp": {
+              "type": "object",
+              "properties": {
+                "minimumAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "maxDurationMs": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 3000
+                }
+              },
+              "required": [
+                "minimumAmount",
+                "maxDurationMs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "haptics",
+            "confetti",
+            "xpCountUp"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -220,7 +345,8 @@
         "home",
         "player",
         "dicom",
-        "offline"
+        "offline",
+        "presentation"
       ],
       "additionalProperties": false
     },

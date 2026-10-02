@@ -38,6 +38,21 @@
         "minCompletedLessons": 1,
         "dismissCooldownDays": 14
       }
+    },
+    "presentation": {
+      "haptics": {
+        "correctAnswer": [15],
+        "badgeUnlocked": [25, 40, 25],
+        "challengeCompleted": [30, 50, 30]
+      },
+      "confetti": {
+        "moments": ["three_star_lesson", "challenge_complete"],
+        "particleCount": 80
+      },
+      "xpCountUp": {
+        "minimumAmount": 10,
+        "maxDurationMs": 900
+      }
     }
   },
   "gamification": {
