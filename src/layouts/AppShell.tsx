@@ -1,7 +1,8 @@
 import { BrainCircuit, Home, RadioTower, Trophy, UserRound } from 'lucide-react'
-import { NavLink, Outlet } from 'react-router'
+import { NavLink, ScrollRestoration } from 'react-router'
 
 import { PageHeader } from '@/components/navigation/PageHeader'
+import { RouteTransition } from '@/components/navigation/RouteTransition'
 import { PwaPromptHost } from '@/components/pwa/PwaPromptHost'
 import { CelebrationHost } from '@/components/rewards/CelebrationHost'
 import { cn } from '@/lib/cn'
@@ -17,13 +18,20 @@ const navigation = [
 export function AppShell() {
   return (
     <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))]">
+      <a
+        className="fixed left-3 top-3 z-toast -translate-y-20 rounded-md bg-brand-800 px-4 py-2 font-bold text-white transition-transform focus:translate-y-0"
+        href="#main-content"
+      >
+        Skip to content
+      </a>
       <CelebrationHost />
       <PwaPromptHost />
       <PageHeader />
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        <Outlet />
+      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8" id="main-content">
+        <RouteTransition />
       </main>
+      <ScrollRestoration />
 
       <nav
         aria-label="Primary navigation"

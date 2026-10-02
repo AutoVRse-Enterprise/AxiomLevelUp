@@ -1522,3 +1522,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Progress motion is shared across mastery/course/pathway surfaces and
   pathway state transitions do not replay after their session state is recorded.
 - **Follow-ups:** Add route-level transition, focus and bypass behavior.
+
+### [2026-10-02 13:03] P8-T10 - Add route transitions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added reduced-motion-aware outlet transitions, browser scroll restoration, visible
+  skip links and route-heading focus to both application layouts.
+- **Files changed:** route transition component, application/immersive layouts, Phase 8 checklist
+  and activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Both route trees share one transition/focus implementation and retain
+  their existing shell and celebration boundaries.
+- **Follow-ups:** Replace generic boot and artifact placeholders with designed loading states.
