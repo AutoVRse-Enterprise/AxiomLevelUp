@@ -52,7 +52,7 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T12 — Complete all required actionable error states.
 - [x] P8-T13 — Standardize actionable empty states.
 - [x] P8-T14 — Refine desktop, landscape, artifact and text-scaling layouts.
-- [ ] P8-T15 — Complete visual and AA-contrast refinement.
+- [x] P8-T15 — Complete visual and AA-contrast refinement.
 - [ ] P8-T16 — Add live announcements and automated accessibility checks.
 - [ ] P8-T17 — Profile and enforce runtime and bundle performance.
 - [ ] P8-T18 — Complete automated behavior coverage.

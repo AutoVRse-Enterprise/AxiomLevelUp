@@ -1586,3 +1586,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Twenty focused tests pass; large artifacts have immersive paths and
   desktop DICOM no longer hides instructions behind a sheet.
 - **Follow-ups:** Complete the cross-surface visual refinement and contrast pass.
+
+### [2026-10-02 13:56] P8-T15 - Refine visual language
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Refined the page atmosphere, selection color, completion surface, interactive cards
+  and locked/unlocked badge treatment while retaining the restrained clinical palette.
+- **Files changed:** global styles, shared learning tiles, completion summary, contrast audit,
+  Phase 8 checklist and activity log.
+- **Commands run:** Token contrast calculation, typecheck and lint.
+- **Result/verification:** All audited normal-text semantic pairs range from 6.10:1 to 6.91:1,
+  exceeding WCAG AA.
+- **Follow-ups:** Add automated axe coverage and finish semantic live announcements.

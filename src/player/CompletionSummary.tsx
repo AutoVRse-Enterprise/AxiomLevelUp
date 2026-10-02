@@ -50,7 +50,7 @@ export function CompletionSummary({
   return (
     <m.section
       animate="visible"
-      className="mx-auto max-w-2xl px-5 py-10 sm:py-16"
+      className="mx-auto my-6 max-w-2xl rounded-xl border border-brand-100 bg-[linear-gradient(155deg,var(--color-neutral-0)_55%,var(--color-brand-50))] px-5 py-10 shadow-card sm:px-10 sm:py-14"
       initial="hidden"
       variants={staggerContainer}
     >

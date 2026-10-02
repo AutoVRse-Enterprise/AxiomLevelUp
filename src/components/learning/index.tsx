@@ -308,8 +308,22 @@ export function BadgeTile({
   unlockedLabel?: string
 }) {
   return (
-    <div className={cn('rounded-lg border p-4', unlocked ? 'border-badge/30 bg-info-50' : 'border-neutral-200 bg-neutral-50')}>
-      <Icon aria-hidden="true" className={unlocked ? 'text-badge' : 'text-neutral-400'} height={28} width={28} />
+    <div
+      className={cn(
+        'rounded-lg border p-4 transition-[border-color,box-shadow,transform] duration-250',
+        unlocked
+          ? 'border-badge/30 bg-gradient-to-br from-info-50 to-white shadow-card hover:-translate-y-0.5'
+          : 'border-neutral-200 bg-neutral-50',
+      )}
+    >
+      <span
+        className={cn(
+          'grid size-11 place-items-center rounded-full',
+          unlocked ? 'bg-badge/10 text-badge ring-1 ring-badge/20' : 'bg-neutral-100 text-neutral-400',
+        )}
+      >
+        <Icon aria-hidden="true" height={26} width={26} />
+      </span>
       <h3 className="mt-3 font-bold">{title}</h3>
       <p className="mt-1 text-small text-neutral-600">{description}</p>
       <p className="mt-3 text-caption font-semibold text-neutral-600">
