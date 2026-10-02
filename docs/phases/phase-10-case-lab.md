@@ -150,7 +150,7 @@ case
 ## Checklist
 
 - [x] P10-T00 — Capture the agreed scope, architecture plan, decisions and task breakdown.
-- [ ] P10-T01 — Asset and 3D feasibility spike: source free lung models, sounds, histology,
+- [x] P10-T01 — Asset and 3D feasibility spike: source free lung models, sounds, histology,
       bronchoscopy and illustration assets; verify lobe and airway separation, interior
       (endoscopic) rendering, GLB size, three.js chunk size and mobile frame rate; record provenance;
       go or fallback decision.

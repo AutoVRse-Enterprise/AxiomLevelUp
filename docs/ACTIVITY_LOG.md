@@ -1785,3 +1785,22 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
 - **Result/verification:** The approved defaults, task dependencies and acceptance criteria are now
   the execution baseline. No runtime code changed.
 - **Follow-ups:** Start P10-T01 and the parallel contract/scoring workstreams.
+
+### [2026-10-03 03:02] P10-T01 - Prove 3D anatomy feasibility
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Selected the open BodyParts3D respiratory dataset, built a reproducible eight-group
+  respiratory fixture, added a standalone Three.js spike and evaluated structure preservation,
+  overview rendering, mobile performance, memory and the endoscopic limitation. Identified open
+  audio and histology candidates and recorded provenance.
+- **Files changed:** `package.json`, `package-lock.json`, `src/spikes/anatomy3d/`,
+  `docs/spikes/anatomy3d-spike.md`, Phase 10 checklist and activity log.
+- **Commands run:** `npm install` for pinned `three`, types and model tooling; BodyParts3D
+  extraction; `obj2gltf`; glTF Transform inspect/optimise; standalone Vite build; desktop and
+  390×844 Chromium checks; TypeScript and lint checks.
+- **Result/verification:** Conditional go. The 128,350-triangle fixture compresses to 649,292 bytes,
+  preserves eight structures and rendered at 82.6 fps desktop / 81.5 fps emulated mobile. The lazy
+  spike bundle is 166,240 bytes gzip. The source mesh has no credible lumen, so the production
+  endoscopic view will use a configured procedural tube driven by the authored waypoint graph.
+- **Follow-ups:** Formalise anatomy maps/model assets in P10-T03 and keep all Three.js imports
+  inside the production anatomy boundary in P10-T04.
