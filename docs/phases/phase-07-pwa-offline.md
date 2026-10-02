@@ -44,7 +44,7 @@ integrity and recovery UX.
 - [x] P7-T02 — Add asset hashing and local manifest verification tooling.
 - [x] P7-T03 — Add pure course-package, readiness, size and fingerprint derivation.
 - [x] P7-T04 — Add device-scoped offline state, learner migration and product configuration.
-- [ ] P7-T05 — Add cache, storage, hashing and fetch platform adapters.
+- [x] P7-T05 — Add cache, storage, hashing and fetch platform adapters.
 - [ ] P7-T06 — Add the verified course download manager and reconciliation.
 - [ ] P7-T07 — Add typed course-download lifecycle events.
 - [ ] P7-T08 — Replace generated service-worker routing with an inject-manifest worker.

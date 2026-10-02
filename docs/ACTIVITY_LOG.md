@@ -1243,3 +1243,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Five courses and thirteen lessons validate, learner migration tests pass
   and TypeScript is clean. Demo seed replacement no longer owns course-download records.
 - **Follow-ups:** Add injectable platform adapters and the download manager.
+
+### [2026-10-02 10:42] P7-T05 - Add offline platform adapters
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added injectable Cache Storage, StorageManager, fetch and SHA-256 boundaries, with
+  clone-safe in-memory cache and configurable storage fakes for deterministic tests.
+- **Files changed:** `src/offline/platform.ts`, Phase 7 checklist and activity log.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** Browser and in-memory implementations satisfy one typed platform
+  boundary and TypeScript passes.
+- **Follow-ups:** Build the verified download lifecycle on the adapters.
