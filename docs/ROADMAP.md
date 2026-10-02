@@ -52,3 +52,9 @@ artifact layouts, live announcements and automated accessibility checks. Browser
 target viewports and 200% text scaling; Lighthouse accessibility reaches 100. The enforced bundle
 budget passes with the entry substantially below the Phase 7 baseline and the lazy imaging boundary
 unchanged.
+
+Phase 9 agent work completed registry-parity coverage for all 25 implemented primitive types across
+a 26-step internal showcase, a complete real-player integration flow, production Chromium QA and
+cross-origin/offline DICOM verification. Android Chrome and iOS Safari/installed-app scripts and
+evidence templates are ready; the phase remains active until those physical runs pass or are
+explicitly waived.

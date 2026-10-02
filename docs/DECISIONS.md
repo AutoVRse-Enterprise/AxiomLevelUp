@@ -947,3 +947,19 @@ different interaction modes, such as exploratory and assessed image hotspots.
 **Consequences:** Adding a primitive type requires adding showcase content and causes the parity
 test to fail until that happens. The current fixture will contain all 25 registered types across 26
 steps after adding the missing guided DICOM mode.
+
+## ADR-065: Physical-device QA remains a separate release gate
+
+**Status:** Accepted
+
+**Context:** Desktop Chromium can emulate target dimensions, touch input, reduced motion and network
+loss, but it does not reproduce mobile browser installation, iOS safe-area/fullscreen behavior,
+physical vibration, operating-system lifecycle pressure or real multi-touch arbitration reliably.
+
+**Decision:** Complete and retain automated and emulated-browser evidence independently, but do not
+mark Phase 9 complete until the scripted Android Chrome and iOS Safari/installed-app runs pass or an
+authorized release approver records an explicit waiver.
+
+**Consequences:** Agent-executable work can finish without creating false device confidence. Phase 9
+stays active with P9-M01 through P9-M03 open, and each physical run uses the shared evidence template
+so defects and waivers are auditable.

@@ -174,3 +174,21 @@ the network, supports media range requests and retains passive DICOM caching for
 viewing. Offline route gates use derived lesson readiness. Download lifecycle events are logged but
 are explicitly excluded from the learner reward pipeline. A worker-persisted simulated-offline flag
 makes the URL-only developer control exercise the same cache-only behavior as a disconnected device.
+
+## Showcase and release evidence
+
+The internal `runtime-showcase` course is the canonical executable fixture for the runtime. Its
+single lesson contains all 25 registered primitive types across 26 steps because exploratory and
+assessed image hotspots are both represented. It is hidden from learner catalogues but uses the
+production loader, schema, planner, player, event bus and completion surfaces.
+
+Automated parity coverage compares showcase types with the canonical primitive list and fails when
+a new registered type has no fixture. A route integration test completes the ordered lesson,
+including retry and unavailable-DICOM paths, and verifies lifecycle events and reward output. The
+developer primitive gallery renders the same content in interactive, review, disabled and
+missing-asset modes without mutating learner progress.
+
+Release evidence is split by capability. Chromium emulation covers repeatable responsive, motion,
+keyboard, recovery, cross-origin, cache and offline checks. Physical Android/iOS scripts own
+browser-specific installation, touch gestures, haptics, safe areas, lifecycle, memory pressure and
+WebGL recovery; emulation cannot satisfy that release gate.

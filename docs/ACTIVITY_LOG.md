@@ -1743,3 +1743,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   conditions, timing fields, evidence requirements and defect/sign-off rules for browser and
   installed-app contexts.
 - **Follow-ups:** Run the final automated gate and hand off P9-M01 through P9-M03.
+
+### [2026-10-02 17:02] P9-T06 - Close agent-executable Phase 9 work
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Updated the architecture, release decisions, roadmap and handoff; aligned the gallery
+  regression count with the 26-step fixture and ran the complete repository gate.
+- **Files changed:** Architecture, decisions, roadmap, handoff, phase and activity documentation;
+  primitive-gallery regression test.
+- **Commands run:** `npm run check`.
+- **Result/verification:** The first gate exposed the stale 25-card assertion. After updating it,
+  the full gate passed: 38 test files and 248 tests, 5 courses and 13 lessons with zero warnings,
+  entry 130,029 gzip bytes, imaging 1,006,573 and confetti 4,244.
+- **Follow-ups:** P9-M01 and P9-M02 require the hosted URLs and physical devices; use the prepared
+  scripts and result template, then triage findings under P9-M03.

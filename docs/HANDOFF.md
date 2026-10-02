@@ -2,48 +2,48 @@
 
 ## Current phase/task
 
-Phase 8 — product polish is complete. Phase 9 showcase and physical-device QA is next.
+Phase 9 — all agent-executable showcase and browser QA is complete. Physical Android/iOS release
+gates P9-M01 through P9-M03 are pending.
 
 ## Done
 
-- Motion uses a token-driven `LazyMotion` boundary with System, Reduced and Full device
-  preferences. CSS and JavaScript share `html[data-motion]`.
-- Typed learner events drive throttled optional haptics, live announcements and configured,
-  dynamically imported confetti.
-- Answer feedback, completion, celebrations, persistent counters, pathway nodes and progress
-  surfaces use restrained motion with reduced-motion parity.
-- Shared loading, notice, empty and error contracts cover boot, routes, media, DICOM, unsupported
-  primitives, corrupted content, offline assets, quota and application failures.
-- All learner routes are lazy. The entry is 130,029 gzip bytes, the imaging chunk is 1,006,573 and
-  confetti is isolated at 4,244; all enforced budgets pass.
-- Desktop navigation replaces the bottom tab bar at large widths. DICOM instructions persist in a
-  side pane, while video, hotspot, compare and DICOM artifacts support immersive expansion.
-- Browser QA passes 375×812, 812×375, 768×900, 1280×900, 200% text, reduced motion and offline
-  recovery. Lighthouse scores 84 performance, 100 accessibility, 100 best practices and 92 SEO.
-- The quality gate passes with 38 test files and 247 tests; five courses and thirteen lessons
-  validate with zero warnings.
-- ADR-057 through ADR-063 record the Phase 8 presentation, preference, effect, delivery, responsive
-  and resilience decisions.
+- Phase 9 scope, PRD traceability and the physical-device release boundary are documented.
+- The internal showcase now has 26 steps covering all 25 registered primitive types plus both
+  exploratory and assessed hotspot modes.
+- `dicom_guided` was added to the showcase with preset, slice-range, acknowledgement and scored
+  checkpoint requirements.
+- Automated parity coverage fails if a registered primitive type is absent. The real route
+  completes all 26 steps and verifies ordered lifecycle events, retries, summary and session cleanup.
+- Production Chromium QA passes 375×812, 812×375, 768×900 and 1280×900 with no document overflow;
+  review, missing assets, reduced motion, keyboard zoom and resume recovery were exercised.
+- A separate CORS host verified 125 DICOM instances and 65,894,350 bytes. All four viewers loaded,
+  `dicom-studies-v1` held 126 responses and an offline hard reload restored every viewer.
+- Android/iOS execution scripts, hosted-environment prerequisites and a shared result template are
+  ready in `docs/qa/`.
+- ADR-064 and ADR-065 record registry-defined showcase completeness and the non-substitutable
+  physical-device gate.
+- `npm run check` passes with 38 test files and 248 tests, zero content warnings, entry 130,029 gzip
+  bytes, imaging 1,006,573 and confetti 4,244.
 
 ## In progress
 
-- None.
+- P9-M01 — physical Android Chrome matrix: not started.
+- P9-M02 — physical iOS Safari and installed-app matrix: not started.
+- P9-M03 — device defect triage and release approval/waiver: blocked on M01 and M02.
 
 ## Next three steps
 
-1. Define the Phase 9 showcase and physical-device matrix.
-2. Validate install, haptics, fullscreen, orientation and DICOM gestures on Android Chrome.
-3. Repeat the install, offline, fullscreen and DICOM checks on iOS Safari.
+1. Supply an HTTPS app URL and CORS-capable DICOM URL; complete the hosting prerequisites.
+2. Execute `docs/qa/phase-09-android-script.md` and save a completed result record.
+3. Execute `docs/qa/phase-09-ios-script.md`, triage findings and close or explicitly waive Phase 9.
 
 ## Blockers/questions for the user
 
-- A production external DICOM host URL must be supplied before hosted deployment; local development
-  falls back to `/assets/dicom/`.
+- Physical Android and iOS hardware or an approved remote-device service is required.
+- A production HTTPS app URL and external CORS-capable DICOM host URL must be supplied.
 - The DICOM technical note referenced by the PRD remains unavailable.
 - The tracheal region and 17.6 mm educational reference require SME approval before customer or
   clinical use.
-- Physical Android Chrome and iOS Safari install, offline and DICOM checks require an HTTPS host and
-  devices and remain deferred to Phase 9.
 
 ## Environment notes
 
@@ -54,9 +54,11 @@ Phase 8 — product polish is complete. Phase 9 showcase and physical-device QA 
 - Install/run: `npm install`, `npm run check`, then `npm run dev`.
 - Refresh asset integrity metadata with `npm run assets:hash`.
 - Local cross-origin QA: `npm run dicom:serve`, set
-  `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview the app on another origin.
-- Phase 8 browser QA is recorded in `docs/qa/phase-08-browser-qa.md`; its raw Lighthouse result is
-  `docs/qa/phase-08-lighthouse-final.json`.
+  `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview on another origin.
+- Phase 9 browser and runtime evidence is in `docs/qa/phase-09-browser-qa.md` and
+  `docs/qa/phase-09-runtime-evidence.md`.
+- Physical setup and evidence collection starts at
+  `docs/qa/phase-09-hosting-prerequisites.md`.
 
 ## Gotchas
 
@@ -71,4 +73,8 @@ Phase 8 — product polish is complete. Phase 9 showcase and physical-device QA 
   origin before comparing bundles.
 - Motion tests should assert semantic presence unless they explicitly advance animation frames;
   initial opacity is intentionally zero in full-motion mode.
-- Physical install, pinch and storage-pressure behavior remain Phase 9 checks.
+- The showcase count is 26 steps but 25 unique types; `image_hotspot` intentionally appears twice.
+- `offline-courses-v1` being empty during passive revisit QA is correct; only explicit downloads
+  populate it.
+- Chromium emulation does not satisfy physical install, pinch, haptic, Safari safe-area or
+  memory-pressure acceptance.
