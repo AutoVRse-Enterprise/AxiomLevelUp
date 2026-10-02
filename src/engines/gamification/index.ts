@@ -26,7 +26,7 @@ function findPrimitive(
   if (activityKind === 'challenge') {
     return registry.appConfig.challenges
         .find(({ id }) => id === activityId)
-        ?.items.find(({ id }) => id === primitiveId)
+      ?.items?.find(({ id }) => id === primitiveId)
   }
   return registry.caseById
     .get(activityId)

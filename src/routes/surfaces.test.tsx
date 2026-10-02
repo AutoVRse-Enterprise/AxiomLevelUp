@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle, type ContentRegistry } from '@/content/loader'
-import { learnerSeedSchema } from '@/content/schema'
+import { appConfigSchema, learnerSeedSchema } from '@/content/schema'
 import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
 import {
   initializeLearningProgressHandlers,
@@ -27,6 +27,28 @@ import { ProfilePage } from './profile/ProfilePage'
 
 const advancedRegistry = validateContentBundle(makeValidContentBundle())
 const freshSeed = learnerSeedSchema.parse(freshSeedData)
+
+function makeQuickCaseRegistry() {
+  const registry = makeCaseRegistry()
+  const appConfig = appConfigSchema.parse({
+    ...registry.appConfig,
+    challenges: registry.appConfig.challenges.map((challenge) =>
+      challenge.type === 'daily'
+        ? {
+            id: 'daily-quick-case',
+            type: 'daily',
+            title: 'Daily quick case',
+            description: 'Complete one focused case.',
+            estimatedMinutes: 3,
+            rewardXp: 50,
+            itemCount: 1,
+            caseId: fixtureCase.id,
+          }
+        : challenge,
+    ),
+  })
+  return { ...registry, appConfig }
+}
 
 function renderSurface(
   element: ReactNode,
@@ -109,6 +131,18 @@ describe('application surfaces', () => {
     expect(screen.getByText('Basic')).toBeVisible()
     expect(screen.getByText('generic')).toBeVisible()
     expect(screen.getByText('4 min')).toBeVisible()
+  })
+
+  it('labels a daily case as a case instead of questions', () => {
+    const caseRegistry = makeQuickCaseRegistry()
+    renderSurface(<ChallengePage />, '/challenge', '/challenge', caseRegistry)
+    expect(screen.getByText('Case')).toBeVisible()
+    expect(screen.queryByText('1 questions')).not.toBeInTheDocument()
+    cleanup()
+
+    renderSurface(<HomePage />, '/', '/', caseRegistry)
+    expect(screen.getByText(/Case · ~3 min/)).toBeVisible()
+    expect(screen.queryByText('1 questions')).not.toBeInTheDocument()
   })
 
   it('keeps internal courses off Home, Learn and Pathway surfaces', () => {

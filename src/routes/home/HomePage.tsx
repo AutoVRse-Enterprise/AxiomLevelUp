@@ -217,8 +217,8 @@ export function HomePage() {
                 </h2>
                 <p className="mt-2 text-neutral-600">{dailyChallenge.description}</p>
                 <p className="mt-4 text-small font-medium text-neutral-600">
-                  {dailyChallenge.itemCount} questions · ~{dailyChallenge.estimatedMinutes} min · +
-                  {dailyChallenge.rewardXp} XP
+                  {dailyChallenge.items ? `${dailyChallenge.itemCount} questions` : 'Case'}{' '}
+                  · ~{dailyChallenge.estimatedMinutes} min · +{dailyChallenge.rewardXp} XP
                 </p>
                 <Link className={`${ctaClass} mt-5`} to={`/challenge/${dailyChallenge.id}/play`}>
                   {dailyProgress?.completed ? 'Review challenge' : 'Start challenge'}{' '}

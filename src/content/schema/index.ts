@@ -200,7 +200,7 @@ export const badgeSchema = z.object({
 
 export type AchievementCriterion = z.infer<typeof badgeSchema>['criteria']
 
-export const challengeSchema = z.object({
+const challengeBaseSchema = z.object({
   id: idSchema,
   type: z.enum(['daily', 'weekly']),
   title: z.string().min(1),
@@ -208,10 +208,20 @@ export const challengeSchema = z.object({
   estimatedMinutes: z.number().int().positive(),
   rewardXp: z.number().int().nonnegative(),
   itemCount: z.number().int().positive(),
-  items: z.array(primitiveBaseSchema).default([]),
   target: z.number().int().positive().optional(),
   progressRule: badgeSchema.shape.criteria.optional(),
 })
+
+export const challengeSchema = z.union([
+  challengeBaseSchema.extend({
+    items: z.array(primitiveBaseSchema).default([]),
+    caseId: z.never().optional(),
+  }),
+  challengeBaseSchema.extend({
+    caseId: idSchema,
+    items: z.never().optional(),
+  }),
+])
 
 export const leaderboardEntrySchema = z.object({
   id: idSchema,

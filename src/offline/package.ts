@@ -140,7 +140,7 @@ export function challengePackage(
   dicomBaseUrl = '/assets/dicom/',
 ): ChallengeOfflinePackage | undefined {
   const challenge = registry.appConfig.challenges.find(({ id }) => id === challengeId)
-  if (!challenge) return undefined
+  if (!challenge?.items) return undefined
   const ids = unique(challenge.items.flatMap(primitiveAssetIds))
   const assets = ids.flatMap((assetId) => {
     const asset = registry.assetById.get(assetId)

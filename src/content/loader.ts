@@ -1106,11 +1106,34 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   }
 
   appConfig.challenges.forEach((challenge, challengeIndex) => {
-    const itemPath = `challenges.${challengeIndex}.items`
-    requireUniquePrimitiveIds(challenge.items, input.appConfigFile, itemPath)
-    challenge.items.forEach((primitive, primitiveIndex) => {
-      validatePrimitive(primitive, input.appConfigFile, `${itemPath}.${primitiveIndex}`)
-    })
+    if (challenge.items !== undefined) {
+      const itemPath = `challenges.${challengeIndex}.items`
+      requireUniquePrimitiveIds(challenge.items, input.appConfigFile, itemPath)
+      challenge.items.forEach((primitive, primitiveIndex) => {
+        validatePrimitive(primitive, input.appConfigFile, `${itemPath}.${primitiveIndex}`)
+      })
+      return
+    }
+
+    requireRef(
+      caseIds,
+      challenge.caseId,
+      input.appConfigFile,
+      `challenges.${challengeIndex}.caseId`,
+      'case',
+    )
+    if (
+      challenge.type === 'daily' &&
+      appConfig.caseLab &&
+      challenge.caseId !== appConfig.caseLab.dailyQuickCaseId
+    ) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `challenges.${challengeIndex}.caseId`,
+        message: `Daily case challenge "${challenge.id}" must reference caseLab.dailyQuickCaseId "${appConfig.caseLab.dailyQuickCaseId}".`,
+        severity: 'error',
+      })
+    }
   })
 
   for (const pathway of appConfig.pathways) {

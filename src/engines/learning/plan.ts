@@ -56,7 +56,9 @@ export function lessonActivity(
   }
 }
 
-export function challengeActivity(challenge: AppConfig['challenges'][number]): ActivityDefinition {
+export function challengeActivity(
+  challenge: Extract<AppConfig['challenges'][number], { items: unknown }>,
+): ActivityDefinition {
   return {
     kind: 'challenge',
     id: challenge.id,

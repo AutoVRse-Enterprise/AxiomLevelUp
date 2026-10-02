@@ -39,7 +39,7 @@ export function ChallengePage() {
 
       <section aria-label="Daily challenges">
         <SectionHeader
-          description="A short set of focused questions for today."
+          description="A short focused activity for today."
           title="Daily challenge"
         />
         <div className="mt-4 grid gap-5 lg:grid-cols-2">
@@ -67,7 +67,8 @@ export function ChallengePage() {
                 <p className="relative mt-2 text-neutral-600">{challenge.description}</p>
                 <div className="relative mt-5 flex flex-wrap gap-4 text-small font-medium text-neutral-600">
                   <span className="flex items-center gap-1.5">
-                    <Target aria-hidden="true" size={16} /> {challenge.itemCount} questions
+                    <Target aria-hidden="true" size={16} />{' '}
+                    {challenge.items ? `${challenge.itemCount} questions` : 'Case'}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock aria-hidden="true" size={16} /> ~{challenge.estimatedMinutes} min

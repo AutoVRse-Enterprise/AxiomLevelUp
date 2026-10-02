@@ -4,9 +4,11 @@ import { createMemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
-import { validateContentBundle } from '@/content/loader'
+import { validateContentBundle, type ContentRegistry } from '@/content/loader'
+import { appConfigSchema } from '@/content/schema'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
-import { clearEventSubscribersForTests } from '@/events/bus'
+import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
+import type { LearnerEvent } from '@/events/types'
 import {
   initializeLearningProgressHandlers,
   stopLearningEventHandlersForTests,
@@ -15,11 +17,33 @@ import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
 import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import { useLearnerStore } from '@/state/learnerStore'
+import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
 
-function renderRoute(path: string) {
+function makeQuickCaseRegistry() {
+  const caseRegistry = makeCaseRegistry()
+  const appConfig = appConfigSchema.parse({
+    ...caseRegistry.appConfig,
+    challenges: [
+      ...caseRegistry.appConfig.challenges,
+      {
+        id: 'daily-quick-case',
+        type: 'daily',
+        title: 'Daily quick case',
+        description: 'Complete one focused case.',
+        estimatedMinutes: 3,
+        rewardXp: 50,
+        itemCount: 1,
+        caseId: fixtureCase.id,
+      },
+    ],
+  })
+  return { ...caseRegistry, appConfig }
+}
+
+function renderRoute(path: string, content: ContentRegistry = registry) {
   const router = createMemoryRouter(
     [
       {
@@ -33,7 +57,7 @@ function renderRoute(path: string) {
     { initialEntries: [path] },
   )
   render(
-    <ContentContext.Provider value={registry}>
+    <ContentContext.Provider value={content}>
       <RouterProvider router={router} />
     </ContentContext.Provider>,
   )
@@ -131,6 +155,7 @@ describe('player routes', () => {
     const challenge = registry.appConfig.challenges.find(
       ({ id }) => id === 'daily-imaging-interpretation',
     )!
+    if (!challenge.items) throw new Error('Expected an item-backed challenge fixture.')
     for (const item of challenge.items) {
       const correctId = item.content.correctOptionId
       const options = item.content.options as Array<{ id: string; label: string }>
@@ -150,5 +175,73 @@ describe('player routes', () => {
     })
     expect(useLearnerStore.getState().xp.total).toBe(4945)
     expect(useLearnerStore.getState().mastery['image-windowing']?.score).toBe(81)
+  })
+
+  it('plays a configured daily case through the challenge route', async () => {
+    const user = userEvent.setup()
+    const quickCaseRegistry = makeQuickCaseRegistry()
+    const events: LearnerEvent[] = []
+    useLearnerStore.getState().replaceWithSeed(quickCaseRegistry.seed)
+    useLearnerStore.setState({
+      caseProgress: {
+        [fixtureCase.id]: {
+          completions: 2,
+          bestTotal: 88,
+          lastCompletedAt: '2026-10-02T00:00:00.000Z',
+        },
+      },
+      caseAttempts: {
+        [fixtureCase.id]: [
+          {
+            attemptId: 'prior-attempt',
+            tier: 'foundation',
+            total: 88,
+            anatomy: 0.8,
+            diagnosis: 0.96,
+            speed: 0,
+            durationSeconds: 180,
+            openedClueIds: [],
+            stepResults: [],
+            completedAt: '2026-10-02T00:00:00.000Z',
+          },
+        ],
+      },
+    })
+    initializeLearningProgressHandlers(quickCaseRegistry)
+    subscribeToEvents((event) => events.push(event))
+    renderRoute('/challenge/daily-quick-case/play', quickCaseRegistry)
+
+    expect(screen.getByRole('heading', { name: fixtureCase.title })).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        event: 'case_started',
+        caseId: fixtureCase.id,
+        attempt: 3,
+      }),
+    )
+
+    await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
+    await user.click(await screen.findByRole('radio', { name: 'True' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(await screen.findByText('Case complete')).toBeVisible()
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        event: 'challenge_completed',
+        challengeId: 'daily-quick-case',
+      }),
+    )
+    expect(useLearnerStore.getState().challenges['daily-quick-case']).toMatchObject({
+      completed: true,
+      bestScore: 100,
+    })
+    await user.click(screen.getByRole('button', { name: 'Compare' }))
+    expect(screen.getByRole('heading', { name: 'Your history' })).toBeVisible()
+    expect(screen.getByText('88')).toBeVisible()
   })
 })

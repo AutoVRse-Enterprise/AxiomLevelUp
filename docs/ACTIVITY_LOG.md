@@ -1978,3 +1978,20 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
 - **Result/verification:** Twenty focused route, selector, surface and reset tests pass. TypeScript,
   lint and diff checks pass.
 - **Follow-ups:** Bind the existing daily challenge route to the configured quick case in P10-T13.
+
+### [2026-10-03 05:22] P10-T13 - Wire the daily quick case
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added mutually exclusive item-backed and case-backed challenge contracts, semantic
+  validation for case references and the configured daily quick case, and CasePlayer routing from
+  the existing challenge URL. Preserved ordinary challenge behavior and updated challenge
+  summaries so case-backed activities are not described as question sets.
+- **Files changed:** App-config schema and generated JSON Schema, content validation and tests,
+  ChallengePlayer route and tests, Home/Challenge surfaces, learning/gamification helpers and
+  offline packaging.
+- **Commands run:** Focused Vitest run, `npm run schema:export`, `npm run typecheck`,
+  `npm run lint`, `git diff --check`.
+- **Result/verification:** Sixty-six focused content, route, surface and pipeline tests pass.
+  TypeScript, lint, schema generation and diff checks pass.
+- **Follow-ups:** Add the configured quick-case document and daily challenge entry with the rest
+  of the respiratory demo content in P10-T15.

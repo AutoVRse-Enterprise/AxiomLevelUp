@@ -14,6 +14,7 @@ import {
   anatomyMapSchema,
   assetManifestSchema,
   caseDocumentSchema,
+  challengeSchema,
   courseSchema,
   learnerSeedSchema,
   parsePrimitive,
@@ -92,6 +93,31 @@ describe('content schemas', () => {
     delete course.visibility
 
     expect(courseSchema.parse(course).visibility).toBe('learner')
+  })
+
+  it('supports either challenge items or one referenced case while preserving item counts', () => {
+    const common = {
+      id: 'quick-case',
+      type: 'daily',
+      title: 'Quick case',
+      description: 'Complete a focused case.',
+      estimatedMinutes: 3,
+      rewardXp: 50,
+      itemCount: 1,
+    } as const
+
+    expect(challengeSchema.parse({ ...common, caseId: 'case-contract-fixture' })).toEqual({
+      ...common,
+      caseId: 'case-contract-fixture',
+    })
+    expect(challengeSchema.parse({ ...common, items: [] })).toEqual({ ...common, items: [] })
+    expect(
+      challengeSchema.safeParse({
+        ...common,
+        caseId: 'case-contract-fixture',
+        items: [],
+      }).success,
+    ).toBe(false)
   })
 
   it('defaults presentation effects for older product configuration', () => {
@@ -387,6 +413,69 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'entry.waypointId',
             message: expect.stringContaining('Unknown anatomy waypoint reference'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('validates case-backed challenge references', () => {
+    const bundle = withCaseFixture()
+    const appConfig = bundle.appConfig as { challenges: Array<Record<string, unknown>> }
+    appConfig.challenges.push({
+      id: 'daily-quick-case',
+      type: 'daily',
+      title: 'Daily quick case',
+      description: 'Complete one focused case.',
+      estimatedMinutes: 3,
+      rewardXp: 50,
+      itemCount: 1,
+      caseId: 'case-contract-fixture',
+    })
+
+    expect(() => validateContentBundle(bundle)).not.toThrow()
+
+    appConfig.challenges.at(-1)!.caseId = 'missing-case'
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'challenges.2.caseId',
+            message: expect.stringContaining('Unknown case reference "missing-case"'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires a daily case challenge to use the configured quick case', () => {
+    const bundle = withCaseFixture()
+    const secondCase = structuredClone(caseFixture) as Record<string, unknown>
+    secondCase.id = 'other-quick-case'
+    bundle.caseFiles.push({ file: 'fixtures/other-quick-case.json', data: secondCase })
+    const appConfig = bundle.appConfig as {
+      caseLab: { caseIds: string[]; dailyQuickCaseId: string }
+      challenges: Array<Record<string, unknown>>
+    }
+    appConfig.caseLab.caseIds.push('other-quick-case')
+    appConfig.caseLab.dailyQuickCaseId = 'other-quick-case'
+    appConfig.challenges.push({
+      id: 'daily-quick-case',
+      type: 'daily',
+      title: 'Daily quick case',
+      description: 'Complete one focused case.',
+      estimatedMinutes: 3,
+      rewardXp: 50,
+      itemCount: 1,
+      caseId: 'case-contract-fixture',
+    })
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'challenges.2.caseId',
+            message: expect.stringContaining('must reference caseLab.dailyQuickCaseId'),
           }),
         ]),
       }),

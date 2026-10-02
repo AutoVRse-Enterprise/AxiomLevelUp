@@ -177,7 +177,7 @@ case
       criteria, attempt history and migration.
 - [x] P10-T12 — Case Lab surfaces: Learn section, Home headline card, case intro route and
       developer gallery support.
-- [ ] P10-T13 — Daily quick case through the existing challenge rewards.
+- [x] P10-T13 — Daily quick case through the existing challenge rewards.
 - [ ] P10-T14 — Autovrse LevelUp branding: name, logo, accent tokens with AA contrast, PWA manifest
       and icons.
 - [ ] P10-T15 — Demo content: asthma, COPD and exacerbation cases, the quick case, expert

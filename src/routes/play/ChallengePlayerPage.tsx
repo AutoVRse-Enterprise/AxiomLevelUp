@@ -8,6 +8,7 @@ import { buildActivityPlan, challengeActivity } from '@/engines/learning/plan'
 import { challengePackage } from '@/offline/package'
 import { isChallengeOfflineReady } from '@/offline/readiness'
 import { ActivityPlayer } from '@/player/ActivityPlayer'
+import { CasePlayer } from '@/player/case/CasePlayer'
 import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 
@@ -17,10 +18,12 @@ export function ChallengePlayerPage() {
   const { appConfig } = registry
   const { online } = useConnectivity()
   const challengeProgress = useLearnerStore((state) => state.challenges)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const challenge = appConfig.challenges.find(({ id }) => id === challengeId)
   const plan = useMemo(
     () =>
-      challenge
+      challenge?.items
         ? buildActivityPlan(challengeActivity(challenge), {
             environment: import.meta.env.DEV ? 'development' : 'production',
             player: appConfig.product.player,
@@ -29,11 +32,49 @@ export function ChallengePlayerPage() {
     [appConfig.product.player, challenge],
   )
 
-  if (!challenge || !plan) {
+  if (!challenge) {
     return (
       <EmptyState
         title="Challenge not found"
         message="This challenge is not configured."
+        action={<Link to="/challenge">Return to challenges</Link>}
+      />
+    )
+  }
+
+  if (challenge.items === undefined) {
+    const caseDoc = registry.caseById.get(challenge.caseId)
+    if (!caseDoc || !appConfig.caseLab) {
+      return (
+        <EmptyState
+          title="Challenge unavailable"
+          message="The case for this challenge is not configured."
+          action={<Link to="/challenge">Return to challenges</Link>}
+        />
+      )
+    }
+
+    const progress = caseProgress[caseDoc.id]
+    return (
+      <CasePlayer
+        anatomyMap={registry.anatomyMapById.get(caseDoc.anatomyMapId)}
+        attemptHistory={caseAttempts[caseDoc.id] ?? []}
+        caseDoc={caseDoc}
+        challengeId={challenge.id}
+        config={appConfig}
+        continuePath="/challenge"
+        exitPath="/challenge"
+        previousAttempts={progress?.completions ?? 0}
+        previousBestScore={progress?.bestTotal ?? null}
+      />
+    )
+  }
+
+  if (!plan) {
+    return (
+      <EmptyState
+        title="Challenge unavailable"
+        message="This challenge is not playable yet."
         action={<Link to="/challenge">Return to challenges</Link>}
       />
     )

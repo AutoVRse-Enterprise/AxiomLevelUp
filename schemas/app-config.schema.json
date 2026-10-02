@@ -1451,718 +1451,1094 @@
     "challenges": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "^[a-z0-9][a-z0-9_-]*$"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "daily",
-              "weekly"
-            ]
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1
-          },
-          "estimatedMinutes": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "rewardXp": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "itemCount": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "items": {
-            "default": [],
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                },
-                "type": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "clueIds": {
-                  "minItems": 1,
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                  }
-                },
-                "conceptIds": {
-                  "default": [],
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                  }
-                },
-                "content": {
-                  "type": "object",
-                  "propertyNames": {
-                    "type": "string"
-                  },
-                  "additionalProperties": {}
-                },
-                "assets": {
-                  "default": [],
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "minLength": 1,
-                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                  }
-                },
-                "completion": {
-                  "default": {
-                    "mode": "viewed"
-                  },
-                  "anyOf": [
-                    {
-                      "oneOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "viewed"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "answer"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "minimum_interactions"
-                            },
-                            "count": {
-                              "type": "integer",
-                              "exclusiveMinimum": 0,
-                              "maximum": 9007199254740991
-                            }
-                          },
-                          "required": [
-                            "mode",
-                            "count"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "explored"
-                            },
-                            "count": {
-                              "type": "integer",
-                              "exclusiveMinimum": 0,
-                              "maximum": 9007199254740991
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "media_progress"
-                            },
-                            "threshold": {
-                              "type": "number",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "measurement"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "outcome"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "interacted"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "mode": {
-                              "type": "string",
-                              "const": "correct_order"
-                            }
-                          },
-                          "required": [
-                            "mode"
-                          ],
-                          "additionalProperties": false
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "daily",
+                  "weekly"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "estimatedMinutes": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rewardXp": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "itemCount": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "target": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "progressRule": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "lessons_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "lessonIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
                         }
-                      ]
+                      },
+                      "courseIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      },
+                      "difficulties": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "foundation",
+                            "intermediate",
+                            "advanced"
+                          ]
+                        }
+                      }
                     },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "mode": {
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "course_completed"
+                      },
+                      "count": {
+                        "default": 1,
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "courseIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "perfect_lessons"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "streak_days"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "weekly_goals_met"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "challenges_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "challengeIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "first_attempt_correct"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "primitiveTypes": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
                           "type": "string",
                           "minLength": 1
                         }
                       },
-                      "required": [
-                        "mode"
-                      ],
-                      "additionalProperties": {}
-                    }
-                  ]
-                },
-                "scoring": {
-                  "default": {
-                    "weight": 1
+                      "conceptIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
                   },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "primitive_reward"
+                      },
+                      "rewardId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "rewardId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "cases_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "tiers": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "foundation",
+                            "intermediate",
+                            "advanced"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "case_component_score"
+                      },
+                      "component": {
+                        "type": "string",
+                        "enum": [
+                          "anatomy",
+                          "diagnosis",
+                          "speed",
+                          "total"
+                        ]
+                      },
+                      "min": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "maxOptionalClues": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "component",
+                      "min"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "case_duration"
+                      },
+                      "maxRatioOfTarget": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "maxRatioOfTarget"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "items": {
+                "default": [],
+                "type": "array",
+                "items": {
                   "type": "object",
                   "properties": {
-                    "xp": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "difficulty": {
-                      "type": "string",
-                      "enum": [
-                        "foundation",
-                        "intermediate",
-                        "advanced"
-                      ]
-                    },
-                    "weight": {
-                      "default": 1,
-                      "type": "number",
-                      "exclusiveMinimum": 0
-                    }
-                  },
-                  "required": [
-                    "weight"
-                  ],
-                  "additionalProperties": {}
-                },
-                "feedback": {
-                  "default": {},
-                  "type": "object",
-                  "properties": {
-                    "retry": {
-                      "type": "boolean"
-                    },
-                    "maxAttempts": {
-                      "type": "integer",
-                      "exclusiveMinimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "correct": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "incorrect": {
-                      "type": "string",
-                      "minLength": 1
-                    },
-                    "hint": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  },
-                  "additionalProperties": {}
-                },
-                "reward": {
-                  "type": "object",
-                  "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "badge",
-                        "certificate",
-                        "points",
-                        "recognition"
-                      ]
-                    },
                     "id": {
                       "type": "string",
                       "minLength": 1,
                       "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  },
-                  "required": [
-                    "type",
-                    "id"
-                  ],
-                  "additionalProperties": false
-                },
-                "source": {
-                  "type": "object",
-                  "properties": {
-                    "title": {
+                    },
+                    "type": {
                       "type": "string",
                       "minLength": 1
                     },
-                    "section": {
-                      "type": "string"
+                    "clueIds": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
                     },
-                    "page": {
-                      "type": [
-                        "string",
-                        "number"
+                    "conceptIds": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "content": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "assets": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "completion": {
+                      "default": {
+                        "mode": "viewed"
+                      },
+                      "anyOf": [
+                        {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "viewed"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "answer"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "minimum_interactions"
+                                },
+                                "count": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "mode",
+                                "count"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "explored"
+                                },
+                                "count": {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 9007199254740991
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "media_progress"
+                                },
+                                "threshold": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 1
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "measurement"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "outcome"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "interacted"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string",
+                                  "const": "correct_order"
+                                }
+                              },
+                              "required": [
+                                "mode"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": [
+                            "mode"
+                          ],
+                          "additionalProperties": {}
+                        }
                       ]
                     },
-                    "url": {
-                      "type": "string",
-                      "format": "uri"
+                    "scoring": {
+                      "default": {
+                        "weight": 1
+                      },
+                      "type": "object",
+                      "properties": {
+                        "xp": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "enum": [
+                            "foundation",
+                            "intermediate",
+                            "advanced"
+                          ]
+                        },
+                        "weight": {
+                          "default": 1,
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "weight"
+                      ],
+                      "additionalProperties": {}
                     },
-                    "artifactRef": {
-                      "type": "string"
+                    "feedback": {
+                      "default": {},
+                      "type": "object",
+                      "properties": {
+                        "retry": {
+                          "type": "boolean"
+                        },
+                        "maxAttempts": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "correct": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "incorrect": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "hint": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "additionalProperties": {}
+                    },
+                    "reward": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "badge",
+                            "certificate",
+                            "points",
+                            "recognition"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "section": {
+                          "type": "string"
+                        },
+                        "page": {
+                          "type": [
+                            "string",
+                            "number"
+                          ]
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "artifactRef": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "timer": {
+                      "type": "object",
+                      "properties": {
+                        "durationSeconds": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "mode": {
+                          "default": "countdown",
+                          "type": "string",
+                          "enum": [
+                            "countdown",
+                            "elapsed"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "durationSeconds",
+                        "mode"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "title"
-                  ],
-                  "additionalProperties": false
-                },
-                "timer": {
-                  "type": "object",
-                  "properties": {
-                    "durationSeconds": {
-                      "type": "integer",
-                      "exclusiveMinimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "mode": {
-                      "default": "countdown",
-                      "type": "string",
-                      "enum": [
-                        "countdown",
-                        "elapsed"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "durationSeconds",
-                    "mode"
+                    "id",
+                    "type",
+                    "conceptIds",
+                    "content",
+                    "assets",
+                    "completion",
+                    "scoring",
+                    "feedback"
                   ],
                   "additionalProperties": false
                 }
               },
-              "required": [
-                "id",
-                "type",
-                "conceptIds",
-                "content",
-                "assets",
-                "completion",
-                "scoring",
-                "feedback"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "target": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "progressRule": {
-            "oneOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "lessons_completed"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "lessonIds": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1,
-                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  },
-                  "courseIds": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1,
-                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  },
-                  "difficulties": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "foundation",
-                        "intermediate",
-                        "advanced"
-                      ]
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "course_completed"
-                  },
-                  "count": {
-                    "default": 1,
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "courseIds": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1,
-                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "perfect_lessons"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "streak_days"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "weekly_goals_met"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "challenges_completed"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "challengeIds": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1,
-                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "first_attempt_correct"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "primitiveTypes": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  },
-                  "conceptIds": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1,
-                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "primitive_reward"
-                  },
-                  "rewardId": {
-                    "type": "string",
-                    "minLength": 1,
-                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
-                  }
-                },
-                "required": [
-                  "type",
-                  "rewardId"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "cases_completed"
-                  },
-                  "count": {
-                    "type": "integer",
-                    "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "tiers": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "foundation",
-                        "intermediate",
-                        "advanced"
-                      ]
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "count"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "case_component_score"
-                  },
-                  "component": {
-                    "type": "string",
-                    "enum": [
-                      "anatomy",
-                      "diagnosis",
-                      "speed",
-                      "total"
-                    ]
-                  },
-                  "min": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100
-                  },
-                  "maxOptionalClues": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  }
-                },
-                "required": [
-                  "type",
-                  "component",
-                  "min"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "const": "case_duration"
-                  },
-                  "maxRatioOfTarget": {
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                  }
-                },
-                "required": [
-                  "type",
-                  "maxRatioOfTarget"
-                ],
-                "additionalProperties": false
+              "caseId": {
+                "not": {}
               }
-            ]
+            },
+            "required": [
+              "id",
+              "type",
+              "title",
+              "description",
+              "estimatedMinutes",
+              "rewardXp",
+              "itemCount",
+              "items"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "daily",
+                  "weekly"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "estimatedMinutes": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "rewardXp": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "itemCount": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "target": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "progressRule": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "lessons_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "lessonIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      },
+                      "courseIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      },
+                      "difficulties": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "foundation",
+                            "intermediate",
+                            "advanced"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "course_completed"
+                      },
+                      "count": {
+                        "default": 1,
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "courseIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "perfect_lessons"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "streak_days"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "weekly_goals_met"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "challenges_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "challengeIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "first_attempt_correct"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "primitiveTypes": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "conceptIds": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "primitive_reward"
+                      },
+                      "rewardId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "rewardId"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "cases_completed"
+                      },
+                      "count": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "tiers": {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "foundation",
+                            "intermediate",
+                            "advanced"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "count"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "case_component_score"
+                      },
+                      "component": {
+                        "type": "string",
+                        "enum": [
+                          "anatomy",
+                          "diagnosis",
+                          "speed",
+                          "total"
+                        ]
+                      },
+                      "min": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      "maxOptionalClues": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "component",
+                      "min"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "case_duration"
+                      },
+                      "maxRatioOfTarget": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "maxRatioOfTarget"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "caseId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "items": {
+                "not": {}
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "title",
+              "description",
+              "estimatedMinutes",
+              "rewardXp",
+              "itemCount",
+              "caseId"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "id",
-          "type",
-          "title",
-          "description",
-          "estimatedMinutes",
-          "rewardXp",
-          "itemCount",
-          "items"
-        ],
-        "additionalProperties": false
+        ]
       }
     },
     "leaderboard": {
