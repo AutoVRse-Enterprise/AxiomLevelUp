@@ -35,7 +35,8 @@ export function AnimatedNumber({
   }, [durationMs, motionValue, resolvedMotion, value])
 
   return (
-    <span className={cn('tabular-nums', className)} aria-label={format(value)}>
+    <span className={cn('tabular-nums', className)}>
+      <span className="sr-only">Final value: {format(value)}</span>
       <span aria-hidden="true">{format(displayed)}</span>
     </span>
   )

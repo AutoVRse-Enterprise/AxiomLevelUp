@@ -1598,3 +1598,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** All audited normal-text semantic pairs range from 6.10:1 to 6.91:1,
   exceeding WCAG AA.
 - **Follow-ups:** Add automated axe coverage and finish semantic live announcements.
+
+### [2026-10-02 14:05] P8-T16 - Harden accessibility
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a centralized learner-event live announcer, fixed invalid weekly-activity ARIA,
+  retained accessible final values during number animation and added direct axe-core coverage for
+  Home, Learn, Profile and player feedback.
+- **Files changed:** application root, presentation announcer, animated number, accessibility test,
+  package manifests, Phase 8 checklist and activity log.
+- **Commands run:** Accessibility tests, typecheck and lint.
+- **Result/verification:** Four WCAG A/AA axe checks pass; route focus and skip links are already
+  active in both shell layouts.
+- **Follow-ups:** Profile the completed motion/loading work and enforce final budgets.
