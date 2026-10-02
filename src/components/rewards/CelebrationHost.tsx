@@ -86,7 +86,11 @@ export function CelebrationHost({
           <Dialog.Description className="mt-2 text-neutral-700">{description}</Dialog.Description>
           {celebration.type === 'badge' && celebration.rewardXp > 0 ? (
             <p className="mt-4 font-bold text-brand-800">
-              +<AnimatedNumber value={celebration.rewardXp} /> XP bonus
+              <AnimatedNumber
+                format={(value) => `+${Math.round(value).toLocaleString()}`}
+                value={celebration.rewardXp}
+              />{' '}
+              XP bonus
             </p>
           ) : null}
           <Dialog.Close asChild>

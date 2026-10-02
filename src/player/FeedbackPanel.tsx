@@ -69,7 +69,11 @@ export function FeedbackPanel({
           initial={{ opacity: 0, y: 8 }}
           transition={{ delay: 0.12, duration: 0.25 }}
         >
-          +<AnimatedNumber value={xpEarned} /> XP
+          <AnimatedNumber
+            format={(value) => `+${Math.round(value).toLocaleString()}`}
+            value={xpEarned}
+          />{' '}
+          XP
         </m.p>
       ) : null}
       {source ? (

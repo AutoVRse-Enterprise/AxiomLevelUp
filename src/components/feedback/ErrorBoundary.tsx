@@ -1,6 +1,6 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
-import { Button } from '@/components/ui'
+import { ErrorState } from '@/components/feedback/ErrorState'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -26,14 +26,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
     return (
       <main className="grid min-h-dvh place-items-center p-6">
-        <div className="max-w-md text-center">
-          <p className="text-small font-semibold text-danger-700">Application error</p>
-          <h1 className="mt-2 text-title font-bold">The learning experience could not continue.</h1>
-          <p className="mt-3 text-neutral-600">{this.state.error.message}</p>
-          <Button className="mt-6" onClick={() => window.location.reload()}>
-            Reload application
-          </Button>
-        </div>
+        <ErrorState
+          actionLabel="Reload application"
+          message={this.state.error.message}
+          onAction={() => window.location.reload()}
+          onSecondaryAction={() => window.location.assign('/')}
+          secondaryActionLabel="Return home"
+          title="The learning experience could not continue"
+        />
       </main>
     )
   }

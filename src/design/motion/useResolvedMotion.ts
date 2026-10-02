@@ -8,6 +8,7 @@ function useSystemReducedMotion() {
   const [reduced, setReduced] = useState(false)
 
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
     const query = window.matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => setReduced(query.matches)
     update()

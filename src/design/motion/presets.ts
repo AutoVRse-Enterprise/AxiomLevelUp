@@ -14,7 +14,7 @@ export const fadeVariants: Variants = {
 }
 
 export const riseVariants: Variants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 1, y: 12 },
   visible: { opacity: 1, y: 0, transition: motionTransition.standard },
   exit: { opacity: 0, y: -6, transition: motionTransition.fast },
 }

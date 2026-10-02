@@ -19,8 +19,9 @@ export function RewardSummary({ result }: { result: NonNullable<ActivityResult> 
           <Award aria-hidden="true" size={17} /> XP earned
         </dt>
         <dd className="mt-1 text-title font-bold text-brand-950">
-          +<AnimatedNumber
+          <AnimatedNumber
             durationMs={appConfig.product.presentation.xpCountUp.maxDurationMs}
+            format={(value) => `+${Math.round(value).toLocaleString()}`}
             value={result.xpEarned}
           />
         </dd>

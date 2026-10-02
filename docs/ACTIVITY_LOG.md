@@ -1547,3 +1547,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Two focused files with ten tests pass. Substantial artifacts now reserve
   space, explain current work and surface recoverable media failures.
 - **Follow-ups:** Complete the shared error contract and required PRD error variants.
+
+### [2026-10-02 13:27] P8-T12 - Complete recovery states
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Extended shared error presentation with primary/secondary recovery, added concise
+  content-validation details, retryable renderer/media failures, explicit unsupported continuation,
+  typed missing-DICOM handling and guided quota recovery.
+- **Files changed:** feedback components, primitive registry and fallback, DICOM context,
+  offline-course control, motion test compatibility, Phase 8 checklist and activity log.
+- **Commands run:** Focused player/media tests, typecheck and lint.
+- **Result/verification:** Asset, unsupported primitive, corrupted specification, DICOM, offline and
+  quota failures now explain the issue and expose an appropriate recovery route.
+- **Follow-ups:** Standardize empty states across learner surfaces.

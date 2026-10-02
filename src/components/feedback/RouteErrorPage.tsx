@@ -17,6 +17,8 @@ export function RouteErrorPage() {
         message={message}
         actionLabel="Return home"
         onAction={() => window.location.assign('/')}
+        secondaryActionLabel="Reload"
+        onSecondaryAction={() => window.location.reload()}
       />
     </main>
   )

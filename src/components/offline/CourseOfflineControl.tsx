@@ -1,8 +1,9 @@
 import { Check, Download, RefreshCw, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
-import { Button, ProgressBar } from '@/components/ui'
+import { Button, InlineNotice, ProgressBar } from '@/components/ui'
 import type { Course } from '@/content/schema'
 import { getDownloadManager } from '@/offline/runtime'
 import { formatBytes } from '@/offline/format'
@@ -98,9 +99,23 @@ export function CourseOfflineControl({ course }: { course: Course }) {
         {retryLabel} · {formatBytes(coursePackage.totalBytes)}
       </Button>
       {record?.error ? (
-        <p className="mt-2 text-small text-danger-700" role="alert">
-          {record.error.message}
-        </p>
+        <InlineNotice
+          action={
+            record.error.kind === 'quota' ? (
+              <Link className="font-semibold underline underline-offset-4" to="/profile">
+                Manage offline storage
+              </Link>
+            ) : undefined
+          }
+          className="mt-3"
+          message={
+            record.error.kind === 'quota'
+              ? `${record.error.message} This course requires ${formatBytes(coursePackage.totalBytes)}.`
+              : record.error.message
+          }
+          title={record.error.kind === 'quota' ? 'Not enough device storage' : 'Download interrupted'}
+          tone="danger"
+        />
       ) : !online ? (
         <p className="mt-2 text-small text-neutral-600">Connect to download this course.</p>
       ) : (

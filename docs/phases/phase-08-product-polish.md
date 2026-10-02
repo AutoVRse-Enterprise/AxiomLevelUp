@@ -49,7 +49,7 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T09 — Animate pathway and progress surfaces.
 - [x] P8-T10 — Add route transitions, scroll restoration, focus management and skip navigation.
 - [x] P8-T11 — Add designed boot, primitive, media and DICOM loading states.
-- [ ] P8-T12 — Complete all required actionable error states.
+- [x] P8-T12 — Complete all required actionable error states.
 - [ ] P8-T13 — Standardize actionable empty states.
 - [ ] P8-T14 — Refine desktop, landscape, artifact and text-scaling layouts.
 - [ ] P8-T15 — Complete visual and AA-contrast refinement.
