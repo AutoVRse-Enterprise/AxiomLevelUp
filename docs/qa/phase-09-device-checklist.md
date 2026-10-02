@@ -4,6 +4,10 @@ Use a production build over HTTPS with the DICOM study served from its productio
 host. Record device model, OS/browser version, network, cold/warm state and observed timings for
 each run.
 
+Before testing, complete `phase-09-hosting-prerequisites.md`. Execute
+`phase-09-android-script.md` and `phase-09-ios-script.md`, and duplicate
+`phase-09-device-results-template.md` for each browser/install context.
+
 ## Android Chrome
 
 - [ ] Install or launch the PWA and open every DICOM mode.

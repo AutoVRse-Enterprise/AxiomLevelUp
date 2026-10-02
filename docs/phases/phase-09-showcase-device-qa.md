@@ -48,7 +48,7 @@ primitive registry and the Android/iOS matrix is completed or explicitly waived.
 - [x] P9-T02 — Add automated showcase exhaustiveness and complete-flow coverage.
 - [x] P9-T03 — Run showcase browser QA across viewports, motion, keyboard semantics and failures.
 - [x] P9-T04 — Verify cross-origin DICOM, offline revisit, cache behavior and performance evidence.
-- [ ] P9-T05 — Prepare Android/iOS execution scripts, evidence templates and hosting prerequisites.
+- [x] P9-T05 — Prepare Android/iOS execution scripts, evidence templates and hosting prerequisites.
 - [ ] P9-T06 — Run the final agent gate and update architecture, decisions, roadmap and handoff.
 - [ ] P9-M01 — Execute the physical Android Chrome matrix.
 - [ ] P9-M02 — Execute the physical iOS Safari and installed-app matrix.

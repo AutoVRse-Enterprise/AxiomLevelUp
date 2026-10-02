@@ -1730,3 +1730,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   heap stress case and all three bundle roles remained within documented limits.
 - **Follow-ups:** Convert the physical Android/iOS checklist into executable scripts and evidence
   records for the hosted build.
+
+### [2026-10-02 16:47] P9-T05 - Prepare physical-device packet
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Converted the deferred device matrix into hosted-environment prerequisites,
+  step-by-step Android and iOS scripts and a repeatable result/evidence template.
+- **Files changed:** Phase 9 device checklist, hosting prerequisites, Android script, iOS script,
+  result template, Phase 9 checklist and activity log.
+- **Commands run:** Documentation audit and formatting.
+- **Result/verification:** The remaining physical work now has explicit setup, order, pass
+  conditions, timing fields, evidence requirements and defect/sign-off rules for browser and
+  installed-app contexts.
+- **Follow-ups:** Run the final automated gate and hand off P9-M01 through P9-M03.
