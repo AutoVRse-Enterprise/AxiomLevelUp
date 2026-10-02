@@ -1,6 +1,7 @@
 export interface Preferences {
   soundEnabled: boolean
   motion: 'system' | 'reduced' | 'full'
+  installPromptDismissedAt?: string
 }
 
 const key = 'axiom-runtime:preferences'

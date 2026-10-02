@@ -1346,3 +1346,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** TypeScript and focused surface tests pass; stale versions and browser
   eviction are now checked on application startup.
 - **Follow-ups:** Add install eligibility, iOS guidance and worker update feedback.
+
+### [2026-10-02 12:15] P7-T13 - Add install and update prompts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added engagement- and cooldown-gated install prompting, standalone detection, iOS
+  Add to Home Screen guidance, service-worker update/reload UX and a dismissible offline-ready
+  notice. Added a virtual-PWA registration test adapter.
+- **Files changed:** PWA prompt host, service-worker registration state, preferences, app shell,
+  Vitest configuration/mock, Phase 7 checklist and activity log.
+- **Commands run:** Typecheck and eighteen router/surface tests.
+- **Result/verification:** TypeScript and focused application tests pass; prompts remain subtle,
+  dismissible and absent in installed standalone mode.
+- **Follow-ups:** Add comprehensive automated coverage for packages, manager failures and routes.

@@ -52,7 +52,7 @@ integrity and recovery UX.
 - [x] P7-T10 — Add course, catalog and lesson offline download status controls.
 - [x] P7-T11 — Gate unavailable lessons and challenges while offline.
 - [x] P7-T12 — Add profile storage and download management.
-- [ ] P7-T13 — Add engagement-gated install and service-worker update prompts.
+- [x] P7-T13 — Add engagement-gated install and service-worker update prompts.
 - [ ] P7-T14 — Add schema, domain, manager, store, component, route and worker coverage.
 - [ ] P7-T15 — Run install, download, offline, removal, eviction, update and responsive browser QA.
 - [ ] P7-T16 — Run the final gate, record ADRs and close Phase 7 documentation.
