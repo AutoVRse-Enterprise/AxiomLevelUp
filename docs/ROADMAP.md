@@ -10,7 +10,7 @@
 | 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                |
 | 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                    |
 | 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                  |
-| 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
+| 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
 | 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
 
 ## Sequencing note

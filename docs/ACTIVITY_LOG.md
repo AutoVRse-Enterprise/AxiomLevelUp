@@ -1662,3 +1662,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** The full gate passes: 38 test files and 247 tests, zero content warnings,
   entry 130,029 gzip bytes, imaging 1,006,573 and confetti 4,244. All bundle roles are within budget.
 - **Follow-ups:** Begin Phase 9 showcase and physical Android/iOS validation.
+
+### [2026-10-02 15:15] P9-T00 - Define showcase and device QA
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Formalized Phase 9 scope, split agent-executable work from physical-device gates,
+  traced the PRD and made registry parity the canonical showcase-completeness rule.
+- **Files changed:** `docs/phases/phase-09-showcase-device-qa.md`, `docs/ROADMAP.md`,
+  `docs/DECISIONS.md`, `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Documentation and repository audit.
+- **Result/verification:** Phase 9 is active with explicit automated, browser, hosted-environment and
+  physical-device acceptance gates. ADR-064 reconciles the PRD's 18 categories with 25 implemented
+  primitive types.
+- **Follow-ups:** Add the missing guided DICOM showcase step and enforce registry parity.

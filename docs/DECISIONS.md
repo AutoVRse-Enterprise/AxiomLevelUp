@@ -930,3 +930,20 @@ storage management or reset where appropriate.
 **Consequences:** Asset, primitive, content, DICOM, offline, quota and route failures are
 distinguishable and recoverable without letting primitives mutate progression or gamification
 state.
+
+## ADR-064: Registry parity defines showcase completeness
+
+**Status:** Accepted
+
+**Context:** PRD section 75 names 18 important showcase categories, while the runtime has evolved to
+25 registered primitive types and some types have materially different modes. Treating the original
+number as a fixed target could leave implemented runtime behavior outside the durable QA fixture.
+
+**Decision:** Keep the PRD list as the minimum product-category trace, but define technical
+showcase completeness as parity with `primitiveTypes`, strict schemas, definitions and lazy
+components. Include more than one configured example only when a single type has meaningfully
+different interaction modes, such as exploratory and assessed image hotspots.
+
+**Consequences:** Adding a primitive type requires adding showcase content and causes the parity
+test to fail until that happens. The current fixture will contain all 25 registered types across 26
+steps after adding the missing guided DICOM mode.
