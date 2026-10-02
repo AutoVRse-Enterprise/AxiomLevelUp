@@ -1219,3 +1219,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Manifest generation and validation pass; missing, stale, size-mismatched
   and hash-mismatched local assets now fail the content gate.
 - **Follow-ups:** Build pure per-course package derivation from the validated asset graph.
+
+### [2026-10-02 10:25] P7-T03 - Derive offline packages
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a browser-independent package domain that walks course images, explicit
+  primitive assets and typed primitive references; groups requirements per lesson; classifies shell
+  and downloadable assets; estimates bytes; and fingerprints course/challenge packages.
+- **Files changed:** `src/offline/package.ts`, Phase 7 checklist and activity log.
+- **Commands run:** `npm run typecheck`.
+- **Result/verification:** Package derivation is configuration-driven and typechecks cleanly.
+- **Follow-ups:** Persist device-scoped download records and add offline product configuration.
