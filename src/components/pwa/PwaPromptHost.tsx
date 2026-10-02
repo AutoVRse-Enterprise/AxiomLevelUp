@@ -8,24 +8,13 @@ import {
   dismissServiceWorkerNotice,
   useServiceWorkerStatus,
 } from '@/pwa/registerSW'
+import { installPromptEligible } from '@/pwa/installPrompt'
 import { readPreferences, writePreferences } from '@/state/preferences'
 import { useLearnerStore } from '@/state/learnerStore'
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>
-}
-
-export function installPromptEligible(
-  completedLessons: number,
-  minimum: number,
-  dismissedAt: string | undefined,
-  cooldownDays: number,
-  now = Date.now(),
-) {
-  if (completedLessons < minimum) return false
-  if (!dismissedAt) return true
-  return now - new Date(dismissedAt).getTime() >= cooldownDays * 86_400_000
 }
 
 function isStandalone() {

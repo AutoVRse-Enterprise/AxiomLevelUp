@@ -71,15 +71,15 @@ export class MemoryCacheStore implements CacheStore {
   }
 
   async match(cacheName: string, url: string) {
-    return this.cache(cacheName).get(url)?.clone()
+    return this.cache(cacheName).get(new URL(url, 'http://localhost').href)?.clone()
   }
 
   async put(cacheName: string, url: string, response: Response) {
-    this.cache(cacheName).set(url, response.clone())
+    this.cache(cacheName).set(new URL(url, 'http://localhost').href, response.clone())
   }
 
   async delete(cacheName: string, url: string) {
-    return this.cache(cacheName).delete(url)
+    return this.cache(cacheName).delete(new URL(url, 'http://localhost').href)
   }
 
   async keys(cacheName: string) {

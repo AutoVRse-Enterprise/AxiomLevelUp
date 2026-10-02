@@ -36,15 +36,18 @@ describe('content schemas', () => {
     }
   })
 
-  it('accepts text assets and optional manifest metadata', () => {
+  it('accepts the asset manifest v0.2 integrity contract', () => {
     const manifest = assetManifestSchema.parse({
-      schemaVersion: '0.1',
+      schemaVersion: '0.2',
       assets: [
         {
           assetId: 'transcript',
           path: '/assets/transcript.vtt',
           type: 'text',
           offlineRequired: true,
+          offlineAvailable: true,
+          sizeBytes: 128,
+          sha256: '0'.repeat(64),
           mimeType: 'text/vtt',
           width: 1920,
           height: 1080,

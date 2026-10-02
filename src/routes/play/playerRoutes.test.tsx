@@ -13,6 +13,7 @@ import {
 } from '@/events/handlers'
 import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
 import { LessonPlayerPage } from '@/routes/play/LessonPlayerPage'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import { useLearnerStore } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
@@ -40,11 +41,13 @@ function renderRoute(path: string) {
 
 describe('player routes', () => {
   beforeEach(async () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
     stopLearningEventHandlersForTests()
     clearEventSubscribersForTests()
     useLearnerStore.getState().replaceWithSeed(registry.seed)
     useActivitySessionStore.getState().clear()
     await useActivitySessionStore.persist.clearStorage()
+    useOfflineLibraryStore.setState({ records: {}, hydrated: true })
   })
 
   it('rejects a lesson that does not belong to the selected course', () => {
@@ -56,6 +59,16 @@ describe('player routes', () => {
     renderRoute('/learn/courses/scientific-imaging/lessons/imaging-case-practice')
     expect(screen.getByRole('heading', { name: 'Lesson locked' })).toBeVisible()
     expect(screen.getByText(/Interpreting Thoracic CT/)).toBeVisible()
+  })
+
+  it('gates required uncached lesson content while offline', () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    renderRoute('/learn/courses/scientific-imaging/lessons/thoracic-ct')
+
+    expect(
+      screen.getByRole('heading', { name: 'This lesson has not been downloaded' }),
+    ).toBeVisible()
+    expect(screen.getByText('Connect to the internet or choose an offline lesson.')).toBeVisible()
   })
 
   it('opens the internal showcase through the real lesson route', async () => {

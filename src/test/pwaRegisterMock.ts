@@ -5,6 +5,7 @@ interface RegisterOptions {
   onRegisterError?: (error: unknown) => void
 }
 
-export function registerSW(_options?: RegisterOptions) {
+export function registerSW(options?: RegisterOptions) {
+  void options
   return async () => undefined
 }

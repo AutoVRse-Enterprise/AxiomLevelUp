@@ -1359,3 +1359,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** TypeScript and focused application tests pass; prompts remain subtle,
   dismissible and absent in installed standalone mode.
 - **Follow-ups:** Add comprehensive automated coverage for packages, manager failures and routes.
+
+### [2026-10-02 12:30] P7-T14 - Cover offline behavior
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added asset-contract, package closure, readiness, successful download, passive-cache
+  promotion, integrity, quota, pause, cancel, shared removal, eviction, version drift, request
+  routing, install-cooldown and offline route-gate coverage. Updated the existing asset and learner
+  migration assertions.
+- **Files changed:** offline/PWA tests, player route and content tests, small testability helpers and
+  adapters, Phase 7 checklist and activity log.
+- **Commands run:** Focused suites, full Vitest suite, typecheck and lint.
+- **Result/verification:** 34 test files and 235 tests pass; TypeScript and ESLint are clean.
+- **Follow-ups:** Exercise production install, download, reload, removal and responsive behavior.

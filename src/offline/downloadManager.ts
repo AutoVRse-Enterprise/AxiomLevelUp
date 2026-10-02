@@ -9,7 +9,7 @@ import {
   type OfflineFailureKind,
   useOfflineLibraryStore,
 } from '@/offline/offlineLibraryStore'
-import type { CourseOfflinePackage, OfflinePackageAsset } from '@/offline/package'
+import type { CourseOfflinePackage } from '@/offline/package'
 import {
   browserCacheStore,
   browserStorageAdapter,
@@ -46,6 +46,7 @@ interface DownloadItem {
   url: string
   sizeBytes: number
   sha256: string
+  passiveCacheEligible: boolean
 }
 
 class PauseDownloadError extends Error {}
@@ -304,6 +305,7 @@ export class DownloadManager {
           url: packageAsset.url,
           sizeBytes: asset.sizeBytes,
           sha256: asset.sha256,
+          passiveCacheEligible: false,
         })
         assetUrls[asset.assetId] = [packageAsset.url]
         continue
@@ -342,6 +344,7 @@ export class DownloadManager {
           url: fileUrls[index]!,
           sizeBytes: file.sizeBytes,
           sha256: file.sha256,
+          passiveCacheEligible: true,
         })
       })
     }
@@ -349,9 +352,11 @@ export class DownloadManager {
     return { items, manifestEntries, assetUrls }
   }
 
-  private async responseFor(url: string, signal: AbortSignal) {
-    const promoted = await this.cache.match(PASSIVE_DICOM_CACHE, url)
-    if (promoted) return promoted
+  private async responseFor(url: string, signal: AbortSignal, passiveCacheEligible = true) {
+    if (passiveCacheEligible) {
+      const promoted = await this.cache.match(PASSIVE_DICOM_CACHE, url)
+      if (promoted) return promoted
+    }
     return this.fetcher(url, { signal })
   }
 
@@ -367,7 +372,7 @@ export class DownloadManager {
   }
 
   private async downloadItem(item: DownloadItem, signal: AbortSignal) {
-    const response = await this.responseFor(item.url, signal)
+    const response = await this.responseFor(item.url, signal, item.passiveCacheEligible)
     if (!response.ok) {
       throw new DownloadManagerError(
         'network',

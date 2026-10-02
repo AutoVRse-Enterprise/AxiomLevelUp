@@ -5,16 +5,11 @@ import { useContent } from '@/app/contentContext'
 import { Button, ProgressBar } from '@/components/ui'
 import type { Course } from '@/content/schema'
 import { getDownloadManager } from '@/offline/runtime'
+import { formatBytes } from '@/offline/format'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import { buildCoursePackage } from '@/offline/package'
 import { isCourseOfflineReady } from '@/offline/readiness'
 import { useConnectivity } from '@/pwa/connectivity'
-
-export function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 export function CourseOfflineControl({ course }: { course: Course }) {
   const registry = useContent()

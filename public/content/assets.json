@@ -177,7 +177,7 @@
       "assetId": "thoracic-ct-series",
       "path": "thoracic-ct/manifest.json",
       "type": "dicom",
-      "offlineRequired": false,
+      "offlineRequired": true,
       "sizeBytes": 65894350,
       "series": {
         "sliceCount": 125,
