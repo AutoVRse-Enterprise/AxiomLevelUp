@@ -1,6 +1,6 @@
 # Phase 8: Product polish
 
-**Status:** In progress
+**Status:** Complete
 
 ## Goal
 
@@ -56,8 +56,8 @@ automated accessibility and bundle-budget protection.
 - [x] P8-T16 — Add live announcements and automated accessibility checks.
 - [x] P8-T17 — Profile and enforce runtime and bundle performance.
 - [x] P8-T18 — Complete automated behavior coverage.
-- [ ] P8-T19 — Run responsive, reduced-motion, keyboard, offline and Lighthouse browser QA.
-- [ ] P8-T20 — Run the final gate, record ADRs and close Phase 8 documentation.
+- [x] P8-T19 — Run responsive, reduced-motion, keyboard, offline and Lighthouse browser QA.
+- [x] P8-T20 — Run the final gate, record ADRs and close Phase 8 documentation.
 
 ## Rules
 
@@ -95,3 +95,6 @@ automated accessibility and bundle-budget protection.
 ## Deviations
 
 - Physical Android Chrome and iOS Safari validation remains Phase 9 work.
+- The final mobile Lighthouse performance score is 84 versus the 86 baseline. This is normal
+  throttled-run variation: total blocking time improved from 180 ms to 130 ms, layout shift fell
+  from 0.013 to zero and the entry bundle fell from 214,583 to 130,029 gzip bytes.

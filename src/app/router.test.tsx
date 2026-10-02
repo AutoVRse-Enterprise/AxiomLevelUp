@@ -44,7 +44,7 @@ describe('router layouts', () => {
     (path) => {
       renderRouter(path)
 
-      expect(screen.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible()
+      expect(screen.getAllByRole('navigation', { name: 'Primary navigation' })).toHaveLength(2)
       expect(screen.getByText('Top-level route')).toBeVisible()
     },
   )
@@ -59,7 +59,11 @@ describe('router layouts', () => {
   it('uses AA-compliant text color for inactive navigation', () => {
     renderRouter('/')
 
-    expect(screen.getByRole('link', { name: 'Learn' })).toHaveClass('text-neutral-600')
-    expect(screen.getByRole('link', { name: 'Home' })).not.toHaveClass('text-neutral-600')
+    for (const link of screen.getAllByRole('link', { name: 'Learn' })) {
+      expect(link).toHaveClass('text-neutral-600')
+    }
+    for (const link of screen.getAllByRole('link', { name: 'Home' })) {
+      expect(link).not.toHaveClass('text-neutral-600')
+    }
   })
 })

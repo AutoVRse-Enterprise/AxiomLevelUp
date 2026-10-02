@@ -830,3 +830,103 @@ only precached or verified responses and rejects network fallbacks; clients rece
 
 **Consequences:** The demo exercises the real cache boundary. It is intentionally restricted to the
 URL-only developer control.
+
+## ADR-057: Lazy Motion boundary
+
+**Status:** Accepted
+
+**Context:** Phase 8 needs consistent, preference-aware interface motion without adding the full
+animation runtime to every route or allowing ad-hoc timings to spread through components.
+
+**Decision:** Use Motion through one application-level `LazyMotion` boundary with `domAnimation`
+and `m.*` components. Resolve System, Reduced and Full preferences in `MotionProvider`, publish the
+result as `html[data-motion]`, and keep durations and easing in design tokens.
+
+**Consequences:** JavaScript and CSS motion share one accessibility policy, normal transitions use
+the same presets, and unused Motion features stay out of the entry bundle.
+
+## ADR-058: Device-scoped presentation preferences
+
+**Status:** Accepted
+
+**Context:** Motion and vibration are properties of the current device and browser rather than
+learner progress. Demo-seed resets must not unexpectedly change them.
+
+**Decision:** Keep motion mode, haptics enablement and install-prompt dismissal in a dedicated
+persisted Zustand store. Migrate the legacy preference object, remove the unused sound setting and
+do not include these fields in learner state.
+
+**Consequences:** Presentation choices survive learner resets, unsupported haptic controls can be
+hidden, and future learner-state synchronization cannot overwrite device behavior.
+
+## ADR-059: Validated presentation-effect configuration
+
+**Status:** Accepted
+
+**Context:** Haptic patterns, celebration moments, confetti density and XP count-up thresholds are
+product choices that must be tunable without changing primitive UI.
+
+**Decision:** Add an optional, defaulted `presentation` block to app configuration. Load
+`canvas-confetti` dynamically only for configured milestone events and skip it for reduced motion.
+Keep animation mechanics in design code and product values in validated content.
+
+**Consequences:** Existing content remains valid, effects are centrally tunable, confetti remains a
+separate lazy chunk and course-specific React branches are unnecessary.
+
+## ADR-060: Event-subscribed haptics
+
+**Status:** Accepted
+
+**Context:** Direct vibration calls from questions or primitives would couple learning UI to device
+APIs and could duplicate pulses during rapid event bursts.
+
+**Decision:** Subscribe one presentation-effect handler to typed learner events. Map correct
+answers, badge unlocks and challenge completions to configured vibration patterns, check the device
+preference and API support, and throttle repeated pulses.
+
+**Consequences:** Primitives remain callback-only, haptics follow the same event vocabulary as
+gamification and unsupported or opted-out devices remain silent.
+
+## ADR-061: Route-level splitting and enforced bundle roles
+
+**Status:** Accepted
+
+**Context:** Adding motion and resilience UI risked exceeding the Phase 7 entry size while the
+Cornerstone boundary and optional confetti needed independent regression protection.
+
+**Decision:** Lazy-load every learner, player and developer route. Enforce gzip limits by bundle
+role for the entry, imaging controller and confetti chunk as part of `npm run check`.
+
+**Consequences:** The entry is substantially smaller than the Phase 7 baseline, DICOM remains
+isolated, celebration code loads on demand and future growth fails the standard quality gate.
+
+## ADR-062: Responsive navigation and artifact workspace
+
+**Status:** Accepted
+
+**Context:** The mobile tab bar wastes desktop space, scientific artifacts need more landscape
+room, and hiding DICOM instructions in a sheet on large screens interrupts guided work.
+
+**Decision:** Move primary navigation into the header at large widths, retain the bottom bar below
+that breakpoint, render DICOM instructions in a persistent desktop side pane and provide
+Fullscreen API expansion with a fixed, safe-area-aware fallback for supported artifacts.
+
+**Consequences:** Navigation matches viewport scale, instructions remain visible beside clinical
+images and video, hotspot, compare and DICOM artifacts can use the available screen without
+forking course content.
+
+## ADR-063: Action-oriented resilience contract
+
+**Status:** Accepted
+
+**Context:** Loading, empty and failure states were implemented inconsistently, and several errors
+described a problem without giving the learner a valid next action.
+
+**Decision:** Standardize designed loading, empty, inline notice and error components. Every
+substantial artifact reserves space while loading, and each supported error maps to recovery
+actions owned by the surrounding route or player, including retry, continue/skip, reload, home,
+storage management or reset where appropriate.
+
+**Consequences:** Asset, primitive, content, DICOM, offline, quota and route failures are
+distinguishable and recoverable without letting primitives mutate progression or gamification
+state.

@@ -205,7 +205,7 @@ describe('showcase lesson integration', () => {
 
     await user.click(await screen.findByRole('checkbox', { name: 'Effect magnitude' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
-    expect(await screen.findByRole('heading', { name: 'Partially correct' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Partially correct' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Try again' }))
     await user.click(await screen.findByRole('checkbox', { name: 'Effect magnitude' }))
     await user.click(screen.getByRole('checkbox', { name: 'Uncertainty' }))

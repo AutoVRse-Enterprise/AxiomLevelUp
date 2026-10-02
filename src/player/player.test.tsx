@@ -210,8 +210,8 @@ describe('activity player', () => {
     expect(screen.getByRole('status')).toHaveTextContent('10 seconds remaining')
     await act(() => vi.advanceTimersByTimeAsync(10_000))
 
-    expect(screen.getByText("Time's up.")).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Try again' })).toBeVisible()
+    expect(screen.getByText("Time's up.")).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
     expect(useActivitySessionStore.getState().session?.progress['fixture-question']).toMatchObject({
       attempts: 1,
       response: 'supported',
@@ -229,7 +229,7 @@ describe('activity player', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
     expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:11')
     await act(() => vi.advanceTimersByTimeAsync(11_000))
-    expect(screen.getByRole('button', { name: 'Continue' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
     expect(useActivitySessionStore.getState().session?.progress['fixture-question']).toMatchObject({
       attempts: 2,
       lastTimedOut: true,
@@ -259,7 +259,7 @@ describe('activity player', () => {
       hidden = false
       document.dispatchEvent(new Event('visibilitychange'))
       await act(() => vi.advanceTimersByTimeAsync(2_000))
-      expect(screen.getByText("Time's up.")).toBeVisible()
+      expect(screen.getByText("Time's up.")).toBeInTheDocument()
     } finally {
       if (hiddenDescriptor) {
         Object.defineProperty(document, 'hidden', hiddenDescriptor)
@@ -285,7 +285,7 @@ describe('activity player', () => {
 
     expect(screen.getByRole('timer')).toHaveAccessibleName('Time remaining: 0:03')
     await act(() => vi.advanceTimersByTimeAsync(3_000))
-    expect(screen.getByText("Time's up.")).toBeVisible()
+    expect(screen.getByText("Time's up.")).toBeInTheDocument()
   })
 
   it('renders retry and continue feedback actions', () => {
@@ -298,7 +298,7 @@ describe('activity player', () => {
         onContinue={vi.fn()}
       />,
     )
-    expect(screen.getByRole('button', { name: 'Try again' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
     rerender(
       <FeedbackPanel
         status="partial"
@@ -308,8 +308,8 @@ describe('activity player', () => {
         onContinue={vi.fn()}
       />,
     )
-    expect(screen.getByRole('heading', { name: 'Partially correct' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Continue' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Partially correct' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
   })
 
   it('keeps primitive modules independent from events and stores', () => {

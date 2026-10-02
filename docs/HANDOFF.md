@@ -2,50 +2,38 @@
 
 ## Current phase/task
 
-Phase 8 — product polish is in progress. P8-T00 established scope, architecture, task sequence,
-rules and PRD traceability.
+Phase 8 — product polish is complete. Phase 9 showcase and physical-device QA is next.
 
 ## Done
 
-- Asset-manifest v0.2 requires offline availability, exact byte sizes and non-DICOM SHA-256 hashes.
-  `assets:hash` maintains metadata and content validation checks local files.
-- Pure package derivation walks course images, primitive assets and typed asset references. Shared
-  assets are deduplicated and lesson requirements are derived.
-- Learner state v4 no longer stores device downloads. A separate IndexedDB-backed offline library
-  tracks queue, progress, verification, failure, eviction and version status.
-- The download manager checks quota, requests persistence, expands DICOM manifests, downloads with
-  bounded concurrency, verifies every file, resumes, cancels and removes shared URLs safely.
-- Explicit downloads use `offline-courses-v1`. The expiring `dicom-studies-v1` cache remains a
-  best-effort source and verified responses can be promoted.
-- The custom inject-manifest worker precaches the shell, serves verified content first, handles
-  media ranges, retains passive DICOM caching and enforces simulated offline mode.
-- Course pages show size, progress, cancel, retry, repair, update and removal controls. Catalog cards
-  and lesson rows show readiness; disconnected routes gate only missing required content.
-- Profile shows site usage, quota, persistence and per-course/remove-all storage controls.
-- Install prompting is engagement-gated and cooldown-aware, with iOS instructions. Waiting worker
-  and offline-ready notices are actionable.
-- Download lifecycle events are typed and logged but excluded from learner-state reduction.
-- Browser QA passed same-origin and cross-origin downloads. A 126-entry verified cache rendered
-  slice 81 / 125 after both simulated and browser-level offline hard reloads.
-- Removal restored the offline gate; simulated eviction produced Repair download and repair
-  restored the verified state.
-- The manifest parsed with zero browser errors and all four target viewports had no overflow.
-- ADR-049 through ADR-056 record offline cache, worker, state, integrity, readiness, storage,
-  install/update and simulation decisions.
-- The final default entry is 717.19 kB raw / 216.52 kB gzip; the lazy imaging chunk remains
-  3,703.17 kB raw / 1,013.90 kB gzip.
-- The quality gate passes with 34 test files and 235 tests; five courses and thirteen lessons
+- Motion uses a token-driven `LazyMotion` boundary with System, Reduced and Full device
+  preferences. CSS and JavaScript share `html[data-motion]`.
+- Typed learner events drive throttled optional haptics, live announcements and configured,
+  dynamically imported confetti.
+- Answer feedback, completion, celebrations, persistent counters, pathway nodes and progress
+  surfaces use restrained motion with reduced-motion parity.
+- Shared loading, notice, empty and error contracts cover boot, routes, media, DICOM, unsupported
+  primitives, corrupted content, offline assets, quota and application failures.
+- All learner routes are lazy. The entry is 130,029 gzip bytes, the imaging chunk is 1,006,573 and
+  confetti is isolated at 4,244; all enforced budgets pass.
+- Desktop navigation replaces the bottom tab bar at large widths. DICOM instructions persist in a
+  side pane, while video, hotspot, compare and DICOM artifacts support immersive expansion.
+- Browser QA passes 375×812, 812×375, 768×900, 1280×900, 200% text, reduced motion and offline
+  recovery. Lighthouse scores 84 performance, 100 accessibility, 100 best practices and 92 SEO.
+- The quality gate passes with 38 test files and 247 tests; five courses and thirteen lessons
   validate with zero warnings.
+- ADR-057 through ADR-063 record the Phase 8 presentation, preference, effect, delivery, responsive
+  and resilience decisions.
 
 ## In progress
 
-- P8-T01 — establish and enforce bundle, visual and Lighthouse baselines before adding motion.
+- None.
 
 ## Next three steps
 
-1. Establish bundle and browser baselines.
-2. Add the motion runtime, device preferences and presentation configuration.
-3. Polish player feedback, rewards and completion before broad layout refinement.
+1. Define the Phase 9 showcase and physical-device matrix.
+2. Validate install, haptics, fullscreen, orientation and DICOM gestures on Android Chrome.
+3. Repeat the install, offline, fullscreen and DICOM checks on iOS Safari.
 
 ## Blockers/questions for the user
 
@@ -67,7 +55,8 @@ rules and PRD traceability.
 - Refresh asset integrity metadata with `npm run assets:hash`.
 - Local cross-origin QA: `npm run dicom:serve`, set
   `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview the app on another origin.
-- Browser QA is recorded in `docs/qa/phase-07-browser-qa.md`.
+- Phase 8 browser QA is recorded in `docs/qa/phase-08-browser-qa.md`; its raw Lighthouse result is
+  `docs/qa/phase-08-lighthouse-final.json`.
 
 ## Gotchas
 
@@ -78,4 +67,8 @@ rules and PRD traceability.
 - Asset content changes require `npm run assets:hash`; stale sizes or hashes fail validation.
 - Downloads are foreground work and pause when the application loses connectivity.
 - A simulated-offline flag persists in service-worker IndexedDB; restore it after manual QA.
+- A waiting service worker can make a preview tab look stale; activate the update or use a clean
+  origin before comparing bundles.
+- Motion tests should assert semantic presence unless they explicitly advance animation frames;
+  initial opacity is intentionally zero in full-motion mode.
 - Physical install, pinch and storage-pressure behavior remain Phase 9 checks.

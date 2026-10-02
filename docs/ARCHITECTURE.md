@@ -20,17 +20,17 @@ read-only ContentRegistry -----> routes -----> activity plan
                         ^                  /                   \
                         |                 v                     v
           learner state + clock   lazy primitive UI      typed event bus
-                        ^                                      /       \
-                        |                                     v         v
-                    IndexedDB                         event history  ordered pipeline
-                                                                      |
-                                                       +--------------+-------------+
-                                                       v              v             v
-                                                   progress     gamification     mastery
-                                                       +--------------+-------------+
-                                                                      |
-                                                                      v
-                                                              learner store v3
+                        ^                                  /       |       \
+                        |                                 v        v        v
+                    IndexedDB                    event history  effects  ordered pipeline
+                                                                subscriber       |
+                                                                      +-----------+-----------+
+                                                                      v           v           v
+                                                                  progress  gamification  mastery
+                                                                      +-----------+-----------+
+                                                                                  |
+                                                                                  v
+                                                                          learner store v4
 ```
 
 ## Boundaries
@@ -58,6 +58,8 @@ read-only ContentRegistry -----> routes -----> activity plan
   adapters and the device-scoped offline library.
 - `src/pwa`: custom service worker, request/cache policy, registration, install/update UX and real
   plus simulated connectivity state.
+- `src/design/motion`: lazy Motion boundary, resolved motion preference and shared transitions.
+- `src/effects`: event-subscribed presentation effects such as throttled haptics and lazy confetti.
 - `src/spikes`: isolated technical experiments; production code must not depend on these.
 
 ## Content loading
@@ -84,7 +86,15 @@ weekly XP and challenge periods. Badge and weekly-challenge criteria are validat
 Mastery applies configured weighted gains/losses to first-attempt fractional scores and keeps bounded
 per-concept history. Badge and level transitions enter a persisted celebration queue.
 
-Application surfaces consume view models from `src/state/selectors/`. Effective lesson availability is derived from prerequisites, and route components do not duplicate progression logic. Demo seed dates are shifted from their declared `referenceDate` when the seed is applied; persisted state then ages normally.
+Application surfaces consume view models from `src/state/selectors/`. Effective lesson availability
+is derived from prerequisites, and route components do not duplicate progression logic. Demo seed
+dates are shifted from their declared `referenceDate` when the seed is applied; persisted state then
+ages normally.
+
+Device presentation preferences are persisted separately from learner state. `MotionProvider`
+resolves the stored System, Reduced or Full choice against the browser media query and applies the
+same result to Motion and CSS through `html[data-motion]`. Haptics, confetti and live announcements
+subscribe to typed learner events; primitives never call device or reward effects directly.
 
 ## Lesson execution
 
@@ -107,6 +117,24 @@ implemented primitive types, including the four DICOM modes, while retaining the
 unknown or malformed primitives. An activity with no implemented steps is unavailable. The player
 emits results only; the central pipeline awards XP, stars and mastery without primitive or
 learning-engine coupling.
+
+Loading, empty and failure presentation uses shared contracts. Artifact errors report intent to the
+player, which owns retry, continue or skip behavior. Content, route, offline and quota failures
+offer recovery actions at their owning boundary rather than mutating progress inside presentation
+components.
+
+## Delivery and presentation runtime
+
+Learner, player and developer pages are route-level lazy modules with a designed route fallback.
+Motion uses `LazyMotion` with `domAnimation`; optional confetti is a separate dynamic chunk.
+Production builds are checked against role-based gzip budgets for the entry, imaging controller and
+confetti chunks.
+
+The application shell renders bottom navigation below the large breakpoint and header navigation
+at desktop widths. Route transitions restore scroll and focus the page heading, while skip links
+bypass shell navigation. DICOM uses a persistent instructions pane on desktop. Video, hotspot,
+compare and DICOM artifacts use the Fullscreen API where available and a fixed safe-area-aware
+fallback otherwise.
 
 ## DICOM imaging boundary
 

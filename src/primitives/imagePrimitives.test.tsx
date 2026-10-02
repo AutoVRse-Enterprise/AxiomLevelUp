@@ -362,7 +362,7 @@ describe('image primitive components', () => {
         {...props}
       />,
     )
-    expect(container.querySelector('svg')).not.toBeInTheDocument()
+    expect(container.querySelector('svg circle')).not.toBeInTheDocument()
 
     rerender(
       <ImageHotspotPrimitive
@@ -379,7 +379,7 @@ describe('image primitive components', () => {
       />,
     )
     expect(container.querySelector('svg circle')).toBeInTheDocument()
-    expect(screen.getByText('The highlighted region shows the target.')).toBeVisible()
+    expect(screen.getByText('The highlighted region shows the target.')).toBeInTheDocument()
   })
 
   it('renders accessible slider and responsive side-by-side comparison modes', () => {

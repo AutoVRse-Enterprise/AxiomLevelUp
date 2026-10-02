@@ -1634,3 +1634,31 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Commands run:** Five focused test files, typecheck and lint.
 - **Result/verification:** Five files and twelve focused tests pass with clean TypeScript and ESLint.
 - **Follow-ups:** Run final browser QA across all target viewports and preferences.
+
+### [2026-10-02 14:48] P8-T19 - Complete browser QA
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Exercised the production preview at all four target viewports, 200% text, reduced
+  motion, desktop/mobile navigation, lesson recovery, browser-level offline gating, DICOM desktop
+  instructions and landscape immersion; corrected the containment issues found during the pass.
+- **Files changed:** Home and Profile routes, PWA prompt host, pan/zoom image container, browser QA
+  report and final Lighthouse JSON.
+- **Commands run:** Production builds, browser viewport/network/motion emulation and Lighthouse 13
+  mobile.
+- **Result/verification:** All target layouts have no document overflow. Reduced mode resolves with
+  no running animations after settle. Lighthouse scores 84 performance, 100 accessibility, 100
+  best practices and 92 SEO.
+- **Follow-ups:** Record Phase 8 ADRs and run the final quality gate.
+
+### [2026-10-02 15:02] P8-T20 - Close Phase 8
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recorded ADR-057 through ADR-063, updated architecture and delivery documentation,
+  aligned regression assertions with animated presentation and dual responsive navigation, and
+  closed the roadmap, phase checklist and handoff.
+- **Files changed:** decision, architecture, roadmap, phase, handoff and activity documentation;
+  router, player, reward and image-primitive regression tests.
+- **Commands run:** Focused regression tests and `npm run check`.
+- **Result/verification:** The full gate passes: 38 test files and 247 tests, zero content warnings,
+  entry 130,029 gzip bytes, imaging 1,006,573 and confetti 4,244. All bundle roles are within budget.
+- **Follow-ups:** Begin Phase 9 showcase and physical Android/iOS validation.
