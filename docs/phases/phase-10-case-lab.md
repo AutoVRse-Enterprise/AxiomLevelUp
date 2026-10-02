@@ -175,7 +175,7 @@ case
       results and compare screens.
 - [x] P10-T11 — Events, pipeline and learner state v5: case events, XP rules, mastery, case badge
       criteria, attempt history and migration.
-- [ ] P10-T12 — Case Lab surfaces: Learn section, Home headline card, case intro route and
+- [x] P10-T12 — Case Lab surfaces: Learn section, Home headline card, case intro route and
       developer gallery support.
 - [ ] P10-T13 — Daily quick case through the existing challenge rewards.
 - [ ] P10-T14 — Autovrse LevelUp branding: name, logo, accent tokens with AA contrast, PWA manifest

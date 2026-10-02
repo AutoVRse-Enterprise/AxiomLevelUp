@@ -14,6 +14,7 @@ import {
   stopLearningEventHandlersForTests,
 } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
+import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
 import { ChallengePage } from './challenge/ChallengePage'
@@ -89,6 +90,25 @@ describe('application surfaces', () => {
 
     expect(router.state.location.search).toBe('?status=completed')
     expect(completed).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('shows the configured featured case above Home continuation and in Learn', () => {
+    const caseRegistry = makeCaseRegistry()
+    renderSurface(<HomePage />, '/', '/', caseRegistry)
+
+    const homeCase = screen.getByRole('link', { name: `Open case: ${fixtureCase.title}` })
+    expect(homeCase).toBeVisible()
+    expect(
+      homeCase.compareDocumentPosition(screen.getByText('Continue learning')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    cleanup()
+
+    renderSurface(<LearnPage />, '/learn', '/learn', caseRegistry)
+    expect(screen.getByRole('link', { name: `Open case: ${fixtureCase.title}` })).toBeVisible()
+    expect(screen.getByText('Basic')).toBeVisible()
+    expect(screen.getByText('generic')).toBeVisible()
+    expect(screen.getByText('4 min')).toBeVisible()
   })
 
   it('keeps internal courses off Home, Learn and Pathway surfaces', () => {

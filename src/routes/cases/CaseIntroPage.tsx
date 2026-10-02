@@ -1,0 +1,182 @@
+import { ArrowLeft, ArrowRight, Clock3, History, Lightbulb, Stethoscope } from 'lucide-react'
+import { Link, useParams } from 'react-router'
+
+import { useContent } from '@/app/contentContext'
+import { EmptyState } from '@/components/feedback/EmptyState'
+import { Card, Chip } from '@/components/ui'
+import { useAssetUrl } from '@/content/useAssetUrl'
+import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { useLearnerStore } from '@/state/learnerStore'
+import { selectCaseLabCards } from '@/state/selectors'
+
+const timingLabels = {
+  none: 'No timer',
+  stopwatch: 'Stopwatch · speed bonus only',
+  countdown: 'Countdown · play continues when time expires',
+} as const
+
+export function CaseIntroPage() {
+  const { caseId } = useParams()
+  const registry = useContent()
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
+  const session = useActivitySessionStore((state) => state.session)
+  const caseView = caseId
+    ? selectCaseLabCards({ caseProgress, caseAttempts }, registry).find(
+        (candidate) => candidate.caseId === caseId,
+      )
+    : undefined
+  const patientImage = useAssetUrl(caseView?.caseDoc.patient.imageAssetId)
+
+  if (!caseView || !registry.appConfig.caseLab) {
+    return (
+      <EmptyState
+        title="Case not found"
+        message="This case is not configured in Case Lab."
+        action={<Link to="/learn">Return to Learn</Link>}
+      />
+    )
+  }
+
+  const { caseDoc } = caseView
+  const attempts = caseAttempts[caseDoc.id] ?? []
+  const resumable =
+    session?.activityKind === 'case' &&
+    session.activityId === caseDoc.id &&
+    session.startedAt !== null &&
+    session.phase !== 'complete'
+  const ctaClass =
+    'inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand-700 px-4 font-semibold text-white hover:bg-brand-800 focus-visible:outline-2'
+
+  return (
+    <div className="space-y-7">
+      <Link className="inline-flex items-center gap-2 font-semibold text-brand-700" to="/learn">
+        <ArrowLeft aria-hidden="true" size={17} /> Case Lab
+      </Link>
+
+      <header>
+        <div className="flex flex-wrap items-center gap-2">
+          <Chip tone="brand">{caseView.tierLabel}</Chip>
+          <Chip>{caseDoc.organSystem}</Chip>
+          <Chip>{caseDoc.estimatedMinutes} min</Chip>
+        </div>
+        <h1 className="mt-4 text-display font-bold">{caseDoc.title}</h1>
+        <p className="mt-3 max-w-3xl text-neutral-600">{caseDoc.summary}</p>
+      </header>
+
+      <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <Card className="overflow-hidden p-0 sm:p-0">
+          {patientImage ? (
+            <img alt="" className="h-52 w-full object-cover" src={patientImage} />
+          ) : null}
+          <div className="p-5 sm:p-6">
+            <div className="flex items-center gap-2 text-brand-700">
+              <Stethoscope aria-hidden="true" size={20} />
+              <p className="text-caption font-bold uppercase tracking-wide">Patient</p>
+            </div>
+            <h2 className="mt-3 text-title font-bold">{caseDoc.patient.label}</h2>
+            {caseDoc.patient.age !== undefined || caseDoc.patient.sex ? (
+              <p className="mt-1 text-small text-neutral-600">
+                {[caseDoc.patient.age === undefined ? null : `${caseDoc.patient.age} years`, caseDoc.patient.sex]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+            ) : null}
+            <p className="mt-4 font-semibold text-neutral-900">
+              {caseDoc.patient.presentingComplaint}
+            </p>
+            {caseDoc.patient.history.length ? (
+              <ul className="mt-4 list-disc space-y-1 pl-5 text-small text-neutral-700">
+                {caseDoc.patient.history.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        </Card>
+
+        <div className="space-y-5">
+          <Card>
+            <h2 className="text-heading font-bold">Case rules</h2>
+            <dl className="mt-4 space-y-4 text-small">
+              <div className="flex gap-3">
+                <Clock3 aria-hidden="true" className="mt-0.5 shrink-0 text-brand-700" size={18} />
+                <div>
+                  <dt className="font-semibold">Timing</dt>
+                  <dd className="text-neutral-600">{timingLabels[caseView.timing]}</dd>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Lightbulb
+                  aria-hidden="true"
+                  className="mt-0.5 shrink-0 text-brand-700"
+                  size={18}
+                />
+                <div>
+                  <dt className="font-semibold">Hints</dt>
+                  <dd className="text-neutral-600">
+                    {caseView.hints === 'full' ? 'Hints are available' : 'Reduced hints'}
+                  </dd>
+                </div>
+              </div>
+              <div>
+                <dt className="font-semibold">Optional clues</dt>
+                <dd className="text-neutral-600">
+                  −{registry.appConfig.caseLab.scoring.cluePenalty.perOptionalClue} points each, up
+                  to {registry.appConfig.caseLab.scoring.cluePenalty.cap} points
+                </dd>
+              </div>
+            </dl>
+          </Card>
+
+          <Card>
+            <h2 className="text-heading font-bold">Your progress</h2>
+            <dl className="mt-4 grid grid-cols-2 gap-4">
+              <div>
+                <dt className="text-small text-neutral-600">Best score</dt>
+                <dd className="text-title font-bold">
+                  {caseView.bestScore === null ? '—' : caseView.bestScore}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-small text-neutral-600">Attempts</dt>
+                <dd className="text-title font-bold">{caseView.attempts}</dd>
+              </div>
+            </dl>
+            <Link className={`${ctaClass} mt-5 w-full`} to={`/learn/cases/${caseDoc.id}/play`}>
+              {resumable ? 'Resume case' : 'Start case'}
+              <ArrowRight aria-hidden="true" size={17} />
+            </Link>
+          </Card>
+        </div>
+      </div>
+
+      {attempts.length ? (
+        <section aria-labelledby="case-history-heading">
+          <h2 className="text-heading font-bold" id="case-history-heading">
+            Attempt history
+          </h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[...attempts].reverse().map((attempt) => (
+              <Link
+                className="rounded-lg focus-visible:outline-2"
+                key={attempt.attemptId}
+                to={`/learn/cases/${caseDoc.id}/attempts/${encodeURIComponent(attempt.attemptId)}`}
+              >
+                <Card className="h-full" interactive>
+                  <History aria-hidden="true" className="text-brand-700" size={20} />
+                  <p className="mt-3 font-bold">{attempt.total} points</p>
+                  <p className="mt-1 text-small text-neutral-600">
+                    {new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(
+                      new Date(attempt.completedAt),
+                    )}
+                  </p>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  )
+}

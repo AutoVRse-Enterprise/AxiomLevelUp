@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
+import { CaseLabCard } from '@/components/learning/CaseLabCard'
 import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
@@ -12,7 +13,12 @@ import { isCourseOfflineReady } from '@/offline/readiness'
 import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 import { today } from '@/lib/clock'
-import { selectCourseSummary, selectPathwayView, type LearningStatus } from '@/state/selectors'
+import {
+  selectCaseLabCards,
+  selectCourseSummary,
+  selectPathwayView,
+  type LearningStatus,
+} from '@/state/selectors'
 
 type Filter = 'all' | 'offline' | 'in_progress' | 'not_started' | 'completed' | 'new'
 
@@ -34,6 +40,8 @@ export function LearnPage() {
   const xp = useLearnerStore((state) => state.xp)
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const challenges = useLearnerStore((state) => state.challenges)
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
@@ -47,6 +55,7 @@ export function LearnPage() {
   const summaries = catalogCourses.map((course) =>
     selectCourseSummary({ lessonProgress }, course, lessonById, courseById),
   )
+  const caseCards = selectCaseLabCards({ caseProgress, caseAttempts }, registry)
   const offlineReadyByCourse = new Map(
     catalogCourses.map((course) => {
       const coursePackage = buildCoursePackage(
@@ -130,6 +139,20 @@ export function LearnPage() {
             Continue pathway <ArrowRight aria-hidden="true" size={17} />
           </Link>
         </Card>
+      ) : null}
+
+      {caseCards.length ? (
+        <section aria-label={appConfig.caseLab?.title ?? 'Case Lab'}>
+          <SectionHeader
+            description={`${caseCards.length} configured ${caseCards.length === 1 ? 'case' : 'cases'} · all tiers open`}
+            title={appConfig.caseLab?.title ?? 'Case Lab'}
+          />
+          <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {caseCards.map((caseView) => (
+              <CaseLabCard caseView={caseView} key={caseView.caseId} />
+            ))}
+          </div>
+        </section>
       ) : null}
 
       <section aria-label="Course catalog">

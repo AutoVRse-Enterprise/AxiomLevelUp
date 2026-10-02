@@ -34,6 +34,7 @@ export function DevPage() {
   const seedProfile = useLearnerStore((state) => state.seedProfile)
   const events = useEventLogStore((state) => state.events)
   const clearEvents = useEventLogStore((state) => state.clear)
+  const resetCaseAttempts = useLearnerStore((state) => state.resetCaseAttempts)
   const { simulatedOffline } = useConnectivity()
 
   async function applySeed(profile: SeedProfile, clearLog = false) {
@@ -109,6 +110,15 @@ export function DevPage() {
             onClick={() => emitEvent({ event: 'demo_command', command: 'simulate_level_up' })}
           >
             Simulate level-up
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              resetCaseAttempts()
+              setMessage('Case attempts reset.')
+            }}
+          >
+            Reset case attempts
           </Button>
           <Button
             variant="ghost"

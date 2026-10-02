@@ -1,5 +1,13 @@
 import type { ContentRegistry } from '@/content/loader'
-import type { AppConfig, Course, LearnerSeed, Lesson } from '@/content/schema'
+import type {
+  AppConfig,
+  CaseAttemptRecord,
+  CaseDocument,
+  CaseLabConfig,
+  Course,
+  LearnerSeed,
+  Lesson,
+} from '@/content/schema'
 import { periodKey } from '@/engines/gamification/calendar'
 import { evaluateCriterion } from '@/engines/gamification/criteria'
 import type { LearnerStore } from '@/state/learnerStore'
@@ -184,6 +192,105 @@ export function selectContinueLearning(
     ) ??
     null
   )
+}
+
+type CaseLabState = Pick<LearnerStore, 'caseProgress' | 'caseAttempts'>
+type CaseLabRegistry = Pick<ContentRegistry, 'appConfig' | 'caseById'>
+
+export interface CaseLabCardView {
+  caseDoc: CaseDocument
+  caseId: string
+  title: string
+  summary: string
+  tier: CaseDocument['tier']
+  tierLabel: string
+  timing: CaseLabConfig['tiers'][CaseDocument['tier']]['timing']
+  hints: CaseLabConfig['tiers'][CaseDocument['tier']]['hints']
+  organSystem: string
+  estimatedMinutes: number
+  bestScore: number | null
+  attempts: number
+}
+
+export interface CaseResultsView {
+  caseId: string
+  attempt: CaseAttemptRecord
+}
+
+export interface CaseCompareView extends CaseResultsView {
+  history: CaseAttemptRecord[]
+  bestScore: number
+}
+
+export function selectCaseLabCards(
+  state: CaseLabState,
+  registry: CaseLabRegistry,
+): CaseLabCardView[] {
+  const caseLab = registry.appConfig.caseLab
+  if (!caseLab) return []
+
+  return caseLab.caseIds.flatMap((caseId) => {
+    const caseDoc = registry.caseById.get(caseId)
+    if (!caseDoc) return []
+    const progress = state.caseProgress[caseId]
+    const attempts = progress?.completions ?? state.caseAttempts[caseId]?.length ?? 0
+    const tier = caseLab.tiers[caseDoc.tier]
+    return [
+      {
+        caseDoc,
+        caseId,
+        title: caseDoc.title,
+        summary: caseDoc.summary,
+        tier: caseDoc.tier,
+        tierLabel: tier.label,
+        timing: tier.timing,
+        hints: tier.hints,
+        organSystem: caseDoc.organSystem,
+        estimatedMinutes: caseDoc.estimatedMinutes,
+        bestScore: progress?.bestTotal ?? null,
+        attempts,
+      },
+    ]
+  })
+}
+
+export function selectFeaturedCase(
+  state: CaseLabState,
+  registry: CaseLabRegistry,
+): CaseLabCardView | null {
+  const featuredCaseId = registry.appConfig.caseLab?.featuredCaseId
+  if (!featuredCaseId) return null
+  return (
+    selectCaseLabCards(state, registry).find(({ caseId }) => caseId === featuredCaseId) ?? null
+  )
+}
+
+export function selectCaseResults(
+  state: Pick<LearnerStore, 'caseAttempts'>,
+  attemptId: string,
+): CaseResultsView | null {
+  for (const [caseId, attempts] of Object.entries(state.caseAttempts)) {
+    const attempt = attempts.find((candidate) => candidate.attemptId === attemptId)
+    if (attempt) return { caseId, attempt }
+  }
+  return null
+}
+
+export function selectCaseCompare(
+  state: Pick<LearnerStore, 'caseAttempts'>,
+  caseId: string,
+  attemptId: string,
+): CaseCompareView | null {
+  const attempts = state.caseAttempts[caseId] ?? []
+  const attempt = attempts.find((candidate) => candidate.attemptId === attemptId)
+  if (!attempt) return null
+  const history = attempts.filter((candidate) => candidate.attemptId !== attemptId)
+  return {
+    caseId,
+    attempt,
+    history,
+    bestScore: Math.max(attempt.total, ...history.map(({ total }) => total)),
+  }
 }
 
 export function selectWeeklyActivity(

@@ -17,6 +17,7 @@ interface LearnerStore extends LearnerData {
   initialize: (seed: LearnerSeed) => void
   replaceWithSeed: (seed: LearnerSeed) => void
   applyEventState: (data: LearnerData) => void
+  resetCaseAttempts: () => void
   setStorageError: (message: string | null) => void
 }
 
@@ -147,6 +148,12 @@ export const useLearnerStore = create<LearnerStore>()(
         set({ ...dataFromSeed(seed), initialized: true, storageError: null })
       },
       applyEventState: (data) => set(data),
+      resetCaseAttempts: () => {
+        if (useActivitySessionStore.getState().session?.activityKind === 'case') {
+          useActivitySessionStore.getState().clear()
+        }
+        set({ caseProgress: {}, caseAttempts: {} })
+      },
       setStorageError: (storageError) => set({ storageError }),
     }),
     {

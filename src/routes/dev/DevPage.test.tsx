@@ -47,4 +47,20 @@ describe('DevPage reward simulations', () => {
       expect.objectContaining({ event: 'demo_command', command: 'simulate_level_up' }),
     )
   })
+
+  it('resets saved case attempts from the developer menu', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter>
+        <DevPage />
+      </MemoryRouter>,
+    )
+
+    expect(Object.keys(useLearnerStore.getState().caseAttempts)).not.toHaveLength(0)
+    await user.click(screen.getByRole('button', { name: 'Reset case attempts' }))
+
+    expect(useLearnerStore.getState().caseAttempts).toEqual({})
+    expect(useLearnerStore.getState().caseProgress).toEqual({})
+    expect(screen.getByText('Case attempts reset.')).toBeVisible()
+  })
 })

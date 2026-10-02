@@ -1964,3 +1964,17 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   tests pass independently. TypeScript, lint, content validation and generated schemas pass.
 - **Follow-ups:** Expose the case catalogue, intro/player/history routes and home/learn entry
   surfaces in P10-T12.
+
+### [2026-10-03 05:14] P10-T12 - Add Case Lab routes and surfaces
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added pure case catalogue, featured-case, results and comparison selectors; lazy
+  case intro, immersive player and attempt routes; Case Lab cards on Learn and Home; and a
+  developer reset action for case attempts. All surfaces remain hidden safely when no Case Lab
+  content is configured.
+- **Files changed:** App router, new case route pages and tests, Case Lab card, Home and Learn
+  surfaces, case result components, learner-store reset action, selectors and developer tools.
+- **Commands run:** Focused Vitest run, `npm run typecheck`, `npm run lint`, `git diff --check`.
+- **Result/verification:** Twenty focused route, selector, surface and reset tests pass. TypeScript,
+  lint and diff checks pass.
+- **Follow-ups:** Bind the existing daily challenge route to the configured quick case in P10-T13.

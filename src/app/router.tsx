@@ -30,6 +30,17 @@ const ChallengePlayerPage = lazy(() =>
     default: module.ChallengePlayerPage,
   })),
 )
+const CaseIntroPage = lazy(() =>
+  import('@/routes/cases/CaseIntroPage').then((module) => ({ default: module.CaseIntroPage })),
+)
+const CasePlayerPage = lazy(() =>
+  import('@/routes/cases/CasePlayerPage').then((module) => ({ default: module.CasePlayerPage })),
+)
+const CaseAttemptPage = lazy(() =>
+  import('@/routes/cases/CaseAttemptPage').then((module) => ({
+    default: module.CaseAttemptPage,
+  })),
+)
 
 function lazyPage(page: ReactNode) {
   return (
@@ -61,6 +72,16 @@ export const router = createBrowserRouter([
         path: 'learn/courses/:courseId',
         element: lazyPage(<CoursePage />),
         handle: { title: 'Course' },
+      },
+      {
+        path: 'learn/cases/:caseId',
+        element: lazyPage(<CaseIntroPage />),
+        handle: { title: 'Case Lab' },
+      },
+      {
+        path: 'learn/cases/:caseId/attempts/:attemptId',
+        element: lazyPage(<CaseAttemptPage />),
+        handle: { title: 'Case results' },
       },
       {
         path: 'challenge',
@@ -100,6 +121,11 @@ export const router = createBrowserRouter([
         path: 'challenge/:challengeId/play',
         element: lazyPage(<ChallengePlayerPage />),
         handle: { title: 'Challenge' },
+      },
+      {
+        path: 'learn/cases/:caseId/play',
+        element: lazyPage(<CasePlayerPage />),
+        handle: { title: 'Case Lab' },
       },
     ],
   },

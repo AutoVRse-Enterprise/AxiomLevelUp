@@ -40,7 +40,7 @@ export function CaseResults({
     })
 
   return (
-    <main className="mx-auto max-w-3xl px-5 py-8 sm:py-12">
+    <div className="mx-auto max-w-3xl px-5 py-8 sm:py-12">
       <p className="text-small font-semibold text-success-700">Case complete</p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -126,6 +126,6 @@ export function CaseResults({
           Replay
         </Button>
       </div>
-    </main>
+    </div>
   )
 }

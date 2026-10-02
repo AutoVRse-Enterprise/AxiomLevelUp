@@ -10,6 +10,7 @@ import {
   StatTile,
   WeeklyActivityStrip,
 } from '@/components/learning'
+import { CaseLabCard } from '@/components/learning/CaseLabCard'
 import { getBadgeIcon } from '@/components/learning/badgeIconRegistry'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
@@ -17,6 +18,7 @@ import { now, today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
 import {
   selectBadgeViews,
+  selectFeaturedCase,
   selectChallengePeriod,
   selectContinueLearning,
   selectDisplayedStreak,
@@ -44,6 +46,7 @@ export function HomePage() {
   const stats = useLearnerStore((state) => state.stats)
   const gamification = useLearnerStore((state) => state.gamification)
   const summary = selectContinueLearning({ lessonProgress }, catalogCourses, lessonById, courseById)
+  const featuredCase = selectFeaturedCase({ caseProgress, caseAttempts }, registry)
   const imageUrl = useAssetUrl(summary?.course.imageAssetId)
   const dailyChallenge = appConfig.challenges.find(({ type }) => type === 'daily')
   const currentDate = today()
@@ -131,6 +134,23 @@ export function HomePage() {
           />
         </div>
       </section>
+
+      {featuredCase ? (
+        <section aria-label={appConfig.caseLab?.title ?? 'Case Lab'}>
+          <SectionHeader
+            action={
+              <Link className="text-small font-semibold text-brand-700" to="/learn">
+                View all cases
+              </Link>
+            }
+            description="Practice evidence-led decisions in an immersive case."
+            title={appConfig.caseLab?.title ?? 'Case Lab'}
+          />
+          <div className="mt-4">
+            <CaseLabCard caseView={featuredCase} featured />
+          </div>
+        </section>
+      ) : null}
 
       <section aria-labelledby="continue-heading">
         <SectionHeader title="Continue learning" />
