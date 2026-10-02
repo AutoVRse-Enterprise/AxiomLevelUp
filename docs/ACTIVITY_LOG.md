@@ -1192,3 +1192,30 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Phase 7 now has explicit rules and exit criteria for verified course
   downloads, passive DICOM caching, offline gating, install/update UX and browser QA.
 - **Follow-ups:** Implement asset-manifest v0.2 and local integrity tooling.
+
+### [2026-10-02 10:15] P7-T01 - Add offline asset contract
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Bumped the asset manifest to v0.2, required exact byte sizes and offline availability,
+  required SHA-256 for non-DICOM assets, retained hosted-manifest hashes for DICOM and added a
+  semantic warning for impossible offline requirements.
+- **Files changed:** content schemas and loader, `public/content/assets.json`, generated schema and
+  content-schema documentation, Phase 7 checklist.
+- **Commands run:** `npm run assets:hash`, `npm run schema:export`, `npm run validate:content`,
+  `npm run typecheck`.
+- **Result/verification:** All 16 configured assets now carry measured sizes and offline policy;
+  non-DICOM assets carry current hashes. Five courses and thirteen lessons validate with no
+  warnings and TypeScript is clean.
+- **Follow-ups:** Keep manifest metadata synchronized through the new asset tooling.
+
+### [2026-10-02 10:16] P7-T02 - Verify local asset integrity
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added an `assets:hash` command and extended content validation to compare every local
+  asset's file size and digest, plus the DICOM asset size against hosted manifest `totalBytes`.
+- **Files changed:** `scripts/assets/hash-assets.ts`, `scripts/validate-content.ts`, `package.json`,
+  Phase 7 checklist and activity log.
+- **Commands run:** `npm run assets:hash`, `npm run validate:content`, `npm run typecheck`.
+- **Result/verification:** Manifest generation and validation pass; missing, stale, size-mismatched
+  and hash-mismatched local assets now fail the content gate.
+- **Follow-ups:** Build pure per-course package derivation from the validated asset graph.

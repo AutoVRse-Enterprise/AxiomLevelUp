@@ -39,9 +39,9 @@ integrity and recovery UX.
 
 ## Checklist
 
-- [ ] P7-T00 — Formalize scope, architecture, decisions, task sequence and PRD traceability.
-- [ ] P7-T01 — Add the asset-manifest v0.2 offline and integrity contract.
-- [ ] P7-T02 — Add asset hashing and local manifest verification tooling.
+- [x] P7-T00 — Formalize scope, architecture, decisions, task sequence and PRD traceability.
+- [x] P7-T01 — Add the asset-manifest v0.2 offline and integrity contract.
+- [x] P7-T02 — Add asset hashing and local manifest verification tooling.
 - [ ] P7-T03 — Add pure course-package, readiness, size and fingerprint derivation.
 - [ ] P7-T04 — Add device-scoped offline state, learner migration and product configuration.
 - [ ] P7-T05 — Add cache, storage, hashing and fetch platform adapters.

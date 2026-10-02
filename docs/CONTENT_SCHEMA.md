@@ -148,8 +148,9 @@ target modes use answer completion.
 
 Asset types are `image`, `video`, `audio`, `dicom`, `document` and `text`. DICOM entries
 require slice count, matrix, pixel spacing, slice thickness and calibration metadata. Other entries
-may include `mimeType`, positive integer `width` and `height`, and non-negative
-`sizeBytes`.
+may include `mimeType` and positive integer `width` and `height`. Asset-manifest version
+`0.2` requires `offlineAvailable` and exact `sizeBytes` for every entry. Non-DICOM entries
+also require lowercase SHA-256; DICOM file hashes remain in the hosted series manifest.
 
 The hosted DICOM manifest is independently validated at runtime as schema version `0.2`. It contains
 series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets

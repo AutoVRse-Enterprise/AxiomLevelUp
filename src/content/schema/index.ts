@@ -470,7 +470,12 @@ const assetSchema = z
     path: pathSchema,
     type: z.enum(['image', 'video', 'audio', 'dicom', 'document', 'text']),
     offlineRequired: z.boolean(),
-    sizeBytes: z.number().int().nonnegative().optional(),
+    offlineAvailable: z.boolean(),
+    sizeBytes: z.number().int().nonnegative(),
+    sha256: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .optional(),
     mimeType: z.string().trim().min(1).optional(),
     width: z.number().int().positive().optional(),
     height: z.number().int().positive().optional(),
@@ -491,10 +496,24 @@ const assetSchema = z
         message: 'Only DICOM assets may declare series metadata.',
       })
     }
+    if (asset.type !== 'dicom' && !asset.sha256) {
+      context.addIssue({
+        code: 'custom',
+        path: ['sha256'],
+        message: 'Non-DICOM assets require a lowercase SHA-256 digest.',
+      })
+    }
+    if (asset.type === 'dicom' && asset.sha256) {
+      context.addIssue({
+        code: 'custom',
+        path: ['sha256'],
+        message: 'DICOM file integrity is declared by the hosted series manifest.',
+      })
+    }
   })
 
 export const assetManifestSchema = z.object({
-  schemaVersion: z.literal('0.1'),
+  schemaVersion: z.literal('0.2'),
   assets: z.array(assetSchema),
 })
 

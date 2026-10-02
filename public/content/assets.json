@@ -1,21 +1,178 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "assets": [
-    { "assetId": "course-imaging-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
-    { "assetId": "course-clinical-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
-    { "assetId": "course-data-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
-    { "assetId": "course-safety-cover", "path": "/assets/images/scientific-grid.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1024, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
-    { "assetId": "windowing-diagram", "path": "/assets/images/windowing-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048, "mimeType": "image/svg+xml", "width": 800, "height": 480 },
-    { "assetId": "thorax-diagram", "path": "/assets/images/thorax-diagram.svg", "type": "image", "offlineRequired": true, "sizeBytes": 2048, "mimeType": "image/svg+xml", "width": 800, "height": 800 },
-    { "assetId": "showcase-cell-map", "path": "/assets/images/showcase/cell-map.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1631, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
-    { "assetId": "showcase-tissue-control", "path": "/assets/images/showcase/tissue-control.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1362, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
-    { "assetId": "showcase-tissue-treated", "path": "/assets/images/showcase/tissue-treated.svg", "type": "image", "offlineRequired": true, "sizeBytes": 1811, "mimeType": "image/svg+xml", "width": 1200, "height": 800 },
-    { "assetId": "showcase-media-video", "path": "/assets/media/showcase/axiom-media-fixture.mp4", "type": "video", "offlineRequired": true, "sizeBytes": 234213, "mimeType": "video/mp4", "width": 640, "height": 360 },
-    { "assetId": "showcase-media-poster", "path": "/assets/media/showcase/axiom-media-poster.jpg", "type": "image", "offlineRequired": true, "sizeBytes": 9675, "mimeType": "image/jpeg", "width": 640, "height": 360 },
-    { "assetId": "showcase-media-captions", "path": "/assets/media/showcase/axiom-media-captions.vtt", "type": "text", "offlineRequired": true, "sizeBytes": 323, "mimeType": "text/vtt" },
-    { "assetId": "showcase-media-audio", "path": "/assets/media/showcase/axiom-audio-fixture.m4a", "type": "audio", "offlineRequired": true, "sizeBytes": 198352, "mimeType": "audio/mp4" },
-    { "assetId": "showcase-media-transcript", "path": "/assets/media/showcase/axiom-audio-transcript.txt", "type": "text", "offlineRequired": true, "sizeBytes": 227, "mimeType": "text/plain" },
-    { "assetId": "showcase-media-reference", "path": "/assets/media/showcase/axiom-reference-fixture.pdf", "type": "document", "offlineRequired": true, "sizeBytes": 708, "mimeType": "application/pdf" },
+    {
+      "assetId": "course-imaging-cover",
+      "path": "/assets/images/scientific-grid.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 841,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 480,
+      "offlineAvailable": true,
+      "sha256": "32fc1d5aa45282cce817ece3f2c1d1c904f31211901077a75b4a09c791fccbe7"
+    },
+    {
+      "assetId": "course-clinical-cover",
+      "path": "/assets/images/scientific-grid.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 841,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 480,
+      "offlineAvailable": true,
+      "sha256": "32fc1d5aa45282cce817ece3f2c1d1c904f31211901077a75b4a09c791fccbe7"
+    },
+    {
+      "assetId": "course-data-cover",
+      "path": "/assets/images/scientific-grid.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 841,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 480,
+      "offlineAvailable": true,
+      "sha256": "32fc1d5aa45282cce817ece3f2c1d1c904f31211901077a75b4a09c791fccbe7"
+    },
+    {
+      "assetId": "course-safety-cover",
+      "path": "/assets/images/scientific-grid.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 841,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 480,
+      "offlineAvailable": true,
+      "sha256": "32fc1d5aa45282cce817ece3f2c1d1c904f31211901077a75b4a09c791fccbe7"
+    },
+    {
+      "assetId": "windowing-diagram",
+      "path": "/assets/images/windowing-diagram.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 1155,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 480,
+      "offlineAvailable": true,
+      "sha256": "84d04d3db4432ae13746b16b2cdc01b349708752a0146c42b54b8eae16ffbf24"
+    },
+    {
+      "assetId": "thorax-diagram",
+      "path": "/assets/images/thorax-diagram.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 938,
+      "mimeType": "image/svg+xml",
+      "width": 800,
+      "height": 800,
+      "offlineAvailable": true,
+      "sha256": "b34369d94c30bcd92750ea15c04e949dfd44e1daea8ff2ace92071f874ae94bf"
+    },
+    {
+      "assetId": "showcase-cell-map",
+      "path": "/assets/images/showcase/cell-map.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 1631,
+      "mimeType": "image/svg+xml",
+      "width": 1200,
+      "height": 800,
+      "offlineAvailable": true,
+      "sha256": "0bd75919a6cab171dfd1386b2960a0dccb2dfb1c861ef4a2f7f9f6759527c42c"
+    },
+    {
+      "assetId": "showcase-tissue-control",
+      "path": "/assets/images/showcase/tissue-control.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 1362,
+      "mimeType": "image/svg+xml",
+      "width": 1200,
+      "height": 800,
+      "offlineAvailable": true,
+      "sha256": "89da0054cb54d7fc16470961a19fde334dff6bc75c9af3e14dc1a6eed8944cb0"
+    },
+    {
+      "assetId": "showcase-tissue-treated",
+      "path": "/assets/images/showcase/tissue-treated.svg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 1811,
+      "mimeType": "image/svg+xml",
+      "width": 1200,
+      "height": 800,
+      "offlineAvailable": true,
+      "sha256": "d99910f6707cc31496e98b46170c6727d10cae3ccc5f4f2b1fccc1a7972dd93f"
+    },
+    {
+      "assetId": "showcase-media-video",
+      "path": "/assets/media/showcase/axiom-media-fixture.mp4",
+      "type": "video",
+      "offlineRequired": true,
+      "sizeBytes": 234213,
+      "mimeType": "video/mp4",
+      "width": 640,
+      "height": 360,
+      "offlineAvailable": true,
+      "sha256": "9ba0e1f5adf570967d20e4c56dda2518e15c38e7062587ffe1f7f657b17f371b"
+    },
+    {
+      "assetId": "showcase-media-poster",
+      "path": "/assets/media/showcase/axiom-media-poster.jpg",
+      "type": "image",
+      "offlineRequired": true,
+      "sizeBytes": 9675,
+      "mimeType": "image/jpeg",
+      "width": 640,
+      "height": 360,
+      "offlineAvailable": true,
+      "sha256": "3308c568bee87d1e0331b3a8222f60ccd772cc7819b96dc08423323182b62dc4"
+    },
+    {
+      "assetId": "showcase-media-captions",
+      "path": "/assets/media/showcase/axiom-media-captions.vtt",
+      "type": "text",
+      "offlineRequired": true,
+      "sizeBytes": 323,
+      "mimeType": "text/vtt",
+      "offlineAvailable": true,
+      "sha256": "8d727dcf54b0ae89062e2b6a164dd838356ce0cb26695f7650bb5d795e7472e5"
+    },
+    {
+      "assetId": "showcase-media-audio",
+      "path": "/assets/media/showcase/axiom-audio-fixture.m4a",
+      "type": "audio",
+      "offlineRequired": true,
+      "sizeBytes": 198352,
+      "mimeType": "audio/mp4",
+      "offlineAvailable": true,
+      "sha256": "a096a32fb8d263edb5eae55bf388f94d65824013b09a0b62e87d84fe4de44f61"
+    },
+    {
+      "assetId": "showcase-media-transcript",
+      "path": "/assets/media/showcase/axiom-audio-transcript.txt",
+      "type": "text",
+      "offlineRequired": true,
+      "sizeBytes": 227,
+      "mimeType": "text/plain",
+      "offlineAvailable": true,
+      "sha256": "3fe7b23fbb6c82809fe2fff6806be78da983ab8865e0ae8465c59b3252d7b421"
+    },
+    {
+      "assetId": "showcase-media-reference",
+      "path": "/assets/media/showcase/axiom-reference-fixture.pdf",
+      "type": "document",
+      "offlineRequired": true,
+      "sizeBytes": 708,
+      "mimeType": "application/pdf",
+      "offlineAvailable": true,
+      "sha256": "a212ee72b6a3d2cc893865918201a36d17735f619ece1804bb800087670283f5"
+    },
     {
       "assetId": "thoracic-ct-series",
       "path": "thoracic-ct/manifest.json",
@@ -26,10 +183,14 @@
         "sliceCount": 125,
         "rows": 512,
         "columns": 512,
-        "pixelSpacingMm": [0.976562, 0.976562],
+        "pixelSpacingMm": [
+          0.976562,
+          0.976562
+        ],
         "sliceThicknessMm": 3.75,
         "calibrated": true
-      }
+      },
+      "offlineAvailable": true
     }
   ]
 }

@@ -169,6 +169,16 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const challengeIds = new Set(appConfig.challenges.map(({ id }) => id))
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
+  assetManifest.assets.forEach((asset, index) => {
+    if (asset.offlineRequired && !asset.offlineAvailable) {
+      warnings.push({
+        file: input.assetManifestFile,
+        path: `assets.${index}.offlineAvailable`,
+        message: `Asset "${asset.assetId}" is required offline but cannot be downloaded; lessons using it can never be offline-ready.`,
+        severity: 'warning',
+      })
+    }
+  })
   const primitiveRewardIds = new Set(
     courses.flatMap((course) =>
       course.lessons.flatMap((lesson) =>
