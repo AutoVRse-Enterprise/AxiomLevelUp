@@ -11,7 +11,7 @@ import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
 import type { LearnerEvent } from '@/events/types'
 import { FeedbackPanel } from '@/player/FeedbackPanel'
-import { ActivityPlayer } from '@/player/ActivityPlayer'
+import { ActivityPlayer, type ActivityPlayerClueContext } from '@/player/ActivityPlayer'
 import { MultipleChoicePrimitive } from '@/primitives/components/MultipleChoicePrimitive'
 import { makeValidContentBundle, playerFixtures } from '@/test/contentFixtures'
 
@@ -58,7 +58,7 @@ function timedPlan(durationSeconds: number) {
   )
 }
 
-function renderPlayer(activityPlan = plan) {
+function renderPlayer(activityPlan = plan, clueContext?: ActivityPlayerClueContext) {
   const router = createMemoryRouter(
     [
       {
@@ -70,6 +70,7 @@ function renderPlayer(activityPlan = plan) {
             previousBestScore={null}
             continuePath="/done"
             exitPath="/exit"
+            clueContext={clueContext}
           />
         ),
       },
@@ -331,8 +332,73 @@ describe('activity player', () => {
     expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument()
   })
 
+  it('shows missed evidence and reopens the selected clue', async () => {
+    const user = userEvent.setup()
+    const onReopenClue = vi.fn()
+    render(
+      <FeedbackPanel
+        status="partial"
+        message="Review the evidence."
+        canRetry={false}
+        missedClues={[
+          { id: 'clue-imaging', title: 'Imaging finding' },
+          { id: 'clue-history', title: 'Patient history' },
+        ]}
+        onRetry={vi.fn()}
+        onContinue={vi.fn()}
+        onReopenClue={onReopenClue}
+      />,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: 'Evidence you may have missed' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Imaging finding')).toBeInTheDocument()
+    expect(screen.getByText('Patient history')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Reopen clue: Imaging finding' }))
+    expect(onReopenClue).toHaveBeenCalledWith('clue-imaging')
+  })
+
+  it('passes case clue context through activity feedback', async () => {
+    const user = userEvent.setup()
+    const onReopenClue = vi.fn()
+    const question = multipleChoicePrimitiveSchema.parse({
+      ...plan.steps[1]!.primitive,
+      clueIds: ['clue-fallback'],
+      content: {
+        ...plan.steps[1]!.primitive.content,
+        options: [
+          { id: 'supported', label: 'Supported' },
+          { id: 'unsupported', label: 'Unsupported', clueIds: ['clue-override'] },
+        ],
+      },
+    })
+    const cluePlan = buildActivityPlan(
+      { ...playerFixtures.allTyped, id: 'clue-context', primitives: [question] },
+      {
+        environment: 'development',
+        player: registry.appConfig.product.player,
+      },
+    )
+    renderPlayer(cluePlan, {
+      clues: [
+        { id: 'clue-fallback', title: 'Fallback evidence' },
+        { id: 'clue-override', title: 'Override evidence' },
+      ],
+      onReopenClue,
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    await user.click(screen.getByRole('radio', { name: 'Unsupported' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    expect(screen.getByText('Override evidence')).toBeInTheDocument()
+    expect(screen.queryByText('Fallback evidence')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Reopen clue: Override evidence' }))
+    expect(onReopenClue).toHaveBeenCalledWith('clue-override')
+  })
+
   it('keeps primitive modules independent from events and stores', () => {
-    expect(Object.keys(primitiveSources)).toHaveLength(27)
+    expect(Object.keys(primitiveSources)).toHaveLength(28)
     for (const [path, source] of Object.entries(primitiveSources)) {
       expect(source, path).not.toMatch(
         /@\/events|@\/state|@\/engines\/learning\/sessionStore|sessionStore|learnerStore/u,

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { primitiveBaseSchema } from '../primitiveBase'
+import { clueIdsSchema, primitiveBaseSchema } from '../primitiveBase'
 import type { PrimitiveContentSchema } from './types'
 
 export const trueFalsePrimitiveSchema = primitiveBaseSchema.extend({
@@ -9,6 +9,12 @@ export const trueFalsePrimitiveSchema = primitiveBaseSchema.extend({
     statement: z.string().min(1),
     answer: z.boolean(),
     explanation: z.string().min(1),
+    responseClueIds: z
+      .strictObject({
+        true: clueIdsSchema.optional(),
+        false: clueIdsSchema.optional(),
+      })
+      .optional(),
   }),
 })
 

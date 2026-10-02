@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { idSchema, primitiveBaseSchema } from '../primitiveBase'
+import { clueIdsSchema, idSchema, primitiveBaseSchema } from '../primitiveBase'
 import type { PrimitiveContentSchema } from './types'
 
 const scenarioAssetSchema = z.strictObject({
@@ -24,6 +24,7 @@ export const scenarioChoiceSchema = z.strictObject({
   next: idSchema,
   score: z.number().min(0).max(1).optional(),
   quality: z.string().min(1).optional(),
+  clueIds: clueIdsSchema.optional(),
 })
 
 export const scenarioDecisionNodeSchema = z.strictObject({

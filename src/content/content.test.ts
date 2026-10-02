@@ -318,6 +318,49 @@ describe('content loader', () => {
     )
   })
 
+  it('rejects clue references anywhere outside case content', () => {
+    const bundle = makeValidContentBundle()
+    const course = bundle.courseFiles[0]!.data as {
+      lessons: Array<{ primitives: Array<Record<string, unknown>> }>
+    }
+    course.lessons[0]!.primitives[0]!.clueIds = ['case-only-clue']
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: bundle.courseFiles[0]!.file,
+            path: 'lessons.0.primitives.0.clueIds.0',
+            message: 'clueIds may only be used in case content.',
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('resolves nested response clue references within a case', () => {
+    const caseDocument = structuredClone(caseFixture) as {
+      stages: Array<{
+        steps: Array<{
+          content: { options?: Array<{ clueIds?: string[] }> }
+        }>
+      }>
+    }
+    caseDocument.stages[0]!.steps[0]!.content.options![1]!.clueIds = ['missing-response-clue']
+
+    expect(() => validateContentBundle(withCaseFixture(caseDocument))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: 'fixtures/case.json',
+            path: 'stages.0.steps.0.content.options.1.clueIds.0',
+            message: expect.stringContaining('missing-response-clue'),
+          }),
+        ]),
+      }),
+    )
+  })
+
   it('validates case-lab IDs and available anatomy entry references', () => {
     const bundle = withCaseFixture()
     const appConfig = bundle.appConfig as {

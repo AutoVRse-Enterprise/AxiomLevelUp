@@ -165,7 +165,7 @@ case
       showcase and gallery entries.
 - [x] P10-T06 — `anatomy_locate` primitive: drill-down levels across model, image-region and choice
       inputs, per-level partial credit, review reveal, showcase and gallery entries.
-- [ ] P10-T07 — Clue-linked feedback: `clueIds` on steps, per-response overrides, validation and
+- [x] P10-T07 — Clue-linked feedback: `clueIds` on steps, per-response overrides, validation and
       feedback-panel presentation with a reopen-clue action.
 - [x] P10-T08 — Timing: active per-step elapsed time, `elapsedMs` on events and tier timing modes
       (none, stopwatch, countdown).

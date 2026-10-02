@@ -196,6 +196,15 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "clueIds": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
                 "conceptIds": {
                   "default": [],
                   "type": "array",

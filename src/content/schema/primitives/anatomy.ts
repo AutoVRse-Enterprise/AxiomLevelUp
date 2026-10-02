@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { idSchema, primitiveBaseSchema } from '../primitiveBase'
+import { clueIdsSchema, idSchema, primitiveBaseSchema } from '../primitiveBase'
 import { hasUniqueRegionIds, imageRegionSchema } from './imageRegions'
 import type { PrimitiveContentSchema } from './types'
 
@@ -15,7 +15,7 @@ export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both'])
 const anatomyLocateLevelBase = {
   levelId: idSchema,
   weight: z.number().positive().optional(),
-  clueIds: z.array(idSchema).min(1).optional(),
+  clueIds: clueIdsSchema.optional(),
 }
 
 const anatomyLocateModelLevelSchema = z.strictObject({
@@ -46,7 +46,7 @@ const anatomyLocateImageLevelSchema = z
 export const anatomyLocateChoiceOptionSchema = z.strictObject({
   id: idSchema,
   label: z.string().trim().min(1),
-  clueIds: z.array(idSchema).min(1).optional(),
+  clueIds: clueIdsSchema.optional(),
 })
 
 const anatomyLocateChoiceLevelSchema = z
@@ -167,33 +167,6 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
         message: 'Anatomy localisation requires answer completion.',
       })
     }
-    primitive.content.levels.forEach((level, levelIndex) => {
-      if (level.clueIds && new Set(level.clueIds).size !== level.clueIds.length) {
-        context.addIssue({
-          code: 'custom',
-          path: ['content', 'levels', levelIndex, 'clueIds'],
-          message: 'Anatomy level clue IDs must be unique.',
-        })
-      }
-      const responses =
-        level.input === 'image' ? level.regions : level.input === 'choice' ? level.options : []
-      responses.forEach((response, responseIndex) => {
-        if (response.clueIds && new Set(response.clueIds).size !== response.clueIds.length) {
-          context.addIssue({
-            code: 'custom',
-            path: [
-              'content',
-              'levels',
-              levelIndex,
-              level.input === 'image' ? 'regions' : 'options',
-              responseIndex,
-              'clueIds',
-            ],
-            message: 'Anatomy response clue IDs must be unique.',
-          })
-        }
-      })
-    })
   })
 
 export type AnatomyExplorePrimitive = z.infer<typeof anatomyExplorePrimitiveSchema>

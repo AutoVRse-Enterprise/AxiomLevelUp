@@ -1913,3 +1913,19 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   Showcase parity is now 27 types across 28 steps. Content validates with zero warnings and all
   bundle roles pass.
 - **Follow-ups:** Resolve case clue references into evidence-linked feedback in P10-T07.
+
+### [2026-10-03 04:44] P10-T07 - Add clue-linked feedback
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added clue references to primitive and response contracts, enforced that references
+  resolve only inside cases, implemented pure missed-evidence resolution and idempotent clue
+  opening, and extended feedback/player APIs with accessible reopen actions.
+- **Files changed:** Primitive and response schemas, anatomy map/case schemas, loader validation,
+  case clue engine and tests, ActivityPlayer and FeedbackPanel tests, generated schemas, Phase 10
+  checklist and activity log.
+- **Commands run:** Focused and full Vitest runs, schema export, `npm run validate:content`,
+  `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Forty-nine focused tests pass; the implementation sub-run also passed all
+  319 tests. Response-level evidence overrides fall back to step clues, and reopening an existing
+  clue does not add a second open.
+- **Follow-ups:** Connect the clue context to the CasePlayer and ClueBoard in P10-T10.

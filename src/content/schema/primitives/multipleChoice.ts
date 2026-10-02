@@ -1,11 +1,12 @@
 import { z } from 'zod'
 
-import { idSchema, primitiveBaseSchema } from '../primitiveBase'
+import { clueIdsSchema, idSchema, primitiveBaseSchema } from '../primitiveBase'
 import type { PrimitiveContentSchema } from './types'
 
 export const choiceOptionSchema = z.strictObject({
   id: idSchema,
   label: z.string().min(1),
+  clueIds: clueIdsSchema.optional(),
 })
 
 export const multipleChoicePrimitiveSchema = primitiveBaseSchema.extend({

@@ -10,9 +10,7 @@ export const caseTierSchema = z.enum(['foundation', 'intermediate', 'advanced'])
 export const caseStageKindSchema = z.enum(['orient', 'observe', 'interpret', 'diagnose'])
 export const caseStageComponentSchema = z.enum(['anatomy', 'diagnosis', 'none'])
 
-export const caseStepSchema = primitiveBaseSchema.extend({
-  clueIds: z.array(idSchema).default([]),
-})
+export const caseStepSchema = primitiveBaseSchema
 
 export const caseCluePrimitiveSchema = primitiveBaseSchema.extend({
   type: z.enum(contentPrimitiveTypes),

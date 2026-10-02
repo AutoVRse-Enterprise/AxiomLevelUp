@@ -6,6 +6,11 @@ export const idSchema = z
   .min(1)
   .regex(/^[a-z0-9][a-z0-9_-]*$/)
 
+export const clueIdsSchema = z
+  .array(idSchema)
+  .min(1)
+  .refine((ids) => new Set(ids).size === ids.length, 'clue IDs must be unique')
+
 export const rewardSchema = z.object({
   type: z.enum(['badge', 'certificate', 'points', 'recognition']),
   id: idSchema,
@@ -70,6 +75,7 @@ export const feedbackSchema = z
 export const primitiveBaseSchema = z.object({
   id: idSchema,
   type: z.string().min(1),
+  clueIds: clueIdsSchema.optional(),
   conceptIds: z.array(idSchema).default([]),
   content: z.record(z.string(), z.unknown()),
   assets: z.array(idSchema).default([]),

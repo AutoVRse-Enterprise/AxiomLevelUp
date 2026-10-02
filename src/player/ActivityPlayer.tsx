@@ -3,6 +3,8 @@ import { useBlocker, useNavigate } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { Button } from '@/components/ui'
+import type { AnatomyMap, CaseClue } from '@/content/schema'
+import { resolveMissedClues } from '@/engines/cases/clues'
 import { isPrimitiveComplete } from '@/engines/learning/completionRules'
 import type { ActivityPlan } from '@/engines/learning/plan'
 import {
@@ -30,12 +32,19 @@ import { evaluatePrimitive } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import { useLearnerStore } from '@/state/learnerStore'
 
+export interface ActivityPlayerClueContext {
+  clues: readonly Pick<CaseClue, 'id' | 'title'>[]
+  anatomyMap?: AnatomyMap
+  onReopenClue: (clueId: string) => void
+}
+
 interface ActivityPlayerProps {
   plan: ActivityPlan
   previousAttempts: number
   previousBestScore: number | null
   continuePath: string
   exitPath: string
+  clueContext?: ActivityPlayerClueContext
 }
 
 export function ActivityPlayer({
@@ -44,6 +53,7 @@ export function ActivityPlayer({
   previousBestScore,
   continuePath,
   exitPath,
+  clueContext,
 }: ActivityPlayerProps) {
   const navigate = useNavigate()
   const { appConfig } = useContent()
@@ -334,6 +344,15 @@ export function ActivityPlayer({
         ? step.primitive.content.explanation
         : null))
   const canRetry = !stepProgress.completed && step.retry && stepProgress.attempts < step.maxAttempts
+  const missedClues = clueContext
+    ? resolveMissedClues({
+        primitive: step.primitive,
+        response: stepProgress.response,
+        score: stepProgress.lastScore ?? 0,
+        clues: clueContext.clues,
+        anatomyMap: clueContext.anatomyMap,
+      })
+    : []
 
   const handleContinue = () => {
     flushDraft()
@@ -398,6 +417,7 @@ export function ActivityPlayer({
               message={feedbackMessage}
               source={step.primitive.source}
               canRetry={canRetry}
+              missedClues={missedClues}
               xpEarned={
                 gamification.lastQuestionReward?.questionId === step.primitive.id
                   ? gamification.lastQuestionReward.xp
@@ -405,6 +425,7 @@ export function ActivityPlayer({
               }
               onRetry={() => transition({ type: 'retry' })}
               onContinue={handleContinue}
+              onReopenClue={clueContext?.onReopenClue}
             />
           </div>
         ) : (

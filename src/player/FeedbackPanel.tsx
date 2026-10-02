@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import { AnimatedNumber, Button } from '@/components/ui'
 import type { Source } from '@/content/schema'
+import type { MissedClue } from '@/engines/cases/clues'
 
 export type FeedbackStatus = 'correct' | 'partial' | 'incorrect'
 
@@ -13,8 +14,10 @@ interface FeedbackPanelProps {
   source?: Source
   canRetry: boolean
   xpEarned?: number
+  missedClues?: readonly MissedClue[]
   onRetry: () => void
   onContinue: () => void
+  onReopenClue?: (clueId: string) => void
 }
 
 export function FeedbackPanel({
@@ -23,8 +26,10 @@ export function FeedbackPanel({
   source,
   canRetry,
   xpEarned = 0,
+  missedClues = [],
   onRetry,
   onContinue,
+  onReopenClue,
 }: FeedbackPanelProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const correct = status === 'correct'
@@ -36,9 +41,7 @@ export function FeedbackPanel({
   return (
     <m.aside
       animate={
-        correct
-          ? { opacity: 1, scale: 1, y: 0 }
-          : { opacity: 1, scale: 1, y: 0, x: [-6, 5, -3, 0] }
+        correct ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, scale: 1, y: 0, x: [-6, 5, -3, 0] }
       }
       aria-live="polite"
       className={`rounded-xl border p-5 ${
@@ -82,6 +85,26 @@ export function FeedbackPanel({
           {source.section ? `, ${source.section}` : ''}
           {source.page !== undefined ? `, p. ${source.page}` : ''}
         </p>
+      ) : null}
+      {!correct && missedClues.length > 0 && onReopenClue ? (
+        <section className="mt-4 border-t border-warning-700/20 pt-4">
+          <h3 className="font-semibold text-neutral-950">Evidence you may have missed</h3>
+          <ul className="mt-2 space-y-2">
+            {missedClues.map((clue) => (
+              <li className="flex flex-wrap items-center justify-between gap-2" key={clue.id}>
+                <span className="text-neutral-800">{clue.title}</span>
+                <Button
+                  aria-label={`Reopen clue: ${clue.title}`}
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => onReopenClue(clue.id)}
+                >
+                  Reopen clue
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
       <Button className="mt-5" onClick={canRetry ? onRetry : onContinue}>
         {canRetry ? 'Try again' : 'Continue'}

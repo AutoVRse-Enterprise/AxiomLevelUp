@@ -1,12 +1,13 @@
 import { z } from 'zod'
 
-import { idSchema } from './primitiveBase'
+import { clueIdsSchema, idSchema } from './primitiveBase'
 
 const vector3Schema = z.tuple([z.number(), z.number(), z.number()])
 
 const anatomyLevelSchema = z.strictObject({
   id: idSchema,
   label: z.string().trim().min(1),
+  clueIds: clueIdsSchema.optional(),
 })
 
 const anatomyStructureSchema = z.strictObject({
@@ -15,6 +16,7 @@ const anatomyStructureSchema = z.strictObject({
   parentId: idSchema.optional(),
   label: z.string().trim().min(1),
   meshNames: z.array(z.string().trim().min(1)).min(1),
+  clueIds: clueIdsSchema.optional(),
 })
 
 const anatomyWaypointSchema = z.strictObject({

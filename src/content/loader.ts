@@ -82,8 +82,58 @@ function zodIssues(
   }))
 }
 
+interface ClueIdReference {
+  id: string
+  path: string
+}
+
+function collectClueIdReferences(value: unknown, path = ''): ClueIdReference[] {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) =>
+      collectClueIdReferences(entry, path ? `${path}.${index}` : String(index)),
+    )
+  }
+  if (!value || typeof value !== 'object') return []
+
+  return Object.entries(value).flatMap(([key, entry]) => {
+    const entryPath = path ? `${path}.${key}` : key
+    if (key === 'clueIds' && Array.isArray(entry)) {
+      return entry.flatMap((id, index) =>
+        typeof id === 'string' ? [{ id, path: `${entryPath}.${index}` }] : [],
+      )
+    }
+    if (key === 'responseClueIds' && entry && typeof entry === 'object') {
+      return Object.entries(entry).flatMap(([response, ids]) =>
+        Array.isArray(ids)
+          ? ids.flatMap((id, index) =>
+              typeof id === 'string' ? [{ id, path: `${entryPath}.${response}.${index}` }] : [],
+            )
+          : [],
+      )
+    }
+    return collectClueIdReferences(entry, entryPath)
+  })
+}
+
 export function validateContentBundle(input: ContentBundleInput): ContentRegistry {
   const issues: ContentIssue[] = []
+  const rejectClueReferencesOutsideCases = (value: unknown, file: string, path = '') => {
+    collectClueIdReferences(value, path).forEach((reference) => {
+      issues.push({
+        file,
+        path: reference.path,
+        message: 'clueIds may only be used in case content.',
+        severity: 'error',
+      })
+    })
+  }
+
+  rejectClueReferencesOutsideCases(input.manifest, input.manifestFile)
+  rejectClueReferencesOutsideCases(input.appConfig, input.appConfigFile)
+  rejectClueReferencesOutsideCases(input.seed, input.seedFile)
+  rejectClueReferencesOutsideCases(input.assetManifest, input.assetManifestFile)
+  input.courseFiles.forEach(({ data, file }) => rejectClueReferencesOutsideCases(data, file))
+
   const manifestResult = contentManifestSchema.safeParse(input.manifest)
   const appConfigResult = appConfigSchema.safeParse(input.appConfig)
   const seedResult = learnerSeedSchema.safeParse(input.seed)
@@ -924,9 +974,6 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       seenStageKinds.add(stage.kind)
       priorStageOrder = Math.max(priorStageOrder, order)
 
-      stage.clueIds.forEach((id, clueIndex) =>
-        requireRef(clueIds, id, file, `stages.${stageIndex}.clueIds.${clueIndex}`, 'clue'),
-      )
       stage.steps.forEach((step, stepIndex) => {
         const path = `stages.${stageIndex}.steps.${stepIndex}`
         if (seenPrimitiveIds.has(step.id)) {
@@ -939,12 +986,21 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         }
         seenPrimitiveIds.add(step.id)
         stepIds.add(step.id)
-        step.clueIds.forEach((id, clueIndex) =>
-          requireRef(clueIds, id, file, `${path}.clueIds.${clueIndex}`, 'clue'),
-        )
         validatePrimitive(step, file, path)
       })
     })
+
+    collectClueIdReferences(caseDocument).forEach(({ id, path }) =>
+      requireRef(clueIds, id, file, path, 'clue'),
+    )
+    if (anatomyMap) {
+      const anatomyMapIndex = anatomyMaps.indexOf(anatomyMap)
+      const anatomyMapFile =
+        input.anatomyMapFiles[anatomyMapIndex]?.file ?? `anatomy-map:${anatomyMap.id}`
+      collectClueIdReferences(anatomyMap).forEach(({ id, path }) =>
+        requireRef(clueIds, id, anatomyMapFile, path, 'clue'),
+      )
+    }
 
     caseDocument.expertBenchmark.openedClueIds.forEach((id, clueIndex) =>
       requireRef(clueIds, id, file, `expertBenchmark.openedClueIds.${clueIndex}`, 'clue'),
@@ -977,6 +1033,13 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         'anatomy waypoint',
       )
     }
+  })
+
+  const caseAnatomyMapIds = new Set(cases.map(({ anatomyMapId }) => anatomyMapId))
+  anatomyMaps.forEach((anatomyMap, anatomyMapIndex) => {
+    if (caseAnatomyMapIds.has(anatomyMap.id)) return
+    const file = input.anatomyMapFiles[anatomyMapIndex]?.file ?? `anatomy-map:${anatomyMap.id}`
+    rejectClueReferencesOutsideCases(anatomyMap, file)
   })
 
   if (appConfig.caseLab) {

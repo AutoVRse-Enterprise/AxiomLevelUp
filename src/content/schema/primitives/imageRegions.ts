@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { idSchema } from '../primitiveBase'
+import { clueIdsSchema, idSchema } from '../primitiveBase'
 
 export const normalizedPointSchema = z.strictObject({
   x: z.number().min(0).max(1),
@@ -11,7 +11,7 @@ const regionDetailsSchema = z.strictObject({
   id: idSchema,
   label: z.string().min(1),
   description: z.string().min(1).optional(),
-  clueIds: z.array(idSchema).min(1).optional(),
+  clueIds: clueIdsSchema.optional(),
 })
 
 const circleRegionSchema = regionDetailsSchema
