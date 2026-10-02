@@ -9,7 +9,7 @@
 | 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
 | 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                |
 | 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                    |
-| 8     | Product polish                 | Planned  | Responsive, accessible, animated, performant and resilient target flows                  |
+| 8     | Product polish                 | Active   | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Planned  | The 18-primitive fixture passes the browser/device matrix                                |
 | 10    | Sanofi demo course             | Planned  | Prospect-specific content runs without runtime code changes                              |
 
@@ -45,3 +45,7 @@ Phase 7 closed with asset-manifest v0.2, verified course downloads, quota and ev
 derived offline activity gating, a custom service worker, storage management and install/update UX.
 The quality gate passes with 34 test files and 235 tests; same-origin and cross-origin downloads
 render the complete DICOM stack after a network-disabled reload.
+
+Phase 8 is active. It adds token-driven motion, optional event-driven haptics, designed loading,
+empty and error states, responsive artifact layouts, accessibility automation and enforced
+performance budgets without adding course-specific UI.

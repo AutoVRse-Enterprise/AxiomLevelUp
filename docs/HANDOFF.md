@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 7 — complete PWA/offline is complete. P7-T00 through P7-T16 satisfy the phase exit criteria.
-Phase 8 — product polish is next.
+Phase 8 — product polish is in progress. P8-T00 established scope, architecture, task sequence,
+rules and PRD traceability.
 
 ## Done
 
@@ -39,13 +39,13 @@ Phase 8 — product polish is next.
 
 ## In progress
 
-- None.
+- P8-T01 — establish and enforce bundle, visual and Lighthouse baselines before adding motion.
 
 ## Next three steps
 
-1. Plan Phase 8 product polish against the current responsive and accessibility baseline.
-2. Audit loading, empty, error and transition states across the core learner journeys.
-3. Establish visual/performance budgets before broad animation and styling changes.
+1. Establish bundle and browser baselines.
+2. Add the motion runtime, device preferences and presentation configuration.
+3. Polish player feedback, rewards and completion before broad layout refinement.
 
 ## Blockers/questions for the user
 

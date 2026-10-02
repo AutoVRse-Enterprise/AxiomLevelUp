@@ -1401,3 +1401,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   3,703.17 kB raw / 1,013.90 kB gzip.
 - **Follow-ups:** Begin Phase 8 product-polish planning; complete physical-device validation in
   Phase 9 and supply a production DICOM host before deployment.
+
+### [2026-10-02 11:40] P8-T00 - Start product-polish phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Audited the current motion, loading, error, empty, responsive, accessibility and
+  performance baseline; formalized Phase 8 scope, decisions, tasks, rules, traceability and exit
+  criteria; and marked the roadmap active.
+- **Files changed:** `docs/phases/phase-08-product-polish.md`, `docs/ROADMAP.md`,
+  `docs/HANDOFF.md` and activity log.
+- **Commands run:** Repository/dependency inspection and read-only source/documentation audits.
+- **Result/verification:** P8-T00 is complete with 21 sequenced tasks and explicit ownership for
+  Motion, haptics, loading/error resilience, responsive refinement, accessibility and budgets.
+- **Follow-ups:** Capture and enforce the pre-motion bundle and browser baselines.
