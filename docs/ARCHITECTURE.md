@@ -54,7 +54,10 @@ read-only ContentRegistry -----> routes -----> activity plan
   infrastructure.
 - `src/state`: persisted learner state, reference-date rebasing and pure derived view selectors.
 - `src/lib/clock.ts`: the injectable source of current date/time for deterministic calendar views.
-- `src/pwa`: service worker registration and connectivity state.
+- `src/offline`: pure course packages and readiness, verified download orchestration, platform
+  adapters and the device-scoped offline library.
+- `src/pwa`: custom service worker, request/cache policy, registration, install/update UX and real
+  plus simulated connectivity state.
 - `src/spikes`: isolated technical experiments; production code must not depend on these.
 
 ## Content loading
@@ -70,7 +73,7 @@ failures include source file and JSON path.
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning
-progress, gamification and mastery, commits one learner-state v3 snapshot and publishes informational
+progress, gamification and mastery, commits one learner-state v4 snapshot and publishes informational
 reward events. The event-history subscriber records a bounded audit trail. Output events are not
 reduced again. Persisted reward ledgers make completion, perfect, daily and badge awards idempotent.
 Level, leaderboard rank, badge progress, displayed streak and aggregate course progress remain
@@ -124,3 +127,22 @@ and measurement primitives keep normalized drafts and delegate fractional gradin
 evaluators. All components report typed slice, window, tool, region, measurement, requirement and
 viewer-lifecycle interactions to the player. The central event pipeline remains the only owner of
 XP, mastery and the first-DICOM reward.
+
+## Offline runtime
+
+Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. Pure package
+derivation walks each course image, primitive asset list and typed primitive references, producing
+deduplicated course and per-lesson requirements. Download records are device-scoped IndexedDB state,
+separate from learner state v4.
+
+The foreground download manager checks estimated quota, requests persistent storage, expands and
+validates DICOM manifests, fetches with bounded concurrency and verifies every file before placing it
+in `offline-courses-v1`. It can promote verified responses from the expiring
+`dicom-studies-v1` cache, resume completed files, cancel, reference-count shared URLs on removal and
+reconcile eviction or changed package fingerprints at startup.
+
+The inject-manifest worker precaches the application shell, serves verified course responses before
+the network, supports media range requests and retains passive DICOM caching for ordinary online
+viewing. Offline route gates use derived lesson readiness. Download lifecycle events are logged but
+are explicitly excluded from the learner reward pipeline. A worker-persisted simulated-offline flag
+makes the URL-only developer control exercise the same cache-only behavior as a disconnected device.

@@ -1386,3 +1386,18 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   files); slice 81 rendered with network disabled; removal and repair behaved correctly; the web
   manifest had zero parse errors; and no target viewport overflowed.
 - **Follow-ups:** Run the final gate, record Phase 7 ADRs and close documentation.
+
+### [2026-10-02 13:18] P7-T16 - Close complete offline phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Recorded ADR-049 through ADR-056, documented the offline runtime boundary, marked the
+  roadmap and phase complete, restored the default build and rewrote the handoff for Phase 8.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/HANDOFF.md`,
+  `docs/ROADMAP.md`, `docs/phases/phase-07-pwa-offline.md` and activity log.
+- **Commands run:** `npm run check`, default production build and IDE diagnostics.
+- **Result/verification:** The complete gate passes: typecheck and lint clean, 34 files / 235 tests
+  passing, five courses / thirteen lessons / zero content warnings, and a successful production
+  build. The default entry is 717.19 kB raw / 216.52 kB gzip; the lazy imaging chunk remains
+  3,703.17 kB raw / 1,013.90 kB gzip.
+- **Follow-ups:** Begin Phase 8 product-polish planning; complete physical-device validation in
+  Phase 9 and supply a production DICOM host before deployment.

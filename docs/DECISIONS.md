@@ -724,3 +724,109 @@ and document the target generation. Require later SME review before clinical or 
 **Consequences:** The runtime has reproducible region and length fixtures without implying
 diagnostic validity. The current 17.6 mm reference and region remain explicitly provisional pending
 SME approval.
+
+## ADR-049: Verified downloads alongside passive DICOM caching
+
+**Status:** Accepted
+
+**Context:** The Phase 6 runtime cache made visited studies resilient but did not prove that a whole
+course was complete or intact.
+
+**Decision:** Retain the expiring `dicom-studies-v1` cache as a best-effort performance layer and add
+`offline-courses-v1` for explicit downloads. Only fully verified entries in the latter contribute
+to offline-ready status. Verify and promote matching passive entries when possible.
+
+**Consequences:** Normal viewing stays fast and explicit downloads have a stronger guarantee, at
+the cost of two caches and reconciliation logic.
+
+## ADR-050: Inject-manifest service worker
+
+**Status:** Accepted
+
+**Context:** Generated Workbox routing could not express verified-first lookup, cache-only demo
+mode, media range responses and custom update messages together.
+
+**Decision:** Use VitePWA `injectManifest` with a typed custom worker. Precache the shell, serve the
+verified cache first, then use the passive DICOM strategy or network.
+
+**Consequences:** Worker behavior is explicit and testable, but Workbox modules and a separate
+WebWorker TypeScript project are maintained directly.
+
+## ADR-051: Device-scoped offline library
+
+**Status:** Accepted
+
+**Context:** Offline files belong to a browser installation, while learner progress may be reset,
+seeded or eventually synchronized between devices.
+
+**Decision:** Persist download records in a separate `offline-library` Zustand/IndexedDB store and
+remove `offlineDownloads` from learner state v4.
+
+**Consequences:** Demo resets cannot orphan or delete large caches, and device storage remains
+independent from learner-domain reducers.
+
+## ADR-052: Asset manifest v0.2 integrity contract
+
+**Status:** Accepted
+
+**Context:** Reliable size estimates, quota checks and verification require immutable metadata for
+every downloadable response.
+
+**Decision:** Require `offlineAvailable` and exact `sizeBytes` for every asset and lowercase
+SHA-256 for non-DICOM assets. Keep per-file DICOM digests in hosted series manifest v0.2.
+
+**Consequences:** Content validation catches stale local assets and download readiness can be
+derived without course-specific code. Asset changes require regenerating metadata.
+
+## ADR-053: Derived lesson offline readiness
+
+**Status:** Accepted
+
+**Context:** A course-level downloaded flag cannot explain which lessons need large assets or remain
+usable from the shell alone.
+
+**Decision:** Walk explicit and typed primitive asset references to derive packages and per-lesson
+requirements. Gate a disconnected route only when one of its required downloadable assets lacks a
+current verified record.
+
+**Consequences:** Offline behavior follows authored content automatically and shell-only lessons
+remain available without a course download.
+
+## ADR-054: Storage, eviction and removal policy
+
+**Status:** Accepted
+
+**Context:** Browser quota and eviction are implementation-defined, and assets can be shared by more
+than one course.
+
+**Decision:** Check estimated free space with a configured safety margin, request persistent
+storage, map quota failures to recovery UX, reconcile records with cache keys at startup and delete
+only URLs unreferenced by another available course.
+
+**Consequences:** Downloads fail early when possible, eviction is repairable and shared data is not
+removed prematurely. Browser quota enforcement still requires adapter tests.
+
+## ADR-055: Engagement-gated install and update prompts
+
+**Status:** Accepted
+
+**Context:** Immediate installation prompts are disruptive, while waiting workers can leave stale
+content controlling the application.
+
+**Decision:** Offer installation only after configured lesson engagement, honor a local dismissal
+cooldown, provide iOS Safari instructions and expose waiting-worker reload and offline-ready notices.
+
+**Consequences:** Browser use remains primary, installation is contextual and updates are explicit.
+
+## ADR-056: Service-worker-enforced simulated offline mode
+
+**Status:** Accepted
+
+**Context:** Sales and development sessions need a repeatable offline demonstration without relying
+on browser developer tools.
+
+**Decision:** Persist a simulated-offline flag in worker IndexedDB. While active, the worker serves
+only precached or verified responses and rejects network fallbacks; clients receive state updates.
+
+**Consequences:** The demo exercises the real cache boundary. It is intentionally restricted to the
+URL-only developer control.

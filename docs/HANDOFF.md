@@ -2,41 +2,39 @@
 
 ## Current phase/task
 
-Phase 6 — DICOM learning viewer is complete. P6-T00 through P6-T16 satisfy the phase exit criteria.
-Phase 7 — complete PWA/offline is next.
+Phase 7 — complete PWA/offline is complete. P7-T00 through P7-T16 satisfy the phase exit criteria.
+Phase 8 — product polish is next.
 
 ## Done
 
-- All 25 primitive types are strictly parsed and playable in production, including
-  `dicom_explore`, `dicom_guided`, `dicom_identify_region` and `dicom_measure`.
-- DICOM courses own series references, presets, tools, one-based slice ranges, normalized targets,
-  guidance, expected measurements and tolerances.
-- The hosted-series manifest v0.2 contains geometry, attribution, sizes and SHA-256 hashes. Local
-  and remote verification checks all 125 files and 65,894,350 bytes.
-- `VITE_DICOM_BASE_URL` supports an external CORS host. DICOM binaries remain outside Git and the
-  application precache.
-- `src/imaging/cornerstone/createController.ts` is the only Cornerstone importer. It provides
-  WebGL/CPU initialization, per-viewer resources, nearby-first loading, bounded concurrency,
-  calibrated length tools, context-loss handling and reference-counted cleanup.
-- The responsive viewer provides loading/retry/skip states, slice/keyboard navigation, tools,
-  presets, fit/reset, overlays, instructions and Fullscreen/fixed-overlay immersive modes.
-- Explore requirements and ordered guidance are resumable. Guided inspection can retain the viewer
-  while presenting an embedded checkpoint.
-- Region and measurement grading are pure, slice-aware and reveal-policy controlled. Non-`mm`
-  measurements cannot be submitted as calibrated answers.
-- DICOM interactions and viewer lifecycle timings flow through typed player events. XP, mastery and
-  the first-DICOM badge remain central-pipeline outcomes.
-- Scientific Imaging contains the complete guided, identify and measure flow; the internal showcase
-  includes the three required DICOM examples and the gallery uses production components.
-- The old DICOM spike route/source is removed. Its findings and follow-ups remain documented.
-- ADR-040 through ADR-048 record the imaging, hosting, contracts, grading, guidance, event, loading,
-  immersive/skip and educational-ground-truth decisions.
-- Browser QA passes at 375×812, 812×375, 768×900 and 1280×900 with no document overflow. The
-  external-host production build reloads the fully cached series while offline.
-- First image measured 236 ms cold and 45–83 ms warm; observed loaded-stack heap was about 249 MiB.
-  The final default build entry is 690.68 kB raw / 208.45 kB gzip and the lazy imaging chunk is
-  3,704.96 kB raw / 1,014.72 kB gzip.
-- The final quality gate passes with 32 test files and 221 tests; five courses and thirteen lessons
+- Asset-manifest v0.2 requires offline availability, exact byte sizes and non-DICOM SHA-256 hashes.
+  `assets:hash` maintains metadata and content validation checks local files.
+- Pure package derivation walks course images, primitive assets and typed asset references. Shared
+  assets are deduplicated and lesson requirements are derived.
+- Learner state v4 no longer stores device downloads. A separate IndexedDB-backed offline library
+  tracks queue, progress, verification, failure, eviction and version status.
+- The download manager checks quota, requests persistence, expands DICOM manifests, downloads with
+  bounded concurrency, verifies every file, resumes, cancels and removes shared URLs safely.
+- Explicit downloads use `offline-courses-v1`. The expiring `dicom-studies-v1` cache remains a
+  best-effort source and verified responses can be promoted.
+- The custom inject-manifest worker precaches the shell, serves verified content first, handles
+  media ranges, retains passive DICOM caching and enforces simulated offline mode.
+- Course pages show size, progress, cancel, retry, repair, update and removal controls. Catalog cards
+  and lesson rows show readiness; disconnected routes gate only missing required content.
+- Profile shows site usage, quota, persistence and per-course/remove-all storage controls.
+- Install prompting is engagement-gated and cooldown-aware, with iOS instructions. Waiting worker
+  and offline-ready notices are actionable.
+- Download lifecycle events are typed and logged but excluded from learner-state reduction.
+- Browser QA passed same-origin and cross-origin downloads. A 126-entry verified cache rendered
+  slice 81 / 125 after both simulated and browser-level offline hard reloads.
+- Removal restored the offline gate; simulated eviction produced Repair download and repair
+  restored the verified state.
+- The manifest parsed with zero browser errors and all four target viewports had no overflow.
+- ADR-049 through ADR-056 record offline cache, worker, state, integrity, readiness, storage,
+  install/update and simulation decisions.
+- The final default entry is 717.19 kB raw / 216.52 kB gzip; the lazy imaging chunk remains
+  3,703.17 kB raw / 1,013.90 kB gzip.
+- The quality gate passes with 34 test files and 235 tests; five courses and thirteen lessons
   validate with zero warnings.
 
 ## In progress
@@ -45,9 +43,9 @@ Phase 7 — complete PWA/offline is next.
 
 ## Next three steps
 
-1. Plan Phase 7 download, quota, integrity and removal behavior from the manifest v0.2 foundation.
-2. Add explicit per-course offline status and download controls without changing primitive UI.
-3. Test quota/eviction recovery and complete offline coverage for all configured course assets.
+1. Plan Phase 8 product polish against the current responsive and accessibility baseline.
+2. Audit loading, empty, error and transition states across the core learner journeys.
+3. Establish visual/performance budgets before broad animation and styling changes.
 
 ## Blockers/questions for the user
 
@@ -56,8 +54,8 @@ Phase 7 — complete PWA/offline is next.
 - The DICOM technical note referenced by the PRD remains unavailable.
 - The tracheal region and 17.6 mm educational reference require SME approval before customer or
   clinical use.
-- Physical Android Chrome and iOS Safari DICOM/PWA checks require an HTTPS host and devices and are
-  deferred to Phase 9.
+- Physical Android Chrome and iOS Safari install, offline and DICOM checks require an HTTPS host and
+  devices and remain deferred to Phase 9.
 
 ## Environment notes
 
@@ -66,23 +64,18 @@ Phase 7 — complete PWA/offline is next.
 - Node: 24.19.0
 - npm: 11.17.0
 - Install/run: `npm install`, `npm run check`, then `npm run dev`.
+- Refresh asset integrity metadata with `npm run assets:hash`.
 - Local cross-origin QA: `npm run dicom:serve`, set
-  `VITE_DICOM_BASE_URL=http://127.0.0.1:4174/`, then run the app.
-- Regenerate schemas with `npm run schema:export`.
-- Series provenance and hosting are documented in
-  `public/assets/dicom/thoracic-ct/README.md`.
+  `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview the app on another origin.
+- Browser QA is recorded in `docs/qa/phase-07-browser-qa.md`.
 
 ## Gotchas
 
-- Never import `@cornerstonejs/*` outside `src/imaging/cornerstone`; the boundary test enforces this.
-- DICOM binaries are intentionally ignored. Do not commit them or add them to the PWA precache.
-- A new service worker may wait until activated; offline QA must confirm the current build controls
-  the page before warming `dicom-studies-v1`.
-- Hosted manifest geometry must match the validated asset manifest before rendering.
-- Cornerstone-reported measurement units are authoritative. Do not assume pixels or unknown units
-  are millimetres.
-- Primitive components emit callbacks only. They must not award XP, mutate mastery or bypass the
-  learner-event pipeline.
-- Slice events are debounced; requirement keys, not raw event counts, own explored completion.
-- Physical pinch, iOS fixed-overlay behavior and device memory pressure remain Phase 9 checks.
-- Output reward events remain informational and must never be reduced back into learner state.
+- Never import `@cornerstonejs/*` outside `src/imaging/cornerstone`.
+- DICOM binaries remain ignored and outside the application precache.
+- `offline-courses-v1` is the only source of verified readiness; `dicom-studies-v1` is best effort.
+- A worker update may wait. Activate it before judging current cache behavior.
+- Asset content changes require `npm run assets:hash`; stale sizes or hashes fail validation.
+- Downloads are foreground work and pause when the application loses connectivity.
+- A simulated-offline flag persists in service-worker IndexedDB; restore it after manual QA.
+- Physical install, pinch and storage-pressure behavior remain Phase 9 checks.

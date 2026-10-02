@@ -1,6 +1,6 @@
 # Phase 7: Complete PWA/offline
 
-**Status:** In progress
+**Status:** Complete
 
 ## Goal
 
@@ -55,7 +55,7 @@ integrity and recovery UX.
 - [x] P7-T13 — Add engagement-gated install and service-worker update prompts.
 - [x] P7-T14 — Add schema, domain, manager, store, component, route and worker coverage.
 - [x] P7-T15 — Run install, download, offline, removal, eviction, update and responsive browser QA.
-- [ ] P7-T16 — Run the final gate, record ADRs and close Phase 7 documentation.
+- [x] P7-T16 — Run the final gate, record ADRs and close Phase 7 documentation.
 
 ## Rules
 
@@ -92,7 +92,7 @@ integrity and recovery UX.
   service-worker-enforced demo offline mode.
 - `npm run check` passes and Phase 7 browser QA and documentation are current.
 
-## Planned deviations
+## Deviations
 
 - Physical Android Chrome and iOS Safari install/offline checks remain Phase 9 work.
 - Downloads require the application to stay open; Background Fetch is not used.
