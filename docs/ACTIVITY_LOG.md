@@ -1701,3 +1701,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   after deterministic unavailable-DICOM paths.
 - **Follow-ups:** Exercise the expanded showcase in the production preview across the Phase 9
   browser matrix.
+
+### [2026-10-02 16:08] P9-T03 - Run showcase browser QA
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Exercised the production lesson and full primitive gallery across phone portrait,
+  phone landscape, tablet and desktop viewports; checked resume, review, missing assets, reduced
+  motion and keyboard pan/zoom semantics.
+- **Files changed:** Phase 9 browser QA report, Phase 9 checklist and activity log.
+- **Commands run:** Production build/preview and Chromium viewport, touch, motion and DOM
+  diagnostics.
+- **Result/verification:** Every viewport had zero document overflow. All 26 gallery cards rendered,
+  keyboard zoom announced 125%, route reload exposed Resume, and media/DICOM missing-asset
+  fallbacks remained recoverable.
+- **Follow-ups:** Capture explicit DICOM host, cache, offline-reload, timing and memory evidence.
