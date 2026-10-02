@@ -1488,3 +1488,14 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Feedback and player motion compile and lint cleanly and inherit the
   global reduced-motion policy.
 - **Follow-ups:** Add staged completion and configured celebration effects.
+
+### [2026-10-02 12:49] P8-T07 - Stage activity completion
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added sequenced completion entry, star reveals, XP count-up and lazy configured
+  confetti for three-star lessons and challenge completion.
+- **Files changed:** completion/reward summaries, confetti effect, Phase 8 checklist and activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Completion effects respect resolved reduced motion; confetti is guarded,
+  deduplicated and dynamically imported.
+- **Follow-ups:** Apply the same presentation language to queued badge and level celebrations.

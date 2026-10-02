@@ -1,10 +1,14 @@
 import { Award, Brain, Flame, Star, Trophy } from 'lucide-react'
+import { m } from 'motion/react'
 
+import { useContent } from '@/app/contentContext'
+import { AnimatedNumber } from '@/components/ui'
 import type { LearnerSeed } from '@/content/schema'
 
 type ActivityResult = LearnerSeed['gamification']['lastActivityResult']
 
 export function RewardSummary({ result }: { result: NonNullable<ActivityResult> }) {
+  const { appConfig } = useContent()
   const masteryGain = Object.values(result.masteryDelta).reduce((total, delta) => total + delta, 0)
   const rankGain = result.rankBefore && result.rankAfter ? result.rankBefore - result.rankAfter : 0
 
@@ -14,7 +18,12 @@ export function RewardSummary({ result }: { result: NonNullable<ActivityResult> 
         <dt className="flex items-center gap-2 text-small text-brand-800">
           <Award aria-hidden="true" size={17} /> XP earned
         </dt>
-        <dd className="mt-1 text-title font-bold text-brand-950">+{result.xpEarned}</dd>
+        <dd className="mt-1 text-title font-bold text-brand-950">
+          +<AnimatedNumber
+            durationMs={appConfig.product.presentation.xpCountUp.maxDurationMs}
+            value={result.xpEarned}
+          />
+        </dd>
       </div>
       <div className="rounded-lg bg-neutral-100 p-4">
         <dt className="flex items-center gap-2 text-small text-neutral-600">
@@ -24,7 +33,16 @@ export function RewardSummary({ result }: { result: NonNullable<ActivityResult> 
           aria-label={`${result.stars} of 3 stars`}
           className="mt-1 text-title font-bold text-star"
         >
-          {'★'.repeat(result.stars)}
+          {Array.from({ length: result.stars }, (_, index) => (
+            <m.span
+              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              key={index}
+              transition={{ delay: index * 0.12, type: 'spring', stiffness: 400, damping: 24 }}
+            >
+              ★
+            </m.span>
+          ))}
           <span className="text-neutral-300">{'★'.repeat(3 - result.stars)}</span>
         </dd>
       </div>
