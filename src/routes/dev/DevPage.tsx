@@ -5,6 +5,7 @@ import { Link } from 'react-router'
 import { Button, Card, Chip } from '@/components/ui'
 import { emitEvent } from '@/events/bus'
 import { useEventLogStore } from '@/events/eventLogStore'
+import { setSimulatedOffline, useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 import { replaceWithSeed, type SeedProfile } from '@/state/seed'
 
@@ -33,6 +34,7 @@ export function DevPage() {
   const seedProfile = useLearnerStore((state) => state.seedProfile)
   const events = useEventLogStore((state) => state.events)
   const clearEvents = useEventLogStore((state) => state.clear)
+  const { simulatedOffline } = useConnectivity()
 
   async function applySeed(profile: SeedProfile, clearLog = false) {
     setMessage(`Loading ${profile} seed…`)
@@ -108,8 +110,14 @@ export function DevPage() {
           >
             Simulate level-up
           </Button>
-          <Button disabled variant="ghost">
-            Toggle offline · Phase 7
+          <Button
+            variant="ghost"
+            onClick={() => {
+              void setSimulatedOffline(!simulatedOffline)
+              setMessage(simulatedOffline ? 'Network access restored.' : 'Simulated offline mode on.')
+            }}
+          >
+            {simulatedOffline ? 'Restore network' : 'Simulate offline'}
           </Button>
         </div>
       </Card>

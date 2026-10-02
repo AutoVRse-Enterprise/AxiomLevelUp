@@ -1294,3 +1294,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Production build passes; the custom worker is emitted as `dist/sw.js`
   with 104 precache entries / 5,646.55 KiB. Entry and imaging chunks remain separated.
 - **Follow-ups:** Connect service-worker simulated state to application connectivity and controls.
+
+### [2026-10-02 11:31] P7-T09 - Connect simulated offline state
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a shared connectivity hook combining browser reachability and worker-enforced
+  simulation, synchronized worker state at registration, updated the calm header indicator and
+  enabled the developer offline toggle.
+- **Files changed:** connectivity and registration modules, offline indicator, developer page,
+  Phase 7 checklist and activity log.
+- **Commands run:** Typecheck and focused developer-route tests.
+- **Result/verification:** TypeScript and the developer-route test pass; worker state changes are
+  broadcast to open application clients.
+- **Follow-ups:** Add course download controls and offline readiness status.

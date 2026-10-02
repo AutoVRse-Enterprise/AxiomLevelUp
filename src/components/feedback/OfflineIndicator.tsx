@@ -1,9 +1,9 @@
 import { WifiOff } from 'lucide-react'
 
-import { useOnlineStatus } from '@/pwa/useOnlineStatus'
+import { useConnectivity } from '@/pwa/connectivity'
 
 export function OfflineIndicator() {
-  const online = useOnlineStatus()
+  const { online, simulatedOffline } = useConnectivity()
   if (online) return null
 
   return (
@@ -12,7 +12,7 @@ export function OfflineIndicator() {
       role="status"
     >
       <WifiOff aria-hidden="true" size={14} />
-      Offline
+      {simulatedOffline ? 'Offline (simulated)' : 'Offline'}
     </span>
   )
 }
