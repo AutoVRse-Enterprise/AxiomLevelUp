@@ -169,7 +169,7 @@ case
       feedback-panel presentation with a reopen-clue action.
 - [x] P10-T08 — Timing: active per-step elapsed time, `elapsedMs` on events and tier timing modes
       (none, stopwatch, countdown).
-- [ ] P10-T09 — Pure case scoring engine: components, speed blend, clue penalty, weight
+- [x] P10-T09 — Pure case scoring engine: components, speed blend, clue penalty, weight
       redistribution and configuration.
 - [ ] P10-T10 — Case session and player: entry views, stage shell, clue board, gating, resume,
       results and compare screens.

@@ -1835,3 +1835,16 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   active time and expiry.
 - **Follow-ups:** Persist the case clock in session v3 and render it through the case player in
   P10-T10.
+
+### [2026-10-03 03:34] P10-T09 - Add composite case scoring
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added a pure case scoring engine for weighted anatomy and diagnosis accuracy,
+  per-step and whole-case speed, no-timer weight redistribution and capped optional-clue penalties.
+- **Files changed:** `src/engines/cases/scoring.ts`, its focused tests, Phase 10 checklist and
+  activity log.
+- **Commands run:** Focused Vitest run, `npm run typecheck`, `npm run lint`.
+- **Result/verification:** 23 focused scoring tests pass, covering defaults, custom weights,
+  no-timer redistribution, timeouts, fast wrong answers, empty components, invalid values and the
+  clue-penalty cap.
+- **Follow-ups:** Feed first-attempt case results and persisted timing into this engine in P10-T10.
