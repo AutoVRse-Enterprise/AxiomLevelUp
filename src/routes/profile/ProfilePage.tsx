@@ -1,4 +1,12 @@
-import { BookOpenCheck, CircleHelp, Flame, RadioTower, Sparkles, Trophy, Vibrate } from 'lucide-react'
+import {
+  BookOpenCheck,
+  CircleHelp,
+  Flame,
+  RadioTower,
+  Sparkles,
+  Trophy,
+  Vibrate,
+} from 'lucide-react'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
@@ -102,7 +110,7 @@ export function ProfilePage() {
 
       <section aria-label="Learner statistics">
         <SectionHeader title="Your stats" />
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(min(100%,9rem),1fr))] gap-3 lg:grid-cols-5">
           <StatTile
             icon={<Trophy aria-hidden="true" size={17} />}
             label="Courses"
@@ -203,12 +211,9 @@ export function ProfilePage() {
       </section>
 
       <section aria-label="Experience preferences">
-        <SectionHeader
-          description="These settings apply only to this device."
-          title="Experience"
-        />
-        <Card className="mt-4 grid gap-5 md:grid-cols-2">
-          <label className="grid gap-2">
+        <SectionHeader description="These settings apply only to this device." title="Experience" />
+        <Card className="mt-4 grid min-w-0 gap-5 md:grid-cols-2">
+          <label className="grid min-w-0 gap-2">
             <span className="flex items-center gap-2 font-bold">
               <Sparkles aria-hidden="true" size={18} /> Motion
             </span>
@@ -216,10 +221,8 @@ export function ProfilePage() {
               Follow your device or choose how interface movement behaves.
             </span>
             <select
-              className="min-h-11 rounded-md border border-neutral-300 bg-white px-3 text-body"
-              onChange={(event) =>
-                setMotion(event.target.value as 'system' | 'reduced' | 'full')
-              }
+              className="min-h-11 min-w-0 max-w-full rounded-md border border-neutral-300 bg-white px-3 text-body"
+              onChange={(event) => setMotion(event.target.value as 'system' | 'reduced' | 'full')}
               value={motion}
             >
               <option value="system">Use device setting</option>
@@ -229,7 +232,7 @@ export function ProfilePage() {
           </label>
 
           {hapticsSupported() ? (
-            <div className="flex min-h-11 items-start gap-3 rounded-lg border border-neutral-200 p-4">
+            <div className="flex min-h-11 min-w-0 items-start gap-3 rounded-lg border border-neutral-200 p-4">
               <input
                 aria-label="Haptic feedback"
                 checked={hapticsEnabled}
@@ -238,7 +241,7 @@ export function ProfilePage() {
                 onChange={(event) => setHapticsEnabled(event.target.checked)}
                 type="checkbox"
               />
-              <span>
+              <span className="min-w-0">
                 <span className="flex items-center gap-2 font-bold">
                   <Vibrate aria-hidden="true" size={18} /> Haptic feedback
                 </span>

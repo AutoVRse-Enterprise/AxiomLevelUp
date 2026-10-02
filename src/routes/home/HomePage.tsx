@@ -134,11 +134,15 @@ export function HomePage() {
         <SectionHeader title="Continue learning" />
         {summary?.nextLesson ? (
           <Card className="mt-4 overflow-hidden p-0 sm:p-0">
-            <div className="grid md:grid-cols-[14rem_1fr]">
+            <div className="grid min-w-0 md:grid-cols-[14rem_1fr]">
               {imageUrl ? (
-                <img alt="" className="h-full min-h-44 w-full object-cover" src={imageUrl} />
+                <img
+                  alt=""
+                  className="h-full min-h-44 min-w-0 max-w-full object-cover"
+                  src={imageUrl}
+                />
               ) : null}
-              <div className="p-5 sm:p-6">
+              <div className="min-w-0 p-5 sm:p-6">
                 <Chip tone="brand">{summary.course.category}</Chip>
                 <h2 id="continue-heading" className="mt-3 text-title font-bold">
                   {summary.course.title}
@@ -163,7 +167,10 @@ export function HomePage() {
           <div className="mt-4">
             <EmptyState
               action={
-                <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+                <Link
+                  className="font-semibold text-brand-700 underline underline-offset-4"
+                  to="/learn"
+                >
                   Browse learning
                 </Link>
               }
@@ -289,7 +296,10 @@ export function HomePage() {
             <div className="mt-4">
               <EmptyState
                 action={
-                  <Link className="font-semibold text-brand-700 underline underline-offset-4" to="/learn">
+                  <Link
+                    className="font-semibold text-brand-700 underline underline-offset-4"
+                    to="/learn"
+                  >
                     Start a lesson
                   </Link>
                 }

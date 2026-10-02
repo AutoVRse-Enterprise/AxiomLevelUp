@@ -67,14 +67,14 @@ export function PwaPromptHost() {
       className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-50 grid w-[min(24rem,calc(100vw-2rem))] gap-3"
     >
       {serviceWorker.needRefresh ? (
-        <Card className="shadow-lg">
+        <Card className="min-w-0 shadow-lg">
           <h2 className="flex items-center gap-2 font-bold">
             <RefreshCw aria-hidden="true" size={18} /> Update available
           </h2>
           <p className="mt-2 text-small text-neutral-600">
             Reload to use the newest learning content and offline support.
           </p>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <Button size="sm" onClick={() => void applyServiceWorkerUpdate()}>
               Reload
             </Button>
@@ -90,7 +90,7 @@ export function PwaPromptHost() {
       ) : null}
 
       {serviceWorker.offlineReady ? (
-        <Card className="shadow-lg" role="status">
+        <Card className="min-w-0 shadow-lg" role="status">
           <h2 className="flex items-center gap-2 font-bold">
             <Wifi aria-hidden="true" size={18} /> Ready to work offline
           </h2>
@@ -109,20 +109,23 @@ export function PwaPromptHost() {
       ) : null}
 
       {engaged && !standalone && installEvent ? (
-        <Card className="shadow-lg">
+        <Card className="min-w-0 shadow-lg">
           <h2 className="flex items-center gap-2 font-bold">
             <Download aria-hidden="true" size={18} /> Install Learning App
           </h2>
           <p className="mt-2 text-small text-neutral-600">
             Access downloaded courses offline and launch directly from your home screen.
           </p>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <Button
               size="sm"
               onClick={() => {
-                void installEvent.prompt().then(() => installEvent.userChoice).then(() => {
-                  setInstallEvent(null)
-                })
+                void installEvent
+                  .prompt()
+                  .then(() => installEvent.userChoice)
+                  .then(() => {
+                    setInstallEvent(null)
+                  })
               }}
             >
               Install
@@ -135,7 +138,7 @@ export function PwaPromptHost() {
       ) : null}
 
       {showIosGuidance ? (
-        <Card className="shadow-lg">
+        <Card className="min-w-0 shadow-lg">
           <h2 className="font-bold">Add Learning App to your Home Screen</h2>
           <p className="mt-2 text-small text-neutral-600">
             In Safari, tap Share, then choose Add to Home Screen.

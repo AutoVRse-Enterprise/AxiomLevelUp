@@ -99,7 +99,7 @@ export function PanZoomImage({
     <div
       ref={viewportRef}
       className={cn(
-        'relative isolate min-h-64 overflow-hidden rounded-xl',
+        'relative isolate min-h-64 w-full min-w-0 max-w-full overflow-hidden rounded-xl',
         dark ? 'bg-neutral-950' : 'bg-neutral-100',
         className,
       )}
