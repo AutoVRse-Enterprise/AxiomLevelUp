@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 interface AssetRecord {
   assetId: string
@@ -19,32 +19,41 @@ interface AssetManifestFile {
   assets: AssetRecord[]
 }
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-const publicRoot = resolve(root, 'public')
-const manifestPath = resolve(publicRoot, 'content/assets.json')
+export async function updateAssetHashes(manifestPath: string, publicRoot: string) {
+  const localAssetPath = (path: string) => resolve(publicRoot, path.replace(/^\/+/, ''))
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as AssetManifestFile
+  manifest.schemaVersion = '0.2'
 
-function localAssetPath(path: string) {
-  return resolve(publicRoot, path.replace(/^\/+/, ''))
-}
+  for (const asset of manifest.assets) {
+    if (asset.type === 'model') {
+      asset.offlineRequired = false
+      asset.offlineAvailable = false
+    } else {
+      asset.offlineAvailable ??= true
+    }
+    if (asset.type === 'dicom') {
+      const hostedManifest = JSON.parse(
+        await readFile(localAssetPath(`/assets/dicom/${asset.path}`), 'utf8'),
+      ) as { totalBytes: number }
+      asset.sizeBytes = hostedManifest.totalBytes
+      delete asset.sha256
+      continue
+    }
 
-const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as AssetManifestFile
-manifest.schemaVersion = '0.2'
-
-for (const asset of manifest.assets) {
-  asset.offlineAvailable ??= true
-  if (asset.type === 'dicom') {
-    const hostedManifest = JSON.parse(
-      await readFile(localAssetPath(`/assets/dicom/${asset.path}`), 'utf8'),
-    ) as { totalBytes: number }
-    asset.sizeBytes = hostedManifest.totalBytes
-    delete asset.sha256
-    continue
+    const bytes = await readFile(localAssetPath(asset.path))
+    asset.sizeBytes = bytes.byteLength
+    asset.sha256 = createHash('sha256').update(bytes).digest('hex')
   }
 
-  const bytes = await readFile(localAssetPath(asset.path))
-  asset.sizeBytes = bytes.byteLength
-  asset.sha256 = createHash('sha256').update(bytes).digest('hex')
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+  return manifest
 }
 
-await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
-console.log(`Updated size and SHA-256 metadata for ${manifest.assets.length} assets.`)
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href
+if (isMain) {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+  const publicRoot = resolve(root, 'public')
+  const manifestPath = resolve(publicRoot, 'content/assets.json')
+  const manifest = await updateAssetHashes(manifestPath, publicRoot)
+  console.log(`Updated size and SHA-256 metadata for ${manifest.assets.length} assets.`)
+}

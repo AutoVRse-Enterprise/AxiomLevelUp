@@ -157,7 +157,7 @@ case
 - [x] P10-T02 — Case content contract: case document and `caseLab` configuration schemas, clue
       catalogue, stage components, tier presets, manifest wiring, semantic validation, JSON Schema
       export and invalid fixtures.
-- [ ] P10-T03 — Anatomy map and `model` asset type: hierarchy levels, structure-to-mesh bindings,
+- [x] P10-T03 — Anatomy map and `model` asset type: hierarchy levels, structure-to-mesh bindings,
       waypoint graph, validation against model metadata and a GLB preparation script.
 - [ ] P10-T04 — Lazy 3D viewer boundary: orbit, zoom, pan, picking, highlight, fly-through,
       endoscopic camera, list alternative, reduced motion, disposal and budget role.

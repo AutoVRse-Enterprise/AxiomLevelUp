@@ -1848,3 +1848,19 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   no-timer redistribution, timeouts, fast wrong answers, empty components, invalid values and the
   clue-penalty cap.
 - **Follow-ups:** Feed first-attempt case results and persisted timing into this engine in P10-T10.
+
+### [2026-10-03 03:48] P10-T03 - Add anatomy map and model pipeline
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Replaced the placeholder anatomy-map envelope with strict hierarchy, mesh binding and
+  waypoint contracts; added model assets and provenance; validated parent levels, model meshes and
+  acyclic waypoint graphs; added model hashing and a production glTF preparation command.
+- **Files changed:** Anatomy and asset schemas, loader validation and tests, content fixtures,
+  generated schemas, model/hash scripts and tests, package manifests, `docs/CONTENT_SCHEMA.md`,
+  Phase 10 checklist and activity log.
+- **Commands run:** Focused tests, `npm run model:prepare` against the spike GLB,
+  `npm run schema:export`, `npm run validate:content`, `npm run typecheck`, `npm run lint`.
+- **Result/verification:** Thirty focused tests pass. The preparation command preserved eight named
+  meshes, reduced the fixture to 96,152 triangles and 514,852 bytes and emitted matching bounds and
+  SHA-256 metadata. Content validates with zero warnings.
+- **Follow-ups:** Build the lazy controller against this contract in P10-T04.

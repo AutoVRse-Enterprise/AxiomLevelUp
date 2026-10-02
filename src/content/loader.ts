@@ -19,7 +19,6 @@ import {
   type LearnerSeed,
   type Lesson,
   type Primitive,
-  type PrimitiveAssetType,
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
 import { contentPrimitiveTypeSet, primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
@@ -260,7 +259,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     id: string,
     file: string,
     path: string,
-    expectedType?: PrimitiveAssetType,
+    expectedType?: AssetManifest['assets'][number]['type'],
   ) => {
     const asset = assetById.get(id)
     if (!asset) {
@@ -522,12 +521,150 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   })
 
   anatomyMaps.forEach((anatomyMap, anatomyMapIndex) => {
-    if (anatomyMap.modelAssetId) {
-      requireAsset(
-        anatomyMap.modelAssetId,
-        input.anatomyMapFiles[anatomyMapIndex]?.file ?? `anatomy:${anatomyMap.id}`,
-        'modelAssetId',
+    const file = input.anatomyMapFiles[anatomyMapIndex]?.file ?? `anatomy-map:${anatomyMap.id}`
+    const modelAsset = assetById.get(anatomyMap.modelAssetId)
+    requireAsset(anatomyMap.modelAssetId, file, 'modelAssetId', 'model')
+
+    const levelIds = new Set<string>()
+    const levelOrder = new Map<string, number>()
+    anatomyMap.levels.forEach((level, levelIndex) => {
+      if (levelIds.has(level.id)) {
+        issues.push({
+          file,
+          path: `levels.${levelIndex}.id`,
+          message: `Duplicate anatomy level id "${level.id}".`,
+          severity: 'error',
+        })
+      } else {
+        levelIds.add(level.id)
+        levelOrder.set(level.id, levelIndex)
+      }
+    })
+
+    const structureIds = new Set<string>()
+    const structureById = new Map(
+      anatomyMap.structures.map((structure) => [structure.id, structure]),
+    )
+    anatomyMap.structures.forEach((structure, structureIndex) => {
+      const path = `structures.${structureIndex}`
+      if (structureIds.has(structure.id)) {
+        issues.push({
+          file,
+          path: `${path}.id`,
+          message: `Duplicate anatomy structure id "${structure.id}".`,
+          severity: 'error',
+        })
+      }
+      structureIds.add(structure.id)
+      requireRef(levelIds, structure.levelId, file, `${path}.levelId`, 'anatomy level')
+
+      const structureLevel = levelOrder.get(structure.levelId)
+      if (structureLevel === 0 && structure.parentId) {
+        issues.push({
+          file,
+          path: `${path}.parentId`,
+          message: 'Structures on the first anatomy level cannot declare a parent.',
+          severity: 'error',
+        })
+      } else if (structureLevel !== undefined && structureLevel > 0 && !structure.parentId) {
+        issues.push({
+          file,
+          path: `${path}.parentId`,
+          message: 'Structures below the first anatomy level require a parent.',
+          severity: 'error',
+        })
+      }
+
+      if (structure.parentId) {
+        const parent = structureById.get(structure.parentId)
+        if (!parent) {
+          issues.push({
+            file,
+            path: `${path}.parentId`,
+            message: `Unknown anatomy structure reference "${structure.parentId}".`,
+            severity: 'error',
+          })
+        } else {
+          const parentLevel = levelOrder.get(parent.levelId)
+          if (
+            structureLevel !== undefined &&
+            parentLevel !== undefined &&
+            parentLevel >= structureLevel
+          ) {
+            issues.push({
+              file,
+              path: `${path}.parentId`,
+              message: `Parent structure "${parent.id}" must belong to a prior anatomy level.`,
+              severity: 'error',
+            })
+          }
+        }
+      }
+
+      if (modelAsset?.type === 'model') {
+        const modelMeshNames = new Set(modelAsset.meshNames)
+        structure.meshNames.forEach((meshName, meshIndex) => {
+          if (!modelMeshNames.has(meshName)) {
+            issues.push({
+              file,
+              path: `${path}.meshNames.${meshIndex}`,
+              message: `Mesh "${meshName}" is not present in model asset "${modelAsset.assetId}".`,
+              severity: 'error',
+            })
+          }
+        })
+      }
+    })
+
+    const waypointIds = new Set<string>()
+    anatomyMap.waypoints.forEach((waypoint, waypointIndex) => {
+      if (waypointIds.has(waypoint.id)) {
+        issues.push({
+          file,
+          path: `waypoints.${waypointIndex}.id`,
+          message: `Duplicate anatomy waypoint id "${waypoint.id}".`,
+          severity: 'error',
+        })
+      }
+      waypointIds.add(waypoint.id)
+    })
+    anatomyMap.waypoints.forEach((waypoint, waypointIndex) => {
+      waypoint.next.forEach((nextId, nextIndex) =>
+        requireRef(
+          waypointIds,
+          nextId,
+          file,
+          `waypoints.${waypointIndex}.next.${nextIndex}`,
+          'anatomy waypoint',
+        ),
       )
+    })
+
+    const waypointById = new Map(anatomyMap.waypoints.map((waypoint) => [waypoint.id, waypoint]))
+    const visitedWaypoints = new Set<string>()
+    const activeWaypoints = new Set<string>()
+    let cyclicWaypoints = false
+    const visitWaypoint = (waypointId: string) => {
+      if (activeWaypoints.has(waypointId)) {
+        cyclicWaypoints = true
+        return
+      }
+      if (visitedWaypoints.has(waypointId)) return
+      const waypoint = waypointById.get(waypointId)
+      if (!waypoint) return
+      activeWaypoints.add(waypointId)
+      waypoint.next.forEach(visitWaypoint)
+      activeWaypoints.delete(waypointId)
+      visitedWaypoints.add(waypointId)
+    }
+    anatomyMap.waypoints.forEach(({ id }) => visitWaypoint(id))
+    if (cyclicWaypoints) {
+      issues.push({
+        file,
+        path: 'waypoints',
+        message: `Anatomy waypoint graph "${anatomyMap.id}" must be acyclic.`,
+        severity: 'error',
+      })
     }
   })
 

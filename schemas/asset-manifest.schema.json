@@ -9,119 +9,362 @@
     "assets": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "assetId": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "^[a-z0-9][a-z0-9_-]*$"
-          },
-          "path": {
-            "type": "string",
-            "minLength": 1
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "image",
-              "video",
-              "audio",
-              "dicom",
-              "document",
-              "text"
-            ]
-          },
-          "offlineRequired": {
-            "type": "boolean"
-          },
-          "offlineAvailable": {
-            "type": "boolean"
-          },
-          "sizeBytes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "sha256": {
-            "type": "string",
-            "pattern": "^[a-f0-9]{64}$"
-          },
-          "mimeType": {
-            "type": "string",
-            "minLength": 1
-          },
-          "width": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "height": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "series": {
+        "oneOf": [
+          {
             "type": "object",
             "properties": {
-              "sliceCount": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991
+              "assetId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
               },
-              "rows": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991
+              "path": {
+                "type": "string",
+                "minLength": 1
               },
-              "columns": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991
-              },
-              "pixelSpacingMm": {
-                "type": "array",
-                "items": [
-                  {
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                  },
-                  {
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                  }
-                ],
-                "additionalItems": false,
-                "minItems": 2,
-                "maxItems": 2
-              },
-              "sliceThicknessMm": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              "calibrated": {
+              "offlineRequired": {
                 "type": "boolean"
+              },
+              "offlineAvailable": {
+                "type": "boolean"
+              },
+              "sizeBytes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "type": "object",
+                "properties": {
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "licence": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "author": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "sourceUrl",
+                  "licence",
+                  "author"
+                ],
+                "additionalProperties": false
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "document",
+                  "text"
+                ]
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "mimeType": {
+                "type": "string",
+                "minLength": 1
+              },
+              "width": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "height": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "series": {
+                "not": {}
               }
             },
             "required": [
-              "sliceCount",
-              "rows",
-              "columns",
-              "pixelSpacingMm",
-              "sliceThicknessMm",
-              "calibrated"
+              "assetId",
+              "path",
+              "offlineRequired",
+              "offlineAvailable",
+              "sizeBytes",
+              "type",
+              "sha256"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "offlineRequired": {
+                "type": "boolean"
+              },
+              "offlineAvailable": {
+                "type": "boolean"
+              },
+              "sizeBytes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "type": "object",
+                "properties": {
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "licence": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "author": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "sourceUrl",
+                  "licence",
+                  "author"
+                ],
+                "additionalProperties": false
+              },
+              "type": {
+                "type": "string",
+                "const": "dicom"
+              },
+              "series": {
+                "type": "object",
+                "properties": {
+                  "sliceCount": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "rows": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "columns": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "pixelSpacingMm": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    ],
+                    "additionalItems": false,
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  "sliceThicknessMm": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "calibrated": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "sliceCount",
+                  "rows",
+                  "columns",
+                  "pixelSpacingMm",
+                  "sliceThicknessMm",
+                  "calibrated"
+                ],
+                "additionalProperties": false
+              },
+              "sha256": {
+                "not": {}
+              },
+              "width": {
+                "not": {}
+              },
+              "height": {
+                "not": {}
+              }
+            },
+            "required": [
+              "assetId",
+              "path",
+              "offlineRequired",
+              "offlineAvailable",
+              "sizeBytes",
+              "type",
+              "series"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "offlineRequired": {
+                "type": "boolean",
+                "const": false
+              },
+              "offlineAvailable": {
+                "type": "boolean",
+                "const": false
+              },
+              "sizeBytes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "provenance": {
+                "type": "object",
+                "properties": {
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "licence": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "author": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "sourceUrl",
+                  "licence",
+                  "author"
+                ],
+                "additionalProperties": false
+              },
+              "type": {
+                "type": "string",
+                "const": "model"
+              },
+              "mimeType": {
+                "type": "string",
+                "const": "model/gltf-binary"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "meshNames": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "triangleCount": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "bounds": {
+                "type": "object",
+                "properties": {
+                  "min": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "additionalItems": false,
+                    "minItems": 3,
+                    "maxItems": 3
+                  },
+                  "max": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "additionalItems": false,
+                    "minItems": 3,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "min",
+                  "max"
+                ],
+                "additionalProperties": false
+              },
+              "series": {
+                "not": {}
+              },
+              "width": {
+                "not": {}
+              },
+              "height": {
+                "not": {}
+              }
+            },
+            "required": [
+              "assetId",
+              "path",
+              "offlineRequired",
+              "offlineAvailable",
+              "sizeBytes",
+              "type",
+              "mimeType",
+              "sha256",
+              "meshNames",
+              "triangleCount",
+              "bounds"
             ],
             "additionalProperties": false
           }
-        },
-        "required": [
-          "assetId",
-          "path",
-          "type",
-          "offlineRequired",
-          "offlineAvailable",
-          "sizeBytes"
-        ],
-        "additionalProperties": false
+        ]
       }
     }
   },

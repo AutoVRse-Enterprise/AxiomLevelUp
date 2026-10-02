@@ -35,10 +35,13 @@ Clues accept only the registered content primitive types and cannot carry timers
 non-default score weights. Stage steps retain the normal strict primitive parsing, asset typing,
 timer compatibility and semantic checks.
 
-The P10-T02 anatomy-map envelope intentionally validates only `schemaVersion`, `id`, optional
-`modelAssetId`, and optional addressable `structures` and `waypoints`. It preserves additional
-fields for forward compatibility. P10-T03 owns the strict hierarchy, model metadata, mesh binding
-and waypoint-graph contract.
+An anatomy map is strict and requires `schemaVersion`, `id`, a model asset reference, ordered
+hierarchy levels, structures and waypoints. Each structure belongs to a level, binds one or more
+prepared model mesh names and, below the first level, has a parent on a prior level. Waypoints
+declare position, look-at target, outgoing waypoint IDs and an optional positive radius used by
+procedural lumen rendering. Semantic validation enforces unique level, structure and waypoint IDs,
+model-asset typing, parent and level references, prepared mesh-name references, resolved waypoint
+edges and an acyclic waypoint graph.
 
 ## Case Lab configuration
 
@@ -179,11 +182,22 @@ target modes use answer completion.
 
 ## Asset manifest
 
-Asset types are `image`, `video`, `audio`, `dicom`, `document` and `text`. DICOM entries
-require slice count, matrix, pixel spacing, slice thickness and calibration metadata. Other entries
-may include `mimeType` and positive integer `width` and `height`. Asset-manifest version
-`0.2` requires `offlineAvailable` and exact `sizeBytes` for every entry. Non-DICOM entries
-also require lowercase SHA-256; DICOM file hashes remain in the hosted series manifest.
+Asset types are `image`, `video`, `audio`, `dicom`, `document`, `text` and `model`.
+Every asset may include strict provenance with `sourceUrl`, `licence` and `author`. DICOM
+entries require slice count, matrix, pixel spacing, slice thickness and calibration metadata.
+Standard non-DICOM entries may include `mimeType` and positive integer `width` and `height`.
+Asset-manifest version `0.2` requires `offlineAvailable` and exact `sizeBytes` for every entry.
+Non-DICOM entries also require lowercase SHA-256; DICOM file hashes remain in the hosted series
+manifest.
+
+Model entries are GLB assets with required `model/gltf-binary` MIME type, `offlineRequired: false`,
+`offlineAvailable: false`, unique mesh names, triangle count and axis-aligned `bounds.min` and
+`bounds.max`. `npm run model:prepare -- <source.glb|gltf> <mapping.json> <out-dir>` renames
+renderable nodes, removes animations and unused resources, welds and simplifies geometry to the
+mapping's target, applies meshopt compression, and emits `model.glb` plus matching
+`metadata.json`. Mapping files contain `nodeNames` (source-to-prepared name pairs),
+`targetTriangles` and optional `simplificationError`. The asset hash command refreshes model
+size and SHA-256 while preserving the online-only flags.
 
 The hosted DICOM manifest is independently validated at runtime as schema version `0.2`. It contains
 series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets

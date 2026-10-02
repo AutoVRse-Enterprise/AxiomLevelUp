@@ -26,6 +26,20 @@ function withCaseFixture(caseDocument: unknown = caseFixture) {
   bundle.anatomyMapFiles = [
     { file: 'fixtures/anatomy-map.json', data: structuredClone(anatomyMapFixture) },
   ]
+  const assetManifest = bundle.assetManifest as { assets: unknown[] }
+  assetManifest.assets.push({
+    assetId: 'fixture-anatomy-model',
+    path: '/assets/models/fixture.glb',
+    type: 'model',
+    mimeType: 'model/gltf-binary',
+    offlineRequired: false,
+    offlineAvailable: false,
+    sizeBytes: 1024,
+    sha256: '1'.repeat(64),
+    meshNames: ['root-region', 'target-structure'],
+    triangleCount: 12,
+    bounds: { min: [-1, -1, -1], max: [1, 1, 1] },
+  })
   const appConfig = bundle.appConfig as Record<string, unknown>
   appConfig.caseLab = {
     title: 'Case Lab',
@@ -133,6 +147,37 @@ describe('content schemas', () => {
     )
   })
 
+  it('requires complete online-only metadata for model assets', () => {
+    const model = {
+      assetId: 'prepared-model',
+      path: '/assets/models/prepared.glb',
+      type: 'model',
+      mimeType: 'model/gltf-binary',
+      offlineRequired: false,
+      offlineAvailable: false,
+      sizeBytes: 2048,
+      sha256: 'a'.repeat(64),
+      meshNames: ['mesh-a'],
+      triangleCount: 24,
+      bounds: { min: [-1, -2, -3], max: [1, 2, 3] },
+      provenance: {
+        sourceUrl: 'https://example.test/model',
+        licence: 'CC BY 4.0',
+        author: 'Fixture author',
+      },
+    }
+
+    expect(assetManifestSchema.parse({ schemaVersion: '0.2', assets: [model] }).assets[0]).toEqual(
+      expect.objectContaining({ type: 'model', offlineAvailable: false }),
+    )
+    expect(
+      assetManifestSchema.safeParse({
+        schemaVersion: '0.2',
+        assets: [{ ...model, offlineAvailable: true }],
+      }).success,
+    ).toBe(false)
+  })
+
   it('keeps an unknown primitive as a warning', () => {
     const result = parsePrimitive(unknownPrimitive)
 
@@ -198,10 +243,12 @@ describe('content loader', () => {
     }
     manifest.cases = ['fixtures/case.json']
     manifest.anatomyMaps = ['fixtures/anatomy-map.json']
-    const appConfig = withCaseFixture().appConfig
+    const caseBundle = withCaseFixture()
+    const appConfig = caseBundle.appConfig
     const responses = new Map(contentResponses)
     responses.set('/content/manifest.json', manifest)
     responses.set('/content/app-config.json', appConfig)
+    responses.set('/content/assets.json', caseBundle.assetManifest)
     responses.set('/content/fixtures/case.json', caseFixture)
     responses.set('/content/fixtures/anatomy-map.json', anatomyMapFixture)
     vi.stubGlobal(
@@ -220,7 +267,7 @@ describe('content loader', () => {
     const registry = await loadContent()
 
     expect(registry.caseById.get('case-contract-fixture')?.title).toBe('Contract fixture')
-    expect(registry.anatomyMapById.get('fixture-anatomy')?.structures).toHaveLength(1)
+    expect(registry.anatomyMapById.get('fixture-anatomy')?.structures).toHaveLength(2)
   })
 
   it('validates case semantics with source files and precise JSON paths', () => {
@@ -286,6 +333,93 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'entry.waypointId',
             message: expect.stringContaining('Unknown anatomy waypoint reference'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('validates anatomy hierarchy, mesh bindings, and waypoint graphs', () => {
+    const bundle = withCaseFixture()
+    const anatomyMap = bundle.anatomyMapFiles[0]!.data as {
+      levels: Array<{ id: string; label: string }>
+      structures: Array<{
+        id: string
+        levelId: string
+        parentId?: string
+        label: string
+        meshNames: string[]
+      }>
+      waypoints: Array<{
+        id: string
+        label: string
+        position: [number, number, number]
+        lookAt: [number, number, number]
+        next: string[]
+      }>
+    }
+    anatomyMap.levels.push({ id: 'region', label: 'Duplicate region' })
+    anatomyMap.structures[1]!.parentId = 'target-structure'
+    anatomyMap.structures[1]!.meshNames = ['missing-mesh']
+    anatomyMap.structures.push({
+      id: 'orphan-structure',
+      levelId: 'structure',
+      parentId: 'missing-parent',
+      label: 'Orphan',
+      meshNames: ['root-region'],
+    })
+    anatomyMap.waypoints[0]!.next = ['entry-waypoint', 'missing-waypoint']
+    anatomyMap.waypoints.push(structuredClone(anatomyMap.waypoints[0]!))
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({ path: 'levels.2.id' }),
+          expect.objectContaining({
+            path: 'structures.1.parentId',
+            message: expect.stringContaining('prior anatomy level'),
+          }),
+          expect.objectContaining({ path: 'structures.1.meshNames.0' }),
+          expect.objectContaining({
+            path: 'structures.2.parentId',
+            message: expect.stringContaining('missing-parent'),
+          }),
+          expect.objectContaining({ path: 'waypoints.2.id' }),
+          expect.objectContaining({ path: 'waypoints.0.next.1' }),
+          expect.objectContaining({
+            path: 'waypoints',
+            message: expect.stringContaining('acyclic'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires anatomy maps to reference model assets', () => {
+    const bundle = withCaseFixture()
+    const assetManifest = bundle.assetManifest as {
+      assets: Array<Record<string, unknown>>
+    }
+    const modelIndex = assetManifest.assets.findIndex(
+      ({ assetId }) => assetId === 'fixture-anatomy-model',
+    )
+    assetManifest.assets[modelIndex] = {
+      assetId: 'fixture-anatomy-model',
+      path: '/assets/models/not-a-model.svg',
+      type: 'image',
+      mimeType: 'image/svg+xml',
+      offlineRequired: false,
+      offlineAvailable: false,
+      sizeBytes: 1024,
+      sha256: '1'.repeat(64),
+    }
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'modelAssetId',
+            message: expect.stringContaining('expects type "model"'),
           }),
         ]),
       }),

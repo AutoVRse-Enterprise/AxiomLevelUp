@@ -16,7 +16,8 @@
       "minLength": 1,
       "pattern": "^[a-z0-9][a-z0-9_-]*$"
     },
-    "structures": {
+    "levels": {
+      "minItems": 1,
       "type": "array",
       "items": {
         "type": "object",
@@ -25,15 +26,64 @@
             "type": "string",
             "minLength": 1,
             "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
-          "id"
+          "id",
+          "label"
         ],
-        "additionalProperties": {}
+        "additionalProperties": false
+      }
+    },
+    "structures": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "levelId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "parentId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "meshNames": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "id",
+          "levelId",
+          "label",
+          "meshNames"
+        ],
+        "additionalProperties": false
       }
     },
     "waypoints": {
+      "minItems": 1,
       "type": "array",
       "items": {
         "type": "object",
@@ -42,18 +92,76 @@
             "type": "string",
             "minLength": 1,
             "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "position": {
+            "type": "array",
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "additionalItems": false,
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "lookAt": {
+            "type": "array",
+            "items": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "additionalItems": false,
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "next": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            }
+          },
+          "radius": {
+            "type": "number",
+            "exclusiveMinimum": 0
           }
         },
         "required": [
-          "id"
+          "id",
+          "label",
+          "position",
+          "lookAt",
+          "next"
         ],
-        "additionalProperties": {}
+        "additionalProperties": false
       }
     }
   },
   "required": [
     "schemaVersion",
-    "id"
+    "id",
+    "modelAssetId",
+    "levels",
+    "structures",
+    "waypoints"
   ],
-  "additionalProperties": {}
+  "additionalProperties": false
 }

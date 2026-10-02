@@ -502,53 +502,72 @@ const dicomSeriesMetadataSchema = z.strictObject({
   calibrated: z.boolean(),
 })
 
-const assetSchema = z
-  .object({
-    assetId: idSchema,
-    path: pathSchema,
-    type: z.enum(['image', 'video', 'audio', 'dicom', 'document', 'text']),
-    offlineRequired: z.boolean(),
-    offlineAvailable: z.boolean(),
-    sizeBytes: z.number().int().nonnegative(),
-    sha256: z
-      .string()
-      .regex(/^[a-f0-9]{64}$/)
-      .optional(),
-    mimeType: z.string().trim().min(1).optional(),
-    width: z.number().int().positive().optional(),
-    height: z.number().int().positive().optional(),
-    series: dicomSeriesMetadataSchema.optional(),
+const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
+const provenanceSchema = z.strictObject({
+  sourceUrl: z.url(),
+  licence: z.string().trim().min(1),
+  author: z.string().trim().min(1),
+})
+const boundsSchema = z
+  .strictObject({
+    min: z.tuple([z.number(), z.number(), z.number()]),
+    max: z.tuple([z.number(), z.number(), z.number()]),
   })
-  .superRefine((asset, context) => {
-    if (asset.type === 'dicom' && !asset.series) {
-      context.addIssue({
-        code: 'custom',
-        path: ['series'],
-        message: 'DICOM assets require series geometry and calibration metadata.',
-      })
-    }
-    if (asset.type !== 'dicom' && asset.series) {
-      context.addIssue({
-        code: 'custom',
-        path: ['series'],
-        message: 'Only DICOM assets may declare series metadata.',
-      })
-    }
-    if (asset.type !== 'dicom' && !asset.sha256) {
-      context.addIssue({
-        code: 'custom',
-        path: ['sha256'],
-        message: 'Non-DICOM assets require a lowercase SHA-256 digest.',
-      })
-    }
-    if (asset.type === 'dicom' && asset.sha256) {
-      context.addIssue({
-        code: 'custom',
-        path: ['sha256'],
-        message: 'DICOM file integrity is declared by the hosted series manifest.',
-      })
-    }
-  })
+  .refine(
+    ({ min, max }) => min.every((minimum, index) => minimum <= (max[index] ?? minimum)),
+    'Model bounds minimums must not exceed maximums.',
+  )
+const assetBaseShape = {
+  assetId: idSchema,
+  path: pathSchema,
+  offlineRequired: z.boolean(),
+  offlineAvailable: z.boolean(),
+  sizeBytes: z.number().int().nonnegative(),
+  provenance: provenanceSchema.optional(),
+}
+
+const standardAssetSchema = z.strictObject({
+  ...assetBaseShape,
+  type: z.enum(['image', 'video', 'audio', 'document', 'text']),
+  sha256: sha256Schema,
+  mimeType: z.string().trim().min(1).optional(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+  series: z.never().optional(),
+})
+
+const dicomAssetSchema = z.strictObject({
+  ...assetBaseShape,
+  type: z.literal('dicom'),
+  series: dicomSeriesMetadataSchema,
+  sha256: z.never().optional(),
+  width: z.never().optional(),
+  height: z.never().optional(),
+})
+
+const modelAssetSchema = z.strictObject({
+  ...assetBaseShape,
+  type: z.literal('model'),
+  mimeType: z.literal('model/gltf-binary'),
+  offlineRequired: z.literal(false),
+  offlineAvailable: z.literal(false),
+  sha256: sha256Schema,
+  meshNames: z
+    .array(z.string().trim().min(1))
+    .min(1)
+    .refine((names) => new Set(names).size === names.length, 'Model mesh names must be unique.'),
+  triangleCount: z.number().int().positive(),
+  bounds: boundsSchema,
+  series: z.never().optional(),
+  width: z.never().optional(),
+  height: z.never().optional(),
+})
+
+const assetSchema = z.discriminatedUnion('type', [
+  standardAssetSchema,
+  dicomAssetSchema,
+  modelAssetSchema,
+])
 
 export const assetManifestSchema = z.object({
   schemaVersion: z.literal('0.2'),

@@ -1,0 +1,14 @@
+{
+  "nodeNames": {
+    "right_upper_lobe": "right_upper_lobe",
+    "right_middle_lobe": "right_middle_lobe",
+    "right_lower_lobe": "right_lower_lobe",
+    "left_upper_lobe": "left_upper_lobe",
+    "left_lower_lobe": "left_lower_lobe",
+    "trachea": "trachea",
+    "right_main_bronchus": "right_main_bronchus",
+    "left_main_bronchus": "left_main_bronchus"
+  },
+  "targetTriangles": 100000,
+  "simplificationError": 0.001
+}
