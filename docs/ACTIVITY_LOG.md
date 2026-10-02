@@ -1372,3 +1372,17 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Commands run:** Focused suites, full Vitest suite, typecheck and lint.
 - **Result/verification:** 34 test files and 235 tests pass; TypeScript and ESLint are clean.
 - **Follow-ups:** Exercise production install, download, reload, removal and responsive behavior.
+
+### [2026-10-02 12:55] P7-T15 - Verify offline browser behavior
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Exercised install metadata, same-origin and cross-origin course downloads, worker
+  updates, simulated and browser-level offline reloads, DICOM rendering, removal, unavailable
+  lesson gating, eviction detection/repair and the four target viewports.
+- **Files changed:** `docs/qa/phase-07-browser-qa.md`, Phase 7 checklist and activity log.
+- **Commands run:** Default and cross-origin production builds, production preview, CORS DICOM
+  server and Chromium CDP cache/network/viewport checks.
+- **Result/verification:** Both download modes produced 126 verified entries (manifest plus 125
+  files); slice 81 rendered with network disabled; removal and repair behaved correctly; the web
+  manifest had zero parse errors; and no target viewport overflowed.
+- **Follow-ups:** Run the final gate, record Phase 7 ADRs and close documentation.
