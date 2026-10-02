@@ -1688,3 +1688,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   has 26 steps covering all 25 registered types plus both hotspot modes.
 - **Follow-ups:** Replace count-only regression coverage with an exhaustive parity assertion and
   extend the complete real-player flow to the guided DICOM step.
+
+### [2026-10-02 15:40] P9-T02 - Enforce showcase parity
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added an exhaustive registry-parity invariant and extended the real-route completion
+  test through all 26 showcase steps, including unavailable-viewer retry behavior.
+- **Files changed:** Showcase route integration test, Phase 9 checklist and activity log.
+- **Commands run:** Focused Vitest run, `npm run typecheck`, `npm run lint` and IDE diagnostics.
+- **Result/verification:** Two focused files and 25 tests pass. The complete lesson emits ordered
+  view/completion events for every step, clears resumable state and reports 73 score/69 accuracy
+  after deterministic unavailable-DICOM paths.
+- **Follow-ups:** Exercise the expanded showcase in the production preview across the Phase 9
+  browser matrix.

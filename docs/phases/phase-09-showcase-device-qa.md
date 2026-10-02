@@ -45,7 +45,7 @@ primitive registry and the Android/iOS matrix is completed or explicitly waived.
 
 - [x] P9-T00 — Formalize Phase 9 scope, PRD traceability, acceptance gates and terminology.
 - [x] P9-T01 — Audit the showcase against every registered primitive and PRD category.
-- [ ] P9-T02 — Add automated showcase exhaustiveness and complete-flow coverage.
+- [x] P9-T02 — Add automated showcase exhaustiveness and complete-flow coverage.
 - [ ] P9-T03 — Run showcase browser QA across viewports, motion, keyboard semantics and failures.
 - [ ] P9-T04 — Verify cross-origin DICOM, offline revisit, cache behavior and performance evidence.
 - [ ] P9-T05 — Prepare Android/iOS execution scripts, evidence templates and hosting prerequisites.

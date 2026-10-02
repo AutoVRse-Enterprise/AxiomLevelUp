@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle } from '@/content/loader'
+import { primitiveTypes } from '@/content/primitiveTypes'
 import { buildActivityPlan, lessonActivity } from '@/engines/learning/plan'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
@@ -144,7 +145,20 @@ describe('showcase lesson integration', () => {
     )
   })
 
-  it('plays all 25 showcase steps through the real route and emits ordered completion events', async () => {
+  it('covers every registered primitive type and only duplicates intentional modes', () => {
+    const representedTypes = showcaseLesson.primitives.map(({ type }) => type)
+    const counts = representedTypes.reduce<Record<string, number>>((result, type) => {
+      result[type] = (result[type] ?? 0) + 1
+      return result
+    }, {})
+
+    expect([...new Set(representedTypes)].sort()).toEqual([...primitiveTypes].sort())
+    expect(Object.fromEntries(Object.entries(counts).filter(([, count]) => count > 1))).toEqual({
+      image_hotspot: 2,
+    })
+  })
+
+  it('plays all 26 showcase steps through the real route and emits ordered completion events', async () => {
     const user = userEvent.setup()
     const events: LearnerEvent[] = []
     subscribeToEvents((event) => events.push(event))
@@ -269,7 +283,7 @@ describe('showcase lesson integration', () => {
     await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
     await continueCompletedStep(user)
 
-    for (let index = 0; index < 2; index += 1) {
+    for (let index = 0; index < 3; index += 1) {
       await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
       await user.click(await screen.findByRole('button', { name: 'Try again' }))
       await user.click(await screen.findByRole('button', { name: 'Skip activity' }))
@@ -277,8 +291,8 @@ describe('showcase lesson integration', () => {
     }
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
-    expect(screen.getByText('79%')).toBeVisible()
-    expect(screen.getByText('9 of 12 correct on the first attempt')).toBeVisible()
+    expect(screen.getByText('73%')).toBeVisible()
+    expect(screen.getByText('9 of 13 correct on the first attempt')).toBeVisible()
 
     const lifecycleEvents = events.filter(({ event }) =>
       ['lesson_started', 'primitive_viewed', 'primitive_completed', 'lesson_completed'].includes(
@@ -298,8 +312,8 @@ describe('showcase lesson integration', () => {
     expect(events.at(-1)).toMatchObject({
       event: 'lesson_completed',
       lessonId: 'primitive-showcase',
-      score: 79,
-      accuracy: 75,
+      score: 73,
+      accuracy: 69,
     })
     expect(useActivitySessionStore.getState().session).toBeNull()
   }, 30_000)
