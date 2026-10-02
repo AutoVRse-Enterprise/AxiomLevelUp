@@ -1715,3 +1715,18 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
   keyboard zoom announced 125%, route reload exposed Resume, and media/DICOM missing-asset
   fallbacks remained recoverable.
 - **Follow-ups:** Capture explicit DICOM host, cache, offline-reload, timing and memory evidence.
+
+### [2026-10-02 16:31] P9-T04 - Validate DICOM and offline runtime
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Verified the hosted study and CORS contract, built against a separate DICOM origin,
+  loaded all four imaging modes, inspected passive cache and heap state, then hard-reloaded the
+  gallery with Chromium fully offline.
+- **Files changed:** Runtime evidence report, Phase 9 checklist and activity log.
+- **Commands run:** DICOM fixture server, `npm run dicom:verify`, cross-origin production build and
+  preview, Chromium network/cache/performance diagnostics, `npm run budget`.
+- **Result/verification:** 125 instances and 65,894,350 bytes passed integrity verification;
+  `dicom-studies-v1` held 126 responses; all four viewers restored offline; the 174 MB four-viewer
+  heap stress case and all three bundle roles remained within documented limits.
+- **Follow-ups:** Convert the physical Android/iOS checklist into executable scripts and evidence
+  records for the hosted build.
