@@ -1230,3 +1230,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Commands run:** `npm run typecheck`.
 - **Result/verification:** Package derivation is configuration-driven and typechecks cleanly.
 - **Follow-ups:** Persist device-scoped download records and add offline product configuration.
+
+### [2026-10-02 10:35] P7-T04 - Separate device offline state
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a persisted device-scoped offline library, moved learner state to v4 without
+  download metadata, added configurable download/quota/install policy and centralized cache names
+  and passive-cache limits.
+- **Files changed:** offline library store, PWA cache policy, learner store/schema/seeds,
+  app configuration, generated schemas/documentation, Phase 7 checklist and activity log.
+- **Commands run:** Schema export, content validation, learner-store tests and typecheck.
+- **Result/verification:** Five courses and thirteen lessons validate, learner migration tests pass
+  and TypeScript is clean. Demo seed replacement no longer owns course-download records.
+- **Follow-ups:** Add injectable platform adapters and the download manager.

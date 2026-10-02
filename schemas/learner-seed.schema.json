@@ -823,44 +823,6 @@
         "viewed"
       ],
       "additionalProperties": false
-    },
-    "offlineDownloads": {
-      "type": "object",
-      "propertyNames": {
-        "type": "string",
-        "minLength": 1,
-        "pattern": "^[a-z0-9][a-z0-9_-]*$"
-      },
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "queued",
-              "downloading",
-              "available",
-              "failed"
-            ]
-          },
-          "downloadedBytes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "totalBytes": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          }
-        },
-        "required": [
-          "status",
-          "downloadedBytes",
-          "totalBytes"
-        ],
-        "additionalProperties": false
-      }
     }
   },
   "required": [
@@ -878,8 +840,7 @@
     "mastery",
     "gamification",
     "stats",
-    "onboarding",
-    "offlineDownloads"
+    "onboarding"
   ],
   "additionalProperties": false
 }

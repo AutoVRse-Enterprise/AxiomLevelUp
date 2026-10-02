@@ -142,8 +142,9 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 3 stores reward idempotency, challenge periods, counters, the active reward
+- Learner state version 4 stores reward idempotency, challenge periods, counters, the active reward
   run, latest activity/question results, celebrations and an abstract digital reward ledger.
+- Device-scoped offline course records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
 
 ## Asset manifest
@@ -165,11 +166,16 @@ course asset manifest.
 in MiB, slice-event debounce interval and tap movement threshold. These runtime limits are not
 hard-coded in primitive components.
 
+## Offline product configuration
+
+\`product.offline\` owns download concurrency, quota safety margin, persistent-storage requests and
+the engagement and cooldown thresholds for installation prompts.
+
 ## Versioning
 
 - Content schema: \`0.1\`
 - Course documents also include an independent \`courseVersion\`.
-- Persisted learner state is version 3 and migrates older snapshots.
+- Persisted learner state is version 4 and migrates older snapshots.
 - In-flight activity sessions are persisted independently at version 2; version 1 sessions restart.
 `
 

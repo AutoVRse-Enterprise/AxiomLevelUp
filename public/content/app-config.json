@@ -29,6 +29,15 @@
       "cacheMaxMiB": 192,
       "sliceEventDebounceMs": 250,
       "tapMaxMovementPx": 8
+    },
+    "offline": {
+      "downloadConcurrency": 3,
+      "quotaSafetyMarginRatio": 0.1,
+      "requestPersistentStorage": true,
+      "installPrompt": {
+        "minCompletedLessons": 1,
+        "dismissCooldownDays": 14
+      }
     }
   },
   "gamification": {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 3,
+  "stateVersion": 4,
   "seedProfile": "advanced",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -88,6 +88,5 @@
     "questionsAnswered": 184,
     "correctAnswers": 156
   },
-  "onboarding": { "viewed": true },
-  "offlineDownloads": {}
+  "onboarding": { "viewed": true }
 }

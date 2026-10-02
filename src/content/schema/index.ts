@@ -235,6 +235,15 @@ export const appConfigSchema = z.object({
       sliceEventDebounceMs: z.number().int().nonnegative(),
       tapMaxMovementPx: z.number().positive(),
     }),
+    offline: z.strictObject({
+      downloadConcurrency: z.number().int().positive().max(8),
+      quotaSafetyMarginRatio: z.number().min(0).max(0.5),
+      requestPersistentStorage: z.boolean(),
+      installPrompt: z.strictObject({
+        minCompletedLessons: z.number().int().nonnegative(),
+        dismissCooldownDays: z.number().int().nonnegative(),
+      }),
+    }),
   }),
   gamification: z.object({
     xp: z.strictObject({
@@ -445,14 +454,6 @@ export const learnerSeedSchema = z.object({
   onboarding: z.object({
     viewed: z.boolean(),
   }),
-  offlineDownloads: z.record(
-    idSchema,
-    z.object({
-      status: z.enum(['queued', 'downloading', 'available', 'failed']),
-      downloadedBytes: z.number().int().nonnegative(),
-      totalBytes: z.number().int().nonnegative(),
-    }),
-  ),
 })
 
 const dicomSeriesMetadataSchema = z.strictObject({
