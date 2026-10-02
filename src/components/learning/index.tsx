@@ -7,6 +7,7 @@ import {
   TrendingDown,
   TrendingUp,
 } from 'lucide-react'
+import { m } from 'motion/react'
 import type { ComponentType, ReactNode, SVGProps } from 'react'
 import { Link } from 'react-router'
 
@@ -132,7 +133,8 @@ export function WeeklyActivityStrip({
         {days.map((day) => (
           <div className="text-center" key={day.date} role="listitem">
             <span className="text-caption text-neutral-600">{day.label}</span>
-            <span
+            <m.span
+              animate={{ opacity: 1, scale: 1 }}
               aria-label={`${day.date}: ${day.completed ? 'learning completed' : 'no learning'}${day.isToday ? ', today' : ''}`}
               className={cn(
                 'mx-auto mt-2 grid size-9 place-items-center rounded-full border text-small font-bold',
@@ -141,9 +143,12 @@ export function WeeklyActivityStrip({
                   : 'border-neutral-200 bg-white text-neutral-400',
                 day.isToday && 'ring-2 ring-brand-200 ring-offset-2',
               )}
+              initial={{ opacity: 0, scale: 0.8 }}
+              role="img"
+              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
             >
               {day.completed ? <Check aria-hidden="true" size={16} /> : '·'}
-            </span>
+            </m.span>
           </div>
         ))}
       </div>
@@ -192,7 +197,7 @@ export function CourseCard({
   offlineReady?: boolean
 }) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden p-0 sm:p-0">
+    <Card interactive className="flex h-full flex-col overflow-hidden p-0 sm:p-0">
       {imageUrl ? <img alt="" className="h-32 w-full object-cover" src={imageUrl} /> : null}
       <div className="flex flex-1 flex-col p-5">
         <div className="flex flex-wrap items-center gap-2">

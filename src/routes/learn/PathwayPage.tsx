@@ -8,7 +8,8 @@ import {
   LockKeyhole,
   Target,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { m } from 'motion/react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
@@ -28,6 +29,36 @@ const nodeIcons = {
   practice: FlaskConical,
   checkpoint: Flag,
 } as const
+
+function PathwayNodeTransition({
+  pathwayId,
+  nodeId,
+  status,
+  children,
+}: {
+  pathwayId: string
+  nodeId: string
+  status: string
+  children: ReactNode
+}) {
+  const storageKey = `axiom-runtime:pathway:${pathwayId}:${nodeId}`
+  const previous =
+    typeof window === 'undefined' ? null : window.sessionStorage.getItem(storageKey)
+  const changed = previous !== null && previous !== status
+
+  useEffect(() => {
+    window.sessionStorage.setItem(storageKey, status)
+  }, [status, storageKey])
+
+  return (
+    <m.div
+      animate={changed ? { scale: [1, 1.025, 1] } : { scale: 1 }}
+      transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+    >
+      {children}
+    </m.div>
+  )
+}
 
 export function PathwayPage() {
   const { pathwayId } = useParams()
@@ -130,7 +161,7 @@ export function PathwayPage() {
                     </p>
                   </>
                 )
-                return node.status === 'locked' ? (
+                const nodeContent = node.status === 'locked' ? (
                   <div key={node.id}>
                     <button
                       aria-label={`${label}. Show why this activity is locked`}
@@ -162,6 +193,16 @@ export function PathwayPage() {
                   >
                     {body}
                   </Link>
+                )
+                return (
+                  <PathwayNodeTransition
+                    key={node.id}
+                    nodeId={node.id}
+                    pathwayId={pathway.id}
+                    status={node.status}
+                  >
+                    {nodeContent}
+                  </PathwayNodeTransition>
                 )
               })}
             </div>

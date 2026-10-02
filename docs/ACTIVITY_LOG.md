@@ -1510,3 +1510,15 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Existing FIFO, focus trap, dismissal and session-suppression behavior is
   retained while visual effects follow the resolved motion preference.
 - **Follow-ups:** Animate pathway and general progress surfaces.
+
+### [2026-10-02 12:58] P8-T09 - Animate progress surfaces
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added spring entry/update motion to progress bars and weekly activity, interactive
+  course-card lift and one-time pathway node transitions tracked per browser session.
+- **Files changed:** shared learning components, progress bar, pathway page, Phase 8 checklist and
+  activity log.
+- **Commands run:** Typecheck and lint.
+- **Result/verification:** Progress motion is shared across mastery/course/pathway surfaces and
+  pathway state transitions do not replay after their session state is recorded.
+- **Follow-ups:** Add route-level transition, focus and bypass behavior.
