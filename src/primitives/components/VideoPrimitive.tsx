@@ -1,11 +1,13 @@
-import { RotateCcw } from 'lucide-react'
+import { Maximize2, RotateCcw } from 'lucide-react'
 import { useRef, useState, type SyntheticEvent } from 'react'
 
 import { Button, InlineNotice, LoadingState } from '@/components/ui'
 import type { VideoPrimitive as VideoPrimitiveConfig } from '@/content/schema/primitives'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { calculatePlayedCoverage, crossedCoverageSteps } from '@/primitives/mediaProgress'
+import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { cn } from '@/lib/cn'
 
 export function VideoPrimitive({
   primitive,
@@ -24,6 +26,8 @@ export function VideoPrimitive({
     videoUrl ? 'loading' : 'error',
   )
   const [loadAttempt, setLoadAttempt] = useState(0)
+  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
+    useImmersiveArtifact<HTMLElement>()
   const activeCheckpoint = primitive.content.checkpoints?.find(
     ({ id }) => id === activeCheckpointId,
   )
@@ -51,15 +55,35 @@ export function VideoPrimitive({
   }
 
   return (
-    <figure className="space-y-4">
-      <div>
-        <h2 className="text-title font-bold text-neutral-950">{primitive.content.title}</h2>
+    <figure
+      className={cn(
+        'space-y-4',
+        immersive &&
+          'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
+      )}
+      data-video-artifact=""
+      ref={immersiveRef}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className={cn('text-title font-bold text-neutral-950', immersive && 'text-white')}>
+            {primitive.content.title}
+          </h2>
         {primitive.content.description ? (
-          <p className="mt-1 text-small text-neutral-600">{primitive.content.description}</p>
+          <p className={cn('mt-1 text-small text-neutral-600', immersive && 'text-neutral-300')}>{primitive.content.description}</p>
         ) : null}
+        </div>
+        <Button
+          leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
+          onClick={() => void toggleImmersive()}
+          size="sm"
+          variant="secondary"
+        >
+          {immersive ? 'Exit' : 'Expand'}
+        </Button>
       </div>
       {videoUrl && mediaState !== 'error' ? (
-        <div className="relative aspect-video overflow-hidden rounded-xl bg-neutral-950">
+        <div className={cn('relative aspect-video overflow-hidden rounded-xl bg-neutral-950', immersive && 'min-h-0 flex-1')}>
           <video
             ref={videoRef}
             aria-label={primitive.content.title}

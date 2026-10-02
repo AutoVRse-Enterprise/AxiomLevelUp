@@ -172,6 +172,7 @@ export function DicomViewer({
 
   return (
     <div
+      data-dicom-viewer=""
       ref={rootRef}
       className={cn(
         'overflow-hidden rounded-xl border border-clinical-700 bg-clinical-950 text-white shadow-card',
@@ -188,6 +189,7 @@ export function DicomViewer({
           {panel ? (
             <Button
               aria-label="Open activity instructions"
+              className={cn(!immersive && 'lg:hidden')}
               size="sm"
               variant="secondary"
               onClick={() => setInstructionsOpen(true)}
@@ -202,12 +204,13 @@ export function DicomViewer({
         </div>
       </header>
 
-      <div
-        aria-label="DICOM image viewport"
-        className={cn(
-          'relative h-[55dvh] min-h-80 w-full touch-none bg-black outline-none',
-          immersive && 'min-h-0 flex-1',
-        )}
+      <div className={cn(panel && !immersive && 'lg:grid lg:grid-cols-[minmax(0,1fr)_20rem]')}>
+        <div
+          aria-label="DICOM image viewport"
+          className={cn(
+            'dicom-viewport relative h-[55dvh] min-h-80 w-full touch-none bg-black outline-none',
+            immersive && 'min-h-0 flex-1',
+          )}
         onContextMenu={(event) => event.preventDefault()}
         onKeyDown={(event) => {
           if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
@@ -238,50 +241,58 @@ export function DicomViewer({
         aria-valuemin={1}
         aria-valuenow={state.slice}
         role="slider"
-        tabIndex={0}
-      >
-        <AnnotationOverlay
-          controller={controller}
-          marker={marker}
-          region={revealRegion}
-          line={revealLine}
-          currentSlice={state.slice}
-        />
-        {state.status !== 'ready' ? (
-          <div className="absolute inset-0 z-10 grid place-items-center bg-clinical-950/95 p-6 text-center">
-            <div className="w-full max-w-md">
-              <p className="font-semibold">
-                {failed ? 'Imaging study unavailable' : 'Preparing imaging study'}
-              </p>
-              <p className="mt-2 text-small text-neutral-300">{state.message}</p>
-              {state.total > 0 && !failed ? (
-                <ProgressBar
-                  className="mt-5 [&_span]:text-neutral-200"
-                  label={`Loading ${state.loaded} / ${state.total} slices`}
-                  max={state.total}
-                  value={state.loaded}
-                />
-              ) : null}
-              {failed ? (
-                <div className="mt-5 flex flex-wrap justify-center gap-3">
-                  <Button
-                    onClick={() => {
-                      loadedReported.current = false
-                      failureReported.current = null
-                      retry()
-                    }}
-                  >
-                    Retry
-                  </Button>
-                  {onSkip ? (
-                    <Button variant="secondary" onClick={onSkip}>
-                      Skip activity
+          tabIndex={0}
+        >
+          <AnnotationOverlay
+            controller={controller}
+            marker={marker}
+            region={revealRegion}
+            line={revealLine}
+            currentSlice={state.slice}
+          />
+          {state.status !== 'ready' ? (
+            <div className="absolute inset-0 z-10 grid place-items-center bg-clinical-950/95 p-6 text-center">
+              <div className="w-full max-w-md">
+                <p className="font-semibold">
+                  {failed ? 'Imaging study unavailable' : 'Preparing imaging study'}
+                </p>
+                <p className="mt-2 text-small text-neutral-300">{state.message}</p>
+                {state.total > 0 && !failed ? (
+                  <ProgressBar
+                    className="mt-5 [&_span]:text-neutral-200"
+                    label={`Loading ${state.loaded} / ${state.total} slices`}
+                    max={state.total}
+                    value={state.loaded}
+                  />
+                ) : null}
+                {failed ? (
+                  <div className="mt-5 flex flex-wrap justify-center gap-3">
+                    <Button
+                      onClick={() => {
+                        loadedReported.current = false
+                        failureReported.current = null
+                        retry()
+                      }}
+                    >
+                      Retry
                     </Button>
-                  ) : null}
-                </div>
-              ) : null}
+                    {onSkip ? (
+                      <Button variant="secondary" onClick={onSkip}>
+                        Skip activity
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
             </div>
-          </div>
+          ) : null}
+        </div>
+        {panel && !immersive ? (
+          <aside className="hidden overflow-y-auto border-l border-clinical-700 bg-clinical-900 p-5 lg:block">
+            <h2 className="font-bold">Activity instructions</h2>
+            <p className="mt-2 text-small text-neutral-300">{prompt}</p>
+            <div className="mt-5">{panel}</div>
+          </aside>
         ) : null}
       </div>
 

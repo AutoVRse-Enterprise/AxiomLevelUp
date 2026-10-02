@@ -1,10 +1,12 @@
 import { ArrowLeft, Flame, Medal } from 'lucide-react'
 import { useEffect } from 'react'
-import { useMatches, useNavigate, useParams } from 'react-router'
+import { NavLink, useMatches, useNavigate, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { OfflineIndicator } from '@/components/feedback/OfflineIndicator'
+import { primaryNavigation } from '@/components/navigation/primaryNavigation'
 import { AnimatedNumber, IconButton } from '@/components/ui'
+import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
 
 interface RouteHandle {
@@ -36,7 +38,7 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
 
   return (
     <header
-      className="sticky top-0 z-20 border-b border-neutral-200/80 bg-neutral-50/90 backdrop-blur-lg"
+      className="sticky top-0 z-header border-b border-neutral-200/80 bg-neutral-50/90 backdrop-blur-lg"
       style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 px-3 sm:px-6">
@@ -57,6 +59,27 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
             <p className="truncate font-bold text-neutral-900">{title}</p>
           </div>
         </div>
+        {!immersive ? (
+          <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
+            {primaryNavigation.map(({ to, label, end }) => (
+              <NavLink
+                className={({ isActive }) =>
+                  cn(
+                    'rounded-md px-3 py-2 text-small font-semibold transition-colors',
+                    isActive
+                      ? 'bg-brand-100 text-brand-800'
+                      : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
+                  )
+                }
+                end={end}
+                key={to}
+                to={to}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        ) : null}
         {!immersive ? (
           <div
             aria-label="Learner status"

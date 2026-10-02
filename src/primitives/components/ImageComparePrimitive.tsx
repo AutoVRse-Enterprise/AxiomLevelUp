@@ -1,7 +1,11 @@
+import { Maximize2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui'
 import type { ImageComparePrimitive as ImageComparePrimitiveConfig } from '@/content/schema/primitives'
 import { useAsset } from '@/content/useAssetUrl'
+import { cn } from '@/lib/cn'
+import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 export function ImageComparePrimitive({
@@ -14,6 +18,8 @@ export function ImageComparePrimitive({
   const [position, setPosition] = useState(primitive.content.initialPosition)
   const comparisonRef = useRef<HTMLDivElement>(null)
   const draggingDivider = useRef(false)
+  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
+    useImmersiveArtifact<HTMLElement>()
 
   useEffect(onComplete, [onComplete])
 
@@ -45,7 +51,24 @@ export function ImageComparePrimitive({
       : undefined
 
   return (
-    <figure className="space-y-4">
+    <figure
+      className={cn(
+        'space-y-4',
+        immersive &&
+          'fixed inset-0 z-overlay h-dvh overflow-y-auto bg-neutral-950 p-4 text-white',
+      )}
+      ref={immersiveRef}
+    >
+      <div className="flex justify-end">
+        <Button
+          leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
+          onClick={() => void toggleImmersive()}
+          size="sm"
+          variant="secondary"
+        >
+          {immersive ? 'Exit' : 'Expand'}
+        </Button>
+      </div>
       {primitive.content.mode === 'side_by_side' ? (
         <div className="grid gap-4 md:grid-cols-2">
           {[

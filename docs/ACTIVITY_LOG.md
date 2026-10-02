@@ -1573,3 +1573,16 @@ richTextTokenizer,mediaPrimitives.test}.ts*`, engine/player parity tests, genera
 - **Result/verification:** Empty experiences now retain heading hierarchy and offer a useful next
   action rather than passive placeholder copy.
 - **Follow-ups:** Refine desktop and landscape layouts and artifact immersion.
+
+### [2026-10-02 13:48] P8-T14 - Refine responsive artifacts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added desktop header navigation, hid the mobile tab bar at large widths, added a
+  persistent desktop DICOM instruction pane, compact landscape artifact sizing, reusable
+  Fullscreen API/fixed-fallback immersion for video/hotspot/compare and rem-scaled chart labels.
+- **Files changed:** navigation/shell, DICOM viewer, video/hotspot/compare/chart primitives,
+  immersive-artifact hook, global CSS, Phase 8 checklist and log.
+- **Commands run:** Typecheck, lint and focused DICOM/media/surface tests.
+- **Result/verification:** Twenty focused tests pass; large artifacts have immersive paths and
+  desktop DICOM no longer hides instructions behind a sheet.
+- **Follow-ups:** Complete the cross-surface visual refinement and contrast pass.

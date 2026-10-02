@@ -49,3 +49,14 @@ html[data-motion='reduced'] *::after {
     transition-duration: 1ms !important;
   }
 }
+
+@media (orientation: landscape) and (max-height: 600px) {
+  [data-dicom-viewer] .dicom-viewport {
+    height: calc(100dvh - 12rem);
+    min-height: 15rem;
+  }
+
+  [data-video-artifact] video {
+    max-height: calc(100dvh - 8rem);
+  }
+}

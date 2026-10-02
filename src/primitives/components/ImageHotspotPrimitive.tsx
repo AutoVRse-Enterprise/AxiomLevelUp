@@ -1,3 +1,4 @@
+import { Maximize2 } from 'lucide-react'
 import { useState, type KeyboardEvent, type MouseEvent } from 'react'
 
 import { Button } from '@/components/ui'
@@ -10,7 +11,9 @@ import { isNormalizedPoint } from '@/primitives/definitions/imageHitTesting'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import { clamp, screenToNormalized } from '@/primitives/shared/panZoomMath'
+import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { cn } from '@/lib/cn'
 
 function LocationMarker({
   point,
@@ -52,6 +55,8 @@ export function ImageHotspotPrimitive({
   const [selectedPoint, setSelectedPoint] = useState<NormalizedPoint | null>(
     isNormalizedPoint(draft) ? draft : null,
   )
+  const { ref: immersiveRef, immersive, toggle: toggleImmersive } =
+    useImmersiveArtifact<HTMLElement>()
   const responsePoint =
     mode === 'review' && isNormalizedPoint(review?.response) ? review.response : selectedPoint
   const readOnly = disabled || mode === 'review'
@@ -129,16 +134,37 @@ export function ImageHotspotPrimitive({
       : undefined
 
   return (
-    <figure className="space-y-3">
-      {primitive.content.prompt ? (
-        <p className="text-lg font-semibold text-neutral-950">{primitive.content.prompt}</p>
-      ) : null}
+    <figure
+      className={cn(
+        'space-y-3',
+        immersive &&
+          'fixed inset-0 z-overlay flex h-dvh flex-col bg-neutral-950 p-4 text-white',
+      )}
+      ref={immersiveRef}
+    >
+      <div className="flex items-start justify-between gap-3">
+        {primitive.content.prompt ? (
+          <p className={cn('text-lg font-semibold text-neutral-950', immersive && 'text-white')}>
+            {primitive.content.prompt}
+          </p>
+        ) : <span />}
+        <Button
+          leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
+          onClick={() => void toggleImmersive()}
+          size="sm"
+          variant="secondary"
+        >
+          {immersive ? 'Exit' : 'Expand'}
+        </Button>
+      </div>
       <div
-        className={`relative overflow-hidden rounded-xl bg-neutral-100 ${
-          assessMode && !readOnly
-            ? 'cursor-crosshair focus-visible:outline-2 focus-visible:outline-offset-2'
-            : ''
-        }`}
+        className={cn(
+          'relative overflow-hidden rounded-xl bg-neutral-100',
+          assessMode &&
+            !readOnly &&
+            'cursor-crosshair focus-visible:outline-2 focus-visible:outline-offset-2',
+          immersive && 'min-h-0 flex-1',
+        )}
         style={
           asset.width && asset.height
             ? { aspectRatio: `${asset.width} / ${asset.height}` }

@@ -1,23 +1,15 @@
-import { BrainCircuit, Home, RadioTower, Trophy, UserRound } from 'lucide-react'
 import { NavLink, ScrollRestoration } from 'react-router'
 
 import { PageHeader } from '@/components/navigation/PageHeader'
+import { primaryNavigation } from '@/components/navigation/primaryNavigation'
 import { RouteTransition } from '@/components/navigation/RouteTransition'
 import { PwaPromptHost } from '@/components/pwa/PwaPromptHost'
 import { CelebrationHost } from '@/components/rewards/CelebrationHost'
 import { cn } from '@/lib/cn'
 
-const navigation = [
-  { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/learn', label: 'Learn', icon: BrainCircuit, end: false },
-  { to: '/challenge', label: 'Challenge', icon: RadioTower, end: false },
-  { to: '/leaderboard', label: 'Leaderboard', icon: Trophy, end: false },
-  { to: '/profile', label: 'Profile', icon: UserRound, end: false },
-] as const
-
 export function AppShell() {
   return (
-    <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))]">
+    <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <a
         className="fixed left-3 top-3 z-toast -translate-y-20 rounded-md bg-brand-800 px-4 py-2 font-bold text-white transition-transform focus:translate-y-0"
         href="#main-content"
@@ -35,11 +27,11 @@ export function AppShell() {
 
       <nav
         aria-label="Primary navigation"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-neutral-200 bg-white/95 backdrop-blur-lg"
+        className="fixed inset-x-0 bottom-0 z-nav border-t border-neutral-200 bg-white/95 backdrop-blur-lg lg:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="mx-auto grid min-h-16 max-w-xl grid-cols-5">
-          {navigation.map(({ to, label, icon: Icon, end }) => (
+          {primaryNavigation.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               className={({ isActive }) =>
                 cn(

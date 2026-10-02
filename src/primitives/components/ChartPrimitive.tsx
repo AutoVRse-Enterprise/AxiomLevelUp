@@ -114,7 +114,7 @@ function NumericChart({ content }: { content: NumericContent }) {
         return (
           <g key={`x-${tick}`}>
             <line x1={x} x2={x} y1={PLOT.top} y2={PLOT.bottom} stroke="#e5e7eb" />
-            <text x={x} y={PLOT.bottom + 22} textAnchor="middle" fontSize="12" fill="#525252">
+            <text x={x} y={PLOT.bottom + 22} textAnchor="middle" fontSize="0.75rem" fill="#525252">
               {formatValue(tick)}
             </text>
           </g>
@@ -125,7 +125,7 @@ function NumericChart({ content }: { content: NumericContent }) {
         return (
           <g key={`y-${tick}`}>
             <line x1={PLOT.left} x2={PLOT.right} y1={y} y2={y} stroke="#e5e7eb" />
-            <text x={PLOT.left - 10} y={y + 4} textAnchor="end" fontSize="12" fill="#525252">
+            <text x={PLOT.left - 10} y={y + 4} textAnchor="end" fontSize="0.75rem" fill="#525252">
               {formatValue(tick)}
             </text>
           </g>
@@ -160,7 +160,7 @@ function NumericChart({ content }: { content: NumericContent }) {
             x={xScale(fit.ec50)}
             y={PLOT.top + 14}
             textAnchor="middle"
-            fontSize="12"
+            fontSize="0.75rem"
             fill="#991b1b"
           >
             EC50 {formatValue(fit.ec50)}
@@ -225,7 +225,7 @@ function BarChart({ content }: { content: Extract<ChartContent, { chartType: 'ba
         return (
           <g key={tick}>
             <line x1={PLOT.left} x2={PLOT.right} y1={y} y2={y} stroke="#e5e7eb" />
-            <text x={PLOT.left - 10} y={y + 4} textAnchor="end" fontSize="12" fill="#525252">
+            <text x={PLOT.left - 10} y={y + 4} textAnchor="end" fontSize="0.75rem" fill="#525252">
               {formatValue(tick)}
             </text>
           </g>
@@ -239,7 +239,7 @@ function BarChart({ content }: { content: Extract<ChartContent, { chartType: 'ba
             x={center}
             y={PLOT.bottom + 22}
             textAnchor="middle"
-            fontSize="12"
+            fontSize="0.75rem"
             fill="#525252"
           >
             {category}
@@ -374,7 +374,7 @@ export function ChartPrimitive({
             x={(PLOT.left + PLOT.right) / 2}
             y={HEIGHT - 18}
             textAnchor="middle"
-            fontSize="14"
+            fontSize="0.875rem"
             fontWeight="600"
           >
             {labelWithUnit(content.axes.x)}
@@ -383,7 +383,7 @@ export function ChartPrimitive({
             x={18}
             y={(PLOT.top + PLOT.bottom) / 2}
             textAnchor="middle"
-            fontSize="14"
+            fontSize="0.875rem"
             fontWeight="600"
             transform={`rotate(-90 18 ${(PLOT.top + PLOT.bottom) / 2})`}
           >
