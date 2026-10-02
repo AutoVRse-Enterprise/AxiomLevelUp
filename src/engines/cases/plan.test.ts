@@ -115,7 +115,9 @@ describe('case activity planning', () => {
 
   it('fails clearly without case configuration', () => {
     const caseDoc = caseDocumentSchema.parse(fixtureCaseJson)
-    const withoutCaseLab = appConfigSchema.parse(appConfigJson)
+    const configWithoutCaseLab = structuredClone(appConfigJson) as Record<string, unknown>
+    delete configWithoutCaseLab.caseLab
+    const withoutCaseLab = appConfigSchema.parse(configWithoutCaseLab)
     expect(() => buildCasePlan(caseDoc, withoutCaseLab)).toThrow(/Case Lab configuration/)
   })
 

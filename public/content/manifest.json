@@ -8,7 +8,12 @@
     "courses/safety-assessment.json",
     "courses/runtime-showcase.json"
   ],
-  "cases": [],
+  "cases": [
+    "cases/asthma-foundation.json",
+    "cases/copd-intermediate.json",
+    "cases/exacerbation-advanced.json",
+    "cases/wheeze-quick.json"
+  ],
   "anatomyMaps": ["anatomy/lung-map.json"],
   "seeds": {
     "advanced": "seeds/advanced.json",

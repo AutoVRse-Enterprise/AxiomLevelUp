@@ -103,7 +103,7 @@
       "label": "Right main airway",
       "position": [-22, -90, 1248],
       "lookAt": [-45, -108, 1235],
-      "next": [],
+      "next": ["right-upper-airway", "right-lower-airway"],
       "radius": 5
     },
     {
@@ -111,8 +111,40 @@
       "label": "Left main airway",
       "position": [22, -90, 1248],
       "lookAt": [45, -108, 1235],
-      "next": [],
+      "next": ["left-upper-airway", "left-lower-airway"],
       "radius": 5
+    },
+    {
+      "id": "right-upper-airway",
+      "label": "Right upper lobar airway",
+      "position": [-48, -103, 1280],
+      "lookAt": [-66, -112, 1302],
+      "next": [],
+      "radius": 3.5
+    },
+    {
+      "id": "right-lower-airway",
+      "label": "Right lower lobar airway",
+      "position": [-44, -118, 1222],
+      "lookAt": [-62, -140, 1195],
+      "next": [],
+      "radius": 3.5
+    },
+    {
+      "id": "left-upper-airway",
+      "label": "Left upper lobar airway",
+      "position": [48, -103, 1280],
+      "lookAt": [66, -112, 1302],
+      "next": [],
+      "radius": 3.5
+    },
+    {
+      "id": "left-lower-airway",
+      "label": "Left lower lobar airway",
+      "position": [44, -118, 1222],
+      "lookAt": [62, -140, 1195],
+      "next": [],
+      "radius": 3.5
     }
   ]
 }

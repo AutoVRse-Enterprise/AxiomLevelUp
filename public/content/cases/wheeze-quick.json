@@ -1,0 +1,206 @@
+{
+  "schemaVersion": "0.1",
+  "caseVersion": "1.0",
+  "id": "wheeze-quick",
+  "title": "Quick Case: Triggered Wheeze",
+  "summary": "Educational demo only—not clinical guidance. A three-minute synthetic case about variable triggered wheeze.",
+  "tier": "foundation",
+  "organSystem": "respiratory",
+  "estimatedMinutes": 3,
+  "conceptIds": ["respiratory-anatomy", "airway-pathophysiology", "respiratory-diagnosis"],
+  "patient": {
+    "label": "Daily quick case — synthetic patient",
+    "age": 19,
+    "presentingComplaint": "Educational-only scenario: wheeze during a cold-weather run.",
+    "history": [
+      "Similar brief episodes follow exercise and settle between triggers.",
+      "This fictional profile is for learning and is not a basis for patient care."
+    ]
+  },
+  "anatomyMapId": "lung-map",
+  "entry": {
+    "mode": "overview_marker",
+    "markerStructureId": "left-upper-lobe"
+  },
+  "clues": [
+    {
+      "id": "quick-history",
+      "category": "history",
+      "title": "Trigger pattern",
+      "essential": true,
+      "primitive": {
+        "id": "quick-clue-history",
+        "type": "rich_text",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "heading": "Brief variable episodes",
+          "body": "Educational-only synthetic history: symptoms follow exercise and cold air, with normal breathing between episodes."
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "quick-wheeze",
+      "category": "audio",
+      "title": "Sound sample",
+      "essential": true,
+      "primitive": {
+        "id": "quick-clue-wheeze",
+        "type": "audio",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "assetId": "wheeze-audio",
+          "title": "Wheeze recording",
+          "description": "A short educational respiratory-sound sample.",
+          "transcript": "Repeated musical, high-pitched expiratory sounds are audible over the breathing cycle."
+        },
+        "assets": ["wheeze-audio"],
+        "completion": { "mode": "media_progress", "threshold": 0.8 },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "quick-flow",
+      "category": "physiology",
+      "title": "Before and after flow",
+      "essential": true,
+      "primitive": {
+        "id": "quick-clue-flow",
+        "type": "data_table",
+        "conceptIds": ["airway-pathophysiology"],
+        "content": {
+          "caption": "Synthetic educational expiratory-flow check",
+          "columns": [
+            { "id": "time", "label": "Time" },
+            { "id": "peak", "label": "Peak flow", "unit": "L/min", "alignment": "decimal" }
+          ],
+          "rows": [
+            {
+              "id": "during",
+              "cells": [
+                { "columnId": "time", "value": "During symptoms" },
+                { "columnId": "peak", "value": 330 }
+              ]
+            },
+            {
+              "id": "after",
+              "cells": [
+                { "columnId": "time", "value": "After reliever" },
+                { "columnId": "peak", "value": 410 }
+              ]
+            }
+          ]
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    }
+  ],
+  "stages": [
+    {
+      "id": "quick-orient",
+      "kind": "orient",
+      "component": "anatomy",
+      "title": "Orient",
+      "intro": "Educational-only task: identify the structure most directly responsible for variable expiratory narrowing.",
+      "clueIds": ["quick-history", "quick-wheeze"],
+      "steps": [
+        {
+          "id": "quick-structure",
+          "type": "multiple_choice",
+          "clueIds": ["quick-history", "quick-wheeze"],
+          "conceptIds": ["respiratory-anatomy"],
+          "content": {
+            "prompt": "Which structure is most directly involved in this variable expiratory pattern?",
+            "options": [
+              { "id": "conducting-airway", "label": "Conducting airway" },
+              { "id": "pleural-space", "label": "Pleural space", "clueIds": ["quick-history"] },
+              { "id": "alveolar-wall", "label": "Alveolar wall alone", "clueIds": ["quick-wheeze"] }
+            ],
+            "correctOptionId": "conducting-airway",
+            "explanation": "Variable bronchoconstriction narrows conducting airways."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": false }
+        }
+      ]
+    },
+    {
+      "id": "quick-diagnose",
+      "kind": "diagnose",
+      "component": "diagnosis",
+      "title": "Diagnose",
+      "intro": "Educational-only task: make a proportionate conclusion for this fictional three-minute case.",
+      "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
+      "steps": [
+        {
+          "id": "quick-diagnosis",
+          "type": "scenario",
+          "clueIds": ["quick-history", "quick-flow"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "startNodeId": "quick-context",
+            "nodes": [
+              {
+                "id": "quick-context",
+                "type": "context",
+                "body": "Educational-only branching scenario: trigger-linked wheeze resolves between episodes and peak flow improves after a reliever.",
+                "next": "quick-commit"
+              },
+              {
+                "id": "quick-commit",
+                "type": "decision",
+                "prompt": "Which explanation is best supported?",
+                "choices": [
+                  { "id": "variable-obstruction", "label": "Variable airflow obstruction compatible with asthma", "consequence": "This integrates trigger pattern and reversibility.", "next": "quick-check", "score": 1 },
+                  { "id": "fixed-destruction", "label": "Fixed alveolar destruction", "consequence": "This does not explain brief reversible episodes.", "next": "quick-check", "score": 0, "clueIds": ["quick-history", "quick-flow"] }
+                ]
+              },
+              {
+                "id": "quick-check",
+                "type": "decision",
+                "prompt": "What is the correct boundary for this conclusion?",
+                "choices": [
+                  { "id": "educational-conclusion", "label": "It is the best answer for this fictional educational case", "consequence": "The conclusion stays within the simulation.", "next": "quick-supported", "score": 1 },
+                  { "id": "personal-advice", "label": "It is personalized clinical advice", "consequence": "The demo cannot provide individual care.", "next": "quick-boundary", "score": 0, "clueIds": ["quick-history"] }
+                ]
+              },
+              { "id": "quick-supported", "type": "outcome", "title": "Quick case solved", "body": "The fictional pattern is compatible with asthma.", "result": "Use variability and reversibility together, within the educational-only boundary." },
+              { "id": "quick-boundary", "type": "outcome", "title": "Boundary crossed", "body": "A learning conclusion was turned into personal advice.", "result": "This case is educational only and not clinical guidance." }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "outcome" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": false }
+        }
+      ]
+    }
+  ],
+  "timing": {
+    "caseTargetSeconds": 180,
+    "caseMaxSeconds": 300
+  },
+  "expertBenchmark": {
+    "name": "Respiratory educator benchmark",
+    "durationSeconds": 120,
+    "openedClueIds": ["quick-history", "quick-wheeze", "quick-flow"],
+    "responses": {
+      "quick-structure": "conducting-airway",
+      "quick-diagnosis": [
+        { "nodeId": "quick-commit", "choiceId": "variable-obstruction" },
+        { "nodeId": "quick-check", "choiceId": "educational-conclusion" }
+      ]
+    },
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 1 }
+  },
+  "debrief": {
+    "summary": "Educational demo only—not clinical guidance. Brief trigger-linked symptoms plus improved expiratory flow support variable airflow obstruction in this fictional quick case.",
+    "keyClueIds": ["quick-history", "quick-flow"]
+  }
+}

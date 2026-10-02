@@ -180,7 +180,7 @@ case
 - [x] P10-T13 — Daily quick case through the existing challenge rewards.
 - [x] P10-T14 — Autovrse LevelUp branding: name, logo, accent tokens with AA contrast, PWA manifest
       and icons.
-- [ ] P10-T15 — Demo content: asthma, COPD and exacerbation cases, the quick case, expert
+- [x] P10-T15 — Demo content: asthma, COPD and exacerbation cases, the quick case, expert
       benchmarks, badges, concepts and integrated assets with asset-manifest hashes.
 - [ ] P10-T16 — QA: automated end-to-end coverage for each case, browser QA across the four target
       viewports, accessibility, motion, performance and 3D memory checks.

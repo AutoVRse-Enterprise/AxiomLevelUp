@@ -41,7 +41,10 @@
     "seven-day-streak": { "unlockedAt": null },
     "four-week-goal": { "unlockedAt": null },
     "challenge-ten": { "unlockedAt": null },
-    "first-dicom": { "unlockedAt": null }
+    "first-dicom": { "unlockedAt": null },
+    "first-case-solved": { "unlockedAt": null },
+    "sharp-eye": { "unlockedAt": null },
+    "rapid-responder": { "unlockedAt": null }
   },
   "mastery": {
     "thoracic-imaging": { "score": 50, "history": [] },
@@ -51,7 +54,10 @@
     "biostatistics": { "score": 50, "history": [] },
     "dose-response": { "score": 50, "history": [] },
     "safety-signals": { "score": 50, "history": [] },
-    "risk-escalation": { "score": 50, "history": [] }
+    "risk-escalation": { "score": 50, "history": [] },
+    "respiratory-anatomy": { "score": 50, "history": [] },
+    "airway-pathophysiology": { "score": 50, "history": [] },
+    "respiratory-diagnosis": { "score": 50, "history": [] }
   },
   "gamification": {
     "xpWeekStart": "2026-09-28",

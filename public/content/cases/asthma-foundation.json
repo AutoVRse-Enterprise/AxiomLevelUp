@@ -1,0 +1,453 @@
+{
+  "schemaVersion": "0.1",
+  "caseVersion": "1.0",
+  "id": "asthma-foundation",
+  "title": "The Variable Wheeze",
+  "summary": "Educational demo only—not clinical guidance. Use reversible airflow limitation and airway inflammation evidence to solve a synthetic asthma case.",
+  "tier": "foundation",
+  "organSystem": "respiratory",
+  "estimatedMinutes": 8,
+  "conceptIds": ["respiratory-anatomy", "airway-pathophysiology", "respiratory-diagnosis"],
+  "patient": {
+    "label": "Case A — synthetic patient",
+    "age": 24,
+    "sex": "Female",
+    "presentingComplaint": "Educational-only scenario: episodic chest tightness and wheeze after exercise.",
+    "history": [
+      "Symptoms vary from day to day and are worse during pollen season.",
+      "No smoking history; symptoms improve after a reliever inhaler.",
+      "This fictional profile is for learning and is not a basis for patient care."
+    ]
+  },
+  "anatomyMapId": "lung-map",
+  "entry": {
+    "mode": "overview_marker",
+    "markerStructureId": "right-upper-lobe"
+  },
+  "clues": [
+    {
+      "id": "history",
+      "category": "history",
+      "title": "Pattern of symptoms",
+      "essential": true,
+      "primitive": {
+        "id": "asthma-clue-history",
+        "type": "rich_text",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "heading": "Variable respiratory symptoms",
+          "body": "Educational-only synthetic history: wheeze, cough and chest tightness vary over time, follow exercise and pollen exposure, and improve after a reliever."
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "anatomy",
+      "category": "anatomy",
+      "title": "Airway structure",
+      "essential": true,
+      "primitive": {
+        "id": "asthma-clue-anatomy",
+        "type": "image",
+        "conceptIds": ["respiratory-anatomy"],
+        "content": {
+          "assetId": "airway-comparison-image",
+          "alt": "OpenStax illustration of a bronchiole, alveolar ducts, alveoli and their microscopic tissue arrangement.",
+          "caption": "Use the bronchiole and alveolar landmarks for this educational localisation exercise."
+        },
+        "assets": ["airway-comparison-image"],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "wheeze",
+      "category": "audio",
+      "title": "Auscultation sample",
+      "essential": true,
+      "primitive": {
+        "id": "asthma-clue-wheeze",
+        "type": "audio",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "assetId": "wheeze-audio",
+          "title": "Wheeze recording",
+          "description": "A short educational respiratory-sound sample.",
+          "transcript": "Repeated musical, high-pitched expiratory sounds are audible over the breathing cycle."
+        },
+        "assets": ["wheeze-audio"],
+        "completion": { "mode": "media_progress", "threshold": 0.8 },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "spirometry",
+      "category": "physiology",
+      "title": "Bronchodilator response",
+      "essential": true,
+      "primitive": {
+        "id": "asthma-clue-spirometry",
+        "type": "chart",
+        "conceptIds": ["airway-pathophysiology"],
+        "content": {
+          "chartType": "bar",
+          "title": "Synthetic spirometry",
+          "summary": "FEV1 rises from 2.45 L to 2.82 L after bronchodilator; values are synthetic and educational only.",
+          "axes": {
+            "x": { "label": "Measurement", "scale": "category" },
+            "y": { "label": "Volume", "unit": "L", "scale": "linear" }
+          },
+          "series": [
+            {
+              "id": "fev1",
+              "label": "FEV1",
+              "values": [
+                { "id": "pre", "category": "Pre-bronchodilator", "value": 2.45 },
+                { "id": "post", "category": "Post-bronchodilator", "value": 2.82 }
+              ]
+            }
+          ]
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "histology",
+      "category": "histology",
+      "title": "Asthmatic airway histology",
+      "essential": false,
+      "primitive": {
+        "id": "asthma-clue-histology",
+        "type": "image",
+        "conceptIds": ["airway-pathophysiology"],
+        "content": {
+          "assetId": "asthma-histology-image",
+          "alt": "Histology image showing an inflamed bronchiole with mucoid material narrowing the lumen.",
+          "caption": "Illustrative histology; educational use only and not a diagnostic specimen."
+        },
+        "assets": ["asthma-histology-image"],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "biomarkers",
+      "category": "biomarker",
+      "title": "Inflammatory markers",
+      "essential": false,
+      "primitive": {
+        "id": "asthma-clue-biomarkers",
+        "type": "data_table",
+        "conceptIds": ["airway-pathophysiology"],
+        "content": {
+          "caption": "Synthetic educational biomarker panel",
+          "columns": [
+            { "id": "marker", "label": "Marker" },
+            { "id": "value", "label": "Value", "alignment": "decimal" },
+            { "id": "context", "label": "Illustrative context" }
+          ],
+          "rows": [
+            {
+              "id": "eosinophils",
+              "cells": [
+                { "columnId": "marker", "value": "Blood eosinophils" },
+                { "columnId": "value", "value": "480 cells/µL" },
+                { "columnId": "context", "value": "Elevated in this synthetic profile" }
+              ]
+            },
+            {
+              "id": "feno",
+              "cells": [
+                { "columnId": "marker", "value": "FeNO" },
+                { "columnId": "value", "value": "46 ppb" },
+                { "columnId": "context", "value": "Supports type 2 airway inflammation" }
+              ]
+            }
+          ]
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    }
+  ],
+  "stages": [
+    {
+      "id": "asthma-orient",
+      "kind": "orient",
+      "component": "anatomy",
+      "title": "Orient",
+      "intro": "Educational-only task: localise the relevant airway level; this is not clinical guidance.",
+      "clueIds": ["anatomy", "history"],
+      "steps": [
+        {
+          "id": "asthma-localise",
+          "type": "anatomy_locate",
+          "clueIds": ["anatomy"],
+          "conceptIds": ["respiratory-anatomy"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Trace the finding from respiratory system to the small conducting airway.",
+            "startView": { "mode": "marker", "structureId": "right-upper-lobe" },
+            "levels": [
+              { "levelId": "system", "input": "model", "targetStructureId": "respiratory-system", "weight": 1 },
+              { "levelId": "lobe", "input": "model", "targetStructureId": "right-upper-lobe", "weight": 1 },
+              {
+                "levelId": "segment",
+                "input": "choice",
+                "options": [
+                  { "id": "apical-segment", "label": "Apical segment" },
+                  { "id": "medial-basal-segment", "label": "Medial basal segment", "clueIds": ["anatomy"] },
+                  { "id": "lingular-segment", "label": "Lingular segment", "clueIds": ["anatomy"] }
+                ],
+                "correctOptionId": "apical-segment",
+                "weight": 1
+              },
+              {
+                "levelId": "structure",
+                "input": "choice",
+                "options": [
+                  { "id": "bronchiole", "label": "Bronchiole" },
+                  { "id": "alveolus", "label": "Alveolus", "clueIds": ["anatomy"] },
+                  { "id": "pleura", "label": "Pleura", "clueIds": ["anatomy"] }
+                ],
+                "correctOptionId": "bronchiole",
+                "weight": 1
+              }
+            ],
+            "explanation": "Asthma principally affects conducting airways; each level is scored independently."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "hint": "Use the airway illustration to distinguish a bronchiole from gas-exchange structures." }
+        },
+        {
+          "id": "asthma-airway-function",
+          "type": "multiple_choice",
+          "clueIds": ["anatomy"],
+          "conceptIds": ["respiratory-anatomy"],
+          "content": {
+            "prompt": "Which structure is the most relevant site of variable airflow narrowing?",
+            "options": [
+              { "id": "conducting-airway", "label": "Conducting airway" },
+              { "id": "pleural-space", "label": "Pleural space", "clueIds": ["anatomy"] },
+              { "id": "pulmonary-artery", "label": "Pulmonary artery", "clueIds": ["anatomy"] }
+            ],
+            "correctOptionId": "conducting-airway",
+            "explanation": "Variable bronchoconstriction and airway inflammation narrow conducting airways."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        }
+      ]
+    },
+    {
+      "id": "asthma-observe",
+      "kind": "observe",
+      "component": "diagnosis",
+      "title": "Observe",
+      "intro": "Educational-only task: identify the observations that distinguish this synthetic pattern.",
+      "clueIds": ["history", "wheeze", "spirometry", "histology"],
+      "steps": [
+        {
+          "id": "asthma-key-observations",
+          "type": "multiple_select",
+          "clueIds": ["history", "spirometry"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which observations most strongly support variable airflow obstruction?",
+            "options": [
+              { "id": "variable-symptoms", "label": "Symptoms vary with triggers and time" },
+              { "id": "reversibility", "label": "FEV1 improves after bronchodilator" },
+              { "id": "fixed-daily", "label": "Identical symptoms every day", "clueIds": ["history"] },
+              { "id": "pleural-pain", "label": "Isolated pleuritic pain", "clueIds": ["anatomy"] }
+            ],
+            "correctOptionIds": ["variable-symptoms", "reversibility"],
+            "scoringMode": "partial",
+            "minSelections": 1,
+            "shuffle": false,
+            "explanation": "Variability and reversibility are the central pattern in this educational case."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        },
+        {
+          "id": "asthma-sort-evidence",
+          "type": "classification",
+          "clueIds": ["wheeze", "biomarkers"],
+          "conceptIds": ["airway-pathophysiology"],
+          "content": {
+            "prompt": "Classify the evidence by what it primarily demonstrates.",
+            "categories": [
+              { "id": "airflow", "label": "Airflow variability" },
+              { "id": "inflammation", "label": "Airway inflammation" }
+            ],
+            "items": [
+              { "id": "fev1-rise", "label": "Post-bronchodilator FEV1 rise", "categoryId": "airflow" },
+              { "id": "feno-eosinophils", "label": "Raised FeNO and eosinophils", "categoryId": "inflammation" }
+            ],
+            "scoringMode": "partial",
+            "explanation": "Spirometry demonstrates variable flow while biomarkers support an inflammatory phenotype."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        }
+      ]
+    },
+    {
+      "id": "asthma-interpret",
+      "kind": "interpret",
+      "component": "diagnosis",
+      "title": "Interpret",
+      "intro": "Educational-only task: integrate the synthetic measurements without treating them as patient advice.",
+      "clueIds": ["spirometry", "biomarkers", "histology"],
+      "steps": [
+        {
+          "id": "asthma-reversibility",
+          "type": "true_false",
+          "clueIds": ["spirometry"],
+          "conceptIds": ["airway-pathophysiology"],
+          "content": {
+            "statement": "The synthetic FEV1 increase is compatible with reversible airflow limitation.",
+            "answer": true,
+            "explanation": "The illustrated increase is substantial and supports reversibility in this learning scenario.",
+            "responseClueIds": { "false": ["spirometry"] }
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        },
+        {
+          "id": "asthma-mechanism",
+          "type": "multiple_choice",
+          "clueIds": ["histology", "biomarkers"],
+          "conceptIds": ["airway-pathophysiology"],
+          "content": {
+            "prompt": "Which mechanism best unifies the optional pathology and biomarker clues?",
+            "options": [
+              { "id": "type2-inflammation", "label": "Type 2 airway inflammation with mucus and remodelling" },
+              { "id": "alveolar-destruction", "label": "Irreversible alveolar wall destruction", "clueIds": ["histology"] },
+              { "id": "pleural-effusion", "label": "Fluid accumulation in the pleural space", "clueIds": ["anatomy"] }
+            ],
+            "correctOptionId": "type2-inflammation",
+            "explanation": "The educational pattern links eosinophilic inflammation, mucus and airway wall change."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        }
+      ]
+    },
+    {
+      "id": "asthma-diagnose",
+      "kind": "diagnose",
+      "component": "diagnosis",
+      "title": "Diagnose",
+      "intro": "Educational-only task: select the best explanation for this fictional case, not a real diagnosis.",
+      "clueIds": ["history", "wheeze", "spirometry"],
+      "steps": [
+        {
+          "id": "asthma-best-diagnosis",
+          "type": "multiple_choice",
+          "clueIds": ["history", "spirometry"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which diagnosis best fits the complete synthetic pattern?",
+            "options": [
+              { "id": "asthma", "label": "Asthma" },
+              { "id": "copd", "label": "COPD", "clueIds": ["history", "spirometry"] },
+              { "id": "pneumothorax", "label": "Pneumothorax", "clueIds": ["anatomy"] }
+            ],
+            "correctOptionId": "asthma",
+            "explanation": "Variable triggered symptoms and reversible obstruction best fit asthma in this exercise."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        },
+        {
+          "id": "asthma-diagnosis-path",
+          "type": "scenario",
+          "clueIds": ["history", "spirometry", "biomarkers"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "startNodeId": "asthma-context",
+            "nodes": [
+              {
+                "id": "asthma-context",
+                "type": "context",
+                "body": "Educational-only branching scenario: symptoms are variable and spirometry improves after bronchodilator.",
+                "next": "asthma-commit"
+              },
+              {
+                "id": "asthma-commit",
+                "type": "decision",
+                "prompt": "What is the best working interpretation?",
+                "choices": [
+                  { "id": "variable-airway", "label": "Variable inflammatory airway disease", "consequence": "This fits the observed pattern.", "next": "asthma-phenotype", "score": 1 },
+                  { "id": "fixed-destruction", "label": "Fixed destructive lung disease", "consequence": "This underweights variability and reversibility.", "next": "asthma-phenotype", "score": 0.25, "clueIds": ["history", "spirometry"] }
+                ]
+              },
+              {
+                "id": "asthma-phenotype",
+                "type": "decision",
+                "prompt": "How should the optional biomarker evidence affect the conclusion?",
+                "choices": [
+                  { "id": "supports-phenotype", "label": "It supports an inflammatory phenotype but is not diagnostic alone", "consequence": "This integrates the evidence proportionately.", "next": "asthma-supported", "score": 1 },
+                  { "id": "proves-alone", "label": "It proves the diagnosis by itself", "consequence": "No single optional marker proves this diagnosis.", "next": "asthma-overcalled", "score": 0.25, "clueIds": ["biomarkers"] }
+                ]
+              },
+              { "id": "asthma-supported", "type": "outcome", "title": "Proportionate conclusion", "body": "The combined evidence supports asthma in this fictional exercise.", "result": "Best path: diagnose from variability and reversibility, using biomarkers as supportive context." },
+              { "id": "asthma-overcalled", "type": "outcome", "title": "Evidence overcalled", "body": "The direction is plausible, but one marker was given too much weight.", "result": "Reopen the history, spirometry and biomarker clues before revising." }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "outcome" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true }
+        }
+      ]
+    }
+  ],
+  "timing": {
+    "caseTargetSeconds": 420,
+    "caseMaxSeconds": 720
+  },
+  "expertBenchmark": {
+    "name": "Respiratory educator benchmark",
+    "durationSeconds": 330,
+    "openedClueIds": ["history", "anatomy", "wheeze", "spirometry"],
+    "responses": {
+      "asthma-localise": { "system": "respiratory-system", "lobe": "right-upper-lobe", "segment": "apical-segment", "structure": "bronchiole" },
+      "asthma-airway-function": "conducting-airway",
+      "asthma-key-observations": ["variable-symptoms", "reversibility"],
+      "asthma-sort-evidence": { "fev1-rise": "airflow", "feno-eosinophils": "inflammation" },
+      "asthma-reversibility": true,
+      "asthma-mechanism": "type2-inflammation",
+      "asthma-best-diagnosis": "asthma",
+      "asthma-diagnosis-path": [
+        { "nodeId": "asthma-commit", "choiceId": "variable-airway" },
+        { "nodeId": "asthma-phenotype", "choiceId": "supports-phenotype" }
+      ]
+    },
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.9 }
+  },
+  "debrief": {
+    "summary": "Educational demo only—not clinical guidance. The strongest pattern is variable triggered symptoms plus reversible airflow limitation; inflammatory markers and histology are supportive, not independently diagnostic.",
+    "keyClueIds": ["history", "spirometry", "wheeze"]
+  }
+}

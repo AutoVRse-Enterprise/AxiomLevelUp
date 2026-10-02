@@ -6,6 +6,7 @@ import invalidCaseSemantics from '../../public/content/fixtures/invalid-case-sem
 import invalidCourse from '../../public/content/fixtures/invalid-course.json'
 import unknownPrimitive from '../../public/content/fixtures/unknown-primitive.json'
 import advancedSeed from '../../public/content/seeds/advanced.json'
+import freshSeed from '../../public/content/seeds/fresh.json'
 import { describe, expect, it, vi } from 'vitest'
 
 import { ContentValidationError, loadContent, validateContentBundle } from '@/content/loader'
@@ -233,6 +234,32 @@ describe('content schemas', () => {
     expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
   })
 
+  it('ships three case concepts, three case badges, and resolvable seeded case history', () => {
+    const config = appConfigSchema.parse(makeValidContentBundle().appConfig)
+    const respiratoryConceptIds = new Set([
+      'respiratory-anatomy',
+      'airway-pathophysiology',
+      'respiratory-diagnosis',
+    ])
+    const caseBadges = config.badges.filter(({ criteria }) =>
+      ['cases_completed', 'case_component_score', 'case_duration'].includes(criteria.type),
+    )
+    const asthma = contentResponses.get('/content/cases/asthma-foundation.json') as {
+      id: string
+      clues: Array<{ id: string }>
+    }
+    const seededAttempts = advancedSeed.caseAttempts['asthma-foundation']
+    const clueIds = new Set(asthma.clues.map(({ id }) => id))
+
+    expect(config.concepts.filter(({ id }) => respiratoryConceptIds.has(id))).toHaveLength(3)
+    expect(caseBadges).toHaveLength(3)
+    expect(seededAttempts).toHaveLength(1)
+    expect(seededAttempts[0]?.attemptId).toBe('seed-asthma-foundation-1')
+    expect(seededAttempts[0]?.openedClueIds.every((id) => clueIds.has(id))).toBe(true)
+    expect(freshSeed.caseProgress).toEqual({})
+    expect(freshSeed.caseAttempts).toEqual({})
+  })
+
   it('rejects assessment primitives used as case clues with a useful path', () => {
     expect(() => validateContentBundle(withCaseFixture(invalidCaseCluePrimitive))).toThrow(
       expect.objectContaining({
@@ -273,7 +300,35 @@ describe('content loader', () => {
     expect(registry.lessonById.get('primitive-showcase')?.primitives).toHaveLength(28)
     expect(registry.courseById.get('scientific-imaging')?.lessons).toHaveLength(5)
     expect(registry.assetById.get('course-imaging-cover')?.type).toBe('image')
-    expect(registry.cases).toEqual([])
+    expect(registry.cases).toHaveLength(4)
+    expect(registry.cases.slice(0, 3).map(({ id }) => id)).toEqual([
+      'asthma-foundation',
+      'copd-intermediate',
+      'exacerbation-advanced',
+    ])
+    for (const caseDocument of registry.cases.slice(0, 3)) {
+      expect(caseDocument.stages.map(({ kind }) => kind)).toEqual([
+        'orient',
+        'observe',
+        'interpret',
+        'diagnose',
+      ])
+      expect(caseDocument.clues.length).toBeGreaterThanOrEqual(5)
+      expect(caseDocument.clues.length).toBeLessThanOrEqual(8)
+      expect(caseDocument.clues.filter(({ essential }) => essential).length).toBeGreaterThanOrEqual(
+        3,
+      )
+      const steps = caseDocument.stages.flatMap(({ steps }) => steps)
+      expect(steps).toHaveLength(8)
+      const anatomyLocate = steps.find(({ type }) => type === 'anatomy_locate')
+      const levels = (anatomyLocate?.content as { levels?: unknown[] }).levels
+      expect([3, 4]).toContain(levels?.length)
+      expect(steps.some(({ type }) => type === 'scenario')).toBe(true)
+    }
+    const quickCase = registry.caseById.get('wheeze-quick')
+    expect(quickCase?.estimatedMinutes).toBe(3)
+    expect(quickCase?.clues).toHaveLength(3)
+    expect(quickCase?.stages.map(({ kind }) => kind)).toEqual(['orient', 'diagnose'])
     expect(registry.anatomyMapById.get('lung-map')?.modelAssetId).toBe('lung-model')
     expect(registry.anatomyMaps).toHaveLength(1)
     expect(registry.warnings).toEqual([])
@@ -776,7 +831,7 @@ describe('content loader', () => {
             message: expect.stringContaining('Duplicate primitive id'),
           }),
           expect.objectContaining({
-            path: 'challenges.0.items.5.id',
+              path: 'challenges.0.items.5.id',
             message: expect.stringContaining('Duplicate primitive id'),
           }),
         ]),

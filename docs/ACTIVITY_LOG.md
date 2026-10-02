@@ -2013,3 +2013,22 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   normal-text pairs meet AA; the lighter purple tokens are explicitly restricted.
 - **Follow-ups:** Populate the branded Case Lab with the three respiratory cases and daily quick
   case in P10-T15.
+
+### [2026-10-03 06:04] P10-T15 - Add respiratory Case Lab content
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Added foundation asthma, intermediate COPD and advanced exacerbation cases plus a
+  two-stage daily wheeze case. Added the configured tiers, scoring, XP, clues, expert benchmarks,
+  respiratory concepts and three case badges; extended the lung airway map; integrated an
+  advanced-seed attempt; and registered optimized histology, airway and respiratory-audio assets
+  with source, licence, author, hashes and metadata.
+- **Files changed:** Four case documents, lung anatomy map, app config, manifest, asset manifest,
+  advanced/fresh seeds, optimized case image/audio assets and content/plan tests.
+- **Commands run:** `npm run assets:hash`, focused and full Vitest runs, `npm run check`,
+  `npm run validate:content`, `npm run typecheck`, `npm run lint`, `npm run build`,
+  `npm run budget`.
+- **Result/verification:** All 348 tests and the full quality gate pass. Content validation reports
+  5 courses, 13 lessons, 4 cases, 1 anatomy map and zero warnings. The three main cases each have
+  four stages, 6–7 clues and eight scored steps; the quick case has two stages and three clues.
+- **Follow-ups:** Exercise all four cases through automated flows and complete viewport,
+  accessibility, motion and 3D performance QA in P10-T16.

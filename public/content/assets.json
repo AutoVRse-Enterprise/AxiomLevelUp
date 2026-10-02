@@ -174,6 +174,87 @@
       "sha256": "a212ee72b6a3d2cc893865918201a36d17735f619ece1804bb800087670283f5"
     },
     {
+      "assetId": "asthma-histology-image",
+      "path": "/assets/images/cases/asthma-histology.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 326014,
+      "mimeType": "image/webp",
+      "width": 1063,
+      "height": 713,
+      "sha256": "5eee2878582b10c61c2c34ea9c7c08d35137b07328b324a83cf9537113f897b4",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Asthma_.jpg",
+        "licence": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+        "author": "Yale Rosen"
+      }
+    },
+    {
+      "assetId": "emphysema-histology-image",
+      "path": "/assets/images/cases/emphysema-histology.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 83138,
+      "mimeType": "image/webp",
+      "width": 1104,
+      "height": 1136,
+      "sha256": "d47ee273128d719538eb8ebbd417408777499db33c6002467b1c7a44208125ce",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Histopathology_of_emphysema.jpg",
+        "licence": "CC0 1.0 Universal Public Domain Dedication",
+        "author": "Mikael Häggström, M.D."
+      }
+    },
+    {
+      "assetId": "airway-comparison-image",
+      "path": "/assets/images/cases/airway-comparison.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 107844,
+      "mimeType": "image/webp",
+      "width": 1200,
+      "height": 1334,
+      "sha256": "4f872870a175398ec39fb0d197631fae86fa55782034925269839ac42e5d8a0e",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:2311_Lung_Tissue.jpg",
+        "licence": "Creative Commons Attribution 3.0 Unported",
+        "author": "OpenStax College"
+      }
+    },
+    {
+      "assetId": "wheeze-audio",
+      "path": "/assets/media/cases/wheeze.m4a",
+      "type": "audio",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 81749,
+      "mimeType": "audio/mp4",
+      "sha256": "99757864118206c83d09a1954bea5704096d572a66aa334854aa1f919313a259",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wheeze2O.ogg",
+        "licence": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+        "author": "James Heilman, MD"
+      }
+    },
+    {
+      "assetId": "crackles-audio",
+      "path": "/assets/media/cases/crackles.m4a",
+      "type": "audio",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 387788,
+      "mimeType": "audio/mp4",
+      "sha256": "063ff1291be4080354895c2d634fc95085242e01eb828ae114759b1502362579",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:IPF_Lung_Sound.ogg",
+        "licence": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+        "author": "IPFeditor"
+      }
+    },
+    {
       "assetId": "lung-model",
       "path": "/assets/models/lung-map/model.glb",
       "type": "model",

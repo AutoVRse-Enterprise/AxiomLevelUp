@@ -111,6 +111,52 @@
       }
     }
   },
+  "caseLab": {
+    "title": "Respiratory Case Lab",
+    "featuredCaseId": "exacerbation-advanced",
+    "caseIds": ["asthma-foundation", "copd-intermediate", "exacerbation-advanced"],
+    "dailyQuickCaseId": "wheeze-quick",
+    "clueCategories": [
+      { "id": "history", "label": "History" },
+      { "id": "anatomy", "label": "Anatomy" },
+      { "id": "audio", "label": "Respiratory sounds" },
+      { "id": "histology", "label": "Histology" },
+      { "id": "physiology", "label": "Physiology" },
+      { "id": "biomarker", "label": "Biomarkers" }
+    ],
+    "tiers": {
+      "foundation": {
+        "label": "Foundation",
+        "timing": "none",
+        "hints": "full",
+        "labelEssentialClues": true
+      },
+      "intermediate": {
+        "label": "Intermediate",
+        "timing": "stopwatch",
+        "hints": "full",
+        "labelEssentialClues": true
+      },
+      "advanced": {
+        "label": "Advanced",
+        "timing": "countdown",
+        "hints": "reduced",
+        "labelEssentialClues": false
+      }
+    },
+    "scoring": {
+      "weights": { "anatomy": 0.4, "diagnosis": 0.4, "speed": 0.2 },
+      "speedBlend": { "perStep": 0.5, "perCase": 0.5 },
+      "defaultStepTargetSeconds": 45,
+      "defaultStepMaxSeconds": 90,
+      "cluePenalty": { "perOptionalClue": 2, "cap": 10 }
+    },
+    "xp": {
+      "caseComplete": 100,
+      "perfectCaseBonus": 40
+    },
+    "historyLimit": 10
+  },
   "concepts": [
     {
       "id": "thoracic-imaging",
@@ -151,6 +197,21 @@
       "id": "risk-escalation",
       "title": "Risk Escalation",
       "description": "Applying proportionate investigation and escalation."
+    },
+    {
+      "id": "respiratory-anatomy",
+      "title": "Respiratory Anatomy",
+      "description": "Localising respiratory findings from system to lobe, segment and structure."
+    },
+    {
+      "id": "airway-pathophysiology",
+      "title": "Airway Pathophysiology",
+      "description": "Connecting airway and alveolar changes with respiratory physiology."
+    },
+    {
+      "id": "respiratory-diagnosis",
+      "title": "Respiratory Diagnosis",
+      "description": "Integrating history, sounds, physiology and pathology in educational cases."
     }
   ],
   "pathways": [
@@ -187,114 +248,21 @@
     { "id": "seven-day-streak", "title": "7 Day Streak", "description": "Learn on seven consecutive days.", "category": "consistency", "icon": "flame", "rewardXp": 40, "criteria": { "type": "streak_days", "count": 7 } },
     { "id": "four-week-goal", "title": "Four Week Goal", "description": "Meet the weekly goal four times.", "category": "consistency", "icon": "calendar-check", "rewardXp": 100, "criteria": { "type": "weekly_goals_met", "count": 4 } },
     { "id": "challenge-ten", "title": "Challenge × 10", "description": "Complete ten daily challenges.", "category": "consistency", "icon": "target", "rewardXp": 75, "criteria": { "type": "challenges_completed", "count": 10, "challengeIds": ["daily-imaging-interpretation"] } },
-    { "id": "first-dicom", "title": "Imaging Explorer", "description": "Complete a first rewarded DICOM activity.", "category": "performance", "icon": "scan", "rewardXp": 40, "criteria": { "type": "primitive_reward", "rewardId": "first-dicom" } }
+    { "id": "first-dicom", "title": "Imaging Explorer", "description": "Complete a first rewarded DICOM activity.", "category": "performance", "icon": "scan", "rewardXp": 40, "criteria": { "type": "primitive_reward", "rewardId": "first-dicom" } },
+    { "id": "first-case-solved", "title": "First Case Solved", "description": "Complete any configured Case Lab case.", "category": "learning", "icon": "clipboard-check", "rewardXp": 50, "criteria": { "type": "cases_completed", "count": 1 } },
+    { "id": "sharp-eye", "title": "Sharp Eye", "description": "Score at least 90% in diagnosis while opening at most one optional clue.", "category": "performance", "icon": "focus", "rewardXp": 75, "criteria": { "type": "case_component_score", "component": "diagnosis", "min": 0.9, "maxOptionalClues": 1 } },
+    { "id": "rapid-responder", "title": "Rapid Responder", "description": "Complete a case within 75% of its configured target time.", "category": "performance", "icon": "target", "rewardXp": 75, "criteria": { "type": "case_duration", "maxRatioOfTarget": 0.75 } }
   ],
   "challenges": [
     {
       "id": "daily-imaging-interpretation",
       "type": "daily",
-      "title": "Imaging Interpretation",
-      "description": "Five rapid checks across imaging concepts.",
+      "title": "Daily Respiratory Quick Case",
+      "description": "Solve one educational-only respiratory case in about three minutes.",
       "estimatedMinutes": 3,
       "rewardXp": 50,
-      "itemCount": 5,
-      "items": [
-        {
-          "id": "daily-q1",
-          "type": "multiple_choice",
-          "conceptIds": ["image-windowing"],
-          "content": {
-            "prompt": "Which window best emphasizes lung parenchyma?",
-            "options": [
-              { "id": "lung", "label": "Lung window" },
-              { "id": "bone", "label": "Bone window" },
-              { "id": "brain", "label": "Brain window" }
-            ],
-            "correctOptionId": "lung",
-            "explanation": "A lung window spans the low attenuation range needed to inspect aerated lung."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "xp": 10, "difficulty": "foundation" },
-          "feedback": { "retry": false }
-        },
-        {
-          "id": "daily-q2",
-          "type": "multiple_choice",
-          "conceptIds": ["clinical-trial-design"],
-          "content": {
-            "prompt": "What is the main purpose of randomization?",
-            "options": [
-              { "id": "balance", "label": "Balance known and unknown confounders" },
-              { "id": "speed", "label": "Shorten every trial" },
-              { "id": "blinding", "label": "Guarantee participant blinding" }
-            ],
-            "correctOptionId": "balance",
-            "explanation": "Random allocation reduces systematic baseline differences between groups."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "xp": 10, "difficulty": "foundation" },
-          "feedback": { "retry": false }
-        },
-        {
-          "id": "daily-q3",
-          "type": "multiple_choice",
-          "conceptIds": ["biostatistics"],
-          "content": {
-            "prompt": "A wider confidence interval generally indicates what?",
-            "options": [
-              { "id": "less-precision", "label": "Less precision" },
-              { "id": "more-precision", "label": "More precision" },
-              { "id": "no-bias", "label": "No risk of bias" }
-            ],
-            "correctOptionId": "less-precision",
-            "explanation": "Width reflects uncertainty around the estimated effect."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "xp": 10, "difficulty": "intermediate" },
-          "feedback": { "retry": false }
-        },
-        {
-          "id": "daily-q4",
-          "type": "multiple_choice",
-          "conceptIds": ["safety-signals"],
-          "content": {
-            "prompt": "What should an unexpected clustered event prompt first?",
-            "options": [
-              { "id": "assess", "label": "Structured signal assessment" },
-              { "id": "ignore", "label": "No action until proof is absolute" },
-              { "id": "publish", "label": "Immediate public attribution" }
-            ],
-            "correctOptionId": "assess",
-            "explanation": "A structured assessment establishes strength, alternatives and urgency."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "xp": 10, "difficulty": "intermediate" },
-          "feedback": { "retry": false }
-        },
-        {
-          "id": "daily-q5",
-          "type": "multiple_choice",
-          "conceptIds": ["dose-response"],
-          "content": {
-            "prompt": "A plateau in response most directly suggests what?",
-            "options": [
-              { "id": "maximal", "label": "A maximal effect may have been reached" },
-              { "id": "zero", "label": "The compound has no activity" },
-              { "id": "bias", "label": "Randomization failed" }
-            ],
-            "correctOptionId": "maximal",
-            "explanation": "A plateau can represent saturation of the achievable biological effect."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "xp": 10, "difficulty": "intermediate" },
-          "feedback": { "retry": false }
-        }
-      ]
+      "itemCount": 1,
+      "caseId": "wheeze-quick"
     },
     {
       "id": "weekly-imaging-sprint",

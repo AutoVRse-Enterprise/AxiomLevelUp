@@ -1,6 +1,10 @@
 import appConfig from '../../public/content/app-config.json'
 import assets from '../../public/content/assets.json'
 import lungMap from '../../public/content/anatomy/lung-map.json'
+import asthmaFoundation from '../../public/content/cases/asthma-foundation.json'
+import copdIntermediate from '../../public/content/cases/copd-intermediate.json'
+import exacerbationAdvanced from '../../public/content/cases/exacerbation-advanced.json'
+import wheezeQuick from '../../public/content/cases/wheeze-quick.json'
 import clinicalResearch from '../../public/content/courses/clinical-research.json'
 import dataInterpretation from '../../public/content/courses/data-interpretation.json'
 import runtimeShowcase from '../../public/content/courses/runtime-showcase.json'
@@ -21,12 +25,128 @@ const courseDocuments = [
   ['courses/runtime-showcase.json', runtimeShowcase],
 ] as const
 
+const caseDocuments = [
+  ['cases/asthma-foundation.json', asthmaFoundation],
+  ['cases/copd-intermediate.json', copdIntermediate],
+  ['cases/exacerbation-advanced.json', exacerbationAdvanced],
+  ['cases/wheeze-quick.json', wheezeQuick],
+] as const
+
 export function makeValidContentBundle(): ContentBundleInput {
+  const fixtureManifest = structuredClone(manifest) as unknown as { cases: string[] }
+  fixtureManifest.cases = []
+  const fixtureAppConfig = structuredClone(appConfig) as unknown as {
+    caseLab?: unknown
+    challenges: Array<Record<string, unknown>>
+  }
+  delete fixtureAppConfig.caseLab
+  fixtureAppConfig.challenges[0] = {
+    id: 'daily-imaging-interpretation',
+    type: 'daily',
+    title: 'Fixture daily question',
+    description: 'Inline challenge fixture for primitive validation.',
+    estimatedMinutes: 3,
+    rewardXp: 50,
+    itemCount: 5,
+    items: [
+      {
+        id: 'fixture-daily-question',
+        type: 'multiple_choice',
+        conceptIds: ['image-windowing'],
+        content: {
+          prompt: 'Which display emphasizes aerated lung?',
+          options: [
+            { id: 'lung', label: 'Lung window' },
+            { id: 'bone', label: 'Bone window' },
+          ],
+          correctOptionId: 'lung',
+          explanation: 'The lung window emphasizes aerated lung.',
+        },
+        assets: [],
+        completion: { mode: 'answer' },
+        scoring: { weight: 1, difficulty: 'foundation' },
+        feedback: {},
+      },
+      {
+        id: 'fixture-daily-question-2',
+        type: 'multiple_choice',
+        conceptIds: ['clinical-trial-design'],
+        content: {
+          prompt: 'Which second fixture option is supported?',
+          options: [
+            { id: 'supported', label: 'Supported' },
+            { id: 'unsupported', label: 'Unsupported' },
+          ],
+          correctOptionId: 'supported',
+          explanation: 'The supported option is configured as correct.',
+        },
+        assets: [],
+        completion: { mode: 'answer' },
+        scoring: { weight: 1, difficulty: 'foundation' },
+        feedback: {},
+      },
+      {
+        id: 'fixture-daily-question-3',
+        type: 'multiple_choice',
+        conceptIds: ['biostatistics'],
+        content: {
+          prompt: 'Which third fixture option is supported?',
+          options: [
+            { id: 'supported', label: 'Supported' },
+            { id: 'unsupported', label: 'Unsupported' },
+          ],
+          correctOptionId: 'supported',
+          explanation: 'The supported option is configured as correct.',
+        },
+        assets: [],
+        completion: { mode: 'answer' },
+        scoring: { weight: 1, difficulty: 'foundation' },
+        feedback: {},
+      },
+      {
+        id: 'fixture-daily-question-4',
+        type: 'multiple_choice',
+        conceptIds: ['safety-signals'],
+        content: {
+          prompt: 'Which fourth fixture option is supported?',
+          options: [
+            { id: 'supported', label: 'Supported' },
+            { id: 'unsupported', label: 'Unsupported' },
+          ],
+          correctOptionId: 'supported',
+          explanation: 'The supported option is configured as correct.',
+        },
+        assets: [],
+        completion: { mode: 'answer' },
+        scoring: { weight: 1, difficulty: 'foundation' },
+        feedback: {},
+      },
+      {
+        id: 'fixture-daily-question-5',
+        type: 'multiple_choice',
+        conceptIds: ['dose-response'],
+        content: {
+          prompt: 'Which fifth fixture option is supported?',
+          options: [
+            { id: 'supported', label: 'Supported' },
+            { id: 'unsupported', label: 'Unsupported' },
+          ],
+          correctOptionId: 'supported',
+          explanation: 'The supported option is configured as correct.',
+        },
+        assets: [],
+        completion: { mode: 'answer' },
+        scoring: { weight: 1, difficulty: 'foundation' },
+        feedback: {},
+      },
+    ],
+  }
+
   return structuredClone({
     manifestFile: 'manifest.json',
-    manifest,
+    manifest: fixtureManifest,
     appConfigFile: 'app-config.json',
-    appConfig,
+    appConfig: fixtureAppConfig,
     courseFiles: courseDocuments.map(([file, data]) => ({ file, data })),
     caseFiles: [],
     anatomyMapFiles: [{ file: 'anatomy/lung-map.json', data: lungMap }],
@@ -44,6 +164,7 @@ export const contentResponses = new Map<string, unknown>([
   ['/content/anatomy/lung-map.json', lungMap],
   ['/content/seeds/advanced.json', advancedSeed],
   ...courseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
+  ...caseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
 ])
 
 const richText = primitiveBaseSchema.parse({

@@ -65,7 +65,10 @@
     "seven-day-streak": { "unlockedAt": "2026-09-30T08:00:00+05:30" },
     "four-week-goal": { "unlockedAt": null },
     "challenge-ten": { "unlockedAt": null },
-    "first-dicom": { "unlockedAt": null }
+    "first-dicom": { "unlockedAt": null },
+    "first-case-solved": { "unlockedAt": "2026-09-27T10:30:00+05:30" },
+    "sharp-eye": { "unlockedAt": null },
+    "rapid-responder": { "unlockedAt": null }
   },
   "mastery": {
     "thoracic-imaging": { "score": 64, "history": [{ "at": "2026-09-25T10:12:00+05:30", "delta": 4, "reason": "ct-windowing" }] },
@@ -75,7 +78,10 @@
     "biostatistics": { "score": 68, "history": [] },
     "dose-response": { "score": 74, "history": [] },
     "safety-signals": { "score": 76, "history": [] },
-    "risk-escalation": { "score": 70, "history": [] }
+    "risk-escalation": { "score": 70, "history": [] },
+    "respiratory-anatomy": { "score": 68, "history": [{ "at": "2026-09-27T10:30:00+05:30", "delta": 4, "reason": "asthma-foundation" }] },
+    "airway-pathophysiology": { "score": 72, "history": [{ "at": "2026-09-27T10:30:00+05:30", "delta": 4, "reason": "asthma-foundation" }] },
+    "respiratory-diagnosis": { "score": 76, "history": [{ "at": "2026-09-27T10:30:00+05:30", "delta": 4, "reason": "asthma-foundation" }] }
   },
   "gamification": {
     "xpWeekStart": "2026-09-28",
