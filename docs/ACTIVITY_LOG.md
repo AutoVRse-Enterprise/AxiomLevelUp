@@ -2032,3 +2032,24 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   four stages, 6–7 clues and eight scored steps; the quick case has two stages and three clues.
 - **Follow-ups:** Exercise all four cases through automated flows and complete viewport,
   accessibility, motion and 3D performance QA in P10-T16.
+
+### [2026-10-03 06:15] P10-T16 - Verify Case Lab flows and browser behavior
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added end-to-end route coverage for all three catalogue cases, the daily quick case
+  and a loader-added fourth fixture case; verified results, compare and central-pipeline updates.
+  Exercised the production player across four Chromium viewports, reduced motion, keyboard-only
+  localisation, unavailable-WebGL recovery, animation cadence and mount/unmount heap behavior.
+  Fixed a React/Three.js canvas ownership crash, restored the persistent tablet clue pane, avoided
+  a squeezed nested anatomy grid and aligned the advanced seed badge with its qualifying attempt.
+- **Files changed:** Case-flow and anatomy-viewer tests; anatomy viewer, step frame and clue board;
+  advanced seed; `docs/qa/phase-10-browser-qa.md`; Phase 10 checklist and activity log.
+- **Commands run:** Focused Vitest runs, production build and preview, Chromium CDP viewport,
+  accessibility-tree, reduced-motion, keyboard, failure, frame-rate and heap checks,
+  `git diff --check`.
+- **Result/verification:** The focused final run passes 2 files / 12 tests. All target viewports
+  have zero document overflow; the 768×900 layout keeps its persistent clue pane. Used JavaScript
+  heap returned from about 18 MiB loaded to about 11 MiB after unmount. The automated unavailable-3D
+  state has no detected axe WCAG A/AA violations.
+- **Follow-ups:** Complete P10-T17 documentation, add the physical-device 3D addendum and run the
+  final quality gate.

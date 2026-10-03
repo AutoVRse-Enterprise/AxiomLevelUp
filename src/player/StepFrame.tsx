@@ -49,7 +49,7 @@ export function StepFrame({
       </div>
       <div
         className={
-          chromeAside ? 'mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]' : 'mt-8'
+          chromeAside ? 'mt-8 grid items-start gap-5 md:grid-cols-[minmax(0,1fr)_20rem]' : 'mt-8'
         }
       >
         <section
@@ -76,7 +76,7 @@ export function StepFrame({
             {children}
           </div>
         </section>
-        {chromeAside ? <aside className="hidden lg:block">{chromeAside}</aside> : null}
+        {chromeAside ? <aside className="hidden md:block">{chromeAside}</aside> : null}
       </div>
       {footer ? <div className="mt-5 flex justify-end">{footer}</div> : null}
     </div>

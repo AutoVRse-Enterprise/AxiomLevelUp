@@ -78,6 +78,18 @@ describe('AnatomyViewer', () => {
     expect(screen.getByRole('button', { name: 'Target structure' })).toHaveFocus()
   })
 
+  it('keeps the imperative canvas mount separate from React-owned overlays', () => {
+    render(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" />)
+
+    const viewport = screen.getByLabelText('Interactive 3D anatomy viewport')
+    const options = mocked.useAnatomyViewer.mock.calls.at(-1)?.[0] as {
+      element: HTMLDivElement | null
+    }
+    expect(options.element).not.toBe(viewport)
+    expect(viewport).toContainElement(options.element)
+    expect(options.element).toBeEmptyDOMElement()
+  })
+
   it('cuts waypoint motion when reduced motion is active', async () => {
     const user = userEvent.setup()
     const onWaypointReached = vi.fn()

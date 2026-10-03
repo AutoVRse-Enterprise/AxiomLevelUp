@@ -1,6 +1,6 @@
 # Phase 10: Case Lab capability demo
 
-**Status:** In progress — implementation plan approved; P10-T01 next
+**Status:** In progress — P10-T16 complete; P10-T17 close-out next
 
 ## Goal
 
@@ -182,7 +182,7 @@ case
       and icons.
 - [x] P10-T15 — Demo content: asthma, COPD and exacerbation cases, the quick case, expert
       benchmarks, badges, concepts and integrated assets with asset-manifest hashes.
-- [ ] P10-T16 — QA: automated end-to-end coverage for each case, browser QA across the four target
+- [x] P10-T16 — QA: automated end-to-end coverage for each case, browser QA across the four target
       viewports, accessibility, motion, performance and 3D memory checks.
 - [ ] P10-T17 — Close: architecture, schema, decisions, roadmap, handoff and final gate.
 

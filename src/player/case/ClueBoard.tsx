@@ -123,7 +123,7 @@ export function ClueBoard(props: ClueBoardProps) {
 
   const selected = props.clues.find(({ id }) => id === props.selectedClueId)
   return (
-    <div className="mt-3 lg:hidden">
+    <div className="mt-3 md:hidden">
       <Button
         disabled={props.clues.length === 0}
         leadingIcon={<Lightbulb aria-hidden="true" size={18} />}

@@ -142,7 +142,7 @@ export function AnatomyViewer({
         </Button>
       </header>
 
-      <div className={cn('grid min-h-0 md:grid-cols-[minmax(0,1fr)_18rem]', immersive && 'flex-1')}>
+      <div className={cn('grid min-h-0 lg:grid-cols-[minmax(0,1fr)_18rem]', immersive && 'flex-1')}>
         <div
           aria-label="Interactive 3D anatomy viewport"
           className={cn(
@@ -150,7 +150,6 @@ export function AnatomyViewer({
             immersive && 'min-h-0 flex-1 md:h-full',
             (disabled || navigation === 'flythrough') && 'pointer-events-none',
           )}
-          ref={setElement}
           role="img"
           onContextMenu={(event) => event.preventDefault()}
           onPointerCancel={() => {
@@ -172,6 +171,7 @@ export function AnatomyViewer({
             if (structureId) selectStructure(structureId, true)
           }}
         >
+          <div className="absolute inset-0" ref={setElement} />
           {state.status !== 'ready' ? (
             <div className="absolute inset-0 z-10 grid place-items-center bg-clinical-950/95 p-6 text-center">
               <div className="max-w-md">
@@ -189,7 +189,7 @@ export function AnatomyViewer({
           ) : null}
         </div>
 
-        <aside className="max-h-[42dvh] overflow-y-auto border-t border-clinical-700 bg-clinical-900 p-4 md:max-h-none md:border-l md:border-t-0">
+        <aside className="max-h-[42dvh] overflow-y-auto border-t border-clinical-700 bg-clinical-900 p-4 lg:max-h-none lg:border-l lg:border-t-0">
           <h2 className="font-bold">Select a structure</h2>
           <p className="mt-1 text-small text-neutral-300">
             This list provides the same selection without using the 3D canvas.
