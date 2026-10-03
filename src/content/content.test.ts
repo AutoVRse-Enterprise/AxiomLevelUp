@@ -147,6 +147,14 @@ describe('content schemas', () => {
       expect.objectContaining({
         pixelRatioCap: 1.5,
         maxTriangleCountWarning: 150_000,
+        volumeStyles: expect.objectContaining({
+          opacity: 0.28,
+          contextOpacity: 0.16,
+        }),
+        volumeValidation: {
+          ancestorFitTolerance: 0.05,
+          sameLevelOverlapTolerance: 0.2,
+        },
         lumen: expect.objectContaining({ defaultRadius: 0.06 }),
       }),
     )
@@ -235,6 +243,30 @@ describe('content schemas', () => {
     expect(parsedCase.id).toBe('case-contract-fixture')
     expect(parsedCase.findings?.map(({ kind }) => kind)).toEqual(['lumen_occlusion', 'region'])
     expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
+  })
+
+  it('accepts exclusive mesh and ellipsoid structure bindings', () => {
+    const map = structuredClone(anatomyMapFixture) as {
+      levels: Array<{ id: string; label: string }>
+      structures: Array<Record<string, unknown>>
+    }
+    map.levels.push({ id: 'volume', label: 'Volume' })
+    map.structures.push({
+      id: 'procedural-target',
+      levelId: 'volume',
+      parentId: 'target-structure',
+      label: 'Procedural target',
+      volume: {
+        shape: 'ellipsoid',
+        center: [0, 0, 0],
+        radii: [0.4, 0.3, 0.2],
+        rotation: [0, 0.2, 0],
+      },
+    })
+
+    expect(anatomyMapSchema.parse(map).structures).toHaveLength(3)
+    map.structures[2]!.meshNames = ['target-structure']
+    expect(anatomyMapSchema.safeParse(map).success).toBe(false)
   })
 
   it('validates case finding IDs, anchors, map edges, clues and step references', () => {
@@ -440,6 +472,55 @@ describe('content loader', () => {
         'right-lower-posterior-basal-segment',
       ]),
     )
+    const volumeStructures =
+      registry.anatomyMapById
+        .get('lung-map')
+        ?.structures.filter((structure) => 'volume' in structure) ?? []
+    expect(volumeStructures).toHaveLength(18)
+    expect(
+      Object.fromEntries(
+        [
+          'right-upper-lobe',
+          'right-middle-lobe',
+          'right-lower-lobe',
+          'left-upper-lobe',
+          'left-lower-lobe',
+        ].map((parentId) => [
+          parentId,
+          volumeStructures.filter((structure) => structure.parentId === parentId).length,
+        ]),
+      ),
+    ).toEqual({
+      'right-upper-lobe': 3,
+      'right-middle-lobe': 2,
+      'right-lower-lobe': 5,
+      'left-upper-lobe': 4,
+      'left-lower-lobe': 4,
+    })
+    expect(volumeStructures.map(({ label }) => label)).toEqual(
+      expect.arrayContaining(['Superior lingular segment', 'Inferior lingular segment']),
+    )
+    const lungMap = registry.anatomyMapById.get('lung-map')!
+    const segmentBranchCount = [
+      'right-upper-airway',
+      'right-middle-airway',
+      'right-lower-airway',
+      'left-upper-airway',
+      'left-lower-airway',
+    ].reduce(
+      (count, id) =>
+        count + (lungMap.waypoints.find((waypoint) => waypoint.id === id)?.next.length ?? 0),
+      0,
+    )
+    expect(segmentBranchCount).toBe(18)
+    expect(
+      registry.anatomyMapById
+        .get('lung-map')
+        ?.structures.find(({ id }) => id === 'right-upper-apical-segment'),
+    ).toMatchObject({
+      label: 'Apical segment',
+      volume: { shape: 'ellipsoid' },
+    })
     expect(registry.seed.caseAttempts['exacerbation-advanced']).toEqual([
       expect.objectContaining({
         resultVersion: 6,
@@ -709,6 +790,55 @@ describe('content loader', () => {
             message: expect.stringContaining(
               'already bound to same-level structure "target-structure"',
             ),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects procedural volumes outside bounds and above overlap tolerance', () => {
+    const bundle = withCaseFixture()
+    const anatomyMap = bundle.anatomyMapFiles.find(
+      ({ file }) => file === 'fixtures/anatomy-map.json',
+    )!.data as {
+      levels: Array<{ id: string; label: string }>
+      structures: Array<Record<string, unknown>>
+    }
+    anatomyMap.levels.push({ id: 'volume', label: 'Volume' })
+    anatomyMap.structures.push(
+      {
+        id: 'volume-a',
+        levelId: 'volume',
+        parentId: 'target-structure',
+        label: 'Volume A',
+        volume: { shape: 'ellipsoid', center: [0, 0, 0], radii: [0.5, 0.5, 0.5] },
+      },
+      {
+        id: 'volume-b',
+        levelId: 'volume',
+        parentId: 'target-structure',
+        label: 'Volume B',
+        volume: { shape: 'ellipsoid', center: [0.2, 0, 0], radii: [0.5, 0.5, 0.5] },
+      },
+      {
+        id: 'outside-volume',
+        levelId: 'volume',
+        parentId: 'target-structure',
+        label: 'Outside volume',
+        volume: { shape: 'ellipsoid', center: [2, 0, 0], radii: [0.5, 0.5, 0.5] },
+      },
+    )
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'structures.3.volume',
+            message: expect.stringContaining('overlaps same-level volume'),
+          }),
+          expect.objectContaining({
+            path: 'structures.4.volume',
+            message: expect.stringContaining('outside the model bounds'),
           }),
         ]),
       }),

@@ -41,20 +41,40 @@ non-default score weights. Stage steps retain the normal strict primitive parsin
 timer compatibility and semantic checks.
 
 An anatomy map is strict and requires `schemaVersion`, `id`, a model asset reference, ordered
-hierarchy levels, structures and waypoints. Each structure belongs to a level, binds one or more
-prepared model mesh names and, below the first level, has a parent on a prior level. Waypoints
-declare position, look-at target, outgoing waypoint IDs and an optional positive radius used by
-procedural lumen rendering. Anatomy primitive start views select overview, marker, waypoint or
-endoscopic mode, while `navigation` selects `orbit`, `flythrough` or `both`. Semantic validation
-enforces unique level, structure and waypoint IDs, model-asset typing, parent and level references,
-prepared mesh-name references, resolved waypoint edges, acyclic waypoint graphs and non-ambiguous
-same-level mesh bindings.
+hierarchy levels, structures and waypoints. Each structure belongs to a level and is exactly one of
+two structural variants: a non-empty `meshNames` binding to prepared model geometry, or a
+procedural `volume` with `shape: "ellipsoid"`, a model-space `center`, positive `radii` and optional
+XYZ Euler `rotation` in radians. Existing mesh-only structures retain their original shape. Every
+structure below the first level has a parent on a prior level. Waypoints declare position, look-at
+target, outgoing waypoint IDs and an optional positive radius used by procedural lumen rendering.
+Anatomy primitive start views select overview, marker, waypoint or endoscopic mode, while
+`navigation` selects `orbit`, `flythrough` or `both`.
+
+Semantic validation enforces unique level, structure and waypoint IDs, model-asset typing, parent
+and level references, prepared mesh-name references, resolved waypoint edges, acyclic waypoint
+graphs and non-ambiguous same-level mesh bindings. A volume must resolve to a mesh or volume parent.
+For a mesh ancestry boundary, its rotated axis-aligned extents must fit within the model asset
+bounds; for a volume ancestor, its center and six rotated extremes must fit inside that ancestor.
+The configured `product.anatomy3d.volumeValidation.ancestorFitTolerance` permits a small
+illustrative authoring margin instead of asserting patient-grade physical containment.
+
+Same-level ellipsoid overlap uses a pure center-line penetration ratio: zero is separated and one
+means penetration by at least the smaller directional radius. Content is rejected above
+`product.anatomy3d.volumeValidation.sameLevelOverlapTolerance`. This deterministic authoring guard
+is deliberately tolerant of illustrative model coordinates and is not a clinical segmentation
+measurement.
 
 `product.anatomy3d.findingStyles` configures generic geometry and materials for each finding kind,
 including deterministic occlusion blobs, local narrowing, wall thickening and translucent regions.
 Anatomy primitives opt into case findings through `findingIds`; exploration may additionally use
 `requiredFindingIds` as completion targets. The case planner resolves those IDs into a typed
 per-step finding map, so React and Three.js contain no course- or organ-specific branches.
+
+`product.anatomy3d.volumeStyles` configures procedural volume color, opacity, selected color and
+opacity, faded parent-mesh context opacity, material response and sphere tessellation. The Three.js
+controller creates and disposes these pickable ellipsoids generically, shows them only for the
+currently selectable level, includes them in framing/highlighting/test projection and keeps their
+nearest mesh parent as context.
 
 ## Case Lab configuration
 

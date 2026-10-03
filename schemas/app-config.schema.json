@@ -179,6 +179,23 @@
             "highlightColor": "#f6c453",
             "highlightOpacity": 1,
             "markerColor": "#f97316",
+            "volumeStyles": {
+              "color": "#38bdf8",
+              "opacity": 0.28,
+              "highlightColor": "#f6c453",
+              "highlightOpacity": 0.72,
+              "contextOpacity": 0.16,
+              "emissiveIntensity": 0.08,
+              "highlightEmissiveIntensity": 0.18,
+              "roughness": 0.62,
+              "metalness": 0,
+              "widthSegments": 24,
+              "heightSegments": 16
+            },
+            "volumeValidation": {
+              "ancestorFitTolerance": 0.05,
+              "sameLevelOverlapTolerance": 0.2
+            },
             "findingStyles": {
               "lumen_narrowing": {
                 "color": "#f59e0b",
@@ -289,6 +306,115 @@
             "markerColor": {
               "type": "string",
               "pattern": "^#[0-9a-f]{6}$"
+            },
+            "volumeStyles": {
+              "default": {
+                "color": "#38bdf8",
+                "opacity": 0.28,
+                "highlightColor": "#f6c453",
+                "highlightOpacity": 0.72,
+                "contextOpacity": 0.16,
+                "emissiveIntensity": 0.08,
+                "highlightEmissiveIntensity": 0.18,
+                "roughness": 0.62,
+                "metalness": 0,
+                "widthSegments": 24,
+                "heightSegments": 16
+              },
+              "type": "object",
+              "properties": {
+                "color": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-f]{6}$"
+                },
+                "opacity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "highlightColor": {
+                  "type": "string",
+                  "pattern": "^#[0-9a-f]{6}$"
+                },
+                "highlightOpacity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "contextOpacity": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 1
+                },
+                "emissiveIntensity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "highlightEmissiveIntensity": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "roughness": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "metalness": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "widthSegments": {
+                  "type": "integer",
+                  "minimum": 8,
+                  "maximum": 64
+                },
+                "heightSegments": {
+                  "type": "integer",
+                  "minimum": 6,
+                  "maximum": 48
+                }
+              },
+              "required": [
+                "color",
+                "opacity",
+                "highlightColor",
+                "highlightOpacity",
+                "contextOpacity",
+                "emissiveIntensity",
+                "highlightEmissiveIntensity",
+                "roughness",
+                "metalness",
+                "widthSegments",
+                "heightSegments"
+              ],
+              "additionalProperties": false
+            },
+            "volumeValidation": {
+              "default": {
+                "ancestorFitTolerance": 0.05,
+                "sameLevelOverlapTolerance": 0.2
+              },
+              "type": "object",
+              "properties": {
+                "ancestorFitTolerance": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.5
+                },
+                "sameLevelOverlapTolerance": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "ancestorFitTolerance",
+                "sameLevelOverlapTolerance"
+              ],
+              "additionalProperties": false
             },
             "findingStyles": {
               "default": {
@@ -640,6 +766,8 @@
             "highlightColor",
             "highlightOpacity",
             "markerColor",
+            "volumeStyles",
+            "volumeValidation",
             "findingStyles",
             "lumen"
           ],

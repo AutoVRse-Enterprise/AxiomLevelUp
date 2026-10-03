@@ -41,6 +41,23 @@
       "highlightColor": "#f6c453",
       "highlightOpacity": 1,
       "markerColor": "#f97316",
+      "volumeStyles": {
+        "color": "#38bdf8",
+        "opacity": 0.28,
+        "highlightColor": "#f6c453",
+        "highlightOpacity": 0.72,
+        "contextOpacity": 0.16,
+        "emissiveIntensity": 0.08,
+        "highlightEmissiveIntensity": 0.18,
+        "roughness": 0.62,
+        "metalness": 0,
+        "widthSegments": 24,
+        "heightSegments": 16
+      },
+      "volumeValidation": {
+        "ancestorFitTolerance": 0.05,
+        "sameLevelOverlapTolerance": 0.2
+      },
       "findingStyles": {
         "lumen_narrowing": {
           "color": "#f59e0b",

@@ -10,14 +10,30 @@ const anatomyLevelSchema = z.strictObject({
   clueIds: clueIdsSchema.optional(),
 })
 
-const anatomyStructureSchema = z.strictObject({
+const anatomyStructureBase = {
   id: idSchema,
   levelId: idSchema,
   parentId: idSchema.optional(),
   label: z.string().trim().min(1),
-  meshNames: z.array(z.string().trim().min(1)).min(1),
   clueIds: clueIdsSchema.optional(),
+}
+
+const meshAnatomyStructureSchema = z.strictObject({
+  ...anatomyStructureBase,
+  meshNames: z.array(z.string().trim().min(1)).min(1),
 })
+
+const volumeAnatomyStructureSchema = z.strictObject({
+  ...anatomyStructureBase,
+  volume: z.strictObject({
+    shape: z.literal('ellipsoid'),
+    center: vector3Schema,
+    radii: z.tuple([z.number().positive(), z.number().positive(), z.number().positive()]),
+    rotation: vector3Schema.optional(),
+  }),
+})
+
+const anatomyStructureSchema = z.union([meshAnatomyStructureSchema, volumeAnatomyStructureSchema])
 
 const anatomyWaypointSchema = z.strictObject({
   id: idSchema,
@@ -43,3 +59,11 @@ export const anatomyMapSchema = z.strictObject({
 })
 
 export type AnatomyMap = z.infer<typeof anatomyMapSchema>
+export type AnatomyStructure = AnatomyMap['structures'][number]
+export type AnatomyVolumeStructure = Extract<AnatomyStructure, { volume: unknown }>
+
+export function isVolumeStructure(
+  structure: AnatomyStructure,
+): structure is AnatomyVolumeStructure {
+  return 'volume' in structure
+}

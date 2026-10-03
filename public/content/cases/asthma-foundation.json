@@ -196,17 +196,7 @@
             "levels": [
               { "levelId": "system", "input": "model", "targetStructureId": "respiratory-system", "weight": 1 },
               { "levelId": "lobe", "input": "model", "targetStructureId": "right-upper-lobe", "weight": 1 },
-              {
-                "levelId": "segment",
-                "input": "choice",
-                "options": [
-                  { "id": "apical-segment", "label": "Apical segment" },
-                  { "id": "medial-basal-segment", "label": "Medial basal segment", "clueIds": ["anatomy"] },
-                  { "id": "lingular-segment", "label": "Lingular segment", "clueIds": ["anatomy"] }
-                ],
-                "correctOptionId": "apical-segment",
-                "weight": 1
-              },
+              { "levelId": "segment", "input": "model", "targetStructureId": "right-upper-apical-segment", "weight": 1 },
               {
                 "levelId": "structure",
                 "input": "choice",
@@ -432,7 +422,7 @@
     "durationSeconds": 330,
     "openedClueIds": ["history", "anatomy", "wheeze", "spirometry"],
     "responses": {
-      "asthma-localise": { "system": "respiratory-system", "lobe": "right-upper-lobe", "segment": "apical-segment", "structure": "bronchiole" },
+      "asthma-localise": { "system": "respiratory-system", "lobe": "right-upper-lobe", "segment": "right-upper-apical-segment", "structure": "bronchiole" },
       "asthma-airway-function": "conducting-airway",
       "asthma-key-observations": ["variable-symptoms", "reversibility"],
       "asthma-sort-evidence": { "fev1-rise": "airflow", "feno-eosinophils": "inflammation" },

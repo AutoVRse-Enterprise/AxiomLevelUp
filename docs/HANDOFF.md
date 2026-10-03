@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T02 is complete; P12-T03 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T03 is complete; P12-T04 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -77,17 +77,26 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   key evidence on reviews and added stable case totals plus separate stage availability.
 - Exposed accessible unopened/opened/reviewed states while suppressing importance labels for
   advanced tiers; exported the config schema and recorded ADR-086.
+- Added exclusive mesh/procedural-volume anatomy structures with pure configured containment and
+  overlap validation.
+- Added 18 labelled bronchopulmonary segment ellipsoids across all five lobes and 18 segmental
+  airway branches while preserving the featured-case route and labels.
+- Rendered only currently selectable volume levels as pickable translucent ellipsoids with faded
+  parent-mesh context, full highlight/frame/projection/disposal support and no Three.js imports
+  outside the anatomy adapter.
+- Moved the foundation apical segment level onto the real 3D volume path and added a projected-point
+  real-WebGL test across both browser projects. Exported schemas and recorded ADR-087.
 
 ## In progress
 
-- P12-T03 is ready to add configured procedural segment volumes and segmental waypoints.
+- P12-T04 is ready to add local evidence notes, location and differential confidence.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Implement P12-T03 configured procedural segment volumes and segmental waypoints.
-2. Implement P12-T04 local evidence notes, location and differential confidence.
+1. Implement P12-T04 local evidence notes, location and differential confidence.
+2. Implement P12-T05 actionable key-evidence debrief and expert teaching.
 3. Preserve the Phase 11 golden-path gate after every task.
 
 ## Blockers/questions for the user
@@ -137,6 +146,14 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
     seconds;
   - the first demo run exposed an accessible-name compatibility regression on the desktop clue
     trigger; restoring its `Clues` prefix fixed the P11-T09 locator and the complete rerun passed.
+- P12-T03 verification:
+  - schema export and focused tests pass 7 files / 78 tests;
+  - full `npm run check` passes 61 files / 415 tests, zero content warnings, production build and
+    all bundle budgets without adjustment;
+  - the focused P12-T03 real-WebGL check passes in desktop and touch-phone Chromium;
+  - the complete browser suite passes all 18 tests across both projects with `--workers=1`; an
+    initial two-worker run had one transient timeout in the pre-existing desktop finding stability
+    poll while its touch and full-path equivalents passed.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.
@@ -147,6 +164,10 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 
 - Golden-case findings and waypoint coordinates are illustrative configured geometry, not
   patient-derived or validated anatomy.
+- Segment volumes and airway branches are illustrative authoring geometry. Mesh-parent fit uses the
+  model asset bounds, volume-parent fit samples the child center and rotated axis extremes, and
+  same-level overlap uses configured center-line penetration tolerance; these checks are not
+  anatomical segmentation validation.
 - `versioned-case-models-v1` caches only SHA-versioned GLBs (four entries, 14 days). It is a
   targeted demo preload and does not establish general offline 3D.
 - Run the full WebGL Playwright suite with `--workers=2` on this workstation; four concurrent

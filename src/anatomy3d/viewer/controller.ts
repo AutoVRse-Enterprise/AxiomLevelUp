@@ -57,7 +57,22 @@ export interface AnatomyControllerConfig {
   cameraAnimationDurationMs: number
   flyThroughEasing: 'linear' | 'ease_out' | 'ease_in_out'
   backgroundColor: string
+  highlightColor: string
+  highlightOpacity: number
   markerColor: string
+  volumeStyles: {
+    color: string
+    opacity: number
+    highlightColor: string
+    highlightOpacity: number
+    contextOpacity: number
+    emissiveIntensity: number
+    highlightEmissiveIntensity: number
+    roughness: number
+    metalness: number
+    widthSegments: number
+    heightSegments: number
+  }
   findingStyles: {
     lumen_narrowing: {
       color: string
@@ -128,6 +143,7 @@ export interface CreateAnatomyControllerOptions {
 export interface AnatomyViewerController {
   load(modelUrl: string, map: AnatomyMap): Promise<AnatomyLoadResult>
   setStartView(view: AnatomyStartView): void
+  setSelectableLevelIds(levelIds?: readonly string[]): void
   pick(clientX: number, clientY: number, selectableLevelIds?: readonly string[]): string | null
   pickFinding(clientX: number, clientY: number): string | null
   highlight(structureIds: readonly string[], style: AnatomyHighlightStyle): void

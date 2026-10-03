@@ -98,6 +98,25 @@ async function stableFindingPoint(page: Page, findingId: string) {
   return current!
 }
 
+async function projectedStructurePoint(page: Page, structureId: string) {
+  let current: { clientX: number; clientY: number } | undefined
+  await expect
+    .poll(
+      async () => {
+        const snapshot = await anatomySnapshot(page)
+        const structure = snapshot.structures.find(
+          ({ id, visible }) => id === structureId && visible,
+        )
+        if (!structure) return false
+        current = structure
+        return true
+      },
+      { intervals: [150, 250, 400, 600], timeout: 15_000 },
+    )
+    .toBe(true)
+  return current!
+}
+
 async function dismissCelebrations(page: Page) {
   for (let index = 0; index < 5; index += 1) {
     const dialog = page.getByRole('dialog')
@@ -183,6 +202,27 @@ test('P11-T03: selects the intended lobe through the rendered canvas', async ({
 
   await activateProjectedPoint(page, testInfo, target!)
   await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
+})
+
+test('P12-T03: selects a procedural segment through real WebGL', async ({ page }, testInfo) => {
+  test.slow()
+  await startCase(page, '/learn/cases/asthma-foundation')
+  await page.locator('[data-anatomy-viewer] canvas').scrollIntoViewIfNeeded()
+
+  const system = await projectedStructurePoint(page, 'respiratory-system')
+  await activateProjectedPoint(page, testInfo, system)
+  await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
+  await page.getByRole('button', { name: 'Next level' }).click()
+
+  const lobe = await projectedStructurePoint(page, 'right-upper-lobe')
+  await activateProjectedPoint(page, testInfo, lobe)
+  await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
+  await page.getByRole('button', { name: 'Next level' }).click()
+
+  const segment = await projectedStructurePoint(page, 'right-upper-apical-segment')
+  await activateProjectedPoint(page, testInfo, segment)
+  await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
+  await expect(page.getByText('Apical segment selected')).toBeAttached()
 })
 
 test('P11-T04: retains the configured overview marker across reset', async ({ page }) => {

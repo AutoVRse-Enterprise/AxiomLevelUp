@@ -79,6 +79,132 @@
       "parentId": "respiratory-system",
       "label": "Left lower lobe",
       "meshNames": ["left_lower_lobe"]
+    },
+    {
+      "id": "right-upper-apical-segment",
+      "levelId": "segment",
+      "parentId": "right-upper-lobe",
+      "label": "Apical segment",
+      "volume": { "shape": "ellipsoid", "center": [-70, -55, 1340], "radii": [19, 22, 30], "rotation": [0.08, 0.18, -0.08] }
+    },
+    {
+      "id": "right-upper-posterior-segment",
+      "levelId": "segment",
+      "parentId": "right-upper-lobe",
+      "label": "Posterior segment",
+      "volume": { "shape": "ellipsoid", "center": [-78, -78, 1280], "radii": [20, 20, 26], "rotation": [-0.08, -0.12, 0.06] }
+    },
+    {
+      "id": "right-upper-anterior-segment",
+      "levelId": "segment",
+      "parentId": "right-upper-lobe",
+      "label": "Anterior segment",
+      "volume": { "shape": "ellipsoid", "center": [-42, -76, 1330], "radii": [17, 20, 25], "rotation": [0.04, -0.16, 0.08] }
+    },
+    {
+      "id": "right-middle-lateral-segment",
+      "levelId": "segment",
+      "parentId": "right-middle-lobe",
+      "label": "Lateral segment",
+      "volume": { "shape": "ellipsoid", "center": [-77, -109, 1260], "radii": [18, 16, 23], "rotation": [0.04, -0.12, -0.12] }
+    },
+    {
+      "id": "right-middle-medial-segment",
+      "levelId": "segment",
+      "parentId": "right-middle-lobe",
+      "label": "Medial segment",
+      "volume": { "shape": "ellipsoid", "center": [-40, -108, 1270], "radii": [15, 16, 21], "rotation": [-0.05, 0.1, 0.08] }
+    },
+    {
+      "id": "right-lower-superior-segment-volume",
+      "levelId": "segment",
+      "parentId": "right-lower-lobe",
+      "label": "Superior segment",
+      "volume": { "shape": "ellipsoid", "center": [-62, -116, 1222], "radii": [21, 18, 23], "rotation": [-0.08, 0.08, 0] }
+    },
+    {
+      "id": "right-lower-medial-basal-segment",
+      "levelId": "segment",
+      "parentId": "right-lower-lobe",
+      "label": "Medial basal segment",
+      "volume": { "shape": "ellipsoid", "center": [-33, -143, 1178], "radii": [14, 20, 27], "rotation": [0.12, 0.08, 0.08] }
+    },
+    {
+      "id": "right-lower-anterior-basal-segment",
+      "levelId": "segment",
+      "parentId": "right-lower-lobe",
+      "label": "Anterior basal segment",
+      "volume": { "shape": "ellipsoid", "center": [-48, -144, 1120], "radii": [17, 21, 25], "rotation": [-0.08, -0.12, 0] }
+    },
+    {
+      "id": "right-lower-lateral-basal-segment-volume",
+      "levelId": "segment",
+      "parentId": "right-lower-lobe",
+      "label": "Lateral basal segment",
+      "volume": { "shape": "ellipsoid", "center": [-82, -145, 1160], "radii": [16, 21, 27], "rotation": [0.08, 0.12, -0.06] }
+    },
+    {
+      "id": "right-lower-posterior-basal-segment-volume",
+      "levelId": "segment",
+      "parentId": "right-lower-lobe",
+      "label": "Posterior basal segment",
+      "volume": { "shape": "ellipsoid", "center": [-76, -148, 1080], "radii": [21, 22, 31], "rotation": [-0.1, 0.14, 0.04] }
+    },
+    {
+      "id": "left-upper-apicoposterior-segment",
+      "levelId": "segment",
+      "parentId": "left-upper-lobe",
+      "label": "Apicoposterior segment",
+      "volume": { "shape": "ellipsoid", "center": [72, -58, 1328], "radii": [21, 24, 33], "rotation": [0.08, -0.16, 0.08] }
+    },
+    {
+      "id": "left-upper-anterior-segment",
+      "levelId": "segment",
+      "parentId": "left-upper-lobe",
+      "label": "Anterior segment",
+      "volume": { "shape": "ellipsoid", "center": [42, -79, 1332], "radii": [17, 20, 25], "rotation": [0.04, 0.16, -0.08] }
+    },
+    {
+      "id": "left-upper-superior-lingular-segment",
+      "levelId": "segment",
+      "parentId": "left-upper-lobe",
+      "label": "Superior lingular segment",
+      "volume": { "shape": "ellipsoid", "center": [68, -102, 1278], "radii": [17, 15, 22], "rotation": [-0.04, 0.1, 0.08] }
+    },
+    {
+      "id": "left-upper-inferior-lingular-segment",
+      "levelId": "segment",
+      "parentId": "left-upper-lobe",
+      "label": "Inferior lingular segment",
+      "volume": { "shape": "ellipsoid", "center": [55, -121, 1236], "radii": [17, 16, 22], "rotation": [0.06, -0.08, -0.06] }
+    },
+    {
+      "id": "left-lower-superior-segment",
+      "levelId": "segment",
+      "parentId": "left-lower-lobe",
+      "label": "Superior segment",
+      "volume": { "shape": "ellipsoid", "center": [92, -112, 1208], "radii": [17, 18, 22], "rotation": [-0.08, -0.08, 0] }
+    },
+    {
+      "id": "left-lower-anteromedial-basal-segment",
+      "levelId": "segment",
+      "parentId": "left-lower-lobe",
+      "label": "Anteromedial basal segment",
+      "volume": { "shape": "ellipsoid", "center": [40, -143, 1162], "radii": [18, 20, 27], "rotation": [0.1, -0.08, -0.06] }
+    },
+    {
+      "id": "left-lower-lateral-basal-segment",
+      "levelId": "segment",
+      "parentId": "left-lower-lobe",
+      "label": "Lateral basal segment",
+      "volume": { "shape": "ellipsoid", "center": [82, -145, 1148], "radii": [17, 21, 28], "rotation": [0.08, -0.1, 0.06] }
+    },
+    {
+      "id": "left-lower-posterior-basal-segment",
+      "levelId": "segment",
+      "parentId": "left-lower-lobe",
+      "label": "Posterior basal segment",
+      "volume": { "shape": "ellipsoid", "center": [70, -148, 1074], "radii": [22, 22, 31], "rotation": [-0.1, -0.12, -0.04] }
     }
   ],
   "waypoints": [
@@ -105,7 +231,7 @@
       "label": "Right main airway",
       "position": [-22, -90, 1248],
       "lookAt": [-45, -108, 1235],
-      "next": ["right-upper-airway", "right-lower-airway"],
+      "next": ["right-upper-airway", "right-middle-airway", "right-lower-airway"],
       "radius": 5,
       "lumen": { "ringCount": 5 }
     },
@@ -123,8 +249,60 @@
       "label": "Right upper lobar airway",
       "position": [-48, -103, 1280],
       "lookAt": [-66, -112, 1302],
-      "next": [],
+      "next": [
+        "right-upper-apical-airway",
+        "right-upper-posterior-airway",
+        "right-upper-anterior-airway"
+      ],
       "radius": 3.5
+    },
+    {
+      "id": "right-upper-apical-airway",
+      "label": "Right apical segmental airway",
+      "position": [-66, -92, 1307],
+      "lookAt": [-72, -72, 1340],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "right-upper-posterior-airway",
+      "label": "Right posterior segmental airway",
+      "position": [-67, -108, 1280],
+      "lookAt": [-82, -98, 1265],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "right-upper-anterior-airway",
+      "label": "Right anterior segmental airway",
+      "position": [-54, -101, 1300],
+      "lookAt": [-39, -88, 1327],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "right-middle-airway",
+      "label": "Right middle lobar airway",
+      "position": [-43, -112, 1253],
+      "lookAt": [-58, -121, 1250],
+      "next": ["right-middle-lateral-airway", "right-middle-medial-airway"],
+      "radius": 3.2
+    },
+    {
+      "id": "right-middle-lateral-airway",
+      "label": "Right lateral segmental airway",
+      "position": [-59, -122, 1248],
+      "lookAt": [-78, -117, 1260],
+      "next": [],
+      "radius": 2.2
+    },
+    {
+      "id": "right-middle-medial-airway",
+      "label": "Right medial segmental airway",
+      "position": [-57, -122, 1255],
+      "lookAt": [-40, -116, 1270],
+      "next": [],
+      "radius": 2.2
     },
     {
       "id": "right-lower-airway",
@@ -133,6 +311,8 @@
       "lookAt": [-62, -140, 1195],
       "next": [
         "right-lower-superior-segment",
+        "right-lower-medial-basal-segment-airway",
+        "right-lower-anterior-basal-segment-airway",
         "right-lower-lateral-basal-segment",
         "right-lower-posterior-basal-segment"
       ],
@@ -145,6 +325,22 @@
       "lookAt": [-82, -151, 1238],
       "next": [],
       "radius": 2.5
+    },
+    {
+      "id": "right-lower-medial-basal-segment-airway",
+      "label": "Medial basal segmental airway",
+      "position": [-60, -143, 1196],
+      "lookAt": [-34, -153, 1178],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "right-lower-anterior-basal-segment-airway",
+      "label": "Anterior basal segmental airway",
+      "position": [-63, -148, 1188],
+      "lookAt": [-49, -161, 1135],
+      "next": [],
+      "radius": 2.3
     },
     {
       "id": "right-lower-lateral-basal-segment",
@@ -177,16 +373,90 @@
       "label": "Left upper lobar airway",
       "position": [48, -103, 1280],
       "lookAt": [66, -112, 1302],
-      "next": [],
+      "next": [
+        "left-upper-apicoposterior-airway",
+        "left-upper-anterior-airway",
+        "left-upper-superior-lingular-airway",
+        "left-upper-inferior-lingular-airway"
+      ],
       "radius": 3.5
+    },
+    {
+      "id": "left-upper-apicoposterior-airway",
+      "label": "Left apicoposterior segmental airway",
+      "position": [64, -91, 1308],
+      "lookAt": [73, -72, 1338],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "left-upper-anterior-airway",
+      "label": "Left anterior segmental airway",
+      "position": [59, -101, 1302],
+      "lookAt": [42, -88, 1330],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "left-upper-superior-lingular-airway",
+      "label": "Superior lingular segmental airway",
+      "position": [61, -114, 1272],
+      "lookAt": [70, -113, 1260],
+      "next": [],
+      "radius": 2.1
+    },
+    {
+      "id": "left-upper-inferior-lingular-airway",
+      "label": "Inferior lingular segmental airway",
+      "position": [58, -119, 1262],
+      "lookAt": [55, -133, 1237],
+      "next": [],
+      "radius": 2.1
     },
     {
       "id": "left-lower-airway",
       "label": "Left lower lobar airway",
       "position": [44, -118, 1222],
       "lookAt": [62, -140, 1195],
-      "next": [],
+      "next": [
+        "left-lower-superior-airway",
+        "left-lower-anteromedial-basal-airway",
+        "left-lower-lateral-basal-airway",
+        "left-lower-posterior-basal-airway"
+      ],
       "radius": 3.5
+    },
+    {
+      "id": "left-lower-superior-airway",
+      "label": "Left superior segmental airway",
+      "position": [62, -136, 1226],
+      "lookAt": [92, -124, 1209],
+      "next": [],
+      "radius": 2.5
+    },
+    {
+      "id": "left-lower-anteromedial-basal-airway",
+      "label": "Left anteromedial basal segmental airway",
+      "position": [61, -145, 1194],
+      "lookAt": [41, -158, 1163],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "left-lower-lateral-basal-airway",
+      "label": "Left lateral basal segmental airway",
+      "position": [66, -147, 1187],
+      "lookAt": [82, -162, 1150],
+      "next": [],
+      "radius": 2.3
+    },
+    {
+      "id": "left-lower-posterior-basal-airway",
+      "label": "Left posterior basal segmental airway",
+      "position": [65, -151, 1179],
+      "lookAt": [70, -169, 1098],
+      "next": [],
+      "radius": 2.3
     }
   ]
 }

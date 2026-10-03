@@ -11,6 +11,7 @@ const mocked = vi.hoisted(() => ({
   controller: {
     load: vi.fn(),
     setStartView: vi.fn(),
+    setSelectableLevelIds: vi.fn(),
     pick: vi.fn(),
     pickFinding: vi.fn(),
     highlight: vi.fn(),
@@ -206,6 +207,7 @@ describe('AnatomyViewer', () => {
       />,
     )
 
+    expect(mocked.controller.setSelectableLevelIds).toHaveBeenCalledWith(['structure'])
     expect(mocked.controller.frameStructures).toHaveBeenCalledWith(['target-structure'], {
       animate: false,
     })

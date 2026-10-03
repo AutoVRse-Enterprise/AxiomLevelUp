@@ -120,6 +120,12 @@ export function AnatomyViewer({
   const selectableLevelKey = selectableLevelIds?.join('|') ?? '*'
 
   useEffect(() => {
+    controller?.setSelectableLevelIds(selectableLevelIds)
+    // The configured IDs are represented by the stable key.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [controller, selectableLevelKey])
+
+  useEffect(() => {
     if (!controller || state.status !== 'ready' || endoscopicRef.current) return
     controller.frameStructures(selectableStructureIds, { animate: motion === 'full' })
     // The IDs are derived from this stable level key and the validated anatomy map.

@@ -43,6 +43,7 @@ vi.mock('@/anatomy3d/viewer/useAnatomyViewer', () => ({
     },
     controller: {
       highlight: vi.fn(),
+      setSelectableLevelIds: vi.fn(),
       setMarker: vi.fn(),
       setFindings: vi.fn(),
       pick: vi.fn(),

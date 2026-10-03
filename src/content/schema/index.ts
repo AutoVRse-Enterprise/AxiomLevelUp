@@ -275,6 +275,42 @@ export const appConfigSchema = z.object({
         highlightColor: z.string().regex(/^#[0-9a-f]{6}$/i),
         highlightOpacity: z.number().min(0).max(1),
         markerColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        volumeStyles: z
+          .strictObject({
+            color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            opacity: z.number().positive().max(1),
+            highlightColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+            highlightOpacity: z.number().positive().max(1),
+            contextOpacity: z.number().positive().max(1),
+            emissiveIntensity: z.number().min(0).max(1),
+            highlightEmissiveIntensity: z.number().min(0).max(1),
+            roughness: z.number().min(0).max(1),
+            metalness: z.number().min(0).max(1),
+            widthSegments: z.number().int().min(8).max(64),
+            heightSegments: z.number().int().min(6).max(48),
+          })
+          .default({
+            color: '#38bdf8',
+            opacity: 0.28,
+            highlightColor: '#f6c453',
+            highlightOpacity: 0.72,
+            contextOpacity: 0.16,
+            emissiveIntensity: 0.08,
+            highlightEmissiveIntensity: 0.18,
+            roughness: 0.62,
+            metalness: 0,
+            widthSegments: 24,
+            heightSegments: 16,
+          }),
+        volumeValidation: z
+          .strictObject({
+            ancestorFitTolerance: z.number().min(0).max(0.5),
+            sameLevelOverlapTolerance: z.number().min(0).max(1),
+          })
+          .default({
+            ancestorFitTolerance: 0.05,
+            sameLevelOverlapTolerance: 0.2,
+          }),
         findingStyles: z
           .strictObject({
             lumen_narrowing: z.strictObject({
@@ -374,6 +410,23 @@ export const appConfigSchema = z.object({
         highlightColor: '#f6c453',
         highlightOpacity: 1,
         markerColor: '#f97316',
+        volumeStyles: {
+          color: '#38bdf8',
+          opacity: 0.28,
+          highlightColor: '#f6c453',
+          highlightOpacity: 0.72,
+          contextOpacity: 0.16,
+          emissiveIntensity: 0.08,
+          highlightEmissiveIntensity: 0.18,
+          roughness: 0.62,
+          metalness: 0,
+          widthSegments: 24,
+          heightSegments: 16,
+        },
+        volumeValidation: {
+          ancestorFitTolerance: 0.05,
+          sameLevelOverlapTolerance: 0.2,
+        },
         findingStyles: {
           lumen_narrowing: {
             color: '#f59e0b',

@@ -29,8 +29,10 @@ function ancestryDepth(
 
 function compareSpecificity(left: RankedStructure, right: RankedStructure) {
   if (left.depth !== right.depth) return right.depth - left.depth
-  if (left.structure.meshNames.length !== right.structure.meshNames.length) {
-    return left.structure.meshNames.length - right.structure.meshNames.length
+  const leftBindingCount = 'meshNames' in left.structure ? left.structure.meshNames.length : 1
+  const rightBindingCount = 'meshNames' in right.structure ? right.structure.meshNames.length : 1
+  if (leftBindingCount !== rightBindingCount) {
+    return leftBindingCount - rightBindingCount
   }
   if (left.structure.id < right.structure.id) return -1
   if (left.structure.id > right.structure.id) return 1
@@ -41,6 +43,7 @@ export function resolveStructure(
   meshNameHits: readonly string[],
   structures: readonly AnatomyStructure[],
   allowedLevelIds?: readonly string[],
+  structureIdHits: readonly string[] = [],
 ): string | null {
   const allowedLevels = allowedLevelIds ? new Set(allowedLevelIds) : null
   const structureById = new Map(structures.map((structure) => [structure.id, structure]))
@@ -50,11 +53,22 @@ export function resolveStructure(
     index,
   }))
 
+  for (const structureId of structureIdHits) {
+    const direct = ranked
+      .filter(
+        ({ structure }) =>
+          structure.id === structureId && (!allowedLevels || allowedLevels.has(structure.levelId)),
+      )
+      .sort(compareSpecificity)
+    if (direct[0]) return direct[0].structure.id
+  }
+
   for (const meshName of meshNameHits) {
     const candidates = ranked
       .filter(
         ({ structure }) =>
           (!allowedLevels || allowedLevels.has(structure.levelId)) &&
+          'meshNames' in structure &&
           structure.meshNames.includes(meshName),
       )
       .sort(compareSpecificity)

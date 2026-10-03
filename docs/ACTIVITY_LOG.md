@@ -2553,3 +2553,32 @@ registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl
   `docs/reference docs/` was not touched.
 - **Follow-ups:** Start P12-T03 configured procedural segment volumes and segmental waypoints.
   Clinical/client sign-off and Phase 9 physical-device gates remain external blockers.
+
+### [2026-10-03 21:39] P12-T03 - Add procedural segment anatomy
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Extended anatomy structures to an exclusive mesh-binding or configured ellipsoid
+  volume union. Added pure rotated-bound, tolerant ancestor-fit and same-level overlap validation;
+  configured volume materials and tolerances; and integrated selectable-level volume rendering,
+  faded mesh-parent context, picking, highlighting, framing, projection and disposal into the
+  shared Three.js controller. Authored 18 labelled segment volumes and 18 useful segmental airway
+  branches across all five lobes, moved the foundation apical-segment task onto real 3D selection
+  and preserved the featured golden route and choice labels. Added ADR-087 and closed P12-T03.
+- **Files changed:** Anatomy schema/loader and new volume-validation helper/tests; app config and
+  generated schemas; Three.js controller/viewer contracts and tests; lung map and foundation case;
+  real-WebGL browser coverage and refreshed golden screenshots; schema exporter/content
+  documentation; ADR-087; Phase 12 checklist; handoff and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (7 files / 78 tests);
+  `npm run schema:export`; `npm run validate:content`; `npm run typecheck`; `npm run lint`;
+  `npm run check`; focused P12-T03 Playwright; full `npm run test:e2e -- --workers=2` and serial
+  rerun with `--workers=1`; IDE diagnostics; `git diff --check`.
+- **Result/verification:** Schema export passes. Focused tests pass 78/78. The complete quality gate
+  passes 61 Vitest files / 415 tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map
+  with zero warnings, builds production output and passes all bundle budgets without adjustment.
+  The projected segment pick passes in desktop and touch-phone Chromium, and the final complete
+  browser suite passes 18/18 serially. The initial two-worker browser run had one transient timeout
+  in the pre-existing desktop finding stability poll while its touch and full-path equivalents
+  passed. No commit was created, and `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T04 local evidence notes, current location and differential confidence.
+  Obtain the outstanding clinical/anatomy/client review and complete the Phase 9 physical-device
+  gates before external approval.

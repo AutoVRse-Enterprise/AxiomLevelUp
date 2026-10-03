@@ -94,4 +94,28 @@ describe('resolveStructure', () => {
     expect(resolveStructure(['right-lower-lobe-mesh'], structures, [])).toBeNull()
     expect(resolveStructure(['right-lower-lobe-mesh'], structures, ['segment'])).toBeNull()
   })
+
+  it('resolves a direct procedural-volume hit within the selectable level', () => {
+    const withVolume = [
+      ...structures,
+      {
+        id: 'right-lower-posterior-basal-segment',
+        levelId: 'segment',
+        parentId: 'right-lower-lobe',
+        label: 'Posterior basal segment',
+        volume: {
+          shape: 'ellipsoid',
+          center: [-68, -150, 1105],
+          radii: [25, 24, 35],
+        },
+      },
+    ] satisfies AnatomyStructure[]
+
+    expect(
+      resolveStructure([], withVolume, ['segment'], ['right-lower-posterior-basal-segment']),
+    ).toBe('right-lower-posterior-basal-segment')
+    expect(
+      resolveStructure([], withVolume, ['lobe'], ['right-lower-posterior-basal-segment']),
+    ).toBeNull()
+  })
 })

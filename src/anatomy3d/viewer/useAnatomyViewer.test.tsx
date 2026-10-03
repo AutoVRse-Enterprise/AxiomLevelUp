@@ -10,6 +10,7 @@ const mocked = vi.hoisted(() => {
   const controller = {
     load: vi.fn(),
     setStartView: vi.fn(),
+    setSelectableLevelIds: vi.fn(),
     pick: vi.fn(),
     pickFinding: vi.fn(),
     highlight: vi.fn(),

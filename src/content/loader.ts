@@ -23,6 +23,7 @@ import {
   type Primitive,
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
+import { validateAnatomyVolumes } from './anatomyVolumeValidation'
 import { contentPrimitiveTypeSet, primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
 
 export interface ContentIssue {
@@ -843,24 +844,26 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         }
       }
 
-      structure.meshNames.forEach((meshName, meshIndex) => {
-        const levelMeshOwners =
-          meshOwnersByLevel.get(structure.levelId) ?? new Map<string, string>()
-        meshOwnersByLevel.set(structure.levelId, levelMeshOwners)
-        const existingOwner = levelMeshOwners.get(meshName)
-        if (existingOwner && existingOwner !== structure.id) {
-          issues.push({
-            file,
-            path: `${path}.meshNames.${meshIndex}`,
-            message: `Mesh "${meshName}" is already bound to same-level structure "${existingOwner}".`,
-            severity: 'error',
-          })
-        } else {
-          levelMeshOwners.set(meshName, structure.id)
-        }
-      })
+      if ('meshNames' in structure) {
+        structure.meshNames.forEach((meshName, meshIndex) => {
+          const levelMeshOwners =
+            meshOwnersByLevel.get(structure.levelId) ?? new Map<string, string>()
+          meshOwnersByLevel.set(structure.levelId, levelMeshOwners)
+          const existingOwner = levelMeshOwners.get(meshName)
+          if (existingOwner && existingOwner !== structure.id) {
+            issues.push({
+              file,
+              path: `${path}.meshNames.${meshIndex}`,
+              message: `Mesh "${meshName}" is already bound to same-level structure "${existingOwner}".`,
+              severity: 'error',
+            })
+          } else {
+            levelMeshOwners.set(meshName, structure.id)
+          }
+        })
+      }
 
-      if (modelAsset?.type === 'model') {
+      if (modelAsset?.type === 'model' && 'meshNames' in structure) {
         const modelMeshNames = new Set(modelAsset.meshNames)
         structure.meshNames.forEach((meshName, meshIndex) => {
           if (!modelMeshNames.has(meshName)) {
@@ -873,6 +876,19 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
           }
         })
       }
+    })
+
+    validateAnatomyVolumes(
+      anatomyMap.structures,
+      modelAsset?.type === 'model' ? modelAsset.bounds : undefined,
+      appConfig.product.anatomy3d.volumeValidation,
+    ).forEach((issue) => {
+      issues.push({
+        file,
+        path: `structures.${issue.structureIndex}.${issue.field}`,
+        message: issue.message,
+        severity: 'error',
+      })
     })
 
     const waypointIds = new Set<string>()

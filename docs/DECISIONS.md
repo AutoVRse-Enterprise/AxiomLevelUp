@@ -1478,3 +1478,32 @@ evidence-consumption fact. Resume preserves reviews without emitting duplicate e
 remediation can open a clue without claiming it was reviewed. Existing result-v5/v6 records remain
 readable but cannot prove review, so their missed-evidence display conservatively treats key clues
 as unreviewed.
+
+## ADR-087: Procedural ellipsoids extend anatomy depth
+
+**Status:** Accepted
+
+**Context:** The licensed lung GLB exposes gross lobes and central airways but no bronchopulmonary
+segment meshes. Replacing it would add provenance, download and visual-regression risk, while
+hard-coded respiratory geometry would violate the organ-agnostic runtime boundary. Illustrative
+coordinates also cannot support brittle claims of exact physical containment.
+
+**Decision:** Make anatomy structures an exclusive union of existing non-empty mesh bindings and
+configured procedural ellipsoid volumes. Validate each volume against its resolved hierarchy and
+the available authoring envelope: child axis extremes must fit a volume ancestor, while volumes
+under mesh ancestry must fit the model asset bounds. Apply configured tolerance to this approximate
+fit and reject same-level volumes whose center-line penetration ratio exceeds the configured
+overlap tolerance.
+
+Render volumes only when their level is selectable, retain the nearest mesh ancestor at configured
+faded opacity and keep picking, highlighting, framing, projection and disposal inside the shared
+Three.js controller. Configure all material, tessellation and validation values under
+`product.anatomy3d`. Author 18 illustrative lung-segment volumes and corresponding airway branches;
+use the right upper apical volume in the foundation localisation while retaining the advanced
+golden case's existing choice IDs.
+
+**Consequences:** Segment-level spatial selection works without changing or duplicating the GLB,
+and the runtime remains configuration-driven and organ-agnostic. Validation catches missing
+parents, out-of-envelope volumes and excessive same-level overlap, but model-bound checks are an
+authoring safeguard rather than anatomical segmentation proof. The added regions and airway paths
+remain illustrative and require anatomy/clinical review before external claims.

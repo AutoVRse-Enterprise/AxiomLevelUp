@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 
-import type { AnatomyMap } from '@/content/schema/anatomyMap'
+import { isVolumeStructure, type AnatomyMap } from '@/content/schema/anatomyMap'
 import type { CaseFinding } from '@/content/schema/case'
 import type {
   AnatomyControllerConfig,
@@ -24,6 +24,7 @@ interface MaterialState {
   emissive?: THREE.Color
   opacity: number
   transparent: boolean
+  depthWrite: boolean
 }
 
 interface CameraTween {
@@ -227,8 +228,16 @@ export function createAnatomyController({
   let markerStructureId: string | null = null
   let lumen: THREE.Group | null = null
   let findingRoot: THREE.Group | null = null
+  let volumeRoot: THREE.Group | null = null
   let findings: readonly CaseFinding[] = []
   const findingObjects = new Map<string, THREE.Group>()
+  const volumeObjects = new Map<string, THREE.Mesh>()
+  let selectableLevelIds: readonly string[] | undefined
+  let highlightedStructureIds: readonly string[] = []
+  let highlightStyle: AnatomyHighlightStyle = {
+    color: config.highlightColor,
+    opacity: config.highlightOpacity,
+  }
   let overviewPosition = new THREE.Vector3(0, 0, 5)
   let overviewTarget = new THREE.Vector3()
   let overviewNear = camera.near
@@ -308,10 +317,19 @@ export function createAnatomyController({
     findingObjects.clear()
   }
 
+  const clearVolumes = () => {
+    if (!volumeRoot) return
+    scene.remove(volumeRoot)
+    disposeGeneratedGroup(volumeRoot)
+    volumeRoot = null
+    volumeObjects.clear()
+  }
+
   const releaseModel = () => {
     clearMarker()
     clearLumen()
     clearFindings()
+    clearVolumes()
     if (model) {
       scene.remove(model)
       model.traverse((object) => {
@@ -327,14 +345,170 @@ export function createAnatomyController({
 
   const meshForStructure = (structureId: string) => {
     if (!model || !map) return []
-    const names = new Set(
-      map.structures.find((structure) => structure.id === structureId)?.meshNames ?? [],
-    )
+    const structure = map.structures.find((candidate) => candidate.id === structureId)
+    const names = new Set(structure && 'meshNames' in structure ? structure.meshNames : [])
     const meshes: THREE.Mesh[] = []
     model.traverse((object) => {
       if (object instanceof THREE.Mesh && names.has(object.name)) meshes.push(object)
     })
     return meshes
+  }
+
+  const volumeForStructure = (structureId: string) => {
+    const volume = volumeObjects.get(structureId)
+    return volume ? [volume] : []
+  }
+
+  const objectsForStructure = (structureId: string) => [
+    ...meshForStructure(structureId),
+    ...volumeForStructure(structureId),
+  ]
+
+  const restoreModelAppearance = () => {
+    model?.traverse((object) => {
+      if (object instanceof THREE.Mesh) object.visible = true
+    })
+    materialStates.forEach((state, material) => {
+      const candidate = material as THREE.Material & {
+        color?: THREE.Color
+        emissive?: THREE.Color
+      }
+      if (state.color && candidate.color) candidate.color.copy(state.color)
+      if (state.emissive && candidate.emissive) candidate.emissive.copy(state.emissive)
+      material.opacity = state.opacity
+      material.transparent = state.transparent
+      material.depthWrite = state.depthWrite
+      material.needsUpdate = true
+    })
+  }
+
+  const nearestMeshAncestor = (structureId: string) => {
+    if (!map) return null
+    const structureById = new Map(map.structures.map((structure) => [structure.id, structure]))
+    const visited = new Set<string>()
+    let current = structureById.get(structureId)
+    while (current?.parentId && !visited.has(current.parentId)) {
+      visited.add(current.parentId)
+      const parent = structureById.get(current.parentId)
+      if (!parent) return null
+      if ('meshNames' in parent) return parent
+      current = parent
+    }
+    return null
+  }
+
+  const resetVolumeAppearance = () => {
+    volumeObjects.forEach((volume) => {
+      const material = volume.material as THREE.MeshStandardMaterial
+      material.color.set(config.volumeStyles.color)
+      material.emissive
+        .set(config.volumeStyles.color)
+        .multiplyScalar(config.volumeStyles.emissiveIntensity)
+      material.opacity = config.volumeStyles.opacity
+      material.transparent = config.volumeStyles.opacity < 1
+      material.depthWrite = false
+      material.needsUpdate = true
+    })
+  }
+
+  const applyStructureAppearance = () => {
+    restoreModelAppearance()
+    resetVolumeAppearance()
+    const allowedLevels = selectableLevelIds ? new Set(selectableLevelIds) : null
+    const activeVolumeIds = new Set<string>()
+    volumeObjects.forEach((volume, structureId) => {
+      const structure = map?.structures.find(({ id }) => id === structureId)
+      volume.visible = Boolean(
+        !endoscopic && allowedLevels && structure && allowedLevels.has(structure.levelId),
+      )
+      if (volume.visible) activeVolumeIds.add(structureId)
+    })
+    if (volumeRoot) volumeRoot.visible = !endoscopic
+
+    if (activeVolumeIds.size > 0 && model) {
+      model.traverse((object) => {
+        if (object instanceof THREE.Mesh) object.visible = false
+      })
+      activeVolumeIds.forEach((structureId) => {
+        const parent = nearestMeshAncestor(structureId)
+        if (!parent) return
+        meshForStructure(parent.id).forEach((mesh) => {
+          mesh.visible = true
+          materialsOf(mesh).forEach((material) => {
+            material.opacity = config.volumeStyles.contextOpacity
+            material.transparent = true
+            material.depthWrite = false
+            material.needsUpdate = true
+          })
+        })
+      })
+    }
+
+    highlightedStructureIds.forEach((id) => {
+      meshForStructure(id).forEach((mesh) => {
+        materialsOf(mesh).forEach((material) => {
+          const candidate = material as THREE.Material & {
+            color?: THREE.Color
+            emissive?: THREE.Color
+          }
+          if (candidate.emissive) candidate.emissive.set(highlightStyle.color)
+          else candidate.color?.set(highlightStyle.color)
+          material.opacity =
+            highlightStyle.opacity ?? materialStates.get(material)?.opacity ?? material.opacity
+          material.transparent = material.opacity < 1
+          material.needsUpdate = true
+        })
+      })
+      volumeForStructure(id).forEach((volume) => {
+        const material = volume.material as THREE.MeshStandardMaterial
+        material.color.set(config.volumeStyles.highlightColor)
+        material.emissive
+          .set(config.volumeStyles.highlightColor)
+          .multiplyScalar(config.volumeStyles.highlightEmissiveIntensity)
+        material.opacity = config.volumeStyles.highlightOpacity
+        material.transparent = config.volumeStyles.highlightOpacity < 1
+        material.needsUpdate = true
+      })
+    })
+  }
+
+  const buildVolumes = () => {
+    clearVolumes()
+    if (!map) return
+    volumeRoot = new THREE.Group()
+    volumeRoot.name = 'procedural-anatomy-volumes'
+    map.structures.forEach((structure) => {
+      if (!isVolumeStructure(structure)) return
+      const geometry = new THREE.SphereGeometry(
+        1,
+        config.volumeStyles.widthSegments,
+        config.volumeStyles.heightSegments,
+      )
+      const material = new THREE.MeshStandardMaterial({
+        color: config.volumeStyles.color,
+        emissive: new THREE.Color(config.volumeStyles.color).multiplyScalar(
+          config.volumeStyles.emissiveIntensity,
+        ),
+        opacity: config.volumeStyles.opacity,
+        transparent: config.volumeStyles.opacity < 1,
+        depthWrite: false,
+        roughness: config.volumeStyles.roughness,
+        metalness: config.volumeStyles.metalness,
+        side: THREE.DoubleSide,
+      })
+      const volume = new THREE.Mesh(geometry, material)
+      volume.name = `volume:${structure.id}`
+      volume.position.set(...structure.volume.center)
+      volume.scale.set(...structure.volume.radii)
+      volume.rotation.set(...(structure.volume.rotation ?? [0, 0, 0]))
+      volume.renderOrder = 2
+      volume.userData.structureId = structure.id
+      volume.visible = false
+      volumeRoot!.add(volume)
+      volumeObjects.set(structure.id, volume)
+    })
+    scene.add(volumeRoot)
+    applyStructureAppearance()
   }
 
   const updateFindingVisibility = () => {
@@ -626,6 +800,7 @@ export function createAnatomyController({
             emissive: candidate.emissive?.clone(),
             opacity: material.opacity,
             transparent: material.transparent,
+            depthWrite: material.depthWrite,
           })
         })
       })
@@ -643,6 +818,7 @@ export function createAnatomyController({
       camera.updateProjectionMatrix()
       controls.minDistance = radius * 0.05
       controls.maxDistance = radius * 8
+      buildVolumes()
       buildFindings()
       controller.resetView()
       return { meshNames, triangleCount }
@@ -660,6 +836,11 @@ export function createAnatomyController({
       }
     },
 
+    setSelectableLevelIds(levelIds) {
+      selectableLevelIds = levelIds ? [...levelIds] : undefined
+      applyStructureAppearance()
+    },
+
     pick(clientX, clientY, selectableLevelIds) {
       if (!model || !map || !model.visible) return null
       const rect = renderer.domElement.getBoundingClientRect()
@@ -669,6 +850,17 @@ export function createAnatomyController({
         -((clientY - rect.top) / rect.height) * 2 + 1,
       )
       raycaster.setFromCamera(pointer, camera)
+      const structureIdHits = volumeRoot
+        ? raycaster
+            .intersectObject(volumeRoot, true)
+            .flatMap(({ object }) =>
+              typeof object.userData.structureId === 'string'
+                ? [object.userData.structureId as string]
+                : [],
+            )
+        : []
+      const volumeHit = resolveStructure([], map.structures, selectableLevelIds, structureIdHits)
+      if (volumeHit) return volumeHit
       const meshNameHits = raycaster.intersectObject(model, true).flatMap(({ object }) => {
         const names: string[] = []
         let current: THREE.Object3D | null = object
@@ -703,44 +895,18 @@ export function createAnatomyController({
     },
 
     highlight(structureIds, style: AnatomyHighlightStyle) {
-      materialStates.forEach((state, material) => {
-        const candidate = material as THREE.Material & {
-          color?: THREE.Color
-          emissive?: THREE.Color
-        }
-        if (state.color && candidate.color) candidate.color.copy(state.color)
-        if (state.emissive && candidate.emissive) candidate.emissive.copy(state.emissive)
-        material.opacity = state.opacity
-        material.transparent = state.transparent
-        material.needsUpdate = true
-      })
-      const selected = new Set(structureIds)
-      selected.forEach((id) => {
-        meshForStructure(id).forEach((mesh) => {
-          materialsOf(mesh).forEach((material) => {
-            const candidate = material as THREE.Material & {
-              color?: THREE.Color
-              emissive?: THREE.Color
-            }
-            if (candidate.emissive) candidate.emissive.set(style.color)
-            else candidate.color?.set(style.color)
-            if (style.opacity !== undefined) {
-              material.opacity = style.opacity
-              material.transparent = style.opacity < 1
-            }
-            material.needsUpdate = true
-          })
-        })
-      })
+      highlightedStructureIds = [...structureIds]
+      highlightStyle = style
+      applyStructureAppearance()
     },
 
     setMarker(structureId) {
       clearMarker()
       if (!structureId) return
-      const meshes = meshForStructure(structureId)
-      if (meshes.length === 0) return
+      const objects = objectsForStructure(structureId)
+      if (objects.length === 0) return
       const bounds = new THREE.Box3()
-      meshes.forEach((mesh) => bounds.expandByObject(mesh))
+      objects.forEach((object) => bounds.expandByObject(object))
       const sphere = bounds.getBoundingSphere(new THREE.Sphere())
       marker = new THREE.Mesh(
         new THREE.SphereGeometry(Math.max(sphere.radius * 0.08, 0.01), 16, 12),
@@ -768,12 +934,14 @@ export function createAnatomyController({
       if (endoscopic) {
         buildLumen()
         if (model) model.visible = false
+        if (volumeRoot) volumeRoot.visible = false
         controls.enabled = false
         headlight.visible = true
         setEndoscopicEnvironment(waypoint)
       } else {
         clearLumen()
         if (model) model.visible = true
+        applyStructureAppearance()
         controls.enabled = true
         headlight.visible = false
         scene.fog = null
@@ -818,6 +986,7 @@ export function createAnatomyController({
       if (!waypoint || !map) return
       buildLumen()
       if (model) model.visible = false
+      if (volumeRoot) volumeRoot.visible = false
       endoscopic = true
       if (waypointId !== currentWaypointId || waypointTrail.length === 0) {
         waypointTrail = pathToWaypoint(map, waypointId)
@@ -837,6 +1006,7 @@ export function createAnatomyController({
       endoscopic = false
       clearLumen()
       if (model) model.visible = true
+      applyStructureAppearance()
       controls.enabled = true
       headlight.visible = false
       scene.fog = null
@@ -876,7 +1046,7 @@ export function createAnatomyController({
       if (!model || endoscopic || structureIds.length === 0) return
       const bounds = new THREE.Box3()
       structureIds.forEach((id) =>
-        meshForStructure(id).forEach((mesh) => bounds.expandByObject(mesh)),
+        objectsForStructure(id).forEach((object) => bounds.expandByObject(object)),
       )
       if (bounds.isEmpty()) return
       const sphere = bounds.getBoundingSphere(new THREE.Sphere())
@@ -913,6 +1083,7 @@ export function createAnatomyController({
       scene.fog = null
       camera.near = overviewNear
       camera.updateProjectionMatrix()
+      applyStructureAppearance()
       updateFindingVisibility()
       setCamera(overviewPosition, overviewTarget)
     },
@@ -939,17 +1110,19 @@ export function createAnatomyController({
       }
       const structures: AnatomyProjectedScreenPoint[] = []
       map?.structures.forEach((structure) => {
-        const meshes = meshForStructure(structure.id)
-        if (meshes.length === 0) return
+        const objects = objectsForStructure(structure.id)
+        if (objects.length === 0) return
         const center = new THREE.Box3()
-        meshes.forEach((mesh) => center.expandByObject(mesh))
-        structures.push(
-          projectPoint(
-            structure.id,
-            center.getCenter(new THREE.Vector3()),
-            model?.visible === true,
-          ),
-        )
+        objects.forEach((object) => center.expandByObject(object))
+        const rendered = objects.some((object) => {
+          let current: THREE.Object3D | null = object
+          while (current) {
+            if (!current.visible) return false
+            current = current.parent
+          }
+          return true
+        })
+        structures.push(projectPoint(structure.id, center.getCenter(new THREE.Vector3()), rendered))
       })
       const projectedFindings = [...findingObjects].flatMap(([id, group]) => {
         if (!group.visible) return []
