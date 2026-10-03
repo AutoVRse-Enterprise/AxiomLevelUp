@@ -60,4 +60,21 @@ describe('useActiveElapsed', () => {
     await act(() => vi.advanceTimersByTimeAsync(300))
     expect(result.current.getElapsedMs()).toBe(1_500)
   })
+
+  it('freezes and resumes the same elapsed attempt when active changes', async () => {
+    vi.useFakeTimers()
+    const { result, rerender } = renderHook(
+      ({ active }) => useActiveElapsed({ active, resetKey: 'attempt-1', updateIntervalMs: 100 }),
+      { initialProps: { active: true } },
+    )
+
+    await act(() => vi.advanceTimersByTimeAsync(800))
+    rerender({ active: false })
+    await act(() => vi.advanceTimersByTimeAsync(5_000))
+    expect(result.current.getElapsedMs()).toBe(800)
+
+    rerender({ active: true })
+    await act(() => vi.advanceTimersByTimeAsync(700))
+    expect(result.current.getElapsedMs()).toBe(1_500)
+  })
 })

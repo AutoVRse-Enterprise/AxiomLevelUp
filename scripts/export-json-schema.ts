@@ -73,12 +73,17 @@ as separate JSON Schema files.
 fetches and parses every listed document, then exposes ordered \`cases\` and \`anatomyMaps\`
 collections plus \`caseById\` and \`anatomyMapById\` registries.
 
-A case document contains patient context, a tier, an anatomy-map entry mode, a content-only clue
-catalogue, ordered stages of reusable primitives, timing targets, an expert benchmark and a
-debrief. Stage kinds are unique and follow \`orient\`, \`observe\`, \`interpret\`, \`diagnose\`
-order; a short case may omit stages without changing that order. Semantic validation resolves
-case, anatomy-map, clue, benchmark-step, concept and asset references. Primitive IDs are unique
-across clue content and stage steps.
+A case document contains patient context, a tier, an anatomy-map entry mode, optional configured
+findings, a content-only clue catalogue, ordered stages of reusable primitives, timing targets, an
+expert benchmark and a debrief. A finding has a stable ID, learner-facing label and description,
+one of four organ-agnostic kinds (\`lumen_narrowing\`, \`lumen_occlusion\`,
+\`wall_thickening\`, \`region\`), normalized severity, clue references and either a \`structure\`
+anchor or \`waypoint\`, \`toWaypoint\` and position \`t\` along one directed edge. Stage kinds are
+unique and follow \`orient\`,
+\`observe\`, \`interpret\`, \`diagnose\` order; a short case may omit stages without changing that
+order. Semantic validation resolves case, anatomy-map, finding, clue, benchmark-step, concept and
+asset references. Expert benchmarks may add per-step rationale keyed by a valid case primitive ID.
+Primitive and finding IDs are unique in their respective case scopes.
 
 Clues accept only the registered content primitive types and cannot carry timers, XP, rewards or
 non-default score weights. Stage steps retain the normal strict primitive parsing, asset typing,
@@ -91,6 +96,12 @@ declare position, look-at target, outgoing waypoint IDs and an optional positive
 procedural lumen rendering. Semantic validation enforces unique level, structure and waypoint IDs,
 model-asset typing, parent and level references, prepared mesh-name references, resolved waypoint
 edges and an acyclic waypoint graph.
+
+\`product.anatomy3d.findingStyles\` configures generic geometry and materials for each finding kind,
+including deterministic occlusion blobs, local narrowing, wall thickening and translucent regions.
+Anatomy primitives opt into case findings through \`findingIds\`; exploration may additionally use
+\`requiredFindingIds\` as completion targets. The case planner resolves those IDs into a typed
+per-step finding map, so React and Three.js contain no course- or organ-specific branches.
 
 ## Case Lab configuration
 
@@ -127,12 +138,14 @@ ${Object.keys(primitiveContentSchemas)
   .join('\n')}
 
 The four DICOM types require a typed DICOM series asset and strict mode-specific content.
-\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset.
+\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset, and may
+require configured structures, waypoints and case findings to be inspected.
 \`anatomy_locate\` adds ordered model, image-region and choice levels, optional positive weights and
-stable level-keyed responses. The loader resolves its map levels, model targets and typed image
-assets. Unknown types are retained with a warning so development playback can render the
-unsupported fallback. Every lesson primitive and challenge item passes through the same parser and
-semantic validation.
+stable level-keyed responses; it may display referenced case findings without making their
+inspection part of its scored response. The loader resolves anatomy maps, levels, model targets,
+finding anchors, directed waypoint edges, finding clue references and typed image assets. Unknown
+types are retained with a warning so development playback can render the unsupported fallback.
+Every lesson primitive and challenge item passes through the same parser and semantic validation.
 
 ### DICOM primitive content
 
@@ -178,6 +191,9 @@ target modes use answer completion.
 - Formula TeX is parsed in Node with KaTeX and mhchem during content validation.
 - DICOM slice ranges, preset/tool references, calibrated measurements and reference-line geometry
   are validated against series metadata.
+- Case finding IDs are unique; finding anchors resolve against the case anatomy map, waypoint
+  anchors follow an authored directed edge, clue IDs resolve locally and anatomy-step finding IDs
+  resolve within the same case.
 - Gamification XP keys, levels, star thresholds, weekly-goal defaults and mastery weights are
   strictly configured.
 - Badge criteria and weekly challenge progress rules resolve referenced courses, lessons,
@@ -188,8 +204,12 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 4 stores reward idempotency, challenge periods, counters, the active reward
+- Learner state version 6 stores reward idempotency, challenge periods, counters, the active reward
   run, latest activity/question results, celebrations and an abstract digital reward ledger.
+- Case attempt result-v6 records retain both speed components, effective score weights, clue cost,
+  timing semantics, normalized first responses, actual duration and XP from the central
+  gamification activity result. Migrated result-v5 records remain explicitly legacy and do not
+  fabricate unavailable details.
 - Device-scoped offline course records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
 

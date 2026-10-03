@@ -43,6 +43,9 @@ vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
           Select right lower lobe
         </button>
         <button onClick={() => props.onWaypointReached?.('carina')}>Reach carina</button>
+        <button onClick={() => props.onFindingInspected?.('fixture-finding')}>
+          Inspect finding
+        </button>
         <button
           onClick={() =>
             props.onViewChanged?.({
@@ -80,6 +83,8 @@ function primitive(
       navigation: 'both',
       requiredStructureIds: ['trachea'],
       requiredWaypointIds: ['carina'],
+      findingIds: ['fixture-finding'],
+      requiredFindingIds: ['fixture-finding'],
     },
     completion,
   })
@@ -341,7 +346,11 @@ describe('anatomy exploration schema and definition', () => {
     })
     expect(resolved?.definition.scored(value)).toBe(false)
     expect(evaluatePrimitive(value, null)).toMatchObject({ score: 0, correct: false })
-    expect(anatomyExploreRequirementKeys(value)).toEqual(['structure:trachea', 'waypoint:carina'])
+    expect(anatomyExploreRequirementKeys(value)).toEqual([
+      'structure:trachea',
+      'waypoint:carina',
+      'finding:fixture-finding',
+    ])
   })
 })
 
@@ -351,6 +360,7 @@ describe('anatomy exploration completion', () => {
     interactionCount: 0,
     selectedStructureIds: [],
     reachedWaypointIds: [],
+    inspectedFindingIds: [],
   }
 
   it('completes viewed, explored and minimum-interaction modes independently', () => {
@@ -371,6 +381,7 @@ describe('anatomy exploration completion', () => {
         ...empty,
         selectedStructureIds: ['trachea'],
         reachedWaypointIds: ['carina'],
+        inspectedFindingIds: ['fixture-finding'],
       }),
     ).toBe(true)
 
@@ -406,6 +417,7 @@ describe('anatomy exploration interactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Load viewer' }))
     fireEvent.click(screen.getByRole('button', { name: 'Select trachea' }))
     fireEvent.click(screen.getByRole('button', { name: 'Reach carina' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Inspect finding' }))
     fireEvent.click(screen.getByRole('button', { name: 'Change view' }))
     fireEvent.click(screen.getByRole('button', { name: 'Change view' }))
     fireEvent.click(screen.getByRole('button', { name: 'Fail viewer' }))
@@ -415,6 +427,7 @@ describe('anatomy exploration interactions', () => {
       'anatomy_viewer_loaded',
       'anatomy_structure_selected',
       'anatomy_waypoint_reached',
+      'anatomy_finding_inspected',
       'anatomy_viewer_failed',
     ])
 
@@ -423,6 +436,7 @@ describe('anatomy exploration interactions', () => {
       'anatomy_viewer_loaded',
       'anatomy_structure_selected',
       'anatomy_waypoint_reached',
+      'anatomy_finding_inspected',
       'anatomy_viewer_failed',
       'anatomy_view_changed',
     ])
@@ -438,6 +452,11 @@ describe('anatomy exploration interactions', () => {
     const interactions: PrimitiveInteraction[] = [
       { name: 'anatomy_structure_selected', structureId: 'trachea', key: 'structure:trachea' },
       { name: 'anatomy_waypoint_reached', waypointId: 'carina', key: 'waypoint:carina' },
+      {
+        name: 'anatomy_finding_inspected',
+        findingId: 'fixture-finding',
+        key: 'finding:fixture-finding',
+      },
       {
         name: 'anatomy_view_changed',
         position: [1, 2, 3],
@@ -459,6 +478,8 @@ describe('anatomy exploration interactions', () => {
       'anatomy_structure_selected',
       'artifact_interacted',
       'anatomy_waypoint_reached',
+      'artifact_interacted',
+      'anatomy_finding_inspected',
       'artifact_interacted',
       'anatomy_view_changed',
       'artifact_interacted',
@@ -491,6 +512,37 @@ describe('anatomy exploration interactions', () => {
 })
 
 describe('anatomy localisation component', () => {
+  it('passes authored navigation and marker settings to the model viewer', () => {
+    const value = anatomyLocatePrimitiveSchema.parse({
+      ...locatePrimitive(),
+      content: {
+        ...locatePrimitive().content,
+        navigation: 'both',
+        startView: { mode: 'marker', structureId: 'trachea' },
+      },
+    })
+    render(
+      <ContentContext.Provider value={registry}>
+        <AnatomyLocatePrimitive
+          attempt={0}
+          draft={null}
+          mode="interactive"
+          onComplete={vi.fn()}
+          onDraftChange={vi.fn()}
+          onInteract={vi.fn()}
+          onSubmit={vi.fn()}
+          primitive={value}
+        />
+      </ContentContext.Provider>,
+    )
+
+    expect(mockedViewer.props).toMatchObject({
+      navigation: 'both',
+      markerStructureId: 'trachea',
+      startView: { mode: 'marker', structureId: 'trachea' },
+    })
+  })
+
   it('completes model, image, and choice levels using only the keyboard', async () => {
     const user = userEvent.setup()
     const onSubmit = vi.fn()

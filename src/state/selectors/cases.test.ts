@@ -12,12 +12,21 @@ import { makeValidContentBundle } from '@/test/contentFixtures'
 import { validateContentBundle } from '@/content/loader'
 
 const attempt = (attemptId: string, total: number): CaseAttemptRecord => ({
+  resultVersion: 6,
   attemptId,
   tier: 'foundation',
   total,
   anatomy: 0.8,
   diagnosis: 0.9,
   speed: 0,
+  perStepSpeed: 0,
+  caseSpeed: 0,
+  clueCostPoints: 2,
+  speedScored: false,
+  timingMode: 'none',
+  weights: { anatomy: 0.5, diagnosis: 0.5, speed: 0 },
+  actualAwardedXp: 30,
+  actualAwardedXpSource: 'gamification_activity_result',
   durationSeconds: 180,
   openedClueIds: ['clue-context'],
   stepResults: [],

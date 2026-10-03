@@ -29,6 +29,13 @@ export interface OpenClueResult {
   newlyOpened: boolean
 }
 
+export type CaseClueOpenContext = 'entry' | 'browse' | 'remediation'
+
+export interface CaseClueOpenRecord {
+  context: CaseClueOpenContext
+  beforeResponse: boolean
+}
+
 function unique(ids: readonly string[]): string[] {
   return [...new Set(ids)]
 }

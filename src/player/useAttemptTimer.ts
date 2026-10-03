@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 interface AttemptTimerOptions {
   active: boolean
+  paused?: boolean
   attemptKey: string
   durationSeconds: number | null
   mode: 'countdown' | 'elapsed'
@@ -13,8 +14,27 @@ interface AttemptTimerValue {
   mode: 'countdown' | 'elapsed'
 }
 
+interface AttemptTimerTracker {
+  attemptKey: string
+  durationMs: number
+  remainingMs: number
+  activeSinceMs: number | null
+  expired: boolean
+}
+
+function remainingAt(tracker: AttemptTimerTracker, nowMs: number) {
+  if (tracker.activeSinceMs === null) return tracker.remainingMs
+  return Math.max(0, tracker.remainingMs - Math.max(0, nowMs - tracker.activeSinceMs))
+}
+
+function pauseTracker(tracker: AttemptTimerTracker, nowMs: number) {
+  tracker.remainingMs = remainingAt(tracker, nowMs)
+  tracker.activeSinceMs = null
+}
+
 export function useAttemptTimer({
   active,
+  paused = false,
   attemptKey,
   durationSeconds,
   mode,
@@ -22,6 +42,13 @@ export function useAttemptTimer({
 }: AttemptTimerOptions): AttemptTimerValue | null {
   const durationMs = (durationSeconds ?? 0) * 1000
   const onExpireRef = useRef(onExpire)
+  const trackerRef = useRef<AttemptTimerTracker>({
+    attemptKey,
+    durationMs,
+    remainingMs: durationMs,
+    activeSinceMs: null,
+    expired: false,
+  })
   const [clock, setClock] = useState({ attemptKey, remainingMs: durationMs })
 
   useEffect(() => {
@@ -29,12 +56,20 @@ export function useAttemptTimer({
   }, [onExpire])
 
   useEffect(() => {
+    trackerRef.current = {
+      attemptKey,
+      durationMs,
+      remainingMs: durationMs,
+      activeSinceMs: null,
+      expired: false,
+    }
+  }, [attemptKey, durationMs])
+
+  useEffect(() => {
     if (!active || durationSeconds === null) return
 
-    let remainingMs = durationSeconds * 1000
-    let deadline = Date.now() + remainingMs
+    const tracker = trackerRef.current
     let interval: ReturnType<typeof setInterval> | null = null
-    let expired = false
 
     const stop = () => {
       if (interval) clearInterval(interval)
@@ -42,40 +77,41 @@ export function useAttemptTimer({
     }
 
     const update = () => {
-      remainingMs = Math.max(0, deadline - Date.now())
-      setClock({ attemptKey, remainingMs })
-      if (remainingMs === 0 && !expired) {
-        expired = true
+      tracker.remainingMs = remainingAt(tracker, Date.now())
+      tracker.activeSinceMs = tracker.remainingMs > 0 ? Date.now() : null
+      setClock({ attemptKey, remainingMs: tracker.remainingMs })
+      if (tracker.remainingMs === 0 && !tracker.expired) {
+        tracker.expired = true
         stop()
         onExpireRef.current()
       }
     }
 
     const start = () => {
-      if (expired || interval || document.hidden) return
-      deadline = Date.now() + remainingMs
+      if (paused || tracker.expired || interval || document.hidden) return
+      tracker.activeSinceMs = Date.now()
       interval = setInterval(update, 250)
     }
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        remainingMs = Math.max(0, deadline - Date.now())
-        setClock({ attemptKey, remainingMs })
+        pauseTracker(tracker, Date.now())
+        setClock({ attemptKey, remainingMs: tracker.remainingMs })
         stop()
       } else {
         start()
       }
     }
 
-    setClock({ attemptKey, remainingMs })
     start()
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
+      pauseTracker(tracker, Date.now())
       stop()
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [active, attemptKey, durationSeconds])
+  }, [active, attemptKey, durationSeconds, paused])
 
   if (durationSeconds === null) return null
 

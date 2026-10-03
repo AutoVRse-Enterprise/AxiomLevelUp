@@ -1,6 +1,8 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { Clock3 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { AnatomyFindingProvider } from '@/anatomy3d/viewer/findingContext'
 import { Button, Chip } from '@/components/ui'
 import type { AnatomyMap, AppConfig, CaseDocument } from '@/content/schema'
 import {
@@ -13,13 +15,14 @@ import {
   type CaseClockMode,
   type CaseClockState,
 } from '@/engines/cases/clock'
-import { openClue } from '@/engines/cases/clues'
+import { openClue, type CaseClueOpenContext, type CaseClueOpenRecord } from '@/engines/cases/clues'
 import {
   buildCasePlan,
   stageForStep,
   type CasePlan,
   type CaseStageBoundary,
 } from '@/engines/cases/plan'
+import { normalizeCaseResponse } from '@/engines/cases/responses'
 import { calculateCaseScore } from '@/engines/cases/scoring'
 import type { ActivitySession, CaseProgress } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
@@ -33,13 +36,30 @@ import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseResults } from '@/player/case/CaseResults'
 import { ClueBoard } from '@/player/case/ClueBoard'
 import { StageHeader } from '@/player/case/StageHeader'
-import type { CaseAttemptHistoryItem, CaseAttemptResult, CaseStepResult } from '@/player/case/types'
+import {
+  presentLiveCaseResult,
+  type CaseAttemptHistoryItem,
+  type CaseAttemptResult,
+  type CaseStepResult,
+} from '@/player/case/types'
+import { useLearnerStore } from '@/state/learnerStore'
 
 const EMPTY_CASE_PROGRESS: CaseProgress = {
   openedClueIds: [],
+  clueOpenContexts: {},
   stepElapsedMs: {},
   caseElapsedMs: 0,
   caseClockExpired: false,
+}
+
+function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
+  return {
+    ...EMPTY_CASE_PROGRESS,
+    ...progress,
+    openedClueIds: [...(progress?.openedClueIds ?? [])],
+    clueOpenContexts: { ...(progress?.clueOpenContexts ?? {}) },
+    stepElapsedMs: { ...(progress?.stepElapsedMs ?? {}) },
+  }
 }
 
 export interface CaseClueOpened {
@@ -47,12 +67,15 @@ export interface CaseClueOpened {
   clueId: string
   essential: boolean
   stageId: string
+  context: CaseClueOpenContext
+  beforeResponse: boolean
 }
 
 export interface CasePlayerProps {
   caseDoc: CaseDocument
   config: AppConfig
   anatomyMap?: AnatomyMap
+  autoStartOrResume?: boolean
   previousAttempts: number
   previousBestScore: number | null
   continuePath: string
@@ -72,11 +95,13 @@ function formatClock(milliseconds: number) {
 function CaseClock({
   mode,
   maximumMs,
+  paused,
   progress,
   onProgress,
 }: {
   mode: CaseClockMode
   maximumMs: number | null
+  paused: boolean
   progress: CaseProgress
   onProgress: (patch: Partial<CaseProgress>) => void
 }) {
@@ -89,6 +114,7 @@ function CaseClock({
   const clockRef = useRef<CaseClockState>(initialClock)
   const [snapshot, setSnapshot] = useState(() => selectCaseClock(initialClock, Date.now()))
   const persistedSecond = useRef(Math.floor(progress.caseElapsedMs / 1_000))
+  const persistedExpired = useRef(progress.caseClockExpired)
   const onProgressRef = useRef(onProgress)
 
   useEffect(() => {
@@ -96,7 +122,6 @@ function CaseClock({
   }, [onProgress])
 
   useEffect(() => {
-    if (mode === 'none') return
     const sync = (now: number, pause = false) => {
       clockRef.current = pause
         ? pauseCaseClock(clockRef.current, now)
@@ -104,8 +129,13 @@ function CaseClock({
       const next = selectCaseClock(clockRef.current, now)
       setSnapshot(next)
       const second = Math.floor(next.elapsedMs / 1_000)
-      if (pause || second !== persistedSecond.current || next.expired) {
+      if (
+        pause ||
+        second !== persistedSecond.current ||
+        next.expired !== persistedExpired.current
+      ) {
         persistedSecond.current = second
+        persistedExpired.current = next.expired
         const persisted = persistCaseClock(clockRef.current, now)
         onProgressRef.current({
           caseElapsedMs: persisted.accumulatedActiveMs,
@@ -114,6 +144,7 @@ function CaseClock({
       }
     }
     const resume = () => {
+      if (paused) return
       clockRef.current = resumeCaseClock(clockRef.current, Date.now())
       setSnapshot(selectCaseClock(clockRef.current, Date.now()))
     }
@@ -122,22 +153,28 @@ function CaseClock({
       else resume()
     }
 
-    resume()
+    if (paused) sync(Date.now(), true)
+    else resume()
     document.addEventListener('visibilitychange', onVisibility)
-    const interval = window.setInterval(() => sync(Date.now()), 250)
+    const interval = paused ? null : window.setInterval(() => sync(Date.now()), 250)
     return () => {
-      window.clearInterval(interval)
+      if (interval !== null) window.clearInterval(interval)
       document.removeEventListener('visibilitychange', onVisibility)
       sync(Date.now(), true)
     }
-  }, [mode])
+  }, [mode, paused])
 
-  if (mode === 'none') return null
   const visibleMs = mode === 'countdown' ? (snapshot.remainingMs ?? 0) : snapshot.elapsedMs
-  const label = mode === 'countdown' ? 'Case time remaining' : 'Case elapsed time'
+  const label =
+    mode === 'countdown'
+      ? 'Case time remaining'
+      : mode === 'none'
+        ? 'Case elapsed time; speed is not scored'
+        : 'Case elapsed time'
   return (
     <Chip tone={snapshot.expired ? 'warning' : 'neutral'}>
       <Clock3 aria-hidden="true" size={15} />
+      {mode === 'none' ? <span>Speed not scored ·</span> : null}
       <span role="timer" aria-label={`${label}: ${formatClock(visibleMs)}`}>
         {formatClock(visibleMs)}
       </span>
@@ -157,22 +194,29 @@ function StageTransition({
   onContinue: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-40 grid place-items-center bg-neutral-950/60 p-5">
-      <section
-        aria-modal="true"
-        className="w-full max-w-lg rounded-xl bg-white p-7 shadow-overlay"
-        role="dialog"
-      >
-        <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
-          Stage {stageIndex + 1} of {stageCount}
-        </p>
-        <h2 className="mt-2 text-display font-bold text-neutral-950">{stage.title}</h2>
-        {stage.intro ? <p className="mt-4 text-neutral-700">{stage.intro}</p> : null}
-        <Button className="mt-7" onClick={onContinue}>
-          Begin stage
-        </Button>
-      </section>
-    </div>
+    <Dialog.Root open>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/60" />
+        <Dialog.Content
+          className="fixed top-1/2 left-1/2 z-50 w-[calc(100%_-_2.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-7 shadow-overlay outline-none"
+          onEscapeKeyDown={(event) => event.preventDefault()}
+          onPointerDownOutside={(event) => event.preventDefault()}
+        >
+          <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
+            Stage {stageIndex + 1} of {stageCount}
+          </p>
+          <Dialog.Title className="mt-2 text-display font-bold text-neutral-950">
+            {stage.title}
+          </Dialog.Title>
+          {stage.intro ? (
+            <Dialog.Description className="mt-4 text-neutral-700">{stage.intro}</Dialog.Description>
+          ) : null}
+          <Button className="mt-7" onClick={onContinue}>
+            Begin stage
+          </Button>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
 
@@ -186,7 +230,8 @@ function buildResult(
   const caseLab = config.caseLab
   if (!caseLab) throw new Error('Case Lab configuration is required to score a case.')
 
-  const stepResults: CaseStepResult[] = plan.steps.map((step) => {
+  const scoredSteps = plan.steps.filter(({ scored }) => scored)
+  const stepResults: CaseStepResult[] = scoredSteps.map((step) => {
     const progress = session.progress[step.primitive.id]
     return {
       primitiveId: step.primitive.id,
@@ -195,7 +240,7 @@ function buildResult(
         ? {}
         : { elapsedMs: caseProgress.stepElapsedMs[step.primitive.id] }),
       timedOut: progress?.firstTimedOut ?? false,
-      response: progress?.firstResponse ?? null,
+      response: normalizeCaseResponse(progress?.firstResponse ?? null),
     }
   })
   const breakdown = calculateCaseScore({
@@ -205,6 +250,7 @@ function buildResult(
       const scoring = step.primitive.scoring as Record<string, unknown>
       return {
         component: boundary?.component ?? 'none',
+        scored: step.scored,
         firstAttemptScore: session.progress[step.primitive.id]?.firstScore ?? 0,
         weight: step.primitive.scoring.weight,
         elapsedMs: caseProgress.stepElapsedMs[step.primitive.id],
@@ -219,6 +265,7 @@ function buildResult(
     }),
     clues: [...plan.clueMap.values()],
     openedClueIds: caseProgress.openedClueIds,
+    clueOpenContexts: caseProgress.clueOpenContexts,
     durationMs: caseProgress.caseElapsedMs,
     caseTargetSeconds: caseDoc.timing?.caseTargetSeconds,
     caseMaxSeconds: caseDoc.timing?.caseMaxSeconds,
@@ -257,6 +304,13 @@ function CompletionFlow({
     () => buildResult(caseDoc, context.plan as CasePlan, context.session, caseProgress, config),
     [caseDoc, caseProgress, config, context.plan, context.session],
   )
+  const persistedAttempt = useLearnerStore((state) =>
+    state.caseAttempts[caseDoc.id]?.find(({ attemptId }) => attemptId === result.attemptId),
+  )
+  const presentedResult = useMemo(
+    () => presentLiveCaseResult(result, persistedAttempt),
+    [persistedAttempt, result],
+  )
   const notified = useRef(false)
   useEffect(() => {
     if (notified.current) return
@@ -272,10 +326,9 @@ function CompletionFlow({
   return view === 'results' ? (
     <CaseResults
       caseDoc={caseDoc}
-      result={result}
+      result={presentedResult}
       clues={caseDoc.clues}
       starThresholds={config.gamification.stars}
-      completionXp={caseLab.xp.caseComplete}
       onCompare={() => setView('compare')}
       onContinue={context.onContinue}
       onReplay={replay}
@@ -283,7 +336,7 @@ function CompletionFlow({
   ) : (
     <CaseCompare
       caseDoc={caseDoc}
-      result={result}
+      result={presentedResult}
       history={attemptHistory}
       historyLimit={caseLab.historyLimit}
       onBack={() => setView('results')}
@@ -297,6 +350,7 @@ export function CasePlayer({
   caseDoc,
   config,
   anatomyMap,
+  autoStartOrResume = false,
   previousAttempts,
   previousBestScore,
   continuePath,
@@ -307,15 +361,17 @@ export function CasePlayer({
   onComplete,
 }: CasePlayerProps) {
   const plan = useMemo(() => buildCasePlan(caseDoc, config), [caseDoc, config])
-  const [initialSession] = useState(() =>
-    useActivitySessionStore.getState().loadForPlan(plan),
-  )
+  const [initialSession] = useState(() => useActivitySessionStore.getState().loadForPlan(plan))
   const [caseProgress, setCaseProgress] = useState<CaseProgress>(
-    initialSession.caseProgress ?? EMPTY_CASE_PROGRESS,
+    normalizeCaseProgress(initialSession.caseProgress),
   )
   const caseProgressRef = useRef(caseProgress)
-  const [selectedClueId, setSelectedClueId] = useState<string | null>(null)
+  const [cluePresentation, setCluePresentation] = useState<{
+    selectedClueId: string | null
+    presenterOpen: boolean
+  }>({ selectedClueId: null, presenterOpen: false })
   const [pendingStage, setPendingStage] = useState<CaseStageBoundary | null>(null)
+  const [cluePresenterBlocking, setCluePresenterBlocking] = useState(false)
   const entryHandled = useRef(false)
   const openedEventSent = useRef(false)
   const completedStageIds = useRef(new Set<string>())
@@ -361,52 +417,68 @@ export function CasePlayer({
         const hadStarted = startedAtRef.current !== null
         startedAtRef.current = nextSession.startedAt
         if (!hadStarted || nextSession.caseProgress) return
-        const reset = { ...EMPTY_CASE_PROGRESS, openedClueIds: [], stepElapsedMs: {} }
+        const reset = normalizeCaseProgress()
         caseProgressRef.current = reset
         setCaseProgress(reset)
-        setSelectedClueId(null)
+        setCluePresentation({ selectedClueId: null, presenterOpen: false })
+        setCluePresenterBlocking(false)
+        setPendingStage(null)
         entryHandled.current = false
       }),
     [plan.activity.id],
   )
 
-  const handleOpenClue = useCallback(
-    (clueId: string) => {
+  const presentClue = useCallback(
+    (clueId: string, context: CaseClueOpenContext) => {
       const clue = plan.clueMap.get(clueId)
       if (!clue) return
-      const currentStepIndex = useActivitySessionStore.getState().session?.stepIndex ?? 0
+      const currentSession = useActivitySessionStore.getState().session
+      const currentStepIndex = currentSession?.stepIndex ?? 0
+      const currentStep = plan.steps[currentStepIndex]
+      const beforeResponse =
+        currentSession?.phase === 'step' &&
+        (currentStep
+          ? (currentSession.progress[currentStep.primitive.id]?.attempts ?? 0) === 0
+          : true)
       const stageId =
         stageForStep(plan, currentStepIndex)?.stageId ?? plan.stageBoundaries[0]?.stageId ?? ''
       const result = openClue(caseProgressRef.current.openedClueIds, clueId)
-      setSelectedClueId(clueId)
+      setCluePresentation({ selectedClueId: clueId, presenterOpen: true })
       if (!result.newlyOpened) return
-      persistProgress({ openedClueIds: [...result.openedClueIds] })
-      const opened = {
+      const opened: CaseClueOpenRecord = { context, beforeResponse }
+      persistProgress({
+        openedClueIds: [...result.openedClueIds],
+        clueOpenContexts: {
+          ...caseProgressRef.current.clueOpenContexts,
+          [clueId]: opened,
+        },
+      })
+      const event = {
         caseId: caseDoc.id,
         clueId,
         essential: clue.essential,
         stageId,
+        ...opened,
       }
-      emitEvent({ event: 'case_clue_opened', ...opened })
-      onClueOpened?.(opened)
+      emitEvent({ event: 'case_clue_opened', ...event })
+      onClueOpened?.(event)
     },
     [caseDoc.id, onClueOpened, persistProgress, plan],
   )
 
-  useEffect(() => {
+  const presentEntryClue = useCallback(() => {
     const entry = caseDoc.entry
     if (entryHandled.current || entry.mode !== 'clue_first') return
-    const unsubscribe = useActivitySessionStore.subscribe((state) => {
-      if (state.session?.activityId !== caseDoc.id || state.session.phase !== 'step') return
-      entryHandled.current = true
-      handleOpenClue(entry.clueId)
-    })
-    return unsubscribe
-  }, [caseDoc.entry, caseDoc.id, handleOpenClue])
+    entryHandled.current = true
+    presentClue(entry.clueId, 'entry')
+  }, [caseDoc.entry, presentClue])
 
   const handleAttempt = useCallback(
     (attempt: ActivityPlayerTimedAttempt) => {
+      const step = plan.steps[attempt.stepIndex]
       if (
+        !step?.scored ||
+        step.primitive.id !== attempt.primitiveId ||
         attempt.attempt !== 1 ||
         caseProgressRef.current.stepElapsedMs[attempt.primitiveId] !== undefined
       ) {
@@ -419,15 +491,17 @@ export function CasePlayer({
         },
       })
     },
-    [persistProgress],
+    [persistProgress, plan.steps],
   )
 
   const resetProgress = useCallback(() => {
     entryHandled.current = false
     completedAttemptRef.current = null
     completedStageIds.current.clear()
-    setSelectedClueId(null)
-    persistProgress({ ...EMPTY_CASE_PROGRESS, stepElapsedMs: {}, openedClueIds: [] })
+    setCluePresentation({ selectedClueId: null, presenterOpen: false })
+    setCluePresenterBlocking(false)
+    setPendingStage(null)
+    persistProgress(normalizeCaseProgress())
   }, [persistProgress])
 
   const notifyComplete = useCallback(
@@ -470,23 +544,33 @@ export function CasePlayer({
 
   const caseLab = config.caseLab
   if (!caseLab) throw new Error('CasePlayer requires appConfig.caseLab.')
+  const pauseTiming = pendingStage !== null || cluePresenterBlocking
 
   return (
-    <>
+    <AnatomyFindingProvider findingsByStepId={plan.findingsByStepId}>
       <ActivityPlayer
         plan={plan}
+        autoStartOrResume={autoStartOrResume}
         previousAttempts={previousAttempts}
         previousBestScore={previousBestScore}
         continuePath={continuePath}
         exitPath={exitPath}
+        pauseTiming={pauseTiming}
         clueContext={{
           clues: [...plan.clueMap.values()],
           anatomyMap,
-          onReopenClue: handleOpenClue,
+          onReopenClue: (clueId) => presentClue(clueId, 'remediation'),
         }}
         onStarted={(resumed) => {
-          if (!resumed) attemptNumberRef.current += 1
-          else if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
+          if (!resumed) {
+            const firstStage = plan.stageBoundaries[0] ?? null
+            setPendingStage(firstStage)
+            if (!firstStage) presentEntryClue()
+            attemptNumberRef.current += 1
+          } else {
+            entryHandled.current = true
+            if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
+          }
           emitEvent({
             event: 'case_started',
             caseId: caseDoc.id,
@@ -509,12 +593,14 @@ export function CasePlayer({
               event: 'case_stage_completed',
               caseId: caseDoc.id,
               stageId: from.stageId,
-              stageIndex: plan.stageBoundaries.findIndex(
-                ({ stageId }) => stageId === from.stageId,
-              ),
+              stageIndex: plan.stageBoundaries.findIndex(({ stageId }) => stageId === from.stageId),
             })
           }
-          if (from?.stageId !== to?.stageId && to) setPendingStage(to)
+          if (from?.stageId !== to?.stageId) {
+            setCluePresentation({ selectedClueId: null, presenterOpen: false })
+            setCluePresenterBlocking(false)
+            if (to) setPendingStage(to)
+          }
         }}
         renderChrome={({ stepIndex }) => {
           const stage = stageForStep(plan, stepIndex) ?? plan.stageBoundaries[0]!
@@ -522,7 +608,9 @@ export function CasePlayer({
             const clue = plan.clueMap.get(id)
             return clue ? [clue] : []
           })
-          const selected = selectedClueId ? plan.clueMap.get(selectedClueId) : undefined
+          const selected = cluePresentation.selectedClueId
+            ? plan.clueMap.get(cluePresentation.selectedClueId)
+            : undefined
           const visibleClues =
             selected && !stageClues.some(({ id }) => id === selected.id)
               ? [...stageClues, selected]
@@ -531,11 +619,14 @@ export function CasePlayer({
             clues: visibleClues,
             categoryLabels,
             openedClueIds: caseProgress.openedClueIds,
-            selectedClueId,
+            selectedClueId: cluePresentation.selectedClueId,
+            presenterOpen: cluePresentation.presenterOpen,
             labelEssentialClues: plan.tierPreset.labelEssentialClues,
             optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
-            onOpenClue: handleOpenClue,
-            onSelectedClueChange: setSelectedClueId,
+            onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
+            onPresenterOpenChange: (presenterOpen: boolean) =>
+              setCluePresentation((current) => ({ ...current, presenterOpen })),
+            onBlockingChange: setCluePresenterBlocking,
           }
           return {
             header: (
@@ -543,6 +634,7 @@ export function CasePlayer({
                 <StageHeader
                   stages={plan.stageBoundaries}
                   currentStage={stage}
+                  currentStepIndex={stepIndex}
                   tierLabel={plan.tierPreset.label}
                   clock={
                     <CaseClock
@@ -552,6 +644,7 @@ export function CasePlayer({
                           ? caseDoc.timing.caseMaxSeconds * 1_000
                           : null
                       }
+                      paused={pauseTiming}
                       progress={caseProgress}
                       onProgress={persistProgress}
                     />
@@ -582,9 +675,13 @@ export function CasePlayer({
             ({ stageId }) => stageId === pendingStage.stageId,
           )}
           stageCount={plan.stageBoundaries.length}
-          onContinue={() => setPendingStage(null)}
+          onContinue={() => {
+            const isFirstStage = pendingStage.stageId === plan.stageBoundaries[0]?.stageId
+            setPendingStage(null)
+            if (isFirstStage) presentEntryClue()
+          }}
         />
       ) : null}
-    </>
+    </AnatomyFindingProvider>
   )
 }

@@ -79,6 +79,8 @@ export interface ActivityPlayerProps {
   previousBestScore: number | null
   continuePath: string
   exitPath: string
+  autoStartOrResume?: boolean
+  pauseTiming?: boolean
   clueContext?: ActivityPlayerClueContext
   renderChrome?: (context: ActivityPlayerChromeContext) => {
     header?: ReactNode
@@ -96,6 +98,8 @@ export function ActivityPlayer({
   previousBestScore,
   continuePath,
   exitPath,
+  autoStartOrResume = false,
+  pauseTiming = false,
   clueContext,
   renderChrome,
   onStarted,
@@ -115,6 +119,7 @@ export function ActivityPlayer({
   const pendingDraft = useRef<{ primitiveId: string; draft: unknown } | null>(null)
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const mediaProgress = useRef<Record<string, number>>({})
+  const automaticStartHandled = useRef(false)
   const blocker = useBlocker(session.startedAt !== null && session.phase !== 'complete')
 
   const transition = useCallback((action: SessionAction) => {
@@ -176,10 +181,33 @@ export function ActivityPlayer({
     [onStarted, plan.activity, previousAttempts],
   )
 
+  const startOrResume = useCallback(() => {
+    const resumed = awaitingResume
+    setAwaitingResume(false)
+    transition({ type: resumed ? 'resume' : 'start', at: new Date().toISOString() })
+    emitStarted(resumed)
+  }, [awaitingResume, emitStarted, transition])
+
+  useEffect(() => {
+    if (
+      !autoStartOrResume ||
+      automaticStartHandled.current ||
+      (!awaitingResume && session.phase !== 'intro')
+    ) {
+      return
+    }
+    automaticStartHandled.current = true
+    startOrResume()
+  }, [autoStartOrResume, awaitingResume, session.phase, startOrResume])
+
   const step = selectCurrentStep(session, plan)
   const stepProgress = step ? session.progress[step.primitive.id] : undefined
   const { getElapsedMs: getAttemptElapsedMs } = useActiveElapsed({
-    active: !awaitingResume && session.phase === 'step' && Boolean(step?.supported),
+    active:
+      !pauseTiming &&
+      !awaitingResume &&
+      session.phase === 'step' &&
+      Boolean(step?.supported && step.scored),
     resetKey: `${step?.primitive.id ?? 'none'}:${stepProgress?.attempts ?? 0}`,
   })
 
@@ -251,16 +279,18 @@ export function ActivityPlayer({
         completed,
         timedOut,
       })
-      onAttemptTimed?.({
-        primitiveId: step.primitive.id,
-        stepIndex: session.stepIndex,
-        attempt: attempts,
-        elapsedMs,
-        timedOut,
-        score: result.score,
-        correct: result.correct,
-        response,
-      })
+      if (step.scored) {
+        onAttemptTimed?.({
+          primitiveId: step.primitive.id,
+          stepIndex: session.stepIndex,
+          attempt: attempts,
+          elapsedMs,
+          timedOut,
+          score: result.score,
+          correct: result.correct,
+          response,
+        })
+      }
       emitEvent({
         event: 'question_answered',
         activityKind: plan.activity.kind,
@@ -273,8 +303,7 @@ export function ActivityPlayer({
         attempt: attempts,
         difficulty:
           step.primitive.scoring.difficulty ?? appConfig.gamification.mastery.defaultDifficulty,
-        timedOut,
-        elapsedMs,
+        ...(step.scored ? { timedOut, elapsedMs } : {}),
       })
       if (completed) {
         emitEvent({
@@ -306,10 +335,11 @@ export function ActivityPlayer({
     active:
       !awaitingResume &&
       session.phase === 'step' &&
-      Boolean(step?.supported && step.timerCompatible && step.primitive.timer),
+      Boolean(step?.supported && step.scored && step.timerCompatible && step.primitive.timer),
     attemptKey: `${step?.primitive.id ?? 'none'}:${stepProgress?.attempts ?? 0}`,
     durationSeconds: step?.primitive.timer?.durationSeconds ?? null,
     mode: step?.primitive.timer?.mode ?? 'countdown',
+    paused: pauseTiming,
     onExpire: () => submitResponse(undefined, true),
   })
 
@@ -357,6 +387,7 @@ export function ActivityPlayer({
   }, [emitStarted, plan])
 
   if (awaitingResume || session.phase === 'intro') {
+    if (autoStartOrResume) return null
     const conceptNames = plan.activity.conceptIds.map(
       (id) => appConfig.concepts.find((concept) => concept.id === id)?.title ?? id,
     )
@@ -365,12 +396,7 @@ export function ActivityPlayer({
         plan={plan}
         conceptNames={conceptNames}
         canResume={awaitingResume}
-        onStart={() => {
-          const resumed = awaitingResume
-          setAwaitingResume(false)
-          transition({ type: resumed ? 'resume' : 'start', at: new Date().toISOString() })
-          emitStarted(resumed)
-        }}
+        onStart={startOrResume}
         onRestart={() => {
           setAwaitingResume(false)
           transition({ type: 'restart', at: new Date().toISOString() })
@@ -467,9 +493,11 @@ export function ActivityPlayer({
     <>
       <StepFrame
         key={step.primitive.id}
-        title={`${plan.activity.title}: ${step.primitive.type.replaceAll('_', ' ')}`}
+        title={`${plan.activity.title}: ${step.label} — ${step.prompt}`}
         definitionLabel={step.label}
-        progress={selectProgressFraction(session, plan) * 100}
+        progress={
+          plan.activity.kind === 'case' ? undefined : selectProgressFraction(session, plan) * 100
+        }
         layout={step.layout}
         chromeHeader={chrome?.header}
         chromeAside={chrome?.aside}

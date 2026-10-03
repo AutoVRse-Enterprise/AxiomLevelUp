@@ -7,7 +7,7 @@ import type { PrimitiveLayout } from '@/primitives/definitions'
 interface StepFrameProps {
   title: string
   definitionLabel: string
-  progress: number
+  progress?: number
   layout: PrimitiveLayout
   onExit: () => void
   children: ReactNode
@@ -37,21 +37,25 @@ export function StepFrame({
 
   return (
     <div
-      className={`mx-auto px-4 py-5 sm:px-6 sm:py-8 ${
+      className={`mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:py-8 ${
         layout === 'viewer' ? 'max-w-7xl' : layout === 'split' ? 'max-w-6xl' : 'max-w-3xl'
       }`}
       data-layout={layout}
     >
-      {chromeHeader ? <div className="mb-5">{chromeHeader}</div> : null}
       <div className="flex items-start gap-4">
-        <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
+        {chromeHeader ? (
+          <div className="min-w-0 flex-1">{chromeHeader}</div>
+        ) : progress !== undefined ? (
+          <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
+        ) : (
+          <div className="flex-1" />
+        )}
         <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
       </div>
-      <div
-        className={
-          chromeAside ? 'mt-8 grid items-start gap-5 md:grid-cols-[minmax(0,1fr)_20rem]' : 'mt-8'
-        }
-      >
+      {chromeHeader && progress !== undefined ? (
+        <ProgressBar className="mt-5" value={progress} label="Activity progress" />
+      ) : null}
+      <div className="mt-5 sm:mt-8">
         <section
           className={`animate-slide-up rounded-xl border border-neutral-200 bg-white shadow-card ${
             layout === 'viewer' ? 'p-2 sm:p-4' : 'p-5 sm:p-8'

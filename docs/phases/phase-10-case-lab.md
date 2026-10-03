@@ -1,7 +1,13 @@
 # Phase 10: Case Lab capability demo
 
-**Status:** Complete — runtime, content, automated QA and Chromium QA passed; physical 3D evidence
-continues under the Phase 9 device gate
+**Status:** Complete as a technical capability foundation — not approved for client demonstration;
+physical 3D evidence continues under the Phase 9 device gate
+
+**Retrospective:** The subsequent 52-finding audit in
+`docs/qa/phase-10-demo-readiness-audit.md` found that configured-flow completion and Chromium
+no-overflow checks did not establish meaningful 3D discovery, reliable canvas interaction, valid
+mobile hit-testing or trustworthy clue/timing/result behavior. Phase 11 owns the golden-path and
+shared P0/P1 recovery; Phase 12 owns remaining depth and polish.
 
 ## Goal
 

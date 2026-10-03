@@ -2,6 +2,7 @@ import type {
   AppConfig,
   CaseClue,
   CaseDocument,
+  CaseFinding,
   CaseLabConfig,
   CaseStage,
   Primitive,
@@ -23,6 +24,8 @@ export interface CasePlan extends ActivityPlan {
   activity: ActivityPlan['activity'] & { kind: 'case' }
   stageBoundaries: CaseStageBoundary[]
   clueMap: ReadonlyMap<string, CaseClue>
+  findingMap: ReadonlyMap<string, CaseFinding>
+  findingsByStepId: ReadonlyMap<string, readonly CaseFinding[]>
   tierPreset: CaseLabConfig['tiers'][CaseDocument['tier']]
 }
 
@@ -94,6 +97,19 @@ export function buildCasePlan(caseDoc: CaseDocument, config: AppConfig): CasePla
       ? { ...clue, essential: true }
       : clue,
   )
+  const findingMap = new Map((caseDoc.findings ?? []).map((finding) => [finding.id, finding]))
+  const findingsByStepId = new Map<string, readonly CaseFinding[]>()
+  primitives.forEach((primitive) => {
+    if (primitive.type !== 'anatomy_explore' && primitive.type !== 'anatomy_locate') return
+    const findingIds = (primitive.content as { findingIds?: readonly string[] }).findingIds ?? []
+    findingsByStepId.set(
+      primitive.id,
+      findingIds.flatMap((id) => {
+        const finding = findingMap.get(id)
+        return finding ? [finding] : []
+      }),
+    )
+  })
 
   return {
     ...base,
@@ -101,6 +117,8 @@ export function buildCasePlan(caseDoc: CaseDocument, config: AppConfig): CasePla
     steps: base.steps as ActivityStep[],
     stageBoundaries,
     clueMap: new Map(clues.map((clue) => [clue.id, clue])),
+    findingMap,
+    findingsByStepId,
     tierPreset: caseLab.tiers[caseDoc.tier],
   }
 }

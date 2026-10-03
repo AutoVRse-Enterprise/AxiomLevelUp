@@ -1,13 +1,30 @@
 import tailwindcss from '@tailwindcss/vite'
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig(() => {
+import { resolveBuildId } from './scripts/build/build-id.ts'
+
+export default defineConfig(({ mode }) => {
+  const root = fileURLToPath(new URL('.', import.meta.url))
+  const environment = loadEnv(mode, root, '')
+  const packageVersion = (
+    JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')) as { version: string }
+  ).version
+  const buildId = resolveBuildId(
+    root,
+    environment.VITE_BUILD_ID ?? environment.CI_COMMIT_SHA ?? environment.GITHUB_SHA,
+    packageVersion,
+  )
+
   return {
+    define: {
+      'import.meta.env.VITE_BUILD_ID': JSON.stringify(buildId),
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -71,11 +88,8 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-        events: resolve(
-          fileURLToPath(new URL('.', import.meta.url)),
-          'node_modules/events/events.js',
-        ),
-        url: resolve(fileURLToPath(new URL('.', import.meta.url)), 'node_modules/url/url.js'),
+        events: resolve(root, 'node_modules/events/events.js'),
+        url: resolve(root, 'node_modules/url/url.js'),
       },
     },
     optimizeDeps: {

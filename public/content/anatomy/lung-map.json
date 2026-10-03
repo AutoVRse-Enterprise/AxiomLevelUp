@@ -88,15 +88,17 @@
       "position": [0, -48, 1280],
       "lookAt": [0, -72, 1265],
       "next": ["carina"],
-      "radius": 8
+      "radius": 8,
+      "lumen": { "ringCount": 8 }
     },
     {
       "id": "carina",
       "label": "Carina",
       "position": [0, -72, 1265],
-      "lookAt": [0, -90, 1250],
+      "lookAt": [-22, -90, 1248],
       "next": ["right-main-airway", "left-main-airway"],
-      "radius": 7
+      "radius": 7,
+      "lumen": { "ringCount": 7 }
     },
     {
       "id": "right-main-airway",
@@ -104,7 +106,8 @@
       "position": [-22, -90, 1248],
       "lookAt": [-45, -108, 1235],
       "next": ["right-upper-airway", "right-lower-airway"],
-      "radius": 5
+      "radius": 5,
+      "lumen": { "ringCount": 5 }
     },
     {
       "id": "left-main-airway",
@@ -112,7 +115,8 @@
       "position": [22, -90, 1248],
       "lookAt": [45, -108, 1235],
       "next": ["left-upper-airway", "left-lower-airway"],
-      "radius": 5
+      "radius": 5,
+      "lumen": { "ringCount": 5 }
     },
     {
       "id": "right-upper-airway",
@@ -127,8 +131,46 @@
       "label": "Right lower lobar airway",
       "position": [-44, -118, 1222],
       "lookAt": [-62, -140, 1195],
-      "next": [],
+      "next": [
+        "right-lower-superior-segment",
+        "right-lower-lateral-basal-segment",
+        "right-lower-posterior-basal-segment"
+      ],
       "radius": 3.5
+    },
+    {
+      "id": "right-lower-superior-segment",
+      "label": "Superior segmental airway",
+      "position": [-66, -136, 1228],
+      "lookAt": [-82, -151, 1238],
+      "next": [],
+      "radius": 2.5
+    },
+    {
+      "id": "right-lower-lateral-basal-segment",
+      "label": "Lateral basal segmental airway",
+      "position": [-67, -145, 1194],
+      "lookAt": [-84, -163, 1183],
+      "next": [],
+      "radius": 2.4
+    },
+    {
+      "id": "right-lower-posterior-basal-segment",
+      "label": "Posterior basal segmental airway",
+      "position": [-61, -151, 1182],
+      "lookAt": [-77, -171, 1161],
+      "next": ["right-lower-posterior-basal-distal"],
+      "radius": 2.4,
+      "lumen": { "ringCount": 4 }
+    },
+    {
+      "id": "right-lower-posterior-basal-distal",
+      "label": "Distal posterior basal airway",
+      "position": [-78, -173, 1159],
+      "lookAt": [-91, -188, 1143],
+      "next": [],
+      "radius": 1.7,
+      "lumen": { "ringCount": 3 }
     },
     {
       "id": "left-upper-airway",

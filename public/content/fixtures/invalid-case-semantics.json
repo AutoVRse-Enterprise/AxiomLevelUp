@@ -79,6 +79,9 @@
     "responses": {
       "missing-step": true
     },
+    "rationales": {
+      "missing-rationale-step": "This rationale points to an unavailable step."
+    },
     "breakdown": {
       "anatomy": 0,
       "diagnosis": 1,

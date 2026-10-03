@@ -11,7 +11,7 @@ import {
 } from '@/engines/cases/clock'
 
 describe('case clock', () => {
-  it('keeps none mode inactive and hidden', () => {
+  it('tracks elapsed duration in none mode without an expiry', () => {
     const clock = resumeCaseClock(
       createCaseClock({ mode: 'none', accumulatedActiveMs: 2_000 }),
       10_000,
@@ -19,10 +19,10 @@ describe('case clock', () => {
 
     expect(selectCaseClock(clock, 20_000)).toEqual({
       mode: 'none',
-      elapsedMs: 0,
+      elapsedMs: 12_000,
       remainingMs: null,
       expired: false,
-      running: false,
+      running: true,
     })
   })
 
@@ -45,21 +45,39 @@ describe('case clock', () => {
     })
   })
 
-  it('expires a countdown without ending or overrunning it', () => {
+  it('clamps countdown remaining while retaining actual elapsed time after expiry', () => {
     const started = resumeCaseClock(
       createCaseClock({ mode: 'countdown', maxDurationMs: 5_000 }),
       10_000,
     )
     const expired = updateCaseClock(started, 16_000)
 
-    expect(selectCaseClock(expired, 30_000)).toEqual({
+    expect(selectCaseClock(expired, 18_000)).toEqual({
       mode: 'countdown',
-      elapsedMs: 5_000,
+      elapsedMs: 8_000,
       remainingMs: 0,
       expired: true,
-      running: false,
+      running: true,
     })
-    expect(resumeCaseClock(expired, 40_000)).toBe(expired)
+    expect(persistCaseClock(expired, 18_000)).toMatchObject({
+      accumulatedActiveMs: 8_000,
+      expired: true,
+    })
+  })
+
+  it('derives expiry from actual elapsed time when restoring', () => {
+    const restored = restoreCaseClock({
+      mode: 'countdown',
+      accumulatedActiveMs: 2_000,
+      maxDurationMs: 5_000,
+      expired: true,
+    })
+
+    expect(selectCaseClock(restored, 30_000)).toMatchObject({
+      elapsedMs: 2_000,
+      remainingMs: 3_000,
+      expired: false,
+    })
   })
 
   it('restores accumulated active time without charging time away', () => {

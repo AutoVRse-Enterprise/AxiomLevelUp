@@ -41,24 +41,17 @@ function normalizeMaximum(mode: CaseClockMode, value: number | null | undefined)
 
 function elapsedAt(state: CaseClockState, nowMs: number) {
   const runningMs = state.activeSinceMs === null ? 0 : Math.max(0, nowMs - state.activeSinceMs)
-  const elapsedMs = normalizeMs(state.accumulatedActiveMs + runningMs)
-  return state.maxDurationMs === null ? elapsedMs : Math.min(elapsedMs, state.maxDurationMs)
+  return normalizeMs(state.accumulatedActiveMs + runningMs)
 }
 
 export function createCaseClock({
   mode,
   maxDurationMs,
   accumulatedActiveMs = 0,
-  expired = false,
 }: CreateCaseClockOptions): CaseClockState {
   const maximum = normalizeMaximum(mode, maxDurationMs)
-  const accumulated =
-    mode === 'none'
-      ? 0
-      : maximum === null
-        ? normalizeMs(accumulatedActiveMs)
-        : Math.min(normalizeMs(accumulatedActiveMs), maximum)
-  const isExpired = mode === 'countdown' && (expired || accumulated >= (maximum ?? Infinity))
+  const accumulated = normalizeMs(accumulatedActiveMs)
+  const isExpired = mode === 'countdown' && accumulated >= (maximum ?? Infinity)
 
   return {
     mode,
@@ -70,7 +63,7 @@ export function createCaseClock({
 }
 
 export function resumeCaseClock(state: CaseClockState, nowMs: number): CaseClockState {
-  if (state.mode === 'none' || state.expired || state.activeSinceMs !== null) return state
+  if (state.activeSinceMs !== null) return state
   return { ...state, activeSinceMs: nowMs }
 }
 
@@ -91,7 +84,7 @@ export function pauseCaseClock(state: CaseClockState, nowMs: number): CaseClockS
 export function updateCaseClock(state: CaseClockState, nowMs: number): CaseClockState {
   if (state.activeSinceMs === null) return state
   const updated = pauseCaseClock(state, nowMs)
-  return updated.expired ? updated : resumeCaseClock(updated, nowMs)
+  return resumeCaseClock(updated, nowMs)
 }
 
 export function selectCaseClock(state: CaseClockState, nowMs: number): CaseClockSnapshot {
@@ -105,7 +98,7 @@ export function selectCaseClock(state: CaseClockState, nowMs: number): CaseClock
     remainingMs:
       state.mode === 'countdown' ? Math.max(0, (state.maxDurationMs ?? 0) - elapsedMs) : null,
     expired,
-    running: state.activeSinceMs !== null && !expired,
+    running: state.activeSinceMs !== null,
   }
 }
 

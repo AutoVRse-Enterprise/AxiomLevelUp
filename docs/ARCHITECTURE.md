@@ -16,7 +16,7 @@ read-only ContentRegistry -----> routes -----> activity plan
         |                                review/completion/evaluation)
         |                                        |
         |                                        v
-        +----> pure view selectors <----- activity/case player + session v3
+        +----> pure view selectors <----- activity/case player + session v4
                         ^                  /                   \
                         |                 v                     v
           learner state + clock   lazy primitive UI      typed event bus
@@ -30,7 +30,7 @@ read-only ContentRegistry -----> routes -----> activity plan
                                                                       +-----------+-----------+
                                                                                   |
                                                                                   v
-                                                                          learner store v5
+                                                                          learner store v6
 ```
 
 ## Boundaries
@@ -39,7 +39,7 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/app`: providers, startup and routing.
 - `src/routes`, `src/layouts`, `src/components`: presentation and user intent.
 - `src/events`: framework-independent event taxonomy and transport.
-- `src/engines/learning`: pure activity planning, session v2, completion, scoring and event
+- `src/engines/learning`: pure activity planning, session v4, completion, scoring and event
   reduction.
 - `src/engines/gamification`: pure XP, stars, levels, calendar, challenge and achievement rules.
 - `src/engines/mastery`: pure deterministic concept-score updates and bounded history.
@@ -77,7 +77,7 @@ plus learner-visible catalogue projections. Parse failures include source file a
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning
-progress, case progress, gamification and mastery, commits one learner-state v5 snapshot and
+progress, case progress, gamification and mastery, commits one learner-state v6 snapshot and
 publishes informational reward events. The event-history subscriber records a bounded audit trail.
 Output events are not reduced again. Persisted reward ledgers make lesson, case, perfect, daily and
 badge awards idempotent.
@@ -106,7 +106,7 @@ subscribe to typed learner events; primitives never call device or reward effect
 Routes adapt a configured lesson or challenge into an immutable activity plan. Planning first parses
 the strict primitive contract, then resolves its pure definition and derives support, family, scoring,
 layout, prompt, exploration keys and timer compatibility. The player advances a pure reducer and
-persists one version 3 activity session separately from aggregate learner state. Session progress
+persists one version 4 activity session separately from aggregate learner state. Session progress
 stores resumable drafts, first/latest fractional scores, distinct interactions and monotonic media
 coverage; first-attempt scores remain authoritative.
 
@@ -117,14 +117,22 @@ translated into typed learner events; the learning progress engine updates lesso
 and lifetime aggregates. Navigation away from an active session is blocked until the learner
 confirms the saved exit.
 
-A case document compiles to a flattened `case` activity plan with stage boundaries. `CasePlayer`
-uses ActivityPlayer extension points for stage chrome, clue access, boundary transitions, active
-timing and completion. Session v3 persists opened clues, step and case elapsed time and clock expiry.
-The pure case scorer combines first-attempt anatomy and diagnosis scores with active speed, then
-applies the configured optional-clue penalty. Results and comparison views use the emitted attempt
-record and configured expert benchmark.
+A case document compiles to a flattened `case` activity plan with stage boundaries and resolved
+case-scoped findings. `CasePlayer` uses ActivityPlayer extension points for stage chrome, atomic clue
+presentation, focus-trapped boundary transitions, active timing and completion. Session v4 persists
+opened clues with first-open context, step and case elapsed time and clock expiry. Blocking stage and
+phone clue dialogs pause both question and case clocks; countdown expiry does not truncate actual
+elapsed duration. Only resolved scored steps enter attempt timing, component/speed denominators,
+persisted step results and comparison.
 
-Development plans preserve unsupported steps for diagnosis. Production plans include all 25
+The pure case scorer combines first-attempt anatomy and diagnosis scores with separate step and case
+speed, then applies only eligible pre-response optional-clue cost. Learner-state result-v6 attempts
+persist effective weights, both speed components, timing semantics, normalized responses, actual
+duration and the XP awarded by the central pipeline. Legacy result-v5 attempts remain readable
+without fabricated detail. Results explain points out of 100; comparison uses authored labels,
+normalized response equality, benchmark rationale and de-duplicated attempt history.
+
+Development plans preserve unsupported steps for diagnosis. Production plans include all 27
 implemented primitive types, including the four DICOM modes, while retaining the fallback for
 unknown or malformed primitives. An activity with no implemented steps is unavailable. The player
 emits results only; the central pipeline awards XP, stars and mastery without primitive or
@@ -170,26 +178,33 @@ XP, mastery and the first-DICOM reward.
 
 ## 3D anatomy boundary
 
-Strict anatomy primitives resolve a validated anatomy map and an online-only GLB model asset. The
+Strict anatomy primitives resolve a validated anatomy map and a hash-versioned GLB model asset. The
 shared viewer dynamically imports `src/anatomy3d/three/createAnatomyController.ts`, the only
 production module permitted to import Three.js. Per-instance controllers reuse a
 reference-counted model cache, cap device pixel ratio, support orbit/pan/zoom and raycast picking,
 and release scenes and renderer resources after the last viewer unmounts.
 
 Anatomy maps keep the runtime organ-agnostic: ordered hierarchy levels bind structures to prepared
-mesh names, while an acyclic waypoint graph drives authored fly-through and endoscopic entry.
-`anatomy_explore` records configured observations; `anatomy_locate` combines model, image-region and
-choice levels into weighted fractional credit. A structured button list provides equivalent
-keyboard selection, and reduced motion uses camera cuts. Viewer interactions are emitted as typed
-learner events; primitives do not mutate case or reward state.
+mesh names, while an acyclic waypoint graph drives reversible authored endoscopic travel. Picking
+considers only the active level and resolves overlapping hits by hierarchy depth, binding
+specificity and stable ID. Case-scoped finding contracts configure narrowing, occlusion, wall and
+region geometry through a typed context; findings may be anchored to a structure or directed
+waypoint edge and can be required exploration observations.
+
+`anatomy_explore` records configured structures, waypoints and finding inspections;
+`anatomy_locate` combines model, image-region and choice levels into weighted fractional credit. A
+secondary structured button list provides equivalent keyboard selection, and reduced motion uses
+camera cuts. Viewer interactions are emitted as typed learner events; primitives do not mutate case
+or reward state. The endoscopic lumen and findings are illustrative authored geometry, not
+patient-derived or anatomically validated reconstruction.
 
 ## Offline runtime
 
 Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. GLB model
-assets are explicitly online-only in Phase 10. Pure package
+assets remain excluded from course offline packages. Pure package
 derivation walks each course image, primitive asset list and typed primitive references, producing
 deduplicated course and per-lesson requirements. Download records are device-scoped IndexedDB state,
-separate from learner state v5.
+separate from learner state v6.
 
 The foreground download manager checks estimated quota, requests persistent storage, expands and
 validates DICOM manifests, fetches with bounded concurrency and verifies every file before placing it
@@ -199,8 +214,13 @@ reconcile eviction or changed package fingerprints at startup.
 
 The inject-manifest worker precaches the application shell, serves verified course responses before
 the network, supports media range requests and retains passive DICOM caching for ordinary online
-viewing. Offline route gates use derived lesson readiness. Download lifecycle events are logged but
-are explicitly excluded from the learner reward pipeline. A worker-persisted simulated-offline flag
+viewing. A separate `versioned-case-models-v1` CacheFirst route accepts only SHA-versioned GLBs and
+retains at most four responses for 14 days. The featured-case intro prefetches its exact validated
+model URL; this presentation preflight is not general offline-3D support. A visible reproducible or
+deployment-supplied build ID supports stale-worker diagnosis.
+
+Offline route gates use derived lesson readiness. Download lifecycle events are logged but are
+explicitly excluded from the learner reward pipeline. A worker-persisted simulated-offline flag
 makes the URL-only developer control exercise the same cache-only behavior as a disconnected device.
 
 ## Showcase and release evidence
@@ -217,9 +237,11 @@ developer primitive gallery renders the same content in interactive, review, dis
 missing-asset modes without mutating learner progress.
 
 Case Lab adds a second configuration-only integration fixture: automated flows complete the three
-catalogue cases, the daily quick case and a loader-added fourth case, while production Chromium
-evidence covers responsive layout, keyboard localisation, reduced motion, WebGL recovery, frame
-cadence and heap release.
+catalogue cases, the daily quick case and a loader-added fourth case. Its production-preview
+Playwright boundary exercises real WebGL on desktop and 375 px touch emulation, including canvas
+picking, marker retention, reversible branch travel, configured finding inspection, hit testing and
+the complete six-task golden path. The test-only projection bridge is build-gated by `VITE_E2E`;
+normal production builds omit it.
 
 Release evidence is split by capability. Chromium emulation covers repeatable responsive, motion,
 keyboard, recovery, cross-origin, cache and offline checks. Physical Android/iOS scripts own

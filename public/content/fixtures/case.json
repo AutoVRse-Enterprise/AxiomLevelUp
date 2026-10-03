@@ -19,6 +19,34 @@
     "mode": "overview_marker",
     "markerStructureId": "target-structure"
   },
+  "findings": [
+    {
+      "id": "fixture-occlusion",
+      "label": "Configured lumen finding",
+      "description": "A deterministic generic lumen overlay.",
+      "kind": "lumen_occlusion",
+      "anchor": {
+        "type": "waypoint",
+        "waypoint": "entry-waypoint",
+        "toWaypoint": "terminal-waypoint",
+        "t": 0.5
+      },
+      "severity": 0.6,
+      "clueIds": ["clue-context"]
+    },
+    {
+      "id": "fixture-region",
+      "label": "Configured structure region",
+      "description": "A translucent generic structure overlay.",
+      "kind": "region",
+      "anchor": {
+        "type": "structure",
+        "structure": "target-structure"
+      },
+      "severity": 0.4,
+      "clueIds": []
+    }
+  ],
   "clues": [
     {
       "id": "clue-context",
@@ -103,6 +131,10 @@
     "responses": {
       "identify-location": "target",
       "select-conclusion": true
+    },
+    "rationales": {
+      "identify-location": "The configured evidence localizes the target structure.",
+      "select-conclusion": "The conclusion follows from the configured evidence."
     },
     "breakdown": {
       "anatomy": 1,

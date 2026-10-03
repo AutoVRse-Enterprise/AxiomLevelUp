@@ -9,13 +9,18 @@
 
 ## Result
 
-Pass for automated and Chromium-emulated acceptance. The three catalogue cases, the daily quick
-case and a loader-added fourth fixture case complete through configured content. The four target
-viewports have no document-level horizontal overflow.
+Pass for configured-flow completion and the recorded Chromium no-overflow checks only. The three
+catalogue cases, the daily quick case and a loader-added fourth fixture case complete through
+configured content. This is not a Case Lab demo-readiness or physical-device pass.
 
 Physical Android and iOS evidence remains part of the open Phase 9 device gate. The frame-rate,
 heap, touch and responsive results below are provisional desktop-Chromium evidence, not a
 substitute for physical-device testing.
+
+The later audit in `phase-10-demo-readiness-audit.md` found P0/P1 defects outside this pass,
+including unreliable real-canvas picking, blocked mobile hit targets, clue-presentation/state
+errors and timing behind overlays. Its no-go verdict supersedes any broader interpretation of this
+report.
 
 ## Automated coverage
 
@@ -27,7 +32,8 @@ substitute for physical-device testing.
 - loads a fourth catalogue case through the content loader and plays it without runtime changes;
 - uses a deterministic unavailable-WebGL substitute and verifies the equivalent structure-list
   path;
-- drives model-level localisation with keyboard activation;
+- drives model-level localisation with keyboard activation, but does not exercise real raycast
+  selection, camera behavior, airway traversal or 3D visual quality;
 - verifies results, expert comparison, case attempts, mastery, badges and central-pipeline updates;
 - reports no axe WCAG 2 A/AA or 2.1 A/AA violations in the active unavailable-3D state. The
   jsdom colour-contrast rule is excluded and is covered by `phase-10-contrast-audit.md`.
@@ -37,16 +43,18 @@ suite.
 
 ## Responsive matrix
 
-- **375 × 812, portrait phone:** stage header, progress, anatomy workspace and actions remain within
-  the document width. Clues use the mobile sheet trigger; the structure list remains reachable
-  below the canvas.
+- **375 × 812, portrait phone:** the sampled page had no document-width overflow. This check did not
+  establish that fixed chrome leaves Start, Clues or other touch targets unobstructed. A clue-sheet
+  trigger was present, but clue presentation and open/consumed state were not verified.
 - **812 × 375, landscape phone:** no document overflow. The compact stage and anatomy controls
-  remain reachable by scrolling, and clues continue to use the mobile sheet.
+  appeared in the scrollable document; touch hit-testing and clue-state semantics were not verified.
 - **768 × 900, touch tablet:** no document overflow (`scrollWidth === 768`). The persistent clue
   pane is visible beside the step and the final anatomy canvas measures 344 × 468 CSS pixels.
-  The viewer's structure list stacks below its canvas to avoid squeezing the model.
+  The viewer's structure list stacks below its canvas; this does not establish that the remaining
+  artifact workspace is adequate for a client demonstration.
 - **1280 × 900, desktop:** no document overflow. The clue board remains persistent, while the
-  anatomy canvas and equivalent structure list share the wider artifact workspace.
+  anatomy canvas and equivalent structure list share the wider artifact workspace. The later audit
+  found this nested three-column arrangement too cramped.
 
 ## Accessibility and motion
 
@@ -54,7 +62,8 @@ suite.
   heading, clue-board groups and labelled controls.
 - Model structures are selectable through buttons with `aria-pressed`; keyboard Enter selects a
   structure and focus remains on the selected control.
-- The WebGL-independent structure list provides the same selection path as raycast picking.
+- The WebGL-independent structure list provides an equivalent configured answer path. It is not
+  evidence that raycast picking works and must not substitute for real-canvas acceptance.
 - With reduced motion resolved, waypoint and start-view changes use immediate camera cuts rather
   than tweened flights. The focused unit test verifies `flyTo(..., { animate: false })`.
 - All changed brand foreground/background pairs meet AA under the separate contrast audit.
@@ -65,7 +74,7 @@ suite.
   equivalent structure list, so localisation is not blocked by WebGL.
 - The viewer now mounts the imperative Three.js canvas in a dedicated child container. React-owned
   loading and error overlays are siblings, preventing the `NotFoundError: Failed to execute
-  'removeChild' on 'Node'` reconciliation failure found during this pass.
+'removeChild' on 'Node'` reconciliation failure found during this pass.
 - A regression test asserts that the controller mount is inside, but distinct from, the
   React-managed viewport.
 
@@ -91,6 +100,7 @@ suite.
 
 ## Remaining physical gate
 
-Run the Phase 10 addendum in the Phase 9 Android and iOS scripts. It must confirm real touch orbit,
-pinch and pan, orientation/safe-area behavior, GPU stability, context-loss recovery and repeated
-mount/unmount memory behavior before device approval.
+After the applicable Phase 11 fixes, run the Case Lab addendum in the Phase 9 Android and iOS
+scripts. It must confirm intended-element touch hit-testing, atomic clue presentation/recording,
+real touch orbit, pinch and pan, real model-tap selection, orientation/safe-area behavior, GPU
+stability, context-loss recovery and repeated mount/unmount memory behavior before device approval.

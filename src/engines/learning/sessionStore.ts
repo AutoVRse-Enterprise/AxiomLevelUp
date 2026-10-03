@@ -9,7 +9,7 @@ import {
 } from '@/engines/learning/session'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
-export const ACTIVITY_SESSION_VERSION = 3
+export const ACTIVITY_SESSION_VERSION = 4
 
 export function migrateActivitySessionState(
   persistedState: unknown,
@@ -19,17 +19,24 @@ export function migrateActivitySessionState(
   if (typeof persistedState !== 'object' || persistedState === null) {
     return { session: null }
   }
-  const session = (persistedState as { session?: ActivitySession | null }).session
+  let session = (persistedState as { session?: ActivitySession | null }).session
   if (version === 2 && session?.progress) {
-    return {
-      session: {
-        ...session,
-        progress: Object.fromEntries(
-          Object.entries(session.progress).map(([id, progress]) => [
-            id,
-            { ...progress, firstTimedOut: false, firstResponse: progress.response ?? null },
-          ]),
-        ),
+    session = {
+      ...session,
+      progress: Object.fromEntries(
+        Object.entries(session.progress).map(([id, progress]) => [
+          id,
+          { ...progress, firstTimedOut: false, firstResponse: progress.response ?? null },
+        ]),
+      ),
+    }
+  }
+  if (session?.caseProgress && !session.caseProgress.clueOpenContexts) {
+    session = {
+      ...session,
+      caseProgress: {
+        ...session.caseProgress,
+        clueOpenContexts: {},
       },
     }
   }

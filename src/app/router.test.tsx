@@ -74,5 +74,6 @@ describe('router layouts', () => {
       'src',
       '/brand/autovrse-logo.svg',
     )
+    expect(screen.getByText(/^Build /)).toBeVisible()
   })
 })

@@ -1,4 +1,14 @@
-import { ArrowLeft, ArrowRight, Clock3, History, Lightbulb, Stethoscope } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Clock3,
+  History,
+  Lightbulb,
+  RefreshCw,
+  Stethoscope,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
@@ -6,6 +16,7 @@ import { EmptyState } from '@/components/feedback/EmptyState'
 import { Card, Chip } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { prefetchVersionedModel, versionedModelUrl } from '@/pwa/modelCache'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCaseLabCards } from '@/state/selectors'
 
@@ -14,6 +25,54 @@ const timingLabels = {
   stopwatch: 'Stopwatch · speed bonus only',
   countdown: 'Countdown · play continues when time expires',
 } as const
+
+function FeaturedModelPreflight({ modelUrl }: { modelUrl: string }) {
+  const [attempt, setAttempt] = useState(0)
+  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading')
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void prefetchVersionedModel(modelUrl, { signal: controller.signal }).then(
+      () => setState('ready'),
+      () => {
+        if (!controller.signal.aborted) setState('failed')
+      },
+    )
+    return () => controller.abort()
+  }, [attempt, modelUrl])
+
+  if (state === 'loading') {
+    return (
+      <p aria-live="polite" className="mt-3 text-small text-neutral-600" role="status">
+        Preparing the exact 3D model for this case…
+      </p>
+    )
+  }
+
+  if (state === 'ready') {
+    return (
+      <p className="mt-3 flex items-center gap-2 text-small text-success-700" role="status">
+        <CheckCircle2 aria-hidden="true" size={16} /> 3D model preloaded for this session.
+      </p>
+    )
+  }
+
+  return (
+    <div className="mt-3 text-small text-warning-800" role="alert">
+      <p>The 3D model could not be preloaded. You can still start the case.</p>
+      <button
+        className="mt-2 inline-flex min-h-11 items-center gap-2 font-semibold text-brand-700 underline"
+        type="button"
+        onClick={() => {
+          setState('loading')
+          setAttempt((current) => current + 1)
+        }}
+      >
+        <RefreshCw aria-hidden="true" size={16} /> Retry model preload
+      </button>
+    </div>
+  )
+}
 
 export function CaseIntroPage() {
   const { caseId } = useParams()
@@ -27,6 +86,13 @@ export function CaseIntroPage() {
       )
     : undefined
   const patientImage = useAssetUrl(caseView?.caseDoc.patient.imageAssetId)
+  const featuredModelUrl = (() => {
+    if (!caseView || caseView.caseId !== registry.appConfig.caseLab?.featuredCaseId)
+      return undefined
+    const anatomyMap = registry.anatomyMapById.get(caseView.caseDoc.anatomyMapId)
+    const model = anatomyMap ? registry.assetById.get(anatomyMap.modelAssetId) : undefined
+    return model?.type === 'model' ? versionedModelUrl(model) : undefined
+  })()
 
   if (!caseView || !registry.appConfig.caseLab) {
     return (
@@ -77,7 +143,10 @@ export function CaseIntroPage() {
             <h2 className="mt-3 text-title font-bold">{caseDoc.patient.label}</h2>
             {caseDoc.patient.age !== undefined || caseDoc.patient.sex ? (
               <p className="mt-1 text-small text-neutral-600">
-                {[caseDoc.patient.age === undefined ? null : `${caseDoc.patient.age} years`, caseDoc.patient.sex]
+                {[
+                  caseDoc.patient.age === undefined ? null : `${caseDoc.patient.age} years`,
+                  caseDoc.patient.sex,
+                ]
                   .filter(Boolean)
                   .join(' · ')}
               </p>
@@ -135,7 +204,7 @@ export function CaseIntroPage() {
               <div>
                 <dt className="text-small text-neutral-600">Best score</dt>
                 <dd className="text-title font-bold">
-                  {caseView.bestScore === null ? '—' : caseView.bestScore}
+                  {caseView.bestScore === null ? '—' : `${caseView.bestScore}/100`}
                 </dd>
               </div>
               <div>
@@ -147,6 +216,7 @@ export function CaseIntroPage() {
               {resumable ? 'Resume case' : 'Start case'}
               <ArrowRight aria-hidden="true" size={17} />
             </Link>
+            {featuredModelUrl ? <FeaturedModelPreflight modelUrl={featuredModelUrl} /> : null}
           </Card>
         </div>
       </div>
@@ -165,7 +235,7 @@ export function CaseIntroPage() {
               >
                 <Card className="h-full" interactive>
                   <History aria-hidden="true" className="text-brand-700" size={20} />
-                  <p className="mt-3 font-bold">{attempt.total} points</p>
+                  <p className="mt-3 font-bold">{attempt.total}/100</p>
                   <p className="mt-1 text-small text-neutral-600">
                     {new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(
                       new Date(attempt.completedAt),

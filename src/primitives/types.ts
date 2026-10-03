@@ -14,6 +14,7 @@ export type PrimitiveInteraction =
   | { name: 'dicom_viewer_failed'; reason: string }
   | { name: 'anatomy_structure_selected'; structureId: string; key: string }
   | { name: 'anatomy_waypoint_reached'; waypointId: string; key: string }
+  | { name: 'anatomy_finding_inspected'; findingId: string; key: string }
   | {
       name: 'anatomy_view_changed'
       position: AnatomyVector3

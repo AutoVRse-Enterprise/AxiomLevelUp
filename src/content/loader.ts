@@ -115,6 +115,25 @@ function collectClueIdReferences(value: unknown, path = ''): ClueIdReference[] {
   })
 }
 
+function collectFindingIdReferences(value: unknown, path = ''): ClueIdReference[] {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) =>
+      collectFindingIdReferences(entry, path ? `${path}.${index}` : String(index)),
+    )
+  }
+  if (!value || typeof value !== 'object') return []
+
+  return Object.entries(value).flatMap(([key, entry]) => {
+    const entryPath = path ? `${path}.${key}` : key
+    if ((key === 'findingIds' || key === 'requiredFindingIds') && Array.isArray(entry)) {
+      return entry.flatMap((id, index) =>
+        typeof id === 'string' ? [{ id, path: `${entryPath}.${index}` }] : [],
+      )
+    }
+    return collectFindingIdReferences(entry, entryPath)
+  })
+}
+
 export function validateContentBundle(input: ContentBundleInput): ContentRegistry {
   const issues: ContentIssue[] = []
   const rejectClueReferencesOutsideCases = (value: unknown, file: string, path = '') => {
@@ -127,12 +146,25 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       })
     })
   }
+  const rejectFindingReferencesOutsideCases = (value: unknown, file: string, path = '') => {
+    collectFindingIdReferences(value, path).forEach((reference) => {
+      issues.push({
+        file,
+        path: reference.path,
+        message: 'findingIds may only be used in case content.',
+        severity: 'error',
+      })
+    })
+  }
 
   rejectClueReferencesOutsideCases(input.manifest, input.manifestFile)
   rejectClueReferencesOutsideCases(input.appConfig, input.appConfigFile)
   rejectClueReferencesOutsideCases(input.seed, input.seedFile)
   rejectClueReferencesOutsideCases(input.assetManifest, input.assetManifestFile)
-  input.courseFiles.forEach(({ data, file }) => rejectClueReferencesOutsideCases(data, file))
+  input.courseFiles.forEach(({ data, file }) => {
+    rejectClueReferencesOutsideCases(data, file)
+    rejectFindingReferencesOutsideCases(data, file)
+  })
 
   const manifestResult = contentManifestSchema.safeParse(input.manifest)
   const appConfigResult = appConfigSchema.safeParse(input.appConfig)
@@ -754,6 +786,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const structureById = new Map(
       anatomyMap.structures.map((structure) => [structure.id, structure]),
     )
+    const meshOwnersByLevel = new Map<string, Map<string, string>>()
     anatomyMap.structures.forEach((structure, structureIndex) => {
       const path = `structures.${structureIndex}`
       if (structureIds.has(structure.id)) {
@@ -809,6 +842,23 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
           }
         }
       }
+
+      structure.meshNames.forEach((meshName, meshIndex) => {
+        const levelMeshOwners =
+          meshOwnersByLevel.get(structure.levelId) ?? new Map<string, string>()
+        meshOwnersByLevel.set(structure.levelId, levelMeshOwners)
+        const existingOwner = levelMeshOwners.get(meshName)
+        if (existingOwner && existingOwner !== structure.id) {
+          issues.push({
+            file,
+            path: `${path}.meshNames.${meshIndex}`,
+            message: `Mesh "${meshName}" is already bound to same-level structure "${existingOwner}".`,
+            severity: 'error',
+          })
+        } else {
+          levelMeshOwners.set(meshName, structure.id)
+        }
+      })
 
       if (modelAsset?.type === 'model') {
         const modelMeshNames = new Set(modelAsset.meshNames)
@@ -883,6 +933,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const clueIds = new Set(caseDocument.clues.map(({ id }) => id))
     const clueCategoryIds = new Set(appConfig.caseLab?.clueCategories.map(({ id }) => id) ?? [])
     const anatomyMap = anatomyMapById.get(caseDocument.anatomyMapId)
+    const findingIds = new Set<string>()
 
     requireRef(anatomyMapIds, caseDocument.anatomyMapId, file, 'anatomyMapId', 'anatomy map')
     caseDocument.conceptIds.forEach((id, conceptIndex) =>
@@ -891,6 +942,58 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     if (caseDocument.patient.imageAssetId) {
       requireAsset(caseDocument.patient.imageAssetId, file, 'patient.imageAssetId', 'image')
     }
+
+    const structureIds = new Set(anatomyMap?.structures.map(({ id }) => id) ?? [])
+    const waypointById = new Map(
+      anatomyMap?.waypoints.map((waypoint) => [waypoint.id, waypoint]) ?? [],
+    )
+    caseDocument.findings?.forEach((finding, findingIndex) => {
+      const path = `findings.${findingIndex}`
+      if (findingIds.has(finding.id)) {
+        issues.push({
+          file,
+          path: `${path}.id`,
+          message: `Duplicate case finding id "${finding.id}".`,
+          severity: 'error',
+        })
+      }
+      findingIds.add(finding.id)
+
+      if (finding.anchor.type === 'structure') {
+        requireRef(
+          structureIds,
+          finding.anchor.structure,
+          file,
+          `${path}.anchor.structure`,
+          'anatomy structure',
+        )
+        return
+      }
+
+      requireRef(
+        new Set(waypointById.keys()),
+        finding.anchor.waypoint,
+        file,
+        `${path}.anchor.waypoint`,
+        'anatomy waypoint',
+      )
+      requireRef(
+        new Set(waypointById.keys()),
+        finding.anchor.toWaypoint,
+        file,
+        `${path}.anchor.toWaypoint`,
+        'anatomy waypoint',
+      )
+      const waypoint = waypointById.get(finding.anchor.waypoint)
+      if (waypoint && !waypoint.next.includes(finding.anchor.toWaypoint)) {
+        issues.push({
+          file,
+          path: `${path}.anchor.toWaypoint`,
+          message: `Finding path must follow a configured edge from "${finding.anchor.waypoint}" to "${finding.anchor.toWaypoint}".`,
+          severity: 'error',
+        })
+      }
+    })
 
     const duplicateClueIds = new Set<string>()
     const seenPrimitiveIds = new Set<string>()
@@ -993,6 +1096,42 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         seenPrimitiveIds.add(step.id)
         stepIds.add(step.id)
         validatePrimitive(step, file, path)
+        const parsedStep = parsePrimitive(step).primitive
+        if (parsedStep?.type === 'anatomy_explore' || parsedStep?.type === 'anatomy_locate') {
+          const anatomyStep = parsedStep as AnatomyExplorePrimitive | AnatomyLocatePrimitive
+          const referencedFindingIds = anatomyStep.content.findingIds ?? []
+          referencedFindingIds.forEach((id, findingIndex) =>
+            requireRef(
+              findingIds,
+              id,
+              file,
+              `${path}.content.findingIds.${findingIndex}`,
+              'case finding',
+            ),
+          )
+          if (
+            referencedFindingIds.length > 0 &&
+            anatomyStep.content.anatomyMapId !== caseDocument.anatomyMapId
+          ) {
+            issues.push({
+              file,
+              path: `${path}.content.anatomyMapId`,
+              message: 'Anatomy steps with findings must use the case anatomy map.',
+              severity: 'error',
+            })
+          }
+          if (anatomyStep.type === 'anatomy_explore') {
+            anatomyStep.content.requiredFindingIds?.forEach((id, findingIndex) =>
+              requireRef(
+                findingIds,
+                id,
+                file,
+                `${path}.content.requiredFindingIds.${findingIndex}`,
+                'case finding',
+              ),
+            )
+          }
+        }
       })
     })
 
@@ -1013,6 +1152,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     )
     Object.keys(caseDocument.expertBenchmark.responses).forEach((id) =>
       requireRef(stepIds, id, file, `expertBenchmark.responses.${id}`, 'case primitive'),
+    )
+    Object.keys(caseDocument.expertBenchmark.rationales ?? {}).forEach((id) =>
+      requireRef(stepIds, id, file, `expertBenchmark.rationales.${id}`, 'case primitive'),
     )
     caseDocument.debrief.keyClueIds.forEach((id, clueIndex) =>
       requireRef(clueIds, id, file, `debrief.keyClueIds.${clueIndex}`, 'clue'),

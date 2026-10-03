@@ -160,6 +160,21 @@
           "radius": {
             "type": "number",
             "exclusiveMinimum": 0
+          },
+          "lumen": {
+            "type": "object",
+            "properties": {
+              "ringCount": {
+                "default": 0,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 64
+              }
+            },
+            "required": [
+              "ringCount"
+            ],
+            "additionalProperties": false
           }
         },
         "required": [

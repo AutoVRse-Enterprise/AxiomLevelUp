@@ -275,12 +275,92 @@ export const appConfigSchema = z.object({
         highlightColor: z.string().regex(/^#[0-9a-f]{6}$/i),
         highlightOpacity: z.number().min(0).max(1),
         markerColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        findingStyles: z
+          .strictObject({
+            lumen_narrowing: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+              maxRadiusReduction: z.number().positive().max(0.9),
+              axialLengthRadiusMultiplier: z.number().positive().max(10),
+            }),
+            lumen_occlusion: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+              blobCount: z.number().int().min(1).max(24),
+              blobRadiusRatio: z.number().positive().max(2),
+              spreadRadiusRatio: z.number().nonnegative().max(2),
+            }),
+            wall_thickening: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+              thicknessRadiusRatio: z.number().positive().max(1),
+              axialLengthRadiusMultiplier: z.number().positive().max(10),
+            }),
+            region: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+              scale: z.number().min(1).max(2),
+            }),
+            pickRadiusRatio: z.number().positive().max(2),
+          })
+          .default({
+            lumen_narrowing: {
+              color: '#f59e0b',
+              opacity: 0.9,
+              maxRadiusReduction: 0.65,
+              axialLengthRadiusMultiplier: 1.8,
+            },
+            lumen_occlusion: {
+              color: '#d6b36a',
+              opacity: 0.92,
+              blobCount: 7,
+              blobRadiusRatio: 0.42,
+              spreadRadiusRatio: 0.28,
+            },
+            wall_thickening: {
+              color: '#ef4444',
+              opacity: 0.72,
+              thicknessRadiusRatio: 0.18,
+              axialLengthRadiusMultiplier: 1.5,
+            },
+            region: {
+              color: '#f97316',
+              opacity: 0.3,
+              scale: 1.01,
+            },
+            pickRadiusRatio: 0.45,
+          }),
         lumen: z.strictObject({
           defaultRadius: z.number().positive(),
           radialSegments: z.number().int().min(6).max(64),
           tubularSegmentsPerConnection: z.number().int().min(1).max(128),
           color: z.string().regex(/^#[0-9a-f]{6}$/i),
           opacity: z.number().positive().max(1),
+          roughness: z.number().min(0).max(1),
+          curveStrength: z.number().min(0).max(1),
+          headlight: z.strictObject({
+            color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            intensity: z.number().nonnegative().max(20),
+            distanceRadiusMultiplier: z.number().positive().max(100),
+          }),
+          fog: z.strictObject({
+            color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            nearRadiusMultiplier: z.number().nonnegative().max(100),
+            farRadiusMultiplier: z.number().positive().max(200),
+          }),
+          lookAround: z.strictObject({
+            enabled: z.boolean(),
+            degreesPerPixel: z.number().positive().max(5),
+            maxYawDegrees: z.number().positive().max(90),
+            maxPitchDegrees: z.number().positive().max(90),
+          }),
+          rings: z.strictObject({
+            color: z.string().regex(/^#[0-9a-f]{6}$/i),
+            opacity: z.number().positive().max(1),
+            tubeRadiusRatio: z.number().positive().max(0.5),
+            radialSegments: z.number().int().min(3).max(32),
+            tubularSegments: z.number().int().min(3).max(64),
+          }),
         }),
       })
       .default({
@@ -294,12 +374,64 @@ export const appConfigSchema = z.object({
         highlightColor: '#f6c453',
         highlightOpacity: 1,
         markerColor: '#f97316',
+        findingStyles: {
+          lumen_narrowing: {
+            color: '#f59e0b',
+            opacity: 0.9,
+            maxRadiusReduction: 0.65,
+            axialLengthRadiusMultiplier: 1.8,
+          },
+          lumen_occlusion: {
+            color: '#d6b36a',
+            opacity: 0.92,
+            blobCount: 7,
+            blobRadiusRatio: 0.42,
+            spreadRadiusRatio: 0.28,
+          },
+          wall_thickening: {
+            color: '#ef4444',
+            opacity: 0.72,
+            thicknessRadiusRatio: 0.18,
+            axialLengthRadiusMultiplier: 1.5,
+          },
+          region: {
+            color: '#f97316',
+            opacity: 0.3,
+            scale: 1.01,
+          },
+          pickRadiusRatio: 0.45,
+        },
         lumen: {
           defaultRadius: 0.06,
           radialSegments: 20,
           tubularSegmentsPerConnection: 12,
           color: '#b7675c',
           opacity: 1,
+          roughness: 0.8,
+          curveStrength: 0.35,
+          headlight: {
+            color: '#fff4e8',
+            intensity: 3,
+            distanceRadiusMultiplier: 12,
+          },
+          fog: {
+            color: '#3a1118',
+            nearRadiusMultiplier: 3,
+            farRadiusMultiplier: 18,
+          },
+          lookAround: {
+            enabled: true,
+            degreesPerPixel: 0.12,
+            maxYawDegrees: 24,
+            maxPitchDegrees: 16,
+          },
+          rings: {
+            color: '#d68b7f',
+            opacity: 0.45,
+            tubeRadiusRatio: 0.06,
+            radialSegments: 8,
+            tubularSegments: 24,
+          },
         },
       }),
     offline: z.strictObject({
@@ -422,6 +554,7 @@ export const masteryStateSchema = z.object({
 const activityResultSchema = z.object({
   activityKind: z.enum(['lesson', 'challenge', 'case']),
   activityId: idSchema,
+  sourceEventId: z.string().min(1).optional(),
   xpEarned: z.number().int().nonnegative(),
   stars: z.number().int().min(0).max(3),
   masteryDelta: z.record(idSchema, z.number()),
@@ -520,7 +653,7 @@ export const caseProgressStateSchema = z.object({
   lastCompletedAt: isoDateSchema.nullable(),
 })
 
-export const caseAttemptRecordSchema = z.strictObject({
+const caseAttemptRecordBaseSchema = z.strictObject({
   attemptId: z.string().min(1),
   tier: caseTierSchema,
   total: z.number().min(0).max(100),
@@ -540,6 +673,31 @@ export const caseAttemptRecordSchema = z.strictObject({
   ),
   completedAt: isoDateSchema,
 })
+
+const legacyCaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
+  resultVersion: z.literal(5),
+})
+
+const currentCaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
+  resultVersion: z.literal(6),
+  perStepSpeed: z.number().min(0).max(1),
+  caseSpeed: z.number().min(0).max(1),
+  clueCostPoints: z.number().min(0).max(100),
+  speedScored: z.boolean(),
+  timingMode: z.enum(['none', 'stopwatch', 'countdown']),
+  weights: z.strictObject({
+    anatomy: z.number().min(0).max(1),
+    diagnosis: z.number().min(0).max(1),
+    speed: z.number().min(0).max(1),
+  }),
+  actualAwardedXp: z.number().int().nonnegative().nullable(),
+  actualAwardedXpSource: z.literal('gamification_activity_result').nullable(),
+})
+
+export const caseAttemptRecordSchema = z.discriminatedUnion('resultVersion', [
+  legacyCaseAttemptRecordSchema,
+  currentCaseAttemptRecordSchema,
+])
 
 export const learnerSeedSchema = z.object({
   schemaVersion: z.literal('0.1'),

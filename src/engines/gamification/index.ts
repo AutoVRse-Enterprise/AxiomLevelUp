@@ -25,7 +25,7 @@ function findPrimitive(
   }
   if (activityKind === 'challenge') {
     return registry.appConfig.challenges
-        .find(({ id }) => id === activityId)
+      .find(({ id }) => id === activityId)
       ?.items?.find(({ id }) => id === primitiveId)
   }
   return registry.caseById
@@ -441,22 +441,10 @@ export function applyGamificationEvent(
         awardXp(state, caseLab.xp.caseComplete, 'case_complete', event.caseId, followUps)
         reward.completionAwarded = true
       } else {
-        awardXp(
-          state,
-          config.gamification.xp.revisionComplete,
-          'revision',
-          event.caseId,
-          followUps,
-        )
+        awardXp(state, config.gamification.xp.revisionComplete, 'revision', event.caseId, followUps)
       }
       if (event.breakdown.total === 100 && !reward.perfectAwarded) {
-        awardXp(
-          state,
-          caseLab.xp.perfectCaseBonus,
-          'case_perfect',
-          event.caseId,
-          followUps,
-        )
+        awardXp(state, caseLab.xp.perfectCaseBonus, 'case_perfect', event.caseId, followUps)
         reward.perfectAwarded = true
       }
       reward.rewardedAttemptIds.push(event.attemptId)
@@ -573,6 +561,7 @@ export function finalizeActivityResult(
   state.gamification.lastActivityResult = {
     activityKind: run.activityKind,
     activityId,
+    sourceEventId: event.id,
     xpEarned: run.xpEarned,
     stars:
       event.event === 'lesson_completed' ? (state.lessonProgress[event.lessonId]?.stars ?? 0) : 0,

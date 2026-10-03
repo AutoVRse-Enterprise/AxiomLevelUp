@@ -80,8 +80,10 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
       prompt: z.string().trim().min(1),
       startView: anatomyStartViewSchema.default({ mode: 'overview' }),
       navigation: anatomyNavigationSchema.default('both'),
+      findingIds: z.array(idSchema).min(1).optional(),
       requiredWaypointIds: z.array(idSchema).min(1).optional(),
       requiredStructureIds: z.array(idSchema).min(1).optional(),
+      requiredFindingIds: z.array(idSchema).min(1).optional(),
     }),
   })
   .superRefine((primitive, context) => {
@@ -95,8 +97,10 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
     }
 
     for (const [field, ids] of [
+      ['findingIds', primitive.content.findingIds],
       ['requiredWaypointIds', primitive.content.requiredWaypointIds],
       ['requiredStructureIds', primitive.content.requiredStructureIds],
+      ['requiredFindingIds', primitive.content.requiredFindingIds],
     ] as const) {
       if (ids && new Set(ids).size !== ids.length) {
         context.addIssue({
@@ -109,7 +113,8 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
 
     const requiredCount =
       (primitive.content.requiredWaypointIds?.length ?? 0) +
-      (primitive.content.requiredStructureIds?.length ?? 0)
+      (primitive.content.requiredStructureIds?.length ?? 0) +
+      (primitive.content.requiredFindingIds?.length ?? 0)
     if (primitive.completion.mode === 'explored') {
       if (requiredCount === 0) {
         context.addIssue({
@@ -139,6 +144,17 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
         message: 'Required waypoints need flythrough navigation.',
       })
     }
+
+    const visibleFindingIds = new Set(primitive.content.findingIds ?? [])
+    primitive.content.requiredFindingIds?.forEach((id, index) => {
+      if (!visibleFindingIds.has(id)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['content', 'requiredFindingIds', index],
+          message: 'Required findings must also appear in findingIds.',
+        })
+      }
+    })
   })
 
 export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
@@ -149,6 +165,8 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
         anatomyMapId: idSchema,
         prompt: z.string().trim().min(1),
         startView: anatomyStartViewSchema.default({ mode: 'overview' }),
+        navigation: anatomyNavigationSchema.default('orbit'),
+        findingIds: z.array(idSchema).min(1).optional(),
         levels: z.array(anatomyLocateLevelSchema).min(1),
         explanation: z.string().trim().min(1).optional(),
       })
@@ -158,7 +176,11 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
           path: ['levels'],
           message: 'Anatomy locate level IDs must be unique.',
         },
-      ),
+      )
+      .refine(({ findingIds }) => !findingIds || new Set(findingIds).size === findingIds.length, {
+        path: ['findingIds'],
+        message: 'Anatomy finding IDs must be unique.',
+      }),
   })
   .superRefine((primitive, context) => {
     if (primitive.completion.mode !== 'answer') {

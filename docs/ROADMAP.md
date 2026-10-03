@@ -12,6 +12,8 @@
 | 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
 | 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only        |
+| 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                |
+| 12    | Case Lab depth and polish      | Planned  | Remaining case breadth, learning depth and polish findings are resolved                  |
 
 ## Sequencing note
 
@@ -69,5 +71,16 @@ Phase 10 closed with first-class case and anatomy-map contracts, a reusable stag
 case rewards and mastery, learner-state v5 attempt history, two anatomy primitives and a lazy
 Three.js boundary. Automated flows complete all four configured cases and a loader-added fixture;
 production Chromium QA passes the four target viewports, keyboard localisation, reduced motion,
-WebGL recovery and heap-release checks. Phase 9 remains active for physical Android/iOS DICOM and
-3D anatomy evidence.
+WebGL recovery and heap-release checks. A subsequent 52-finding demo-readiness audit determined
+that this establishes the technical capability but not a credible unsupervised client demo. Phase 9
+remains active for physical Android/iOS DICOM and 3D anatomy evidence.
+
+Phase 11 closed with all 40 assigned audit findings technically resolved, a real-WebGL production
+preview suite passing on desktop and 375 px touch emulation, and durable golden-path screenshots.
+The six-task advanced case now demonstrates branch navigation, configured finding discovery,
+overlay-free localisation, truthful timing/results/rewards and comparison. Clinical claims remain
+unapproved, and physical-device approval remains under Phase 9.
+
+Phase 12 is next. It retains the 12 explicitly deferred findings covering catalogue breadth, deeper
+anatomy, general clue and timeout semantics, evidence synthesis, debrief/expert-teaching depth,
+metadata/history consistency and learner-facing presentation/offline-model polish.

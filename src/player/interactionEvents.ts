@@ -1,8 +1,4 @@
-import type {
-  EventActivityKind,
-  LearnerEventDraft,
-  MediaProgressMilestone,
-} from '@/events/types'
+import type { EventActivityKind, LearnerEventDraft, MediaProgressMilestone } from '@/events/types'
 import type { PrimitiveInteraction } from '@/primitives/types'
 
 const MEDIA_MILESTONES = [25, 50, 75, 100] as const
@@ -127,6 +123,14 @@ export function mapInteractionToEvents(
       event: 'anatomy_waypoint_reached',
       ...context,
       waypointId: interaction.waypointId,
+    })
+  }
+
+  if (interaction.name === 'anatomy_finding_inspected' && 'findingId' in interaction) {
+    events.push({
+      event: 'anatomy_finding_inspected',
+      ...context,
+      findingId: interaction.findingId,
     })
   }
 

@@ -230,8 +230,76 @@ describe('content schemas', () => {
   })
 
   it('accepts the case document and anatomy-map fixture contracts', () => {
-    expect(caseDocumentSchema.parse(caseFixture).id).toBe('case-contract-fixture')
+    const parsedCase = caseDocumentSchema.parse(caseFixture)
+    expect(parsedCase.id).toBe('case-contract-fixture')
+    expect(parsedCase.findings?.map(({ kind }) => kind)).toEqual(['lumen_occlusion', 'region'])
     expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
+  })
+
+  it('validates case finding IDs, anchors, map edges, clues and step references', () => {
+    const invalid = structuredClone(caseFixture) as {
+      findings: Array<{
+        id: string
+        anchor:
+          | { type: 'waypoint'; waypoint: string; toWaypoint: string; t: number }
+          | { type: 'structure'; structure: string }
+        clueIds: string[]
+      }>
+      stages: Array<{ steps: unknown[] }>
+    }
+    invalid.findings[1]!.id = invalid.findings[0]!.id
+    invalid.findings[0]!.anchor = {
+      type: 'waypoint',
+      waypoint: 'terminal-waypoint',
+      toWaypoint: 'entry-waypoint',
+      t: 0.5,
+    }
+    invalid.findings[0]!.clueIds = ['missing-clue']
+    invalid.findings[1]!.anchor = {
+      type: 'structure',
+      structure: 'missing-structure',
+    }
+    invalid.stages[0]!.steps = [
+      {
+        id: 'inspect-finding',
+        type: 'anatomy_explore',
+        conceptIds: ['thoracic-imaging'],
+        content: {
+          anatomyMapId: 'fixture-anatomy',
+          prompt: 'Inspect the configured finding.',
+          findingIds: ['missing-finding'],
+          requiredFindingIds: ['missing-finding'],
+        },
+        completion: { mode: 'explored' },
+      },
+    ]
+
+    expect(() => validateContentBundle(withCaseFixture(invalid))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'findings.1.id',
+            message: expect.stringContaining('Duplicate case finding'),
+          }),
+          expect.objectContaining({
+            path: 'findings.0.anchor.toWaypoint',
+            message: expect.stringContaining('must follow a configured edge'),
+          }),
+          expect.objectContaining({
+            path: 'findings.1.anchor.structure',
+            message: expect.stringContaining('Unknown anatomy structure'),
+          }),
+          expect.objectContaining({
+            path: 'findings.0.clueIds.0',
+            message: expect.stringContaining('Unknown clue'),
+          }),
+          expect.objectContaining({
+            path: 'stages.0.steps.0.content.findingIds.0',
+            message: expect.stringContaining('Unknown case finding'),
+          }),
+        ]),
+      }),
+    )
   })
 
   it('ships three case concepts, three case badges, and resolvable seeded case history', () => {
@@ -319,12 +387,64 @@ describe('content loader', () => {
         3,
       )
       const steps = caseDocument.stages.flatMap(({ steps }) => steps)
-      expect(steps).toHaveLength(8)
       const anatomyLocate = steps.find(({ type }) => type === 'anatomy_locate')
       const levels = (anatomyLocate?.content as { levels?: unknown[] }).levels
       expect([3, 4]).toContain(levels?.length)
-      expect(steps.some(({ type }) => type === 'scenario')).toBe(true)
+      if (caseDocument.id === 'exacerbation-advanced') {
+        expect(steps).toHaveLength(6)
+      } else {
+        expect(steps).toHaveLength(8)
+        expect(steps.some(({ type }) => type === 'scenario')).toBe(true)
+      }
     }
+    const goldenCase = registry.caseById.get('exacerbation-advanced')!
+    const goldenSteps = goldenCase.stages.flatMap(({ steps }) => steps)
+    expect(goldenCase.title).toBe('Respiratory Case Review')
+    expect(goldenCase.estimatedMinutes).toBe(6)
+    expect(goldenCase.timing).toEqual({ caseTargetSeconds: 300, caseMaxSeconds: 480 })
+    expect(goldenSteps.map(({ id }) => id)).toEqual([
+      'exac-explore-airway',
+      'exac-localise',
+      'exac-severity-signals',
+      'exac-co2-reasoning',
+      'exac-best-diagnosis',
+      'exac-immediate-consequence',
+    ])
+    expect(goldenSteps.every((step) => step.timer === undefined)).toBe(true)
+    expect(goldenCase.findings?.map(({ id }) => id)).toEqual([
+      'exac-diffuse-wall-change',
+      'exac-posterior-basal-plug',
+    ])
+    expect(goldenSteps[0]?.content).toMatchObject({
+      startView: { mode: 'endoscopic', waypointId: 'trachea-mid' },
+      requiredWaypointIds: ['right-lower-posterior-basal-segment'],
+      requiredFindingIds: ['exac-posterior-basal-plug'],
+    })
+    expect(goldenSteps[1]?.content).not.toHaveProperty('findingIds')
+    expect(Object.keys(goldenCase.expertBenchmark.responses)).toEqual(
+      goldenSteps.map(({ id }) => id),
+    )
+    expect(Object.keys(goldenCase.expertBenchmark.rationales ?? {})).toEqual(
+      goldenSteps.map(({ id }) => id),
+    )
+    expect(
+      registry.anatomyMapById
+        .get('lung-map')
+        ?.waypoints.filter(({ id }) => id.startsWith('right-lower-'))
+        .map(({ id }) => id),
+    ).toEqual(
+      expect.arrayContaining([
+        'right-lower-superior-segment',
+        'right-lower-lateral-basal-segment',
+        'right-lower-posterior-basal-segment',
+      ]),
+    )
+    expect(registry.seed.caseAttempts['exacerbation-advanced']).toEqual([
+      expect.objectContaining({
+        resultVersion: 6,
+        attemptId: 'seed-exacerbation-advanced-1',
+      }),
+    ])
     const quickCase = registry.caseById.get('wheeze-quick')
     expect(quickCase?.estimatedMinutes).toBe(3)
     expect(quickCase?.clues).toHaveLength(3)
@@ -399,6 +519,9 @@ describe('content loader', () => {
           expect.objectContaining({ path: 'stages.1.kind' }),
           expect.objectContaining({ path: 'expertBenchmark.openedClueIds.0' }),
           expect.objectContaining({ path: 'expertBenchmark.responses.missing-step' }),
+          expect.objectContaining({
+            path: 'expertBenchmark.rationales.missing-rationale-step',
+          }),
           expect.objectContaining({ path: 'debrief.keyClueIds.0' }),
         ]),
       }),
@@ -537,6 +660,54 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'challenges.2.caseId',
             message: expect.stringContaining('must reference caseLab.dailyQuickCaseId'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('allows aggregate parents to share descendant mesh bindings across levels', () => {
+    const bundle = withCaseFixture()
+    const anatomyMap = bundle.anatomyMapFiles.find(
+      ({ file }) => file === 'fixtures/anatomy-map.json',
+    )!.data as {
+      structures: Array<{ meshNames: string[] }>
+    }
+    anatomyMap.structures[0]!.meshNames.push('target-structure')
+
+    expect(() => validateContentBundle(bundle)).not.toThrow()
+  })
+
+  it('rejects a mesh bound to multiple structures on the same anatomy level', () => {
+    const bundle = withCaseFixture()
+    const anatomyMap = bundle.anatomyMapFiles.find(
+      ({ file }) => file === 'fixtures/anatomy-map.json',
+    )!.data as {
+      structures: Array<{
+        id: string
+        levelId: string
+        parentId?: string
+        label: string
+        meshNames: string[]
+      }>
+    }
+    anatomyMap.structures.push({
+      id: 'overlapping-sibling',
+      levelId: 'structure',
+      parentId: 'root-region',
+      label: 'Overlapping sibling',
+      meshNames: ['target-structure'],
+    })
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            file: 'fixtures/anatomy-map.json',
+            path: 'structures.2.meshNames.0',
+            message: expect.stringContaining(
+              'already bound to same-level structure "target-structure"',
+            ),
           }),
         ]),
       }),
@@ -831,7 +1002,7 @@ describe('content loader', () => {
             message: expect.stringContaining('Duplicate primitive id'),
           }),
           expect.objectContaining({
-              path: 'challenges.0.items.5.id',
+            path: 'challenges.0.items.5.id',
             message: expect.stringContaining('Duplicate primitive id'),
           }),
         ]),

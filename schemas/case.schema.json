@@ -157,6 +157,114 @@
         }
       ]
     },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "lumen_narrowing",
+              "lumen_occlusion",
+              "wall_thickening",
+              "region"
+            ]
+          },
+          "anchor": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "waypoint"
+                  },
+                  "waypoint": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "toWaypoint": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "t": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "required": [
+                  "type",
+                  "waypoint",
+                  "toWaypoint",
+                  "t"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "structure"
+                  },
+                  "structure": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "required": [
+                  "type",
+                  "structure"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          },
+          "severity": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "clueIds": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description",
+          "kind",
+          "anchor",
+          "severity",
+          "clueIds"
+        ],
+        "additionalProperties": false
+      }
+    },
     "clues": {
       "minItems": 1,
       "type": "array",
@@ -1012,6 +1120,18 @@
             "pattern": "^[a-z0-9][a-z0-9_-]*$"
           },
           "additionalProperties": {}
+        },
+        "rationales": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "breakdown": {
           "type": "object",

@@ -1,65 +1,75 @@
 {
   "schemaVersion": "0.1",
-  "caseVersion": "1.0",
+  "caseVersion": "2.0",
   "id": "exacerbation-advanced",
-  "title": "The Escalating Attack",
-  "summary": "Educational demo only—not clinical guidance or emergency-care instruction. Recognise a synthetic severe asthma exacerbation while separating severity evidence from diagnosis.",
+  "title": "Respiratory Case Review",
+  "summary": "Review spatial, clinical and physiological evidence in a synthetic respiratory presentation. Training simulation—not clinical guidance.",
   "tier": "advanced",
   "organSystem": "respiratory",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 6,
   "conceptIds": ["respiratory-anatomy", "airway-pathophysiology", "respiratory-diagnosis"],
   "patient": {
     "label": "Case C — synthetic patient",
     "age": 37,
     "sex": "Female",
-    "presentingComplaint": "Educational-only scenario: rapidly worsening breathlessness and difficulty speaking after a viral prodrome.",
+    "presentingComplaint": "Rapidly worsening breathlessness and difficulty completing sentences after several days of coryzal symptoms.",
     "history": [
-      "Prior variable wheeze and nocturnal symptoms; preventer doses were missed this week.",
-      "Reliever benefit has become brief and incomplete over the last six hours.",
-      "This fictional profile is for learning and must not guide emergency decisions."
+      "Episodes of variable wheeze and nocturnal cough have occurred previously.",
+      "Several preventer doses were missed this week.",
+      "Reliever benefit has become brief and incomplete over the last six hours."
     ]
   },
   "anatomyMapId": "lung-map",
   "entry": {
     "mode": "endoscopic",
-    "waypointId": "carina"
+    "waypointId": "trachea-mid"
   },
+  "findings": [
+    {
+      "id": "exac-diffuse-wall-change",
+      "label": "Diffuse wall thickening with mild narrowing",
+      "description": "The airway wall appears diffusely thickened, with mild reduction in the visible lumen.",
+      "kind": "wall_thickening",
+      "anchor": {
+        "type": "waypoint",
+        "waypoint": "trachea-mid",
+        "toWaypoint": "carina",
+        "t": 0.56
+      },
+      "severity": 0.46,
+      "clueIds": ["exac-airway-reference", "exac-pathology-reference"]
+    },
+    {
+      "id": "exac-posterior-basal-plug",
+      "label": "Dominant posterior basal mucus plug",
+      "description": "A dominant mucus plug substantially occludes the posterior basal segmental lumen.",
+      "kind": "lumen_occlusion",
+      "anchor": {
+        "type": "waypoint",
+        "waypoint": "right-lower-posterior-basal-segment",
+        "toWaypoint": "right-lower-posterior-basal-distal",
+        "t": 0.62
+      },
+      "severity": 0.9,
+      "clueIds": ["exac-airway-reference", "exac-pathology-reference"]
+    }
+  ],
   "clues": [
     {
       "id": "exac-history",
       "category": "history",
-      "title": "Acute trajectory",
+      "title": "Symptom trajectory",
       "essential": true,
       "primitive": {
         "id": "exac-clue-history",
         "type": "rich_text",
         "conceptIds": ["respiratory-diagnosis"],
         "content": {
-          "heading": "Rapid deterioration",
-          "body": "Educational-only synthetic history: established variable symptoms, viral prodrome, missed preventer doses and rapidly diminishing reliever effect."
+          "heading": "Six-hour change",
+          "body": "Previous variable wheeze and nocturnal cough are followed by rapidly worsening breathlessness, incomplete reliever response and difficulty completing sentences."
         },
         "assets": [],
         "completion": { "mode": "viewed" },
-        "feedback": {}
-      }
-    },
-    {
-      "id": "exac-wheeze",
-      "category": "audio",
-      "title": "Respiratory sound",
-      "essential": true,
-      "primitive": {
-        "id": "exac-clue-wheeze",
-        "type": "audio",
-        "conceptIds": ["respiratory-diagnosis"],
-        "content": {
-          "assetId": "wheeze-audio",
-          "title": "Wheeze recording",
-          "description": "A short educational respiratory-sound sample, not a severity scale.",
-          "transcript": "Repeated musical, high-pitched expiratory sounds are audible over the breathing cycle."
-        },
-        "assets": ["wheeze-audio"],
-        "completion": { "mode": "media_progress", "threshold": 0.8 },
         "feedback": {}
       }
     },
@@ -74,8 +84,8 @@
         "conceptIds": ["airway-pathophysiology"],
         "content": {
           "chartType": "line",
-          "title": "Synthetic peak expiratory flow trend",
-          "summary": "Peak flow falls from 310 to 170 L/min over six hours; values are synthetic and educational only.",
+          "title": "Peak expiratory flow trend",
+          "summary": "Peak expiratory flow falls from 310 to 170 L/min over six hours.",
           "axes": {
             "x": { "label": "Hours since symptom escalation", "unit": "h", "scale": "linear" },
             "y": { "label": "Peak expiratory flow", "unit": "L/min", "scale": "linear" }
@@ -107,7 +117,7 @@
         "type": "data_table",
         "conceptIds": ["airway-pathophysiology"],
         "content": {
-          "caption": "Synthetic educational physiology snapshot",
+          "caption": "Current observations",
           "columns": [
             { "id": "measure", "label": "Measure" },
             { "id": "value", "label": "Value" },
@@ -126,7 +136,7 @@
               "id": "saturation",
               "cells": [
                 { "columnId": "measure", "value": "Oxygen saturation" },
-                { "columnId": "value", "value": "91% room air" },
+                { "columnId": "value", "value": "91% on room air" },
                 { "columnId": "trend", "value": "Falling" }
               ]
             },
@@ -135,7 +145,7 @@
               "cells": [
                 { "columnId": "measure", "value": "PaCO₂" },
                 { "columnId": "value", "value": "5.8 kPa" },
-                { "columnId": "trend", "value": "No longer low" }
+                { "columnId": "trend", "value": "Previously 4.1 kPa" }
               ]
             }
           ]
@@ -146,18 +156,18 @@
       }
     },
     {
-      "id": "exac-anatomy",
+      "id": "exac-airway-reference",
       "category": "anatomy",
-      "title": "Branching airway",
+      "title": "Airway anatomy reference",
       "essential": true,
       "primitive": {
-        "id": "exac-clue-anatomy",
+        "id": "exac-clue-airway-reference",
         "type": "image",
         "conceptIds": ["respiratory-anatomy"],
         "content": {
           "assetId": "airway-comparison-image",
-          "alt": "OpenStax illustration showing a bronchiole leading into alveolar ducts and alveoli.",
-          "caption": "Educational anatomy reference for distinguishing conducting airway from gas-exchange units."
+          "alt": "Illustration of a bronchiole leading into alveolar ducts and alveoli.",
+          "caption": "Use the branching conducting-airway anatomy to distinguish lobe, segment and structure."
         },
         "assets": ["airway-comparison-image"],
         "completion": { "mode": "viewed" },
@@ -165,41 +175,21 @@
       }
     },
     {
-      "id": "exac-histology",
+      "id": "exac-pathology-reference",
       "category": "histology",
-      "title": "Remodelled airway",
+      "title": "Airway pathology reference",
       "essential": false,
       "primitive": {
-        "id": "exac-clue-histology",
+        "id": "exac-clue-pathology-reference",
         "type": "image",
         "conceptIds": ["airway-pathophysiology"],
         "content": {
           "assetId": "asthma-histology-image",
-          "alt": "Histology image showing an inflamed bronchiole with mucoid material narrowing the lumen.",
-          "caption": "Illustrative chronic pathology; educational use only and not a specimen from this fictional episode."
+          "alt": "Histology image of an inflamed bronchiole with mucoid material narrowing the lumen.",
+          "caption": "Reference image showing airway-wall change and mucoid luminal obstruction."
         },
         "assets": ["asthma-histology-image"],
         "completion": { "mode": "viewed" },
-        "feedback": {}
-      }
-    },
-    {
-      "id": "exac-crackles",
-      "category": "audio",
-      "title": "Alternative sound pattern",
-      "essential": false,
-      "primitive": {
-        "id": "exac-clue-crackles",
-        "type": "audio",
-        "conceptIds": ["respiratory-diagnosis"],
-        "content": {
-          "assetId": "crackles-audio",
-          "title": "Inspiratory crackles comparator",
-          "description": "An educational comparator from an interstitial lung disease recording, not this fictional patient's sound.",
-          "transcript": "Fine, repeated inspiratory crackles are audible. Compare their discontinuous character with the musical wheeze sample."
-        },
-        "assets": ["crackles-audio"],
-        "completion": { "mode": "media_progress", "threshold": 0.8 },
         "feedback": {}
       }
     }
@@ -210,27 +200,52 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
-      "intro": "Educational-only timed task: navigate from the endoscopic entry to the affected conducting airway.",
-      "clueIds": ["exac-anatomy", "exac-wheeze"],
+      "intro": "Trace the airway, inspect the dominant finding, then localise it without an overlay.",
+      "clueIds": ["exac-airway-reference", "exac-pathology-reference"],
       "steps": [
+        {
+          "id": "exac-explore-airway",
+          "type": "anatomy_explore",
+          "clueIds": ["exac-airway-reference", "exac-pathology-reference"],
+          "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Starting in the mid trachea, follow the airway to the right lower lobe and inspect the dominant posterior basal obstruction.",
+            "startView": { "mode": "endoscopic", "waypointId": "trachea-mid" },
+            "navigation": "flythrough",
+            "findingIds": ["exac-diffuse-wall-change", "exac-posterior-basal-plug"],
+            "requiredWaypointIds": ["right-lower-posterior-basal-segment"],
+            "requiredFindingIds": ["exac-posterior-basal-plug"]
+          },
+          "assets": [],
+          "completion": { "mode": "explored" },
+          "scoring": { "weight": 1, "difficulty": "advanced" },
+          "feedback": {}
+        },
         {
           "id": "exac-localise",
           "type": "anatomy_locate",
-          "clueIds": ["exac-anatomy"],
+          "clueIds": ["exac-airway-reference"],
           "conceptIds": ["respiratory-anatomy"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Localise the dominant airway narrowing from lobe to structure.",
-            "startView": { "mode": "endoscopic", "waypointId": "carina" },
+            "prompt": "Localise the dominant obstruction from lobe to segment and structure.",
+            "startView": { "mode": "overview" },
+            "navigation": "orbit",
             "levels": [
-              { "levelId": "lobe", "input": "model", "targetStructureId": "right-lower-lobe", "weight": 1.5 },
+              {
+                "levelId": "lobe",
+                "input": "model",
+                "targetStructureId": "right-lower-lobe",
+                "weight": 1.5
+              },
               {
                 "levelId": "segment",
                 "input": "choice",
                 "options": [
                   { "id": "posterior-basal-segment", "label": "Posterior basal segment" },
-                  { "id": "apical-segment", "label": "Apical segment", "clueIds": ["exac-anatomy"] },
-                  { "id": "lingular-segment", "label": "Lingular segment", "clueIds": ["exac-anatomy"] }
+                  { "id": "superior-segment", "label": "Superior segment" },
+                  { "id": "lateral-basal-segment", "label": "Lateral basal segment" }
                 ],
                 "correctOptionId": "posterior-basal-segment",
                 "weight": 1
@@ -239,42 +254,20 @@
                 "levelId": "structure",
                 "input": "choice",
                 "options": [
-                  { "id": "bronchiole", "label": "Bronchiole" },
-                  { "id": "alveolar-wall", "label": "Alveolar wall", "clueIds": ["exac-anatomy"] },
-                  { "id": "pleura", "label": "Pleura", "clueIds": ["exac-anatomy"] }
+                  { "id": "segmental-bronchus", "label": "Segmental bronchus" },
+                  { "id": "pulmonary-artery-branch", "label": "Pulmonary artery branch" },
+                  { "id": "visceral-pleura", "label": "Visceral pleura" }
                 ],
-                "correctOptionId": "bronchiole",
+                "correctOptionId": "segmental-bronchus",
                 "weight": 1.5
               }
             ],
-            "explanation": "Acute bronchoconstriction and mucus narrow conducting airways; levels receive independent credit."
+            "explanation": "The traversed route enters the right lower lobe, posterior basal segment and its conducting segmental bronchus."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "hint": "Use the airway illustration; reduced hints are intentional at this tier." },
-          "timer": { "durationSeconds": 75, "mode": "countdown" }
-        },
-        {
-          "id": "exac-airway-change",
-          "type": "multiple_choice",
-          "clueIds": ["exac-histology", "exac-anatomy"],
-          "conceptIds": ["airway-pathophysiology"],
-          "content": {
-            "prompt": "Which acute change most directly increases expiratory resistance?",
-            "options": [
-              { "id": "narrowed-radius", "label": "Reduced airway radius from smooth-muscle constriction and mucus" },
-              { "id": "larger-alveoli", "label": "Uniform enlargement of alveoli", "clueIds": ["exac-histology"] },
-              { "id": "pleural-thickening", "label": "Isolated pleural thickening", "clueIds": ["exac-anatomy"] }
-            ],
-            "correctOptionId": "narrowed-radius",
-            "explanation": "A smaller conducting-airway radius markedly increases resistance."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 45, "mode": "countdown" }
+          "feedback": { "retry": false }
         }
       ]
     },
@@ -283,57 +276,39 @@
       "kind": "observe",
       "component": "diagnosis",
       "title": "Observe",
-      "intro": "Educational-only timed task: identify deterioration signals in the synthetic observations.",
-      "clueIds": ["exac-history", "exac-wheeze", "exac-flow", "exac-gas", "exac-crackles"],
+      "intro": "Select the observations that indicate marked deterioration.",
+      "clueIds": ["exac-history", "exac-flow", "exac-gas"],
       "steps": [
         {
           "id": "exac-severity-signals",
           "type": "multiple_select",
-          "clueIds": ["exac-flow", "exac-gas"],
+          "clueIds": ["exac-history", "exac-flow", "exac-gas"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
-            "prompt": "Which observations indicate worsening ventilatory compromise in this exercise?",
+            "prompt": "Which findings support marked respiratory deterioration? Select all that apply.",
             "options": [
-              { "id": "falling-flow", "label": "Rapidly falling peak flow" },
-              { "id": "co2-not-low", "label": "PaCO₂ is no longer low despite distress" },
-              { "id": "stable-speech", "label": "Comfortable full-sentence speech", "clueIds": ["exac-history"] },
-              { "id": "normal-rate", "label": "Normal respiratory rate", "clueIds": ["exac-gas"] }
+              { "id": "speech-limited", "label": "Difficulty completing sentences" },
+              { "id": "falling-flow", "label": "Peak expiratory flow falling to 170 L/min" },
+              { "id": "hypoxaemia", "label": "Oxygen saturation of 91% on room air and falling" },
+              { "id": "co2-rising", "label": "PaCO₂ rising from 4.1 to 5.8 kPa during ongoing distress" },
+              { "id": "prior-nocturnal-cough", "label": "Previous nocturnal cough by itself" },
+              { "id": "coryzal-symptoms", "label": "Coryzal symptoms by themselves" }
             ],
-            "correctOptionIds": ["falling-flow", "co2-not-low"],
+            "correctOptionIds": [
+              "speech-limited",
+              "falling-flow",
+              "hypoxaemia",
+              "co2-rising"
+            ],
             "scoringMode": "partial",
             "minSelections": 1,
             "shuffle": false,
-            "explanation": "Falling flow and failure to maintain a low CO₂ during marked distress are concerning in this synthetic pattern."
+            "explanation": "Speech limitation, falling expiratory flow, hypoxaemia and a rising PaCO₂ during distress all add severity information; the background symptoms alone do not grade the acute episode."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 50, "mode": "countdown" }
-        },
-        {
-          "id": "exac-sort-evidence",
-          "type": "classification",
-          "clueIds": ["exac-history", "exac-gas"],
-          "conceptIds": ["respiratory-diagnosis"],
-          "content": {
-            "prompt": "Classify each observation as identity evidence or severity evidence.",
-            "categories": [
-              { "id": "identity", "label": "Supports asthma pattern" },
-              { "id": "severity", "label": "Supports severe deterioration" }
-            ],
-            "items": [
-              { "id": "prior-variability", "label": "Prior variable nocturnal wheeze", "categoryId": "identity" },
-              { "id": "falling-oxygen", "label": "Falling oxygen saturation and rising rate", "categoryId": "severity" }
-            ],
-            "scoringMode": "partial",
-            "explanation": "Background variability helps identify the disease; acute physiology helps judge the episode."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 45, "mode": "countdown" }
+          "feedback": { "retry": false }
         }
       ]
     },
@@ -342,46 +317,41 @@
       "kind": "interpret",
       "component": "diagnosis",
       "title": "Interpret",
-      "intro": "Educational-only timed task: combine trajectory and physiology; do not use this scenario for emergency decisions.",
-      "clueIds": ["exac-flow", "exac-gas", "exac-wheeze", "exac-crackles"],
+      "intro": "Explain the carbon-dioxide trend in the context of the other observations.",
+      "clueIds": ["exac-flow", "exac-gas"],
       "steps": [
         {
-          "id": "exac-co2-meaning",
-          "type": "true_false",
-          "clueIds": ["exac-gas"],
+          "id": "exac-co2-reasoning",
+          "type": "multiple_choice",
+          "clueIds": ["exac-flow", "exac-gas"],
           "conceptIds": ["airway-pathophysiology"],
           "content": {
-            "statement": "In this synthetic distressed patient, a PaCO₂ that is no longer low can be a deterioration signal rather than reassurance.",
-            "answer": true,
-            "explanation": "The exercise treats this trend as evidence of reduced ventilatory reserve.",
-            "responseClueIds": { "false": ["exac-gas"] }
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 40, "mode": "countdown" }
-        },
-        {
-          "id": "exac-sound-weight",
-          "type": "multiple_choice",
-          "clueIds": ["exac-wheeze", "exac-crackles", "exac-flow"],
-          "conceptIds": ["respiratory-diagnosis"],
-          "content": {
-            "prompt": "How should respiratory sounds be weighted in the final interpretation?",
+            "prompt": "Why is the PaCO₂ rise concerning in this presentation?",
             "options": [
-              { "id": "integrated", "label": "Use them with history and objective trajectory; sound alone does not grade severity" },
-              { "id": "wheeze-equals-safe", "label": "Audible wheeze proves adequate airflow", "clueIds": ["exac-flow", "exac-gas"] },
-              { "id": "crackles-prove", "label": "The comparator crackles prove fibrosis", "clueIds": ["exac-crackles"] }
+              {
+                "id": "reduced-ventilatory-reserve",
+                "label": "It may indicate that ventilation is failing to keep pace with the work of breathing"
+              },
+              {
+                "id": "expected-recovery",
+                "label": "It confirms recovery because PaCO₂ has returned toward the reference range"
+              },
+              {
+                "id": "oxygenation-only",
+                "label": "It measures oxygenation only and does not inform ventilation"
+              },
+              {
+                "id": "rules-out-obstruction",
+                "label": "It rules out clinically important airflow obstruction"
+              }
             ],
-            "correctOptionId": "integrated",
-            "explanation": "Sound is one evidence stream and must be interpreted with provenance and objective change."
+            "correctOptionId": "reduced-ventilatory-reserve",
+            "explanation": "A distressed patient may initially lower PaCO₂ through hyperventilation; a subsequent rise alongside worsening flow and hypoxaemia can indicate reduced ventilatory reserve."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 45, "mode": "countdown" }
+          "feedback": { "retry": false }
         }
       ]
     },
@@ -390,8 +360,8 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Diagnose",
-      "intro": "Educational-only timed task: choose the best label and reasoning path for this fictional episode.",
-      "clueIds": ["exac-history", "exac-flow", "exac-gas", "exac-wheeze"],
+      "intro": "Synthesize the pattern, then identify its immediate consequence.",
+      "clueIds": ["exac-history", "exac-flow", "exac-gas", "exac-pathology-reference"],
       "steps": [
         {
           "id": "exac-best-diagnosis",
@@ -399,59 +369,63 @@
           "clueIds": ["exac-history", "exac-flow", "exac-gas"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
-            "prompt": "Which conclusion best fits the complete synthetic pattern?",
+            "prompt": "Which diagnosis best fits the complete pattern?",
             "options": [
-              { "id": "severe-asthma-exacerbation", "label": "Severe asthma exacerbation with deteriorating ventilatory reserve" },
-              { "id": "stable-asthma", "label": "Stable asthma", "clueIds": ["exac-flow", "exac-gas"] },
-              { "id": "isolated-fibrosis", "label": "Isolated pulmonary fibrosis", "clueIds": ["exac-history", "exac-crackles"] }
+              {
+                "id": "severe-asthma-exacerbation",
+                "label": "Severe asthma exacerbation with deteriorating ventilatory reserve"
+              },
+              {
+                "id": "copd-exacerbation",
+                "label": "COPD exacerbation without prior chronic airflow-limitation history"
+              },
+              {
+                "id": "lobar-pneumonia",
+                "label": "Lobar pneumonia as the sole explanation"
+              },
+              {
+                "id": "pulmonary-embolism",
+                "label": "Pulmonary embolism as the sole explanation"
+              }
             ],
             "correctOptionId": "severe-asthma-exacerbation",
-            "explanation": "The prior variable pattern and acute objective deterioration converge on a severe exacerbation in this exercise."
+            "explanation": "Prior variable symptoms, worsening expiratory flow, hypoxaemia and the PaCO₂ trajectory converge on a severe asthma exacerbation with diminishing ventilatory reserve."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
-          "feedback": { "retry": false },
-          "timer": { "durationSeconds": 45, "mode": "countdown" }
+          "feedback": { "retry": false }
         },
         {
-          "id": "exac-diagnosis-path",
-          "type": "scenario",
+          "id": "exac-immediate-consequence",
+          "type": "multiple_choice",
           "clueIds": ["exac-history", "exac-flow", "exac-gas"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
-            "startNodeId": "exac-context",
-            "nodes": [
+            "prompt": "What immediate consequence follows from this synthesis?",
+            "options": [
               {
-                "id": "exac-context",
-                "type": "context",
-                "body": "Educational-only branching scenario: a known variable airway pattern is accompanied by falling flow, hypoxaemia and a concerning CO₂ trend.",
-                "next": "exac-identify"
+                "id": "urgent-escalation",
+                "label": "Treat the pattern as high-risk deterioration and activate urgent escalation under the local emergency pathway"
               },
               {
-                "id": "exac-identify",
-                "type": "decision",
-                "prompt": "What is the most defensible synthesis?",
-                "choices": [
-                  { "id": "identity-plus-severity", "label": "Asthma identity evidence plus independent severe deterioration evidence", "consequence": "This separates diagnosis from severity while integrating both.", "next": "exac-qualify", "score": 1 },
-                  { "id": "sound-only", "label": "Wheeze alone defines both disease and severity", "consequence": "This overweights one clue and misses trajectory.", "next": "exac-qualify", "score": 0.2, "clueIds": ["exac-history", "exac-flow", "exac-gas"] }
-                ]
+                "id": "routine-follow-up",
+                "label": "Arrange routine follow-up because the PaCO₂ is near the reference range"
               },
               {
-                "id": "exac-qualify",
-                "type": "decision",
-                "prompt": "How should this educational conclusion be framed?",
-                "choices": [
-                  { "id": "urgent-pattern", "label": "A severe deteriorating pattern within this simulation, not care advice", "consequence": "This is proportionate and preserves the educational boundary.", "next": "exac-supported", "score": 1 },
-                  { "id": "self-treatment", "label": "A personalized treatment instruction", "consequence": "The demo cannot provide patient-specific care.", "next": "exac-boundary", "score": 0, "clueIds": ["exac-history", "exac-gas"] }
-                ]
+                "id": "delay-for-repeat",
+                "label": "Delay escalation until a later peak-flow measurement confirms the trend"
               },
-              { "id": "exac-supported", "type": "outcome", "title": "Integrated educational conclusion", "body": "The fictional evidence supports a severe asthma exacerbation with deteriorating reserve.", "result": "Best path: separate disease identity from severity and retain the educational-only boundary." },
-              { "id": "exac-boundary", "type": "outcome", "title": "Boundary crossed", "body": "The case evidence was converted into advice the demo is not designed to give.", "result": "Return to evidence interpretation; this simulation is not clinical guidance." }
-            ]
+              {
+                "id": "anatomy-alone",
+                "label": "Base the response only on the focal airway finding"
+              }
+            ],
+            "correctOptionId": "urgent-escalation",
+            "explanation": "The combined clinical and physiological pattern warrants urgent escalation; neither a near-reference PaCO₂ nor one spatial finding should be interpreted in isolation."
           },
           "assets": [],
-          "completion": { "mode": "outcome" },
+          "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
           "feedback": { "retry": false }
         }
@@ -459,30 +433,45 @@
     }
   ],
   "timing": {
-    "caseTargetSeconds": 480,
-    "caseMaxSeconds": 720
+    "caseTargetSeconds": 300,
+    "caseMaxSeconds": 480
   },
   "expertBenchmark": {
-    "name": "Respiratory educator benchmark",
-    "durationSeconds": 405,
-    "openedClueIds": ["exac-history", "exac-wheeze", "exac-flow", "exac-gas", "exac-anatomy"],
+    "name": "Authored respiratory-educator benchmark",
+    "durationSeconds": 282,
+    "openedClueIds": ["exac-history", "exac-flow", "exac-gas", "exac-airway-reference"],
     "responses": {
-      "exac-localise": { "lobe": "right-lower-lobe", "segment": "posterior-basal-segment", "structure": "bronchiole" },
-      "exac-airway-change": "narrowed-radius",
-      "exac-severity-signals": ["falling-flow", "co2-not-low"],
-      "exac-sort-evidence": { "prior-variability": "identity", "falling-oxygen": "severity" },
-      "exac-co2-meaning": true,
-      "exac-sound-weight": "integrated",
+      "exac-explore-airway": {
+        "reachedWaypointIds": ["right-lower-posterior-basal-segment"],
+        "inspectedFindingIds": ["exac-posterior-basal-plug"]
+      },
+      "exac-localise": {
+        "lobe": "right-lower-lobe",
+        "segment": "posterior-basal-segment",
+        "structure": "segmental-bronchus"
+      },
+      "exac-severity-signals": [
+        "speech-limited",
+        "falling-flow",
+        "hypoxaemia",
+        "co2-rising"
+      ],
+      "exac-co2-reasoning": "reduced-ventilatory-reserve",
       "exac-best-diagnosis": "severe-asthma-exacerbation",
-      "exac-diagnosis-path": [
-        { "nodeId": "exac-identify", "choiceId": "identity-plus-severity" },
-        { "nodeId": "exac-qualify", "choiceId": "urgent-pattern" }
-      ]
+      "exac-immediate-consequence": "urgent-escalation"
     },
-    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.92 }
+    "rationales": {
+      "exac-explore-airway": "The authored route reaches the posterior basal segment and inspects the dominant configured occlusion.",
+      "exac-localise": "The finding lies in the right lower lobe posterior basal segmental bronchus.",
+      "exac-severity-signals": "Each selected item contributes acute severity information rather than disease identity alone.",
+      "exac-co2-reasoning": "The trend is interpreted with work of breathing, flow and oxygenation rather than against a reference interval in isolation.",
+      "exac-best-diagnosis": "Variable airway symptoms and the acute objective trajectory form the most coherent synthesis.",
+      "exac-immediate-consequence": "The combined deterioration signals justify urgent escalation through the applicable emergency pathway."
+    },
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.94 }
   },
   "debrief": {
-    "summary": "Educational demo only—not clinical guidance or emergency-care instruction. The case separates prior variable-airway evidence from acute severity evidence: falling flow, hypoxaemia and a concerning CO₂ trend establish deterioration in the simulation.",
-    "keyClueIds": ["exac-history", "exac-flow", "exac-gas"]
+    "summary": "The spatial task identified a dominant posterior basal mucus obstruction against diffuse airway-wall change. The diagnostic task kept disease identity separate from severity, then integrated falling flow, hypoxaemia and a rising PaCO₂ into a high-risk deterioration pattern.",
+    "keyClueIds": ["exac-history", "exac-flow", "exac-gas", "exac-airway-reference"]
   }
 }

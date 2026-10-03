@@ -1,4 +1,5 @@
 import type { CaseAttemptRecord } from '@/content/schema'
+import { normalizeCaseResponse } from '@/engines/cases/responses'
 import type { LearnerEvent } from '@/events/types'
 import type { LearnerData } from '@/state/learnerStore'
 
@@ -7,10 +8,10 @@ export function applyCaseProgressEvent(
   event: LearnerEvent,
   historyLimit: number,
 ) {
-  if (event.event !== 'case_completed') return
+  if (event.event !== 'case_completed') return false
 
   const attempts = state.caseAttempts[event.caseId] ?? []
-  if (attempts.some(({ attemptId }) => attemptId === event.attemptId)) return
+  if (attempts.some(({ attemptId }) => attemptId === event.attemptId)) return false
 
   const previous = state.caseProgress[event.caseId] ?? {
     completions: 0,
@@ -18,15 +19,27 @@ export function applyCaseProgressEvent(
     lastCompletedAt: null,
   }
   const record: CaseAttemptRecord = {
+    resultVersion: 6,
     attemptId: event.attemptId,
     tier: event.tier,
     total: event.breakdown.total,
     anatomy: event.breakdown.anatomy,
     diagnosis: event.breakdown.diagnosis,
     speed: event.breakdown.speed,
+    perStepSpeed: event.breakdown.perStepSpeed,
+    caseSpeed: event.breakdown.caseSpeed,
+    clueCostPoints: event.breakdown.penalty,
+    speedScored: event.breakdown.speedScored,
+    timingMode: event.breakdown.timingMode,
+    weights: structuredClone(event.breakdown.weights),
+    actualAwardedXp: null,
+    actualAwardedXpSource: null,
     durationSeconds: event.durationSeconds,
     openedClueIds: [...new Set(event.openedClueIds)],
-    stepResults: structuredClone(event.stepResults),
+    stepResults: event.stepResults.map((step) => ({
+      ...structuredClone(step),
+      response: normalizeCaseResponse(step.response),
+    })),
     completedAt: event.occurredAt,
   }
 
@@ -41,4 +54,24 @@ export function applyCaseProgressEvent(
   state.gamification.counters.caseCompletionsByTier[event.tier] =
     (state.gamification.counters.caseCompletionsByTier[event.tier] ?? 0) + 1
   if (previous.completions === 0) state.stats.casesCompleted += 1
+  return true
+}
+
+export function attachCaseAttemptRewardResult(state: LearnerData, event: LearnerEvent) {
+  if (event.event !== 'case_completed') return
+  const activityResult = state.gamification.lastActivityResult
+  if (
+    activityResult?.activityKind !== 'case' ||
+    activityResult.activityId !== event.caseId ||
+    activityResult.sourceEventId !== event.id
+  ) {
+    return
+  }
+
+  const attempt = state.caseAttempts[event.caseId]?.find(
+    (candidate) => candidate.attemptId === event.attemptId,
+  )
+  if (!attempt || attempt.resultVersion !== 6) return
+  attempt.actualAwardedXp = activityResult.xpEarned
+  attempt.actualAwardedXpSource = 'gamification_activity_result'
 }

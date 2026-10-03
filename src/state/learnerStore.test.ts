@@ -3,11 +3,7 @@ import freshSeedData from '../../public/content/seeds/fresh.json'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { learnerSeedSchema } from '@/content/schema'
-import {
-  learnerDataSnapshot,
-  migrateLearnerState,
-  useLearnerStore,
-} from '@/state/learnerStore'
+import { learnerDataSnapshot, migrateLearnerState, useLearnerStore } from '@/state/learnerStore'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
 const advancedSeed = learnerSeedSchema.parse(advancedSeedData)
@@ -97,7 +93,7 @@ describe('learner store persistence', () => {
     expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
   })
 
-  it.each([3, 4])('migrates learner state v%i to empty v5 case state', (stateVersion) => {
+  it.each([3, 4])('migrates learner state v%i to empty v6 case state', (stateVersion) => {
     const legacy = structuredClone(freshSeed) as unknown as Record<string, unknown>
     legacy.stateVersion = stateVersion
     delete legacy.caseProgress
@@ -112,7 +108,7 @@ describe('learner store persistence', () => {
 
     const migrated = migrateLearnerState(legacy)
 
-    expect(migrated.stateVersion).toBe(5)
+    expect(migrated.stateVersion).toBe(6)
     expect(migrated.caseProgress).toEqual({})
     expect(migrated.caseAttempts).toEqual({})
     expect(migrated.gamification.caseRewards).toEqual({})
@@ -123,5 +119,24 @@ describe('learner store persistence', () => {
       advanced: 0,
     })
     expect(migrated.stats.casesCompleted).toBe(0)
+  })
+
+  it('marks v5 attempts as legacy without inventing unavailable result details', () => {
+    const legacy = structuredClone(advancedSeed) as unknown as Record<string, unknown>
+    legacy.stateVersion = 5
+    const attempts = (legacy.caseAttempts as Record<string, Array<Record<string, unknown>>>)[
+      'asthma-foundation'
+    ]!
+    delete attempts[0]!.resultVersion
+
+    const migrated = migrateLearnerState(legacy)
+    const attempt = migrated.caseAttempts['asthma-foundation']![0]!
+
+    expect(migrated.stateVersion).toBe(6)
+    expect(attempt.resultVersion).toBe(5)
+    expect(attempt).not.toHaveProperty('perStepSpeed')
+    expect(attempt).not.toHaveProperty('caseSpeed')
+    expect(attempt).not.toHaveProperty('clueCostPoints')
+    expect(attempt).not.toHaveProperty('actualAwardedXp')
   })
 })

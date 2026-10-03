@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.1",
-  "stateVersion": 5,
+  "stateVersion": 6,
   "seedProfile": "advanced",
   "referenceDate": "2026-10-01",
   "learner": {
@@ -33,11 +33,17 @@
       "completions": 1,
       "bestTotal": 84,
       "lastCompletedAt": "2026-09-27T10:30:00+05:30"
+    },
+    "exacerbation-advanced": {
+      "completions": 1,
+      "bestTotal": 82,
+      "lastCompletedAt": "2026-09-30T14:20:00+05:30"
     }
   },
   "caseAttempts": {
     "asthma-foundation": [
       {
+        "resultVersion": 5,
         "attemptId": "seed-asthma-foundation-1",
         "tier": "foundation",
         "total": 84,
@@ -48,6 +54,74 @@
         "openedClueIds": ["history", "anatomy"],
         "stepResults": [],
         "completedAt": "2026-09-27T10:30:00+05:30"
+      }
+    ],
+    "exacerbation-advanced": [
+      {
+        "resultVersion": 6,
+        "attemptId": "seed-exacerbation-advanced-1",
+        "tier": "advanced",
+        "total": 82,
+        "anatomy": 1,
+        "diagnosis": 0.6875,
+        "speed": 0.675,
+        "perStepSpeed": 0.75,
+        "caseSpeed": 0.6,
+        "clueCostPoints": 0,
+        "speedScored": true,
+        "timingMode": "countdown",
+        "weights": { "anatomy": 0.4, "diagnosis": 0.4, "speed": 0.2 },
+        "actualAwardedXp": 100,
+        "actualAwardedXpSource": "gamification_activity_result",
+        "durationSeconds": 342,
+        "openedClueIds": [
+          "exac-history",
+          "exac-flow",
+          "exac-gas",
+          "exac-airway-reference"
+        ],
+        "stepResults": [
+          {
+            "primitiveId": "exac-localise",
+            "firstAttemptScore": 1,
+            "elapsedMs": 48000,
+            "timedOut": false,
+            "response": {
+              "lobe": "right-lower-lobe",
+              "segment": "posterior-basal-segment",
+              "structure": "segmental-bronchus"
+            }
+          },
+          {
+            "primitiveId": "exac-severity-signals",
+            "firstAttemptScore": 0.75,
+            "elapsedMs": 52000,
+            "timedOut": false,
+            "response": ["speech-limited", "falling-flow", "hypoxaemia"]
+          },
+          {
+            "primitiveId": "exac-co2-reasoning",
+            "firstAttemptScore": 1,
+            "elapsedMs": 38000,
+            "timedOut": false,
+            "response": "reduced-ventilatory-reserve"
+          },
+          {
+            "primitiveId": "exac-best-diagnosis",
+            "firstAttemptScore": 1,
+            "elapsedMs": 41000,
+            "timedOut": false,
+            "response": "severe-asthma-exacerbation"
+          },
+          {
+            "primitiveId": "exac-immediate-consequence",
+            "firstAttemptScore": 0,
+            "elapsedMs": 45000,
+            "timedOut": false,
+            "response": "routine-follow-up"
+          }
+        ],
+        "completedAt": "2026-09-30T14:20:00+05:30"
       }
     ]
   },
@@ -97,6 +171,11 @@
         "completionAwarded": true,
         "perfectAwarded": false,
         "rewardedAttemptIds": ["seed-asthma-foundation-1"]
+      },
+      "exacerbation-advanced": {
+        "completionAwarded": true,
+        "perfectAwarded": false,
+        "rewardedAttemptIds": ["seed-exacerbation-advanced-1"]
       }
     },
     "challengePeriods": {
@@ -110,11 +189,11 @@
       "firstAttemptCorrect": 156,
       "firstAttemptCorrectByType": {},
       "firstAttemptCorrectByConcept": {},
-      "caseCompletions": { "asthma-foundation": 1 },
+      "caseCompletions": { "asthma-foundation": 1, "exacerbation-advanced": 1 },
       "caseCompletionsByTier": {
         "foundation": 1,
         "intermediate": 0,
-        "advanced": 0
+        "advanced": 1
       }
     },
     "activeRun": null,
@@ -127,7 +206,7 @@
     "coursesCompleted": 1,
     "lessonsCompleted": 24,
     "challengesCompleted": 6,
-    "casesCompleted": 1,
+    "casesCompleted": 2,
     "questionsAnswered": 184,
     "correctAnswers": 156
   },

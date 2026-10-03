@@ -55,16 +55,21 @@ Repeat the marked steps in Safari and the installed app:
    host is restored.
 7. Enter and exit all DICOM modes repeatedly and record reload, canvas, WebGL or memory warnings.
 
-## 5. Phase 10 addendum: Case Lab 3D anatomy
+## 5. Case Lab addendum: 3D anatomy and clues
 
 Repeat in Safari and the installed app:
 
-1. Open all three Case Lab tiers and the daily quick case. Confirm the overview-marker, clue-first
-   and endoscopic entry views load.
+Run this addendum against the Phase 11 candidate build. Phase 10 completion alone is not a device
+or demo-readiness pass.
+
+1. Open the three catalogue cases. Confirm the Foundation overview marker remains visible after
+   model load, Intermediate visibly presents clue-first evidence and Advanced loads its endoscopic
+   entry. Open the daily quick case separately; it has no effective 3D entry in the Phase 10 build.
 2. In portrait and landscape, orbit with one finger, pinch to zoom and pan with two fingers.
    Confirm Safari navigation and page scrolling do not steal active viewer gestures.
-3. Select a lobe on the model, then complete the same localisation using the equivalent structure
-   list and an external keyboard if available.
+3. Select the intended lobe by tapping its visible mesh and verify the canvas records that exact
+   structure. Then complete the equivalent path using the list and an external keyboard if
+   available; do not count list-only success as a model-tap pass.
 4. Enter the fixed immersive anatomy view, rotate twice and exit. Confirm safe areas, controls,
    focus return and current selection survive.
 5. Enable Reduce Motion and confirm waypoint and endoscopic transitions use immediate camera cuts.
@@ -72,7 +77,12 @@ Repeat in Safari and the installed app:
    list remain usable, then retry after restoring the model.
 7. Enter and exit a 3D case five times. Record frame stability, Safari memory warnings, context
    loss, blank canvases and progressive delay.
-8. Complete one case through results and expert comparison in both contexts.
+8. In a narrow portrait viewport, activate Start case and Clues without manually scrolling them
+   away from fixed chrome. Confirm hit-testing reaches the intended controls.
+9. Verify clue-first opens the evidence sheet; opening from the trigger records the clue exactly
+   once; closing without consuming it does not count as consumed; and Reopen clue both records and
+   visibly presents the clue without adding a post-answer penalty.
+10. Complete one case through explainable `/100` results and expert comparison in both contexts.
 
 ## 6. Accessibility and evidence
 

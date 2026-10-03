@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 5
+export const LEARNER_STATE_VERSION = 6
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -84,7 +84,10 @@ function dataFromSeed(seed: LearnerSeed): LearnerData {
 }
 
 export function migrateLearnerState(persistedState: unknown): LearnerData {
-  const state = persistedState as LearnerData & { offlineDownloads?: unknown }
+  const state = structuredClone(persistedState) as LearnerData & { offlineDownloads?: unknown }
+  const persistedCaseAttempts = (
+    state as unknown as { caseAttempts?: Record<string, Array<Record<string, unknown>>> }
+  ).caseAttempts
   delete state.offlineDownloads
   const completedLessonEntries = Object.entries(state.lessonProgress ?? {}).filter(
     ([, progress]) => progress.status === 'completed',
@@ -105,28 +108,38 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
         },
       }
     : ({
-      ...createEmptyGamificationState(state.referenceDate ?? today()),
-      lessonRewards: Object.fromEntries(
-        completedLessonEntries.map(([id, progress]) => [
-          id,
-          {
-            completionAwarded: true,
-            perfectAwarded: progress.bestScore === 100,
-          },
-        ]),
-      ),
-      counters: {
-        ...createEmptyGamificationState().counters,
-        perfectLessons: completedLessonEntries.filter(([, progress]) => progress.bestScore === 100)
-          .length,
-      },
-    } satisfies LearnerData['gamification'])
+        ...createEmptyGamificationState(state.referenceDate ?? today()),
+        lessonRewards: Object.fromEntries(
+          completedLessonEntries.map(([id, progress]) => [
+            id,
+            {
+              completionAwarded: true,
+              perfectAwarded: progress.bestScore === 100,
+            },
+          ]),
+        ),
+        counters: {
+          ...createEmptyGamificationState().counters,
+          perfectLessons: completedLessonEntries.filter(
+            ([, progress]) => progress.bestScore === 100,
+          ).length,
+        },
+      } satisfies LearnerData['gamification'])
   return {
     ...state,
     stateVersion: LEARNER_STATE_VERSION,
     referenceDate: state.referenceDate ?? today(),
     caseProgress: state.caseProgress ?? {},
-    caseAttempts: state.caseAttempts ?? {},
+    caseAttempts: Object.fromEntries(
+      Object.entries(persistedCaseAttempts ?? {}).map(([caseId, attempts]) => [
+        caseId,
+        attempts.map((attempt) =>
+          attempt.resultVersion === 5 || attempt.resultVersion === 6
+            ? attempt
+            : { ...attempt, resultVersion: 5 },
+        ),
+      ]),
+    ) as LearnerData['caseAttempts'],
     gamification,
     stats: {
       ...state.stats,

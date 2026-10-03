@@ -357,8 +357,8 @@ describe('activity planning and sessions', () => {
     expect(isPrimitiveComplete(ordering, { ...context, attempts: 2, correct: false })).toBe(true)
   })
 
-  it('restarts v1 sessions and migrates v2 sessions into session v3', () => {
-    expect(ACTIVITY_SESSION_VERSION).toBe(3)
+  it('restarts v1 sessions and migrates v2 and legacy case sessions into session v4', () => {
+    expect(ACTIVITY_SESSION_VERSION).toBe(4)
     expect(migrateActivitySessionState({ session: { activityId: 'legacy' } }, 1)).toEqual({
       session: null,
     })
@@ -375,6 +375,22 @@ describe('activity planning and sessions', () => {
       },
     })
     expect(migrated?.caseProgress).toBeUndefined()
+
+    const versionThree = {
+      ...createActivitySession(plan),
+      caseProgress: {
+        openedClueIds: ['legacy-clue'],
+        stepElapsedMs: {},
+        caseElapsedMs: 1_000,
+        caseClockExpired: false,
+      },
+    }
+    expect(migrateActivitySessionState({ session: versionThree }, 3).session?.caseProgress).toEqual(
+      {
+        ...versionThree.caseProgress,
+        clueOpenContexts: {},
+      },
+    )
   })
 
   it('validates known and forward-compatible completion modes', () => {

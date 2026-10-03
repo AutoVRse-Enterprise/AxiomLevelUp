@@ -9,6 +9,35 @@ const nonEmptyStringSchema = z.string().trim().min(1)
 export const caseTierSchema = z.enum(['foundation', 'intermediate', 'advanced'])
 export const caseStageKindSchema = z.enum(['orient', 'observe', 'interpret', 'diagnose'])
 export const caseStageComponentSchema = z.enum(['anatomy', 'diagnosis', 'none'])
+export const caseFindingKindSchema = z.enum([
+  'lumen_narrowing',
+  'lumen_occlusion',
+  'wall_thickening',
+  'region',
+])
+
+export const caseFindingAnchorSchema = z.discriminatedUnion('type', [
+  z.strictObject({
+    type: z.literal('waypoint'),
+    waypoint: idSchema,
+    toWaypoint: idSchema,
+    t: z.number().min(0).max(1),
+  }),
+  z.strictObject({
+    type: z.literal('structure'),
+    structure: idSchema,
+  }),
+])
+
+export const caseFindingSchema = z.strictObject({
+  id: idSchema,
+  label: nonEmptyStringSchema,
+  description: nonEmptyStringSchema,
+  kind: caseFindingKindSchema,
+  anchor: caseFindingAnchorSchema,
+  severity: z.number().positive().max(1),
+  clueIds: z.array(idSchema).default([]),
+})
 
 export const caseStepSchema = primitiveBaseSchema
 
@@ -79,6 +108,7 @@ export const caseDocumentSchema = z.strictObject({
   }),
   anatomyMapId: idSchema,
   entry: caseEntrySchema,
+  findings: z.array(caseFindingSchema).optional(),
   clues: z.array(caseClueSchema).min(1),
   stages: z.array(caseStageSchema).min(1).max(4),
   timing: caseTimingSchema.optional(),
@@ -87,6 +117,7 @@ export const caseDocumentSchema = z.strictObject({
     durationSeconds: z.number().int().positive(),
     openedClueIds: z.array(idSchema),
     responses: z.record(idSchema, z.unknown()),
+    rationales: z.record(idSchema, nonEmptyStringSchema).optional(),
     breakdown: z.strictObject({
       anatomy: z.number().min(0).max(1),
       diagnosis: z.number().min(0).max(1),
@@ -166,6 +197,8 @@ export const caseLabConfigSchema = z
   })
 
 export type CaseDocument = z.infer<typeof caseDocumentSchema>
+export type CaseFinding = z.infer<typeof caseFindingSchema>
+export type CaseFindingAnchor = z.infer<typeof caseFindingAnchorSchema>
 export type CaseStep = z.infer<typeof caseStepSchema>
 export type CaseClue = z.infer<typeof caseClueSchema>
 export type CaseStage = z.infer<typeof caseStageSchema>

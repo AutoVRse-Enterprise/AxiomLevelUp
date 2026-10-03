@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -193,6 +193,7 @@ describe('player routes', () => {
       caseAttempts: {
         [fixtureCase.id]: [
           {
+            resultVersion: 5,
             attemptId: 'prior-attempt',
             tier: 'foundation',
             total: 88,
@@ -221,6 +222,7 @@ describe('player routes', () => {
       }),
     )
 
+    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
@@ -242,6 +244,9 @@ describe('player routes', () => {
     })
     await user.click(screen.getByRole('button', { name: 'Compare' }))
     expect(screen.getByRole('heading', { name: 'Your history' })).toBeVisible()
-    expect(screen.getByText('88')).toBeVisible()
+    expect(screen.getByText('88/100')).toBeVisible()
+    const history = screen.getByRole('list', { name: 'Recent case attempts' })
+    expect(within(history).getAllByRole('listitem')).toHaveLength(2)
+    expect(within(history).getAllByText('Current')).toHaveLength(1)
   })
 })

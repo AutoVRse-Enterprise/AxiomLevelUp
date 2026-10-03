@@ -2628,9 +2628,9 @@ Use an event bus/service.
 
 ---
 
-# 80. Demo sequence we should ultimately be able to run
+# 80. Demo sequences we should ultimately be able to run
 
-A good 5-minute Sanofi demo could eventually be:
+A good 5-minute general product demo could be:
 
 ### 1. Open installed app
 
@@ -2688,6 +2688,11 @@ Show:
 * level
 
 At that point the prospect has seen both the **learning depth** and the **engagement wrapper**.
+
+Case Lab has a separate five-minute golden-path gate. The Phase 11 exacerbation path must show a
+meaningful 3D finding and airway branch, evidence use, diagnosis, explainable scoring, feedback and
+comparison in one rehearsed run. The Phase 10 capability scaffold does not yet satisfy that gate;
+see `docs/qa/phase-10-demo-readiness-audit.md`.
 
 ---
 
@@ -2844,13 +2849,24 @@ At minimum, run a Cornerstone spike in parallel with phases 1 to 3.
 * empty/error states
 * visual refinement
 
-## Phase 9: Showcase course
+## Phase 9: Showcase and device QA
 
-Populate the primitive test lesson.
+Keep the primitive showcase in registry parity and complete the automated, browser and physical
+Android/iOS matrix. The physical-device gate remains active.
 
-## Phase 10: Actual Sanofi demo course
+## Phase 10: Case Lab capability foundation
 
-Separate exercise after the runtime is stable.
+Add first-class case documents, staged play, clues, composite scoring and reusable 3D anatomy.
+Phase 10 proves the configuration-driven capability; it does not by itself approve a client demo.
+
+## Phase 11: Case Lab demo hardening
+
+Build one five-minute golden exacerbation path and repair shared-engine P0/P1 demo defects.
+
+## Phase 12: Case Lab depth and polish
+
+Extend the golden path into differentiated tiers, evidence synthesis, teaching-oriented debrief and
+remaining learner-facing polish.
 
 ---
 

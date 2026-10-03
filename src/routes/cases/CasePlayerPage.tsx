@@ -33,6 +33,7 @@ export function CasePlayerPage() {
     <CasePlayer
       anatomyMap={registry.anatomyMapById.get(caseDoc.anatomyMapId)}
       attemptHistory={caseAttempts[caseDoc.id] ?? []}
+      autoStartOrResume
       caseDoc={caseDoc}
       config={registry.appConfig}
       continuePath={`/learn/cases/${caseDoc.id}`}

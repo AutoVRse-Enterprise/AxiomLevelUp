@@ -1,4 +1,5 @@
 import type { CaseClockMode } from '@/engines/cases/clock'
+import type { CaseClueOpenRecord } from '@/engines/cases/clues'
 
 export type CaseScoreComponent = 'anatomy' | 'diagnosis' | 'none'
 
@@ -28,6 +29,7 @@ export interface CaseScoringConfig {
 
 export interface CaseScoringStepInput {
   component: CaseScoreComponent
+  scored: boolean
   firstAttemptScore: number
   weight?: number
   elapsedMs?: number
@@ -46,6 +48,7 @@ export interface CaseScoreInput {
   steps: readonly CaseScoringStepInput[]
   clues: readonly CaseScoringClueInput[]
   openedClueIds: readonly string[]
+  clueOpenContexts: Readonly<Record<string, CaseClueOpenRecord>>
   durationMs: number
   caseTargetSeconds?: number
   caseMaxSeconds?: number
@@ -59,6 +62,8 @@ export interface CaseScoreBreakdown {
   speed: number
   perStepSpeed: number
   caseSpeed: number
+  speedScored: boolean
+  timingMode: CaseClockMode
   penalty: number
   total: number
   weights: CaseScoringWeights
@@ -148,7 +153,9 @@ function resolveSteps(
   config: CaseScoringConfig,
 ): ResolvedStep[] {
   return steps
-    .filter(({ component }) => component === 'anatomy' || component === 'diagnosis')
+    .filter(
+      ({ component, scored }) => scored && (component === 'anatomy' || component === 'diagnosis'),
+    )
     .map((step) => {
       const score = scoreOrZero(step.firstAttemptScore)
       const weight =
@@ -215,10 +222,18 @@ function uniqueOpenedClueIds(openedClueIds: readonly string[]) {
 function resolvePenalty(
   clues: readonly CaseScoringClueInput[],
   openedClueIds: readonly string[],
+  clueOpenContexts: Readonly<Record<string, CaseClueOpenRecord>>,
   config: CaseCluePenaltyConfig,
 ) {
   const optionalClueIds = new Set(clues.filter(({ essential }) => !essential).map(({ id }) => id))
-  const openedOptionalCount = openedClueIds.filter((id) => optionalClueIds.has(id)).length
+  const openedOptionalCount = openedClueIds.filter((id) => {
+    const opened = clueOpenContexts[id]
+    return (
+      optionalClueIds.has(id) &&
+      opened?.beforeResponse === true &&
+      (opened.context === 'entry' || opened.context === 'browse')
+    )
+  }).length
   const perOptionalClue = nonnegativeOrZero(config.perOptionalClue)
   const cap = clamp(nonnegativeOrZero(config.cap), 0, 100)
   return Math.min(cap, perOptionalClue * openedOptionalCount)
@@ -230,7 +245,12 @@ export function calculateCaseScore(input: CaseScoreInput): CaseScoreBreakdown {
   const anatomy = componentMean(steps, 'anatomy')
   const diagnosis = componentMean(steps, 'diagnosis')
   const openedClueIds = uniqueOpenedClueIds(input.openedClueIds)
-  const penalty = resolvePenalty(input.clues, openedClueIds, input.config.cluePenalty)
+  const penalty = resolvePenalty(
+    input.clues,
+    openedClueIds,
+    input.clueOpenContexts,
+    input.config.cluePenalty,
+  )
 
   const perStepSpeed = input.timingMode === 'none' ? 0 : mean(steps.map(({ speed }) => speed))
   const caseSpeed = input.timingMode === 'none' ? 0 : resolveCaseSpeed(input, anatomy, diagnosis)
@@ -251,6 +271,8 @@ export function calculateCaseScore(input: CaseScoreInput): CaseScoreBreakdown {
     speed,
     perStepSpeed,
     caseSpeed,
+    speedScored: input.timingMode !== 'none',
+    timingMode: input.timingMode,
     penalty,
     total,
     weights: effectiveWeights,

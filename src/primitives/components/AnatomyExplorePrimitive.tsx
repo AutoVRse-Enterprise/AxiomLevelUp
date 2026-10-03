@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
+import { useStepFindings } from '@/anatomy3d/viewer/findingContext'
 import type { AnatomyViewState } from '@/anatomy3d/viewer/controller'
 import type { AnatomyExplorePrimitive as AnatomyExplorePrimitiveContent } from '@/content/schema/primitives'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
@@ -21,6 +22,9 @@ function initialObservation(draft: unknown): AnatomyExploreObservation {
     reachedWaypointIds: Array.isArray(value.reachedWaypointIds)
       ? value.reachedWaypointIds.filter((id): id is string => typeof id === 'string')
       : [],
+    inspectedFindingIds: Array.isArray(value.inspectedFindingIds)
+      ? value.inspectedFindingIds.filter((id): id is string => typeof id === 'string')
+      : [],
   }
 }
 
@@ -31,7 +35,8 @@ export function AnatomyExplorePrimitive({
   onDraftChange,
   onInteract,
 }: PrimitiveComponentProps<AnatomyExplorePrimitiveContent>) {
-  const { appConfig, map, model } = useAnatomyPrimitiveContext(primitive)
+  const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
+  const findings = useStepFindings(primitive.id)
   const [observation, setObservation] = useState(() => initialObservation(draft))
   const observationRef = useRef(observation)
   const sequence = useRef(observation.interactionCount)
@@ -62,6 +67,7 @@ export function AnatomyExplorePrimitive({
       interactionCount: next.interactionCount,
       selectedStructureIds: next.selectedStructureIds,
       reachedWaypointIds: next.reachedWaypointIds,
+      inspectedFindingIds: next.inspectedFindingIds,
     })
   }
 
@@ -89,12 +95,13 @@ export function AnatomyExplorePrimitive({
       config={appConfig.product.anatomy3d}
       disabled={disabled}
       map={map}
+      findings={findings}
       markerStructureId={
         primitive.content.startView.mode === 'marker'
           ? primitive.content.startView.structureId
           : undefined
       }
-      modelUrl={model.path}
+      modelUrl={modelUrl}
       navigation={primitive.content.navigation}
       prompt={primitive.content.prompt}
       selectedStructureIds={observation.selectedStructureIds}
@@ -125,6 +132,16 @@ export function AnatomyExplorePrimitive({
           { selectedStructureIds },
           (key) => ({ name: 'anatomy_structure_selected', structureId, key }),
           `structure:${structureId}`,
+        )
+      }}
+      onFindingInspected={(findingId) => {
+        const inspectedFindingIds = observationRef.current.inspectedFindingIds.includes(findingId)
+          ? observationRef.current.inspectedFindingIds
+          : [...observationRef.current.inspectedFindingIds, findingId]
+        recordInteraction(
+          { inspectedFindingIds },
+          (key) => ({ name: 'anatomy_finding_inspected', findingId, key }),
+          `finding:${findingId}`,
         )
       }}
       onViewChanged={(view) => {

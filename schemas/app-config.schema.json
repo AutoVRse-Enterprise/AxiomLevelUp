@@ -179,12 +179,64 @@
             "highlightColor": "#f6c453",
             "highlightOpacity": 1,
             "markerColor": "#f97316",
+            "findingStyles": {
+              "lumen_narrowing": {
+                "color": "#f59e0b",
+                "opacity": 0.9,
+                "maxRadiusReduction": 0.65,
+                "axialLengthRadiusMultiplier": 1.8
+              },
+              "lumen_occlusion": {
+                "color": "#d6b36a",
+                "opacity": 0.92,
+                "blobCount": 7,
+                "blobRadiusRatio": 0.42,
+                "spreadRadiusRatio": 0.28
+              },
+              "wall_thickening": {
+                "color": "#ef4444",
+                "opacity": 0.72,
+                "thicknessRadiusRatio": 0.18,
+                "axialLengthRadiusMultiplier": 1.5
+              },
+              "region": {
+                "color": "#f97316",
+                "opacity": 0.3,
+                "scale": 1.01
+              },
+              "pickRadiusRatio": 0.45
+            },
             "lumen": {
               "defaultRadius": 0.06,
               "radialSegments": 20,
               "tubularSegmentsPerConnection": 12,
               "color": "#b7675c",
-              "opacity": 1
+              "opacity": 1,
+              "roughness": 0.8,
+              "curveStrength": 0.35,
+              "headlight": {
+                "color": "#fff4e8",
+                "intensity": 3,
+                "distanceRadiusMultiplier": 12
+              },
+              "fog": {
+                "color": "#3a1118",
+                "nearRadiusMultiplier": 3,
+                "farRadiusMultiplier": 18
+              },
+              "lookAround": {
+                "enabled": true,
+                "degreesPerPixel": 0.12,
+                "maxYawDegrees": 24,
+                "maxPitchDegrees": 16
+              },
+              "rings": {
+                "color": "#d68b7f",
+                "opacity": 0.45,
+                "tubeRadiusRatio": 0.06,
+                "radialSegments": 8,
+                "tubularSegments": 24
+              }
             }
           },
           "type": "object",
@@ -238,6 +290,175 @@
               "type": "string",
               "pattern": "^#[0-9a-f]{6}$"
             },
+            "findingStyles": {
+              "default": {
+                "lumen_narrowing": {
+                  "color": "#f59e0b",
+                  "opacity": 0.9,
+                  "maxRadiusReduction": 0.65,
+                  "axialLengthRadiusMultiplier": 1.8
+                },
+                "lumen_occlusion": {
+                  "color": "#d6b36a",
+                  "opacity": 0.92,
+                  "blobCount": 7,
+                  "blobRadiusRatio": 0.42,
+                  "spreadRadiusRatio": 0.28
+                },
+                "wall_thickening": {
+                  "color": "#ef4444",
+                  "opacity": 0.72,
+                  "thicknessRadiusRatio": 0.18,
+                  "axialLengthRadiusMultiplier": 1.5
+                },
+                "region": {
+                  "color": "#f97316",
+                  "opacity": 0.3,
+                  "scale": 1.01
+                },
+                "pickRadiusRatio": 0.45
+              },
+              "type": "object",
+              "properties": {
+                "lumen_narrowing": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "maxRadiusReduction": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 0.9
+                    },
+                    "axialLengthRadiusMultiplier": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "opacity",
+                    "maxRadiusReduction",
+                    "axialLengthRadiusMultiplier"
+                  ],
+                  "additionalProperties": false
+                },
+                "lumen_occlusion": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "blobCount": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 24
+                    },
+                    "blobRadiusRatio": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 2
+                    },
+                    "spreadRadiusRatio": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 2
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "opacity",
+                    "blobCount",
+                    "blobRadiusRatio",
+                    "spreadRadiusRatio"
+                  ],
+                  "additionalProperties": false
+                },
+                "wall_thickening": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "thicknessRadiusRatio": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "axialLengthRadiusMultiplier": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 10
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "opacity",
+                    "thicknessRadiusRatio",
+                    "axialLengthRadiusMultiplier"
+                  ],
+                  "additionalProperties": false
+                },
+                "region": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "scale": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 2
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "opacity",
+                    "scale"
+                  ],
+                  "additionalProperties": false
+                },
+                "pickRadiusRatio": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "maximum": 2
+                }
+              },
+              "required": [
+                "lumen_narrowing",
+                "lumen_occlusion",
+                "wall_thickening",
+                "region",
+                "pickRadiusRatio"
+              ],
+              "additionalProperties": false
+            },
             "lumen": {
               "type": "object",
               "properties": {
@@ -263,6 +484,133 @@
                   "type": "number",
                   "exclusiveMinimum": 0,
                   "maximum": 1
+                },
+                "roughness": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "curveStrength": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "headlight": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "intensity": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 20
+                    },
+                    "distanceRadiusMultiplier": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 100
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "intensity",
+                    "distanceRadiusMultiplier"
+                  ],
+                  "additionalProperties": false
+                },
+                "fog": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "nearRadiusMultiplier": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "farRadiusMultiplier": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 200
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "nearRadiusMultiplier",
+                    "farRadiusMultiplier"
+                  ],
+                  "additionalProperties": false
+                },
+                "lookAround": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "degreesPerPixel": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 5
+                    },
+                    "maxYawDegrees": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 90
+                    },
+                    "maxPitchDegrees": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 90
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "degreesPerPixel",
+                    "maxYawDegrees",
+                    "maxPitchDegrees"
+                  ],
+                  "additionalProperties": false
+                },
+                "rings": {
+                  "type": "object",
+                  "properties": {
+                    "color": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "tubeRadiusRatio": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 0.5
+                    },
+                    "radialSegments": {
+                      "type": "integer",
+                      "minimum": 3,
+                      "maximum": 32
+                    },
+                    "tubularSegments": {
+                      "type": "integer",
+                      "minimum": 3,
+                      "maximum": 64
+                    }
+                  },
+                  "required": [
+                    "color",
+                    "opacity",
+                    "tubeRadiusRatio",
+                    "radialSegments",
+                    "tubularSegments"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "required": [
@@ -270,7 +618,13 @@
                 "radialSegments",
                 "tubularSegmentsPerConnection",
                 "color",
-                "opacity"
+                "opacity",
+                "roughness",
+                "curveStrength",
+                "headlight",
+                "fog",
+                "lookAround",
+                "rings"
               ],
               "additionalProperties": false
             }
@@ -286,6 +640,7 @@
             "highlightColor",
             "highlightOpacity",
             "markerColor",
+            "findingStyles",
             "lumen"
           ],
           "additionalProperties": false

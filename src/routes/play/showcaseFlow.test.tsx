@@ -44,10 +44,17 @@ vi.mock('@/anatomy3d/viewer/useAnatomyViewer', () => ({
     controller: {
       highlight: vi.fn(),
       setMarker: vi.fn(),
+      setFindings: vi.fn(),
       pick: vi.fn(),
-      flyTo: vi.fn(),
+      pickFinding: vi.fn(),
+      travelTo: vi.fn(),
       availableBranches: () => ['carina'],
+      parentWaypoint: () => null,
+      waypointPath: () => ['trachea-mid'],
       enterEndoscopic: vi.fn(),
+      exitEndoscopic: vi.fn(),
+      lookAround: vi.fn(),
+      frameStructures: vi.fn(),
       resetView: vi.fn(),
     },
     retry: vi.fn(),
@@ -57,6 +64,19 @@ vi.mock('@/anatomy3d/viewer/useAnatomyViewer', () => ({
 const registry = validateContentBundle(makeValidContentBundle())
 const showcaseCourse = registry.courseById.get('runtime-showcase')!
 const showcaseLesson = registry.lessonById.get('primitive-showcase')!
+const showcasePlan = buildActivityPlan(
+  lessonActivity(showcaseCourse.id, showcaseCourse.courseVersion, showcaseLesson),
+  {
+    environment: 'development',
+    player: registry.appConfig.product.player,
+  },
+)
+
+function authoredStepHeading(primitiveId: string) {
+  const step = showcasePlan.steps.find(({ primitive }) => primitive.id === primitiveId)
+  if (!step) throw new Error(`Missing showcase plan step ${primitiveId}`)
+  return `${showcasePlan.activity.title}: ${step.label} — ${step.prompt}`
+}
 
 function renderShowcaseRoute() {
   const router = createMemoryRouter(
@@ -187,18 +207,18 @@ describe('showcase lesson integration', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
 
-    await screen.findByRole('heading', { name: 'Primitive Showcase: rich text' })
+    await screen.findByRole('heading', { name: authoredStepHeading('showcase-rich-text') })
     await continueCompletedStep(user)
-    await screen.findByRole('heading', { name: 'Primitive Showcase: image' })
+    await screen.findByRole('heading', { name: authoredStepHeading('showcase-image') })
     await continueCompletedStep(user)
-    await screen.findByRole('heading', { name: 'Primitive Showcase: zoomable image' })
+    await screen.findByRole('heading', { name: authoredStepHeading('showcase-zoomable-image') })
     await continueCompletedStep(user)
 
     await user.click(await screen.findByRole('button', { name: 'Explore Sparse observations' }))
     await user.click(screen.getByRole('button', { name: 'Explore Dense observations' }))
     await continueCompletedStep(user)
 
-    await screen.findByRole('heading', { name: 'Primitive Showcase: image compare' })
+    await screen.findByRole('heading', { name: authoredStepHeading('showcase-image-compare') })
     await continueCompletedStep(user)
 
     const video = await screen.findByLabelText('Reading a scientific signal')
@@ -213,8 +233,13 @@ describe('showcase lesson integration', () => {
     await user.click(screen.getByRole('button', { name: 'Show slide 3: Context' }))
     await continueCompletedStep(user)
 
-    for (const type of ['data table', 'chart', 'formula', 'pdf reference']) {
-      await screen.findByRole('heading', { name: `Primitive Showcase: ${type}` })
+    for (const primitiveId of [
+      'showcase-data-table',
+      'showcase-chart',
+      'showcase-formula',
+      'showcase-pdf-reference',
+    ]) {
+      await screen.findByRole('heading', { name: authoredStepHeading(primitiveId) })
       await continueCompletedStep(user)
     }
 

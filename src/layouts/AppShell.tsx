@@ -1,5 +1,6 @@
 import { NavLink, ScrollRestoration } from 'react-router'
 
+import { BuildStamp } from '@/components/navigation/BuildStamp'
 import { PageHeader } from '@/components/navigation/PageHeader'
 import { primaryNavigation } from '@/components/navigation/primaryNavigation'
 import { RouteTransition } from '@/components/navigation/RouteTransition'
@@ -9,7 +10,7 @@ import { cn } from '@/lib/cn'
 
 export function AppShell() {
   return (
-    <div className="min-h-dvh pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <div className="flex min-h-dvh flex-col pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <a
         className="fixed left-3 top-3 z-toast -translate-y-20 rounded-md bg-brand-800 px-4 py-2 font-bold text-white transition-transform focus:translate-y-0"
         href="#main-content"
@@ -20,10 +21,11 @@ export function AppShell() {
       <PwaPromptHost />
       <PageHeader />
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8" id="main-content">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8" id="main-content">
         <RouteTransition />
       </main>
       <ScrollRestoration />
+      <BuildStamp />
 
       <nav
         aria-label="Primary navigation"

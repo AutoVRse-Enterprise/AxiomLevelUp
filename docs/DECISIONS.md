@@ -1104,3 +1104,276 @@ it passes AA). Typography stays Inter, which autovrse.com also uses.
 
 **Consequences:** Branding changes are confined to configuration, tokens and static assets. Contrast
 is re-audited only for changed tokens.
+
+## ADR-074: Separate Case Lab capability completion from demo readiness
+
+**Status:** Accepted
+
+**Context:** Phase 10 completed the reusable Case Lab contracts, player, anatomy boundary, sample
+content and automated flow coverage. A subsequent client-demo audit found 52 issues, including
+eight P0 blockers and twenty P1 defects. Real canvas picking, branch navigation, pathology
+discovery, mobile hit-testing, timing and clue semantics, result truthfulness and physical-device
+acceptance were not established by automated completion or Chromium no-overflow checks.
+
+**Decision:** Retain Phase 10 as the completed technical capability foundation, but do not treat it
+as client-demo approval. Add Phase 11 to produce one five-minute golden exacerbation path and fix
+shared-engine P0/P1 defects, including the P2 issues necessary for that path's coherence and
+delivery. Add Phase 12 for remaining case breadth, learning depth and presentation polish. Keep
+P9-M01 through P9-M03 as the sole physical Android/iOS release gate; neither later phase may infer
+device approval from emulation.
+
+**Consequences:** Roadmap status distinguishes architecture completion from experience readiness.
+Every audit finding maps to a phase and task in
+`docs/qa/phase-10-demo-readiness-audit.md`. Demo approval now requires meaningful 3D evidence,
+truthful lifecycle and scoring behavior, real-WebGL coverage and a rehearsed build, while broader
+Case Lab refinement can proceed without obscuring the immediate golden-path blockers.
+
+## ADR-075: Production-preview WebGL acceptance boundary
+
+**Status:** Accepted
+
+**Context:** Phase 10 browser-flow tests replaced the anatomy runtime with an unavailable-viewer
+double. They proved route and fallback behavior but could not detect broken raycasting, canvas
+input, renderer startup or patient-finding projection. The Phase 11 repair sequence needs one
+stable browser boundary before those behaviors change.
+
+**Decision:** Use Playwright against a fresh production build served by Vite preview on fixed port 4181. Block service workers in every context, apply the advanced seed before each test, and run
+Chromium projects at 1440×900 and touch-enabled 375×812 with SwiftShader WebGL launch flags. An
+optional `window.__anatomyTest` bridge exists only when the build-time `VITE_E2E` value is `true`.
+The typed bridge reports renderer diagnostics and projected viewport coordinates for configured
+structures, findings and markers; normal production builds do not install or retain the global.
+Keep the real-WebGL seeded smoke and screenshot active now. Add executable skipped specifications
+for picking, marker retention, branch traversal, configured findings and the complete golden path,
+then enable each assertion in its owning Phase 11 task.
+
+**Consequences:** `npm run test:e2e` owns its build and preview lifecycle and fails if its dedicated
+port is occupied or WebGL cannot start. Browser binaries are an explicit local/CI prerequisite.
+The current suite establishes real renderer startup on both target emulations without pretending
+that downstream defects are fixed; later tasks must remove their corresponding skips rather than
+replace the canvas with mocks.
+
+## ADR-076: Case assessment and finding contracts
+
+**Status:** Accepted
+
+**Context:** Case result construction previously treated every planned step as assessed. An
+unscored exploration step inside an anatomy stage therefore contributed a zero to the anatomy and
+per-step speed means, appeared in persisted step results and was shown against an expert response.
+The generic player also started its per-attempt elapsed tracker for every supported step even when
+the primitive definition marked that step unscored. The same exploration path also lacked a
+validated way to describe patient-specific spatial findings: adding disease-specific React or
+Three.js branches would couple one demo case to the shared runtime and leave clue, anchor and
+completion references unchecked.
+
+**Decision:** Treat the activity plan's resolved `step.scored` flag as the authority for question
+timing and case assessment inclusion. Only scored steps start attempt timers, report timed
+attempts, contribute to component or per-step speed means, enter persisted case step results and
+appear in expert comparison. Continue to include all supported steps in progression, completion,
+interaction events, primitive-completion events, resume state and total case duration. Scored
+steps continue to use the first submitted score, response, timeout and elapsed duration.
+
+Define findings at case scope with stable IDs, learner-facing labels and descriptions, normalized
+severity, local clue references, one of four organ-agnostic kinds (`lumen_narrowing`,
+`lumen_occlusion`, `wall_thickening`, `region`) and a discriminated anchor. Waypoint anchors
+identify a directed `waypoint` → `toWaypoint` edge plus normalized `t`; structure anchors use
+`structure` to identify a configured anatomy structure. Anatomy explore and locate steps opt into
+findings by ID, and exploration may require finding inspection for completion. `buildCasePlan`
+resolves those IDs into a typed per-step map supplied through an anatomy finding context rather
+than adding course-specific component behavior.
+
+Keep all visual parameters under `product.anatomy3d.findingStyles`. The generic Three.js controller
+owns deterministic geometry, visibility, picking and projection: local lumen sleeves represent
+narrowing or wall thickening, seeded clustered geometry represents occlusion, and translucent
+overlays represent regions. React owns only configured labels, descriptions, equivalent controls
+and status. Inspection emits the typed `anatomy_finding_inspected` learner event.
+
+**Consequences:** `anatomy_explore` and any future definition-unscored case primitive can carry
+completion requirements without lowering assessment results or creating misleading comparison
+rows. Exploration still consumes total case time when the tier uses a case clock, while retries
+cannot replace the first-attempt evidence used for scoring. Finding IDs, clue IDs, anchors,
+directed waypoint edges and case/map alignment fail semantic validation before playback. New organ
+systems and cases can reuse the same rendering contract, while clinical meaning and geometry
+placement remain authored content. The generated overlays are illustrative and do not claim
+patient-derived reconstruction.
+
+## ADR-077: Shared anatomy interaction and navigation contract
+
+**Status:** Accepted
+
+**Context:** Anatomy interaction was split across loosely related controller calls. A raycast
+against a lobe mesh also matched the respiratory-system aggregate because that parent
+intentionally binds every respiratory mesh, while `flyTo` always restored the outside model and
+therefore made an authored endoscopic route impossible to traverse. The viewer had no route
+history, current-location context or explicit way to leave the lumen at the same waypoint.
+Localisation also forced orbit navigation instead of honoring authored primitive settings.
+
+**Decision:** Pass the viewer's currently selectable level IDs into controller picking. Resolve
+ordered raycast mesh-name hits one hit at a time, considering only eligible structures and ranking
+same-hit candidates by deepest `parentId` ancestry, then fewer bound mesh names, then structure ID.
+Reject two structures on the same level that bind the same mesh, while allowing expected
+aggregate-parent overlap across different levels.
+
+Use the controller as the shared boundary for both outside and endoscopic navigation.
+`travelTo(waypointId)` preserves the active view mode, records a reversible authored route and
+exposes its parent/path context; `enterEndoscopic` and `exitEndoscopic` switch representations
+without changing the current waypoint. Reduced-motion callers pass `animate: false`. The outside
+view can frame all structures selectable at the current level. The endoscopic renderer builds
+organ-agnostic tapered curves from waypoint position, look target and radius, with map-authored
+ring counts and app-configured material, lighting, fog, bounded pointer look and ring appearance.
+React owns labelled branch/back controls, breadcrumb and landmark context, orientation cues,
+Outside/Airway mode controls and the collapsed equivalent structure list. Both anatomy primitives
+pass their authored start view, navigation and marker configuration into that shared viewer.
+
+**Consequences:** The nearest rendered hit remains authoritative, aggregate map structures remain
+useful, and canvas picking deterministically selects the most-specific eligible structure.
+Ambiguous same-level authoring fails before runtime. The real-WebGL acceptance check uses the
+foundation case's stable visible surface after advancing to its lobe level because the current
+golden case deliberately starts with the surface model hidden in endoscopic mode. Endoscopic
+travel no longer leaks into outside mode, parent navigation retraces the actual route even in
+graphs with shared descendants, and future organs can author the same waypoint/lumen contract
+without controller branches. Procedural lumen visuals remain illustrative rather than
+patient-specific anatomy and add no `three` import outside `src/anatomy3d/three`.
+
+## ADR-078: Blocking case states pause one active-time model
+
+**Status:** Accepted
+
+**Context:** Question countdowns and elapsed-attempt tracking could start while a stage transition
+covered the task, and the mobile clue sheet could continue consuming answer and case time while it
+blocked the task. The case countdown also stopped at its authored maximum, so persisted duration
+and results hid time spent after expiry. Untimed cases suppressed their clock entirely even though
+their real completion duration remains useful.
+
+**Decision:** `ActivityPlayer` accepts an explicit `pauseTiming` signal and applies it to both
+active elapsed tracking and the authored attempt timer without resetting either timer. `CasePlayer`
+owns the blocking-state aggregate: stage transitions and the open mobile clue presenter pause both
+question timing and the case clock, while non-blocking desktop evidence remains available without
+stopping time. Stage transitions use a focus-trapped Radix Dialog. Every fresh attempt presents the
+first stage transition before its first task; resumed attempts return directly to their saved task.
+
+All case clock modes track active elapsed duration. Countdown elapsed time is unbounded, remaining
+time clamps to zero, expiry derives from actual elapsed time, and persistence retains the actual
+duration after expiry. Untimed cases display elapsed time with an explicit “Speed not scored”
+label; scoring continues to redistribute the configured speed weight and records zero speed.
+Per-step timers remain limited to supported, definition-scored, timer-compatible steps with an
+authored timer. Exploration and clue-reading countdown removal remains a content-authoring change
+for P11-T11 rather than a case-specific runtime exception.
+
+**Consequences:** Hidden questions cannot expire behind stage or mobile clue dialogs, and pausing
+does not grant a fresh countdown. Case results and history can preserve truthful overrun duration,
+while untimed learners still see elapsed progress without implying a speed score. The generic
+runtime remains content-driven; P11-T11 must remove the unwanted authored countdowns from the
+golden case's exploration and evidence-reading steps.
+
+## ADR-079: Case-owned atomic clue presentation and first-open context
+
+**Status:** Accepted
+
+**Context:** Clue selection and the mobile sheet were owned by different components. Clue-first
+entry could record evidence without showing it on a phone, the mobile trigger could display the
+first clue without recording it, feedback reopen changed selection without opening the sheet and
+selected evidence could leak across stages. Scoring also penalized every opened optional clue,
+including evidence first opened as post-response remediation.
+
+**Decision:** `CasePlayer` owns `{ selectedClueId, presenterOpen }` and exposes one
+`presentClue(id, context)` action for `entry`, `browse` and `remediation`. The action selects and
+visibly presents the clue, then records and emits only its first opening. `ClueBoard` is controlled;
+its phone trigger opens the unselected list without opening a clue. Stage changes clear both
+presentation fields. Persist each first opening's context and whether it preceded the current
+response in session `caseProgress`; session v4 migrates older progress with an empty context map so
+unknown legacy openings are not retroactively penalized.
+
+Only optional clues whose first recorded context is `entry` or `browse` and whose opening preceded
+the response contribute to the configured clue penalty. Remediation never creates a penalty, while
+reopening a pre-response hint retains that hint's original scoring status.
+
+**Consequences:** Mobile entry and remediation always show the same sheet whose visibility pauses
+timing, desktop cards retain their inline presentation and one typed `case_clue_opened` event is
+emitted per clue. Resume preserves first-open scoring semantics without guessing about legacy
+sessions. General clue-consumption and permanent attempt-history context remain deferred to their
+Phase 12 and P11-T10 contracts.
+
+## ADR-080: Persist truthful case results and central rewards
+
+**Status:** Accepted
+
+**Context:** Learner-state v5 stored only aggregate case speed, then the saved-attempt route reused
+that value as both step speed and case speed and recomputed clue penalties and weights from current
+configuration. Results also displayed configured completion XP even when the central gamification
+engine awarded revision, perfect-case or badge XP instead. Older records cannot supply the missing
+facts without inventing them.
+
+**Decision:** Learner-state v6 distinguishes legacy result-v5 records from complete result-v6
+records. New records persist step speed, case speed, effective component weights, clue cost,
+timing mode, whether speed was scored, normalized first responses and the actual XP from the
+matching central gamification activity result. Migrated v5 records retain only known values and
+the UI omits unavailable detail. Expert comparison resolves authored prompts, ignores unscored
+steps, compares recursively key-sorted objects and order-normalized arrays, and may show validated
+per-step benchmark rationales.
+
+**Consequences:** Saved results no longer reinterpret history through current configuration or
+duplicate aggregate speed values. Live and saved views can explain component points and rewards
+from persisted facts, while legacy attempts remain usable with an explicit limitation. Current
+attempt IDs are filtered from comparison history, including challenge-hosted case completion.
+
+## ADR-081: Golden case is a focused six-task authored composition
+
+**Status:** Accepted
+
+**Context:** The advanced exacerbation case was a ten-minute, eight-task draft whose title and
+repeated warning copy disclosed the intended diagnosis, whose first task skipped exploration, and
+whose temporary focal narrowing did not support a complete spatial story. P11-T11 needs one
+repeatable five-to-six-minute path without adding disease-specific runtime behavior or presenting
+unreviewed sample content as clinically approved.
+
+**Decision:** Author `exacerbation-advanced` as four stages and exactly six tasks: unscored
+endoscopic exploration from the mid trachea, scored lobe/segment/structure localisation with no
+finding overlay, one multi-select severity task, one CO₂ reasoning task, one diagnosis task and one
+urgent-escalation consequence task. The exploration requires both arrival at the right lower lobe
+posterior basal segmental waypoint and canvas inspection of its dominant configured mucus
+occlusion. Add generic superior, lateral basal and posterior basal branch alternatives to the
+shared lung map. Represent diffuse wall thickening with mild narrowing and the dominant occlusion
+as case-configured findings linked to authored clues.
+
+Use a neutral title, one disclaimer, a 300-second target, a 480-second maximum, no per-step timers,
+authored benchmark responses/rationales, a debrief and one prior result-v6 advanced-seed attempt.
+Keep the complete browser path deterministic: use real branch controls and projected finding
+canvas interaction in both projects, while the separately retained P11-T03 check remains the
+authoritative model-raycast localisation proof. Expose camera position, target and waypoint through
+`?anatomyDebug=1` only in development builds. Record every clinical claim as unreviewed in the
+focused QA ledger until named SME and client sign-off are supplied.
+
+**Consequences:** The featured case now demonstrates the repaired runtime in a compact sequence
+without hard-coded case behavior. The shared lung map gains illustrative segmental authoring
+waypoints that other content may use, but their coordinates are not validated anatomy. Production
+builds do not expose the authoring readout. Technical completion does not confer clinical approval;
+external presentation remains conditional on the review recorded in
+`docs/qa/phase-11-golden-case-content-review.md`.
+
+## ADR-082: Hash-versioned featured-model preflight
+
+**Status:** Accepted
+
+**Context:** The featured case and the anatomy viewer loaded the same GLB through an unversioned
+path, so a browser could not distinguish an updated response reliably and the case intro could not
+verify that its exact model had been fetched. Pre-caching all 3D assets would exceed Phase 11 and
+could imply unsupported offline-3D behavior. Demo operators also lacked an on-screen build
+identifier for detecting a stale service worker.
+
+**Decision:** Derive model request URLs from the validated asset SHA-256 and use that exact URL for
+both featured-case prefetch and viewer loading. Apply a service-worker `CacheFirst` route only to
+GLBs with a SHA-256 query version or a hash in the filename, with a dedicated cache limited to four
+entries and 14 days. The featured case intro fully reads its configured anatomy model response and
+reports preparing, ready or recoverable failure state without blocking the case CTA; unrelated
+case intros do not prefetch.
+
+Expose a client-visible build ID from configured `VITE_BUILD_ID`, CI commit metadata or a
+deterministic digest of application/content build inputs. Keep the existing prompt update model:
+a waiting worker is activated through `SKIP_WAITING` and reload, while a blocked/unsupported
+registration clears stale update state without logging an expected capability failure.
+
+**Consequences:** A successful featured-case preflight and the runtime viewer address the same
+immutable model version, and old versions age out within explicit bounds. This is targeted
+performance/freshness caching, not a guarantee that 3D works offline. Operators can compare the
+visible build to deployment notes and follow a documented clean-origin recovery. Source changes
+alter the fallback build ID reproducibly; deployments may supply their own traceable ID.

@@ -26,6 +26,11 @@ const anatomyWaypointSchema = z.strictObject({
   lookAt: vector3Schema,
   next: z.array(idSchema),
   radius: z.number().positive().optional(),
+  lumen: z
+    .strictObject({
+      ringCount: z.number().int().nonnegative().max(64).default(0),
+    })
+    .optional(),
 })
 
 export const anatomyMapSchema = z.strictObject({

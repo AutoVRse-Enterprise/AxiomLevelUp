@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
+import { useStepFindings } from '@/anatomy3d/viewer/findingContext'
 import { Button } from '@/components/ui'
 import type {
   AnatomyLocateLevel,
@@ -161,7 +162,8 @@ export function AnatomyLocatePrimitive({
   onInteract,
   onSubmit,
 }: PrimitiveComponentProps<AnatomyLocatePrimitiveContent>) {
-  const { appConfig, map, model } = useAnatomyPrimitiveContext(primitive)
+  const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
+  const findings = useStepFindings(primitive.id)
   const initial = readSelections(mode === 'review' ? review?.response : draft)
   const [selections, setSelections] = useState<Selections>(initial)
   const [levelIndex, setLevelIndex] = useState(() => {
@@ -201,9 +203,15 @@ export function AnatomyLocatePrimitive({
           <AnatomyViewer
             config={appConfig.product.anatomy3d}
             disabled={readOnly}
+            findings={findings}
             map={map}
-            modelUrl={model.path}
-            navigation="orbit"
+            modelUrl={modelUrl}
+            markerStructureId={
+              primitive.content.startView.mode === 'marker'
+                ? primitive.content.startView.structureId
+                : undefined
+            }
+            navigation={primitive.content.navigation}
             prompt={levelLabel}
             selectableLevelIds={[level.levelId]}
             selectedStructureIds={
@@ -221,6 +229,15 @@ export function AnatomyLocatePrimitive({
                   meshCount: result.meshNames.length,
                   triangleCount: result.triangleCount,
                 })
+            }}
+            onFindingInspected={(findingId) => {
+              if (!readOnly) {
+                onInteract({
+                  name: 'anatomy_finding_inspected',
+                  findingId,
+                  key: `finding:${findingId}`,
+                })
+              }
             }}
             onStructureSelected={(structureId) => select(level, structureId)}
           />

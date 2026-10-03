@@ -68,7 +68,11 @@ function renderPlayer(
   extensions: Partial<
     Pick<
       ActivityPlayerProps,
-      'renderChrome' | 'onStepBoundary' | 'onAttemptTimed' | 'renderCompletion'
+      | 'autoStartOrResume'
+      | 'renderChrome'
+      | 'onStepBoundary'
+      | 'onAttemptTimed'
+      | 'renderCompletion'
     >
   > = {},
 ) {
@@ -119,6 +123,12 @@ describe('activity player', () => {
     renderPlayer()
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: `${plan.activity.title}: ${plan.steps[0]!.label} — ${plan.steps[0]!.prompt}`,
+      }),
+    ).toHaveFocus()
     expect(await screen.findByText('Review the evidence before answering.')).toBeVisible()
     await user.click(await screen.findByRole('button', { name: 'Continue' }))
     await user.click(await screen.findByRole('radio', { name: 'Supported' }))
@@ -142,6 +152,36 @@ describe('activity player', () => {
       ]),
     )
     expect(useActivitySessionStore.getState().session).toBeNull()
+  })
+
+  it('auto-starts only when the explicit player prop is enabled', async () => {
+    renderPlayer(plan, undefined, { autoStartOrResume: true })
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: `${plan.activity.title}: ${plan.steps[0]!.label} — ${plan.steps[0]!.prompt}`,
+      }),
+    ).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Start' })).not.toBeInTheDocument()
+  })
+
+  it('auto-resumes a stored session when the explicit player prop is enabled', async () => {
+    const user = userEvent.setup()
+    renderPlayer()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    await waitFor(() => expect(useActivitySessionStore.getState().session?.startedAt).toBeTruthy())
+    cleanup()
+
+    renderPlayer(plan, undefined, { autoStartOrResume: true })
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: `${plan.activity.title}: ${plan.steps[0]!.label} — ${plan.steps[0]!.prompt}`,
+      }),
+    ).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument()
   })
 
   it('offers resume and restart for a stored session', async () => {

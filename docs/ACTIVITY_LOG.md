@@ -2085,3 +2085,402 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   BY 4.0 as current. Runtime provenance and reproducible preparation documentation now agree.
 - **Follow-ups:** None for Phase 10; retain the HRA unified lung GLB as a possible future
   higher-detail alternative if segment-level model geometry is required.
+
+### [2026-10-03 16:41] P11-T00 - Rebaseline Case Lab demo readiness
+
+- **Agent/session:** Cursor documentation planning session
+- **Action:** Transcribed all 52 Case Lab demo-readiness findings into a durable QA audit and mapped
+  each to severity, evidence and a Phase 11 or Phase 12 task. Added the golden exacerbation
+  hardening phase and the later breadth/depth/polish phase, recorded ADR-074, updated roadmap/PRD
+  wording, corrected clue and device QA claims, and rewrote the handoff for Phase 11.
+- **Files changed:** `PRD.md`, `docs/DECISIONS.md`, `docs/HANDOFF.md`, `docs/ROADMAP.md`,
+  `docs/phases/phase-10-case-lab.md`, `docs/phases/phase-11-case-lab-demo-hardening.md`,
+  `docs/phases/phase-12-case-lab-depth-and-polish.md`,
+  `docs/qa/phase-10-demo-readiness-audit.md`, `docs/qa/phase-10-browser-qa.md`,
+  `docs/qa/phase-09-android-script.md`, `docs/qa/phase-09-ios-script.md`,
+  `docs/qa/phase-09-device-checklist.md`, `docs/qa/phase-09-device-results-template.md` and
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Targeted repository searches and reads; audit ID/severity/target validation;
+  Prettier checks and formatting for changed documentation; stale-wording scan; `git diff --check`;
+  repository status/diff review.
+- **Result/verification:** P11-T00 is complete. The audit contains exactly 52 unique findings
+  (P0 8, P1 20, P2 19, P3 5), every finding has a Phase 11/12 target, changed documentation passes
+  Prettier and whitespace checks, no implementation code changed and no commit was created.
+- **Follow-ups:** Start P11-T01 with the golden exacerbation content/asset decision; retain
+  P9-M01 through P9-M03 as the active physical-device gate.
+
+### [2026-10-03 16:46] P11-T00 - Correct approved Phase 11 task plan
+
+- **Agent/session:** Cursor documentation correction session
+- **Action:** Corrected the Phase 11/12 split to the approved plan. Replaced the invented Phase 11
+  task grouping with the authoritative P11-T00 through P11-T13 checklist, remapped all 52 audit
+  findings, moved cross-catalogue semantics and depth back to Phase 12 and refreshed the handoff.
+  This entry supersedes the prior P11-T00 follow-up that incorrectly named golden-case authoring as
+  P11-T01; the prior entry remains unchanged under the append-only protocol.
+- **Files changed:** `docs/phases/phase-11-case-lab-demo-hardening.md`,
+  `docs/phases/phase-12-case-lab-depth-and-polish.md`,
+  `docs/qa/phase-10-demo-readiness-audit.md`, `docs/HANDOFF.md` and
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Exact Phase 11 task-ID validation; 52-finding audit mapping validation;
+  targeted phase-split searches; Prettier formatting/check; `git diff --check`; repository
+  status/diff review.
+- **Result/verification:** The Phase 11 checklist contains exactly P11-T00 through P11-T13, with
+  only P11-T00 complete. Phase 11 explicitly includes F24, F35–F38, F50 and F52. Phase 12 retains
+  the approved breadth, general clue/timeout/schema semantics, deeper anatomy, evidence/debrief,
+  metadata/history, accessibility/polish and offline-model work. No code or plan file changed.
+- **Follow-ups:** Start P11-T01 with the Playwright real-WebGL harness; keep P9-M01 through P9-M03
+  active.
+
+### [2026-10-03 16:55] P11-T01 - Add real-WebGL acceptance harness
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added Playwright production-preview coverage with deterministic advanced-seed setup,
+  blocked service workers, desktop and touch-phone Chromium projects and SwiftShader launch flags.
+  Added an E2E-gated typed anatomy bridge for renderer diagnostics and projected structure,
+  finding and marker coordinates. Kept real-WebGL startup, screenshot capture and baseline case
+  assertions active while adding executable skips owned by P11-T03 through P11-T06 and P11-T11.
+- **Files changed:** Playwright configuration and golden-path spec; package manifests and E2E
+  TypeScript project; anatomy viewer/controller types and implementation; Vite environment types;
+  ADR-075, Phase 11 checklist, handoff and activity log.
+- **Commands run:** `npm install --save-dev @playwright/test`, `npx playwright install chromium`,
+  `npm run typecheck`, `npm run lint`, focused anatomy Vitest, `npm run build`,
+  `npx playwright test --list`, `npm run test:e2e`, Prettier checks and `git diff --check`.
+- **Result/verification:** TypeScript, lint, 8 focused anatomy tests, production build and whitespace
+  checks pass. The production bundle contains no `__anatomyTest` or `VITE_E2E` global. Playwright
+  passes the active real-WebGL smoke in both 1440×900 desktop and 375×812 touch-phone projects (2
+  passed); 10 downstream assertions are intentionally skipped and assigned to their owning tasks.
+- **Follow-ups:** Enable each focused browser assertion when P11-T03 through P11-T06 land, then
+  enable the complete five-minute path in P11-T11. Start P11-T02 next.
+
+### [2026-10-03 17:05] P11-T02 - Exclude unscored case steps
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Made resolved plan-step scoring status authoritative for question attempt timing,
+  case component and per-step speed means, emitted/persisted scored-step results and comparison
+  rows. Preserved progression, completion and lifecycle events for unscored steps and retained
+  first-attempt score, response, timeout and elapsed semantics for scored retries.
+- **Files changed:** Case scoring engine and tests; ActivityPlayer timing boundary; CasePlayer
+  result construction and tests; ADR-076; Phase 11 checklist; handoff and activity log.
+- **Commands run:** Focused Vitest runs, `npm run typecheck`, `npm run lint`, IDE diagnostics and
+  `git diff --check`.
+- **Result/verification:** Forty-two focused scoring and player tests pass, including an unscored
+  `anatomy_explore` case that completes and emits its event but is absent from component/speed
+  denominators, case-completion step results and expert comparison. TypeScript, lint and IDE
+  diagnostics pass.
+- **Follow-ups:** Start P11-T03 and enable its projected-point canvas-picking Playwright assertion.
+
+### [2026-10-03 17:12] P11-T03 - Resolve most-specific canvas picks
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a pure ordered-hit structure resolver, passed selectable anatomy levels into
+  controller picking and replaced document-order aggregate matching with ancestry depth, mesh-count
+  and deterministic-ID resolution. Added same-level mesh-binding validation while preserving
+  aggregate-parent overlap across levels. Enabled the real-WebGL lobe-selection assertion on the
+  foundation case's visible surface route because the golden case currently opens with its surface
+  model hidden in endoscopic mode.
+- **Files changed:** Anatomy resolver and focused tests; Three.js controller and controller-facing
+  viewer test; content loader and semantic validation tests; Playwright golden-path specification;
+  ADR-077; Phase 11 checklist; handoff and activity log.
+- **Commands run:** Focused Vitest runs, Prettier, `npm run typecheck`, `npm run lint`,
+  `npm run validate:content`, focused P11-T03 Playwright desktop/touch-phone run, IDE diagnostics
+  and `git diff --check`.
+- **Result/verification:** Forty-eight focused resolver, viewer and content tests pass. TypeScript,
+  lint, content validation and IDE diagnostics pass. Real-WebGL click/tap selects the right upper
+  lobe in both Playwright projects (2 passed). The first browser attempt selected successfully but
+  exceeded the default teardown budget; marking this GPU-backed test slow produced a clean rerun.
+- **Follow-ups:** Start P11-T04 and preserve configured overview markers across asynchronous model
+  readiness, reset, remount and resume.
+
+### [2026-10-03 17:18] P11-T04 - Preserve authored anatomy markers
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Changed marker resolution so an explicit runtime marker wins, otherwise a marker
+  authored in the anatomy start view remains active. Enabled the production-preview reset
+  assertion in both Playwright projects and lengthened the shared WebGL bridge readiness poll for
+  slower software-rendered mobile startup.
+- **Files changed:** `src/anatomy3d/viewer/AnatomyViewer.tsx`, its focused test,
+  `e2e/golden-path.spec.ts`, Phase 11 checklist, handoff and activity log.
+- **Commands run:** Focused Vitest and desktop/touch-phone P11-T04 Playwright runs.
+- **Result/verification:** Seven focused viewer tests pass. The configured foundation marker is
+  visible before and after reset in desktop and 375 px touch-phone real-WebGL Chromium.
+- **Follow-ups:** Implement reversible authored endoscopic navigation in P11-T05.
+
+### [2026-10-03 17:27] P11-T05 - Add navigable endoscopic mode
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced mode-switching waypoint flight with controller-owned `travelTo` route
+  history that preserves endoscopic mode and supports same-waypoint outside exit. Added
+  branch/parent controls, breadcrumb and current-landmark context, Outside/Airway controls,
+  orientation cues, bounded pointer look, selectable-level outside framing and a collapsed
+  equivalent structure disclosure that opens on WebGL failure. Rebuilt the procedural lumen with
+  smooth tapered curves, authored ring counts and configured ring, headlight and fog properties.
+  Made anatomy localisation forward authored navigation/marker settings, expanded ADR-077 into the
+  shared interaction/navigation contract and enabled the P11-T05 real-WebGL route.
+- **Files changed:** Anatomy controller/viewer contracts, implementation and tests; anatomy
+  primitive/map/app schemas and generated schemas; lung/fixture maps and golden case; localisation
+  primitive/tests; Playwright route; Vitest collection boundary; content-schema documentation;
+  ADR-077; Phase 11 checklist; handoff and activity log.
+- **Commands run:** `npm run schema:export`; focused Vitest (4 files / 67 tests);
+  `npm run typecheck`; `npm run lint`; `npm run validate:content`; `npm run test`;
+  `npm run build`; `npm run test:e2e -- --grep "P11-T05"`; targeted Prettier checks;
+  import/API searches; `git diff --check`; status/diff review.
+- **Result/verification:** TypeScript, lint, 53 Vitest files / 372 tests, content validation (5
+  courses, 13 lessons, 4 cases, 1 anatomy map, zero warnings), production build and whitespace
+  checks pass. P11-T05 traverses Carina → Right main airway → Carina in both desktop and
+  touch-phone Chromium with real WebGL (2 passed). The first full Vitest run exposed Playwright
+  collection; excluding `e2e/**` in Vitest restored the intended independent unit/browser gates.
+- **Follow-ups:** Implement P11-T06 configured patient-specific findings. Physical Android/iOS
+  gates P9-M01 through P9-M03 remain open.
+
+### [2026-10-03 17:46] P11-T06 - Add configured anatomy findings
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added case-scoped findings with organ-agnostic kinds, normalized severity, local clue
+  references and structure or directed-waypoint anchors. Resolved step `findingIds` into the typed
+  case plan, added `requiredFindingIds` exploration completion, typed inspection events and a
+  context boundary that keeps course data out of React. Added app-configured Three.js narrowing,
+  deterministic occlusion, wall-thickening and translucent-region overlays with mode-aware
+  visibility, picking, projection, equivalent controls and a labelled status card. Added a
+  temporary focal narrowing and authored carina framing to the advanced case; P11-T11 still owns
+  final case re-authoring.
+- **Files changed:** Case/anatomy/app schemas and generated JSON schemas; content loader and tests;
+  case plan/context and tests; anatomy controller/viewer/primitives/events and tests; app config,
+  lung map, case fixtures and advanced case; Playwright golden path; schema documentation/export
+  script; ADR-076; Phase 11 checklist; handoff and activity log.
+- **Commands run:** Prettier on changed files; `npm run schema:export`; focused Vitest (6 files / 75
+  tests); `npm run typecheck`; `npm run lint`; `npm run test`; `npm run validate:content`;
+  `npm run build`; `npm run test:e2e -- --project touch-phone-chromium --grep "P11-T06"`;
+  `npm run test:e2e -- --grep "P11-T06"`; IDE diagnostics; `git diff --check`; repository
+  status/diff review.
+- **Result/verification:** Schema export, TypeScript, lint, 54 Vitest files / 375 tests, content
+  validation (5 courses, 13 lessons, 4 cases, 1 anatomy map, zero warnings), production build and
+  IDE diagnostics pass. P11-T06 projects and activates the configured narrowing through the real
+  canvas in desktop and touch-phone Chromium (2 passed). The first browser run exposed an
+  ambiguous generic status locator and an off-viewport phone tap; scrolling the canvas before
+  projection and selecting the finding-labelled status made the pointer evidence deterministic.
+- **Follow-ups:** P11-T07 must pause question timing across transitions and blocking evidence.
+  P11-T11 must re-author and clinically review the final golden-case finding; current geometry is
+  explicitly illustrative rather than patient-derived reconstruction. Physical Android/iOS gates
+  P9-M01 through P9-M03 remain open.
+
+### [2026-10-03 18:01] P11-T07 - Pause blocked case timing
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added `ActivityPlayer.pauseTiming` and resumable attempt countdown behavior; made
+  CasePlayer pause attempt and case clocks for stage transitions and the blocking mobile clue
+  presenter. Converted stage transitions to focus-trapped Radix dialogs and showed the first stage
+  before a fresh attempt's first task while preserving direct resume. Made case elapsed time
+  unbounded after countdown expiry, persisted actual elapsed duration, displayed elapsed time in
+  untimed mode and explicitly labelled speed as not scored. Kept per-step timers gated by resolved
+  scored/timer-compatible metadata and deferred content timer removal to P11-T11.
+- **Files changed:** `src/engines/cases/{clock,clock.test}.ts`; `src/player/ActivityPlayer.tsx`;
+  `src/player/useActiveElapsed.test.tsx`; `src/player/useAttemptTimer.ts`;
+  `src/player/useAttemptTimer.test.tsx`;
+  `src/player/case/{CasePlayer,ClueBoard,CaseResults,CaseCompare,casePlayer.test}.tsx`;
+  `src/routes/cases/{CaseAttemptPage,caseRoutes.test}.tsx`;
+  `src/routes/play/{caseFlow.test,playerRoutes.test}.tsx`; ADR-078, Phase 11 checklist, handoff and
+  activity log.
+- **Commands run:** Prettier write/check; focused timing/player Vitest (5 files / 29 tests);
+  focused route Vitest (3 files / 20 tests); `npm run test`; `npm run typecheck`; `npm run lint`;
+  `npm run validate:content`; IDE diagnostics; `git diff --check`; repository status/diff review.
+- **Result/verification:** P11-T07 is complete. Focused suites pass; the full suite passes 55 files
+  / 380 tests; TypeScript, lint and content validation (5 courses, 13 lessons, 4 cases, 1 anatomy
+  map, zero warnings) pass. The first full run correctly exposed eight flows that needed to
+  acknowledge the new initial stage dialog; all were updated and the rerun is green. No content
+  timer was removed and no commit was created.
+- **Follow-ups:** P11-T08 should consolidate all clue entry/reopen paths into one CasePlayer-owned
+  atomic presenter. P11-T11 should remove exploration/evidence countdowns in authored content.
+
+### [2026-10-03 18:09] P11-T08 - Unify atomic clue presentation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Lifted selected-clue and presenter-open state into CasePlayer and routed clue-first
+  entry, clue cards and feedback remediation through one context-aware `presentClue` action. Made
+  ClueBoard controlled; its phone trigger now opens an unselected list without recording a clue,
+  while clue-first and feedback reopen visibly present the selected clue on phone. Cleared stale
+  presentation at stage boundaries, preserved first-open/no-double-event behavior and extended the
+  typed clue event with first-open context and pre-response status. Added session-v4 migration for
+  clue context and restricted optional clue penalties to entry/browse openings made before the
+  response, excluding remediation and unknown legacy openings.
+- **Files changed:** Case clue/scoring/session contracts and tests; session-store migration; typed
+  learner events; `CasePlayer`, controlled `ClueBoard` and focused component tests; ADR-079; Phase
+  11 checklist; handoff and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest runs (3 files / 45 tests and 2 files / 15
+  tests); `npm run typecheck`; `npm run lint`; `npm run validate:content`; `npm run test`; IDE
+  diagnostics; final diff/whitespace review.
+- **Result/verification:** P11-T08 is complete. TypeScript, lint and content validation (5 courses,
+  13 lessons, 4 cases, 1 anatomy map, zero warnings) pass. The final full suite passes 55 files /
+  383 tests. The first full run exposed one desktop flow regression because the test environment
+  lacked `matchMedia`; the viewport fallback now uses `innerWidth`, and both the desktop flow and
+  controlled phone presenter pass on rerun. No schema export was needed because authored content
+  contracts did not change. No commit was created.
+- **Follow-ups:** P11-T09 should harden the artifact-first responsive player layout. P11-T10 owns
+  permanent attempt-v6 persistence of complete result data; Phase 12 still owns general
+  clue-consumption semantics.
+
+### [2026-10-03 18:22] P11-T09 - Harden artifact-first case layout
+
+- **Agent/session:** Cursor implementation session with focused implementation subagent
+- **Action:** Removed the second case start screen by adding an explicit ActivityPlayer
+  auto-start/resume option used only by the catalogue case route. Replaced technical primitive type
+  names in focused step headings with authored labels/prompts; removed generic progress in case
+  mode and added current-stage task context. Reworked case chrome into a full-width artifact
+  workspace with a controlled collapsed desktop clue rail, fixed safe-area-aware phone clue
+  action/sheet, compact responsive stage header and approximately 60dvh phone anatomy viewport.
+  Added global safe-area scroll padding/margins and desktop/touch-phone production-preview
+  `elementFromPoint` coverage for the start, stage, canvas, branch and clue controls. Kept the
+  equivalent structure list secondary and used ADR-074 rather than creating a redundant ADR.
+- **Files changed:** Activity player and step frame; case player, stage header and clue board; case
+  route wrapper; anatomy viewer and global styles; component, route, showcase and Playwright tests;
+  Phase 11 checklist, handoff and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (5 files / 47 tests); `npm run typecheck`;
+  `npm run lint`; `npm run validate:content`; `npm run test`; `npm run build`; focused P11-T09 and
+  P11-T03 Playwright runs; full `npm run test:e2e`; IDE diagnostics; final diff/whitespace review.
+- **Result/verification:** P11-T09 is complete. TypeScript, lint, content validation (5 courses, 13
+  lessons, 4 cases, 1 anatomy map, zero warnings), production build and IDE diagnostics pass. The
+  full suite passes 55 files / 385 tests. Playwright passes 12 active checks across desktop and
+  touch-phone Chromium; the two P11-T11 checks remain intentionally skipped. The first full unit
+  run exposed legacy technical-title assertions, and the first browser run exposed a hidden
+  equivalent-list assertion; both were updated to authored-heading and canvas-state evidence before
+  clean reruns. No commit was created.
+- **Follow-ups:** Start P11-T10 attempt-v6 result persistence. Physical Android/iOS gates P9-M01
+  through P9-M03 remain open.
+
+### [2026-10-03 18:40] P11-T10 - Persist truthful case results
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Upgraded learner state to v6 with discriminated legacy-v5 and complete result-v6
+  attempt records. Persisted separate step/case speed, effective weights, clue cost, timing mode,
+  speed-scored status, normalized first responses, actual duration and XP from the matching central
+  gamification activity result. Rebuilt saved/live results and comparison around persisted facts,
+  authored scored-step prompts, normalized equality, optional validated expert rationales,
+  accessible stars, `/100`, `mm:ss`, first-attempt disclosure and de-duplicated history. Added
+  ADR-080 and updated generated schemas/documentation and the Phase 11 checklist.
+- **Files changed:** Learner/case schemas and seeds; learner migration; case scoring, progress,
+  response normalization and gamification/pipeline integration; case result, compare, intro and
+  attempt-route UI; focused migration, selector, result, compare, route, challenge and pipeline
+  tests; generated schemas/content-schema documentation; ADR-080; Phase 11 checklist; handoff and
+  activity log.
+- **Commands run:** Targeted Prettier; `npm run schema:export`; focused Vitest (10 files / 114
+  tests, then 7 files / 48 tests after focused additions); `npm run test`; `npm run typecheck`;
+  `npm run lint`; `npm run validate:content`; `npm run build`; IDE diagnostics; `git diff --check`;
+  repository status/diff review.
+- **Result/verification:** P11-T10 is complete. The full suite passes 56 files / 389 tests.
+  TypeScript, lint, content validation (5 courses, 13 lessons, 4 cases, 1 anatomy map, zero
+  warnings), schema export, production build and IDE diagnostics pass. Legacy attempts never
+  synthesize unavailable details; current attempts display the central activity-result XP.
+- **Follow-ups:** P11-T11 should compose and clinically review the five-minute golden case.
+  Physical Android/iOS gates P9-M01 through P9-M03 remain open.
+
+### [2026-10-03 19:01] P11-T11 - Compose focused golden case
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Re-authored the featured advanced case as a neutral four-stage, six-task,
+  five-to-six-minute path. Added required mid-trachea-to-posterior-basal exploration, generic
+  right-lower-lobe segmental branches, diffuse wall change and dominant mucus-occlusion findings,
+  overlay-free scored localisation, one severity selection, one CO₂ interpretation, diagnosis and
+  urgent-consequence tasks. Removed all per-step timers, set 300/480-second case timing, authored
+  benchmark responses/rationales and debrief, and seeded one prior result-v6 attempt. Added a
+  development-only `?anatomyDebug=1` camera/target/waypoint readout, focused clinical-claim ledger,
+  ADR-081, content/flow tests and a complete real-UI Playwright path in both projects.
+- **Files changed:** `public/content/cases/exacerbation-advanced.json`,
+  `public/content/anatomy/lung-map.json`, `public/content/seeds/advanced.json`,
+  `src/anatomy3d/viewer/{AnatomyViewer,AnatomyViewer.test}.tsx`,
+  `src/content/content.test.ts`, `src/routes/play/caseFlow.test.tsx`,
+  `e2e/golden-path.spec.ts`, `docs/qa/phase-11-golden-case-content-review.md`,
+  `docs/DECISIONS.md`, Phase 11 checklist, handoff and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (3 files / 59 tests);
+  `npm run schema:export`; `npm run test`; `npm run typecheck`; `npm run lint`;
+  `npm run validate:content`; `npm run build`; targeted and full `npm run test:e2e`; IDE
+  diagnostics; `git diff --check` and targeted diff review. `npm run assets:hash` was not run
+  because no asset changed.
+- **Result/verification:** The final full suite passes 56 files / 390 tests. TypeScript, lint,
+  content validation (5 courses, 13 lessons, 4 cases, 1 anatomy map, zero warnings), schema export,
+  production build, IDE diagnostics and whitespace checks pass. Playwright passes all 14 tests,
+  including P11-T11 completion through branch controls and projected finding canvas interaction in
+  desktop and touch-phone Chromium. Initial browser runs exposed an achievement dialog and
+  animation-sensitive projected coordinates; the test now dismisses configured celebrations and
+  waits for a stable projected point before canvas activation.
+- **Follow-ups:** Obtain the explicitly outstanding respiratory SME, anatomy/pathology and
+  client/legal sign-offs in the focused claim ledger before external presentation. Continue with
+  P11-T12 deployment/cache resilience; physical Android/iOS gates P9-M01 through P9-M03 remain
+  open.
+
+### [2026-10-03 19:24] P11-T12 - Preflight versioned model and build
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Derived every model runtime URL from validated SHA-256 metadata and added a dedicated
+  CacheFirst service-worker route limited to four versioned GLBs and 14 days. Prefetched only the
+  configured featured case's exact model on intro, exposed accessible loading/ready/recoverable
+  failure state without blocking its CTA, and kept unrelated cases untouched. Added a visible
+  configured/CI-or-source-derived build ID. Preserved prompt-based waiting-worker activation and
+  reload, while clearing stale update state and suppressing expected errors when service workers
+  are blocked. Added unit and real-service-worker browser coverage, ADR-082 and the exact
+  clean-origin/model/build/seed/viewport/recovery/six-task demo runbook.
+- **Files changed:** `vite.config.ts`; `scripts/build/{build-id,build-id.test}.ts`;
+  `src/{sw,vite-env.d}.ts`; `src/pwa/{cachePolicy,modelCache,modelCache.test,registerSW,
+registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl.ts`;
+  anatomy primitive context/components; `CaseIntroPage` and route tests; `BuildStamp`, `AppShell`
+  and router test; `e2e/pwa-resilience.spec.ts`; ADR-082; Phase 11 checklist; demo runbook; handoff
+  and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (5 files / 24 tests); `npm run typecheck`;
+  `npm run lint`; `npm run validate:content`; `npm run test`; `npm run build`; `npm run budget`;
+  focused P11-T12 Playwright; `npm run check`; full `npm run test:e2e -- --workers=2`; IDE
+  diagnostics; `git diff --check`; repository status/diff review.
+- **Result/verification:** P11-T12 is complete. The full quality gate passes: 59 Vitest files / 400
+  tests, 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, production PWA build
+  and all bundle budgets. The service-worker preflight passes in both browser projects and the full
+  browser suite passes 16/16. An initial concurrent four-worker browser/full-check run caused
+  resource-contention timeouts; the same complete suites passed sequentially with two browser
+  workers. The unoverridden build ID is `0.1.0+765186c09b76`. No commit was created.
+- **Follow-ups:** Run P11-T13 closeout. External presentation remains conditional on the recorded
+  clinical/client review, and P9-M01 through P9-M03 remain open pending physical-device evidence or
+  an authorized waiver.
+
+### [2026-10-03 19:37] P11-T13 - Close Phase 11
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Audited all 52 demo-readiness findings against the approved Phase 11/12 split;
+  retained the 12 approved Phase 12 deferrals and closed the 40 Phase 11 findings with
+  task/browser evidence. Added repeatable full-page screenshots at finding, localisation, results
+  and comparison for desktop and 375 px paths; recorded exact environment, command timing, WebGL
+  renderer and emulation limits. Refreshed architecture, content contracts, roadmap, phase,
+  audit disposition and handoff. Confirmed ADR-074 through ADR-082 remain accepted, sequential and
+  accurately referenced.
+- **Files changed:** `e2e/golden-path.spec.ts`; `playwright.config.ts`;
+  `docs/qa/evidence/phase-11/*.png`; `docs/qa/phase-11-browser-qa.md`;
+  `docs/qa/phase-10-demo-readiness-audit.md`; `docs/ARCHITECTURE.md`;
+  `docs/CONTENT_SCHEMA.md`; `docs/ROADMAP.md`;
+  `docs/phases/phase-11-case-lab-demo-hardening.md`; `docs/HANDOFF.md`; activity log.
+- **Commands run:** `npm run check:demo` (two prerequisite failures before browser launch);
+  `npx playwright install chromium`; `npm run check:demo` with the installed browser cache;
+  focused Playwright renderer diagnostics; `npm run check`; targeted Prettier check/write; IDE
+  diagnostics; `git diff --check`; repository status/evidence review.
+- **Result/verification:** Phase 11 is complete. The final `npm run check:demo` passes in 180.387 seconds:
+  typecheck, lint and 16/16 production-preview Playwright tests. Desktop and 375 px automated golden
+  paths complete in 17.654 and 17.043 seconds, using WebGL 2 through ANGLE Vulkan SwiftShader.
+  Eight durable screenshots cover both targets. `npm run check` passes in 41.589 seconds with 59
+  Vitest files / 400 tests, zero content warnings, a successful production build and all bundle
+  budgets. IDE diagnostics and whitespace checks pass. No schema export or asset hashing was needed
+  because P11-T13 changed no runtime schema or asset. No commit was created, and the user's
+  `docs/reference docs/` remained untouched.
+- **Follow-ups:** Start P12-T00 from the 12 explicit deferrals. Before any external presentation,
+  obtain the unapproved clinical/anatomy/pathology/client sign-offs. Complete P9-M01 through P9-M03
+  on physical Android/iOS hardware or record an authorized waiver.
+
+### [2026-10-03 19:48] P11-T13 - Correct final endoscopic visual
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Reviewed the durable screenshots rather than relying only on interaction assertions,
+  found that a closed procedural waypoint sphere filled the endoscopic camera with a flat wall and
+  removed those generated shells. Open tapered tube ends now expose airway depth, cartilage rings
+  and the configured mucus occlusion.
+- **Files changed:** Three.js anatomy controller; refreshed Phase 11 desktop/mobile screenshots;
+  Phase 11 browser QA, handoff and activity log.
+- **Commands run:** Focused desktop/touch golden-path Playwright run, `npm run check`, final
+  `npm run check:demo` and visual inspection of refreshed evidence.
+- **Result/verification:** The refreshed screenshots visibly show the airway and occlusion.
+  Fifty-nine Vitest files / 400 tests, content validation, build, budgets and all 16 Playwright
+  tests pass. The final browser gate completes in 93.259 seconds.
+- **Follow-ups:** Clinical/client sign-off and Phase 9 physical-device gates remain external
+  blockers; Phase 12 begins with the 12 approved deferrals.

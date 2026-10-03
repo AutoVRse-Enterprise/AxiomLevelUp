@@ -54,14 +54,17 @@ each result. A failure must include reproducible steps and an issue link.
 - Missing-study recovery:
 - Repeated-entry memory/WebGL recovery:
 - Educational-only labeling:
-- Case entry modes:
+- Case entry modes by case:
+- Start/Clues fixed-chrome hit-testing:
+- Clue presentation/open/consumed state:
+- Reopen-clue presentation and penalty:
 - 3D orbit/pinch/pan gesture isolation:
-- Model-tap localisation:
+- Exact model-tap localisation:
 - Keyboard/list localisation:
 - Anatomy reduced-motion cuts:
 - Missing-model/context-loss recovery:
 - Repeated 3D entry and disposal:
-- Case results and expert comparison:
+- Explainable `/100` results, actual rewards and expert comparison:
 
 ## Evidence
 

@@ -14,12 +14,14 @@ export interface AnatomyExploreObservation {
   interactionCount: number
   selectedStructureIds: readonly string[]
   reachedWaypointIds: readonly string[]
+  inspectedFindingIds: readonly string[]
 }
 
 export function anatomyExploreRequirementKeys(primitive: AnatomyExplorePrimitive): string[] {
   return [
     ...(primitive.content.requiredStructureIds ?? []).map((id) => `structure:${id}`),
     ...(primitive.content.requiredWaypointIds ?? []).map((id) => `waypoint:${id}`),
+    ...(primitive.content.requiredFindingIds ?? []).map((id) => `finding:${id}`),
   ]
 }
 
@@ -40,6 +42,7 @@ export function isAnatomyExploreComplete(
   const observed = new Set([
     ...observation.selectedStructureIds.map((id) => `structure:${id}`),
     ...observation.reachedWaypointIds.map((id) => `waypoint:${id}`),
+    ...observation.inspectedFindingIds.map((id) => `finding:${id}`),
   ])
   const required = anatomyExploreRequirementKeys(primitive)
   const completed = required.filter((key) => observed.has(key)).length

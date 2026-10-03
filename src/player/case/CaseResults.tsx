@@ -3,14 +3,13 @@ import { RotateCcw, Scale } from 'lucide-react'
 import { Button, Card, Chip } from '@/components/ui'
 import type { CaseClue, CaseDocument } from '@/content/schema'
 import { starsForScore } from '@/engines/gamification/stars'
-import type { CaseAttemptResult } from '@/player/case/types'
+import type { CaseResultPresentation } from '@/player/case/types'
 
 interface CaseResultsProps {
   caseDoc: CaseDocument
-  result: CaseAttemptResult
+  result: CaseResultPresentation
   clues: readonly CaseClue[]
   starThresholds: { one: number; two: number; three: number }
-  completionXp: number
   onCompare: () => void
   onContinue: () => void
   onReplay: () => void
@@ -20,18 +19,30 @@ function percent(value: number) {
   return `${Math.round(value * 100)}%`
 }
 
+function points(value: number) {
+  return Number(value.toFixed(1)).toString()
+}
+
+function formatDuration(seconds: number) {
+  const roundedSeconds = Math.max(0, Math.round(seconds))
+  return `${Math.floor(roundedSeconds / 60)}:${String(roundedSeconds % 60).padStart(2, '0')}`
+}
+
 export function CaseResults({
   caseDoc,
   result,
   clues,
   starThresholds,
-  completionXp,
   onCompare,
   onContinue,
   onReplay,
 }: CaseResultsProps) {
   const { breakdown } = result
   const stars = starsForScore(breakdown.total, starThresholds)
+  const completeBreakdown =
+    breakdown.weights !== undefined &&
+    breakdown.clueCostPoints !== undefined &&
+    breakdown.speedScored !== undefined
   const missedDebriefClues = caseDoc.debrief.keyClueIds
     .filter((id) => !breakdown.openedClueIds.includes(id))
     .flatMap((id) => {
@@ -44,57 +55,94 @@ export function CaseResults({
       <p className="text-small font-semibold text-success-700">Case complete</p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Chip tone="brand">{breakdown.total} points</Chip>
-        <Chip>
-          {'★'.repeat(stars)}
-          {'☆'.repeat(3 - stars)}
+        <Chip tone="brand">{breakdown.total}/100</Chip>
+        <Chip aria-label={`${stars} of 3 stars`}>
+          <span aria-hidden="true">
+            {'★'.repeat(stars)}
+            {'☆'.repeat(3 - stars)}
+          </span>
         </Chip>
-        <Chip>{Math.round(breakdown.durationSeconds)} sec</Chip>
-        <Chip>{completionXp} completion XP</Chip>
+        <Chip>{formatDuration(breakdown.durationSeconds)}</Chip>
+        {result.actualAwardedXp !== undefined && result.actualAwardedXp !== null ? (
+          <Chip>{result.actualAwardedXp} XP awarded</Chip>
+        ) : null}
       </div>
+      <p className="mt-4 text-small text-neutral-600">
+        This score uses your first submitted response for each scored task; retries support learning
+        but do not replace the scored response.
+      </p>
 
       <dl className="mt-8 grid gap-4 sm:grid-cols-3">
-        {[
-          ['Anatomy', breakdown.anatomy],
-          ['Diagnosis', breakdown.diagnosis],
-          ['Speed', breakdown.speed],
-        ].map(([label, value]) => (
-          <Card key={label as string}>
-            <dt className="text-small text-neutral-600">{label}</dt>
-            <dd className="mt-1 text-title font-bold text-neutral-950">
-              {percent(value as number)}
-            </dd>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-neutral-100">
-              <div
-                className="h-full rounded-full bg-brand-700"
-                style={{ width: percent(value as number) }}
-              />
-            </div>
-          </Card>
-        ))}
+        {(
+          [
+            ['Anatomy', 'anatomy', breakdown.anatomy],
+            ['Diagnosis', 'diagnosis', breakdown.diagnosis],
+            ['Speed', 'speed', breakdown.speed],
+          ] as const
+        ).map(([label, component, value]) => {
+          const notScored = component === 'speed' && breakdown.speedScored === false
+          const unavailable = component === 'speed' && breakdown.speedScored === undefined
+          const weight = breakdown.weights?.[component]
+          return (
+            <Card key={label}>
+              <dt className="text-small text-neutral-600">{label}</dt>
+              <dd className="mt-1 text-title font-bold text-neutral-950">
+                {notScored ? 'Not scored' : unavailable ? 'Unavailable' : percent(value)}
+              </dd>
+              {weight !== undefined ? (
+                <p className="mt-1 text-small text-neutral-600">
+                  {percent(weight)} weight · {points(value * weight * 100)} points
+                </p>
+              ) : null}
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-neutral-100">
+                <div
+                  className="h-full rounded-full bg-brand-700"
+                  style={{
+                    width: notScored || unavailable ? '0%' : percent(value),
+                  }}
+                />
+              </div>
+            </Card>
+          )
+        })}
       </dl>
 
-      <Card className="mt-5">
-        <h2 className="text-heading font-bold text-neutral-950">Score details</h2>
-        <dl className="mt-4 grid grid-cols-2 gap-4 text-small sm:grid-cols-4">
-          <div>
-            <dt className="text-neutral-600">Step speed</dt>
-            <dd className="font-semibold">{percent(breakdown.perStepSpeed)}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-600">Case speed</dt>
-            <dd className="font-semibold">{percent(breakdown.caseSpeed)}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-600">Clues opened</dt>
-            <dd className="font-semibold">{breakdown.openedClueIds.length}</dd>
-          </div>
-          <div>
-            <dt className="text-neutral-600">Clue penalty</dt>
-            <dd className="font-semibold">−{breakdown.penalty}</dd>
-          </div>
-        </dl>
-      </Card>
+      {completeBreakdown ? (
+        <Card className="mt-5">
+          <h2 className="text-heading font-bold text-neutral-950">Score details</h2>
+          <dl className="mt-4 grid grid-cols-2 gap-4 text-small sm:grid-cols-4">
+            <div>
+              <dt className="text-neutral-600">Step speed</dt>
+              <dd className="font-semibold">
+                {breakdown.speedScored && breakdown.perStepSpeed !== undefined
+                  ? percent(breakdown.perStepSpeed)
+                  : 'Not scored'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-neutral-600">Case speed</dt>
+              <dd className="font-semibold">
+                {breakdown.speedScored && breakdown.caseSpeed !== undefined
+                  ? percent(breakdown.caseSpeed)
+                  : 'Not scored'}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-neutral-600">Clues opened</dt>
+              <dd className="font-semibold">{breakdown.openedClueIds.length}</dd>
+            </div>
+            <div>
+              <dt className="text-neutral-600">Clue cost</dt>
+              <dd className="font-semibold">−{breakdown.clueCostPoints} points</dd>
+            </div>
+          </dl>
+        </Card>
+      ) : (
+        <p className="mt-5 rounded-lg bg-neutral-100 p-4 text-small text-neutral-700">
+          Detailed speed, weighting, clue cost and reward data are unavailable for this legacy
+          attempt.
+        </p>
+      )}
 
       <Card className="mt-5">
         <h2 className="text-heading font-bold text-neutral-950">Debrief</h2>

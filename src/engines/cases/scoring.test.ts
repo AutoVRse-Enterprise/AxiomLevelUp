@@ -20,6 +20,7 @@ const baseInput: CaseScoreInput = {
   steps: [],
   clues: [],
   openedClueIds: [],
+  clueOpenContexts: {},
   durationMs: 300_000,
   caseTargetSeconds: 300,
   caseMaxSeconds: 600,
@@ -33,6 +34,7 @@ const step = (
   overrides: Partial<CaseScoringStepInput> = {},
 ): CaseScoringStepInput => ({
   component,
+  scored: true,
   firstAttemptScore,
   elapsedMs,
   ...overrides,
@@ -51,6 +53,8 @@ describe('calculateCaseScore', () => {
       perStepSpeed: 0.625,
       caseSpeed: 0.75,
       speed: 0.6875,
+      speedScored: true,
+      timingMode: 'stopwatch',
       penalty: 0,
       total: 74,
       weights: { anatomy: 0.4, diagnosis: 0.4, speed: 0.2 },
@@ -116,6 +120,9 @@ describe('calculateCaseScore', () => {
         'essential',
         'unknown',
       ],
+      clueOpenContexts: Object.fromEntries(
+        clues.map(({ id }) => [id, { context: 'browse' as const, beforeResponse: true }]),
+      ),
     })
 
     expect(result.openedClueIds).toEqual([
@@ -130,6 +137,34 @@ describe('calculateCaseScore', () => {
     ])
     expect(result.penalty).toBe(10)
     expect(result.total).toBe(90)
+  })
+
+  it('penalizes only optional clues first opened for entry or browsing before a response', () => {
+    const result = calculateCaseScore({
+      ...baseInput,
+      timingMode: 'none',
+      steps: [step('anatomy', 1), step('diagnosis', 1)],
+      clues: [
+        { id: 'entry', essential: false },
+        { id: 'browse', essential: false },
+        { id: 'after-response', essential: false },
+        { id: 'remediation', essential: false },
+        { id: 'essential', essential: true },
+        { id: 'legacy', essential: false },
+      ],
+      openedClueIds: ['entry', 'browse', 'after-response', 'remediation', 'essential', 'legacy'],
+      clueOpenContexts: {
+        entry: { context: 'entry', beforeResponse: true },
+        browse: { context: 'browse', beforeResponse: true },
+        'after-response': { context: 'browse', beforeResponse: false },
+        remediation: { context: 'remediation', beforeResponse: false },
+        essential: { context: 'browse', beforeResponse: true },
+      },
+    })
+
+    expect(result.penalty).toBe(4)
+    expect(result.total).toBe(96)
+    expect(result.openedClueIds).toHaveLength(6)
   })
 
   it.each([
@@ -239,6 +274,30 @@ describe('calculateCaseScore', () => {
     expect(result.total).toBe(55)
   })
 
+  it('excludes unscored exploration from component and per-step speed means', () => {
+    const result = calculateCaseScore({
+      ...baseInput,
+      steps: [
+        step('anatomy', 0, 90_000, {
+          scored: false,
+          weight: 100,
+          timedOut: true,
+        }),
+        step('anatomy', 1),
+        step('diagnosis', 1),
+      ],
+    })
+
+    expect(result).toMatchObject({
+      anatomy: 1,
+      diagnosis: 1,
+      perStepSpeed: 1,
+      caseSpeed: 1,
+      speed: 1,
+      total: 100,
+    })
+  })
+
   it.each([
     {
       name: 'an absent anatomy component',
@@ -295,6 +354,8 @@ describe('calculateCaseScore', () => {
       speed: 0,
       perStepSpeed: 0,
       caseSpeed: 0,
+      speedScored: true,
+      timingMode: 'stopwatch',
       penalty: 0,
       total: 0,
       weights: { anatomy: 0, diagnosis: 0, speed: 0 },

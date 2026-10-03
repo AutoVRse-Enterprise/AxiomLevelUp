@@ -51,16 +51,25 @@ Before testing, complete `phase-09-hosting-prerequisites.md`. Execute
 - [ ] Attach console errors, device logs and exact reproduction steps for every failure.
 - [ ] Add the completed matrix and deviations to the Phase 9 closeout before release approval.
 
-## Phase 10 addendum: Case Lab 3D anatomy
+## Case Lab addendum: 3D anatomy and clues
 
-- [ ] Open the foundation, intermediate, advanced and daily quick cases.
-- [ ] Verify overview-marker, clue-first and endoscopic entry views.
+- [ ] Use the Phase 11 candidate build; do not infer device readiness from Phase 10 completion.
+- [ ] Open the foundation, intermediate and advanced cases; open the daily quick case separately.
+- [ ] Verify Foundation retains its overview marker after model load, Intermediate visibly presents
+      clue-first evidence and Advanced loads its endoscopic entry.
+- [ ] Record that the Phase 10 quick case has no effective 3D entry unless Phase 12 changes its
+      content or removes the inert marker configuration.
 - [ ] Verify one-finger orbit, two-finger pinch/pan and page-gesture isolation.
-- [ ] Select the same structure by model tap and by the keyboard/list alternative.
+- [ ] Select the intended visible mesh by model tap and confirm that exact structure is recorded.
+- [ ] Select the same structure by the keyboard/list alternative; do not count list-only success as
+      a model-tap pass.
 - [ ] Verify portrait, landscape, safe areas and expanded-view focus restoration.
+- [ ] Verify fixed headers/navigation do not intercept Start case, Clues or primary player actions.
+- [ ] Verify clue-first and Reopen clue visibly present evidence, clue state is recorded exactly
+      once and post-answer remediation does not incur a clue penalty.
 - [ ] Confirm reduced motion replaces camera flights with immediate cuts.
 - [ ] Confirm a blocked model or lost WebGL context offers Retry and leaves the structure list usable.
 - [ ] Enter and exit 3D five times without a blank canvas, crash or severe progressive delay.
 - [ ] Record frame stability, memory and WebGL/context warnings where the platform exposes them.
-- [ ] Complete a case through clues, localisation, results and expert comparison.
+- [ ] Complete a case through clues, localisation, explainable `/100` results and expert comparison.
 - [ ] Capture portrait/landscape screenshots and a recording of 3D touch gestures.

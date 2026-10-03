@@ -88,6 +88,7 @@ describe('case activity planning', () => {
                 prompt: 'Explore',
                 startView: { mode: 'overview' },
                 navigation: 'both',
+                findingIds: ['fixture-occlusion'],
               },
               completion: { mode: 'viewed' },
               feedback: {},
@@ -102,6 +103,10 @@ describe('case activity planning', () => {
       structureId: 'target-structure',
     })
     expect(base.stages[0]?.steps[0]?.content.startView).toEqual({ mode: 'overview' })
+    expect(marker.findingMap.get('fixture-occlusion')?.kind).toBe('lumen_occlusion')
+    expect(marker.findingsByStepId.get('anatomy-entry')?.map(({ id }) => id)).toEqual([
+      'fixture-occlusion',
+    ])
 
     const endoscopic = buildCasePlan(
       { ...base, entry: { mode: 'endoscopic', waypointId: 'entry-waypoint' } },

@@ -1,4 +1,5 @@
 import { useContent } from '@/app/contentContext'
+import { versionedModelUrl } from '@/pwa/modelCache'
 
 export function useAsset(assetId?: string) {
   const { assetById } = useContent()
@@ -6,5 +7,6 @@ export function useAsset(assetId?: string) {
 }
 
 export function useAssetUrl(assetId?: string) {
-  return useAsset(assetId)?.path
+  const asset = useAsset(assetId)
+  return asset ? versionedModelUrl(asset) : undefined
 }

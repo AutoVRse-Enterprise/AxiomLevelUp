@@ -2,7 +2,7 @@ import fixtureAnatomyMap from '../../../public/content/fixtures/anatomy-map.json
 import fixtureCase from '../../../public/content/fixtures/case.json'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import axe from 'axe-core'
@@ -28,6 +28,9 @@ import { contentResponses } from '@/test/contentFixtures'
 vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
   AnatomyViewer: (props: AnatomyViewerProps) => {
     const reportedFailure = useRef(false)
+    const [waypointId, setWaypointId] = useState(
+      props.startView && 'waypointId' in props.startView ? props.startView.waypointId : null,
+    )
 
     useEffect(() => {
       if (reportedFailure.current || props.disabled) return
@@ -39,10 +42,37 @@ vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
     const structures = props.map.structures.filter(
       ({ levelId }) => selectableLevels.size === 0 || selectableLevels.has(levelId),
     )
+    const waypoint = props.map.waypoints.find(({ id }) => id === waypointId)
 
     return (
       <section aria-label="Unavailable 3D anatomy substitute">
         <p role="status">3D anatomy unavailable; use the equivalent structure list.</p>
+        {waypoint?.next.map((nextId) => {
+          const next = props.map.waypoints.find(({ id }) => id === nextId)
+          return (
+            <button
+              disabled={props.disabled}
+              key={nextId}
+              type="button"
+              onClick={() => {
+                setWaypointId(nextId)
+                props.onWaypointReached?.(nextId)
+              }}
+            >
+              {next?.label ?? nextId}
+            </button>
+          )
+        })}
+        {props.findings?.map((finding) => (
+          <button
+            disabled={props.disabled}
+            key={finding.id}
+            type="button"
+            onClick={() => props.onFindingInspected?.(finding.id)}
+          >
+            {finding.label}
+          </button>
+        ))}
         {structures.map((structure) => (
           <button
             aria-pressed={props.selectedStructureIds?.includes(structure.id) ?? false}
@@ -125,6 +155,59 @@ function optionLabel(options: readonly { id: string; label: string }[], id: stri
   return label
 }
 
+function waypointPath(registry: ContentRegistry, mapId: string, startId: string, targetId: string) {
+  const map = registry.anatomyMapById.get(mapId)
+  if (!map) throw new Error(`Missing anatomy map "${mapId}".`)
+  const queue: string[][] = [[startId]]
+  const visited = new Set([startId])
+  while (queue.length) {
+    const path = queue.shift()!
+    const current = map.waypoints.find(({ id }) => id === path.at(-1))
+    for (const nextId of current?.next ?? []) {
+      const nextPath = [...path, nextId]
+      if (nextId === targetId) return nextPath
+      if (!visited.has(nextId)) {
+        visited.add(nextId)
+        queue.push(nextPath)
+      }
+    }
+  }
+  throw new Error(`No authored waypoint route from "${startId}" to "${targetId}".`)
+}
+
+async function answerAnatomyExplore(
+  user: TestUser,
+  primitive: Extract<TypedPrimitive, { type: 'anatomy_explore' }>,
+  response: unknown,
+  registry: ContentRegistry,
+) {
+  if (!('waypointId' in primitive.content.startView)) {
+    throw new Error('Case-flow anatomy exploration requires a waypoint start view.')
+  }
+  const observation = response as {
+    reachedWaypointIds?: string[]
+    inspectedFindingIds?: string[]
+  }
+  const map = registry.anatomyMapById.get(primitive.content.anatomyMapId)!
+  let currentId = primitive.content.startView.waypointId
+  for (const targetId of observation.reachedWaypointIds ?? []) {
+    const path = waypointPath(registry, primitive.content.anatomyMapId, currentId, targetId)
+    for (const nextId of path.slice(1)) {
+      const label = map.waypoints.find(({ id }) => id === nextId)?.label
+      if (!label) throw new Error(`Missing waypoint "${nextId}".`)
+      await user.click(await screen.findByRole('button', { name: label }))
+    }
+    currentId = targetId
+  }
+  for (const findingId of observation.inspectedFindingIds ?? []) {
+    const finding = registry.cases
+      .flatMap(({ findings }) => findings ?? [])
+      .find(({ id }) => id === findingId)
+    if (!finding) throw new Error(`Missing finding "${findingId}".`)
+    await user.click(await screen.findByRole('button', { name: finding.label }))
+  }
+}
+
 async function answerAnatomyLocate(
   user: TestUser,
   primitive: Extract<TypedPrimitive, { type: 'anatomy_locate' }>,
@@ -192,6 +275,9 @@ async function answerStep(
   registry: ContentRegistry,
 ) {
   switch (primitive.type) {
+    case 'anatomy_explore':
+      await answerAnatomyExplore(user, primitive, response, registry)
+      return
     case 'anatomy_locate':
       await answerAnatomyLocate(user, primitive, response, registry)
       return
@@ -246,7 +332,9 @@ async function answerStep(
 }
 
 async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: ContentRegistry) {
-  await user.click(screen.getByRole('button', { name: /^(Start|Resume)$/ }))
+  const manualStart = screen.queryByRole('button', { name: /^(Start|Resume)$/ })
+  if (manualStart) await user.click(manualStart)
+  await user.click(await screen.findByRole('button', { name: 'Begin stage' }))
 
   for (const [stageIndex, stage] of caseDoc.stages.entries()) {
     for (const step of stage.steps) {
@@ -264,7 +352,7 @@ async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: Con
   }
 
   expect(await screen.findByText('Case complete')).toBeVisible()
-  expect(screen.getByText(/^\d+ points$/)).toBeVisible()
+  expect(screen.getByText(/^\d+\/100$/)).toBeVisible()
   expect(screen.getByRole('heading', { name: 'Score details' })).toBeVisible()
 }
 
@@ -366,9 +454,16 @@ describe('configured Case Lab flows', () => {
       const attempts = state.caseAttempts[caseId] ?? []
       expect(attempts).toHaveLength(priorAttempts + 1)
       expect(attempts.at(-1)).toMatchObject({
+        resultVersion: 6,
         anatomy: 1,
         diagnosis: 1,
+        actualAwardedXpSource: 'gamification_activity_result',
       })
+      const completedAttempt = attempts.at(-1)
+      const awardedXp =
+        completedAttempt?.resultVersion === 6 ? completedAttempt.actualAwardedXp : null
+      expect(awardedXp).not.toBeNull()
+      expect(screen.getByText(`${awardedXp} XP awarded`)).toBeVisible()
       expect(attempts.at(-1)!.total).toBeGreaterThanOrEqual(90)
       expect(state.mastery['respiratory-diagnosis']?.score).toBeGreaterThan(priorDiagnosisMastery)
       expect(state.badges['sharp-eye']?.unlockedAt).not.toBeNull()
@@ -388,7 +483,9 @@ describe('configured Case Lab flows', () => {
         }),
       ).toBeVisible()
       expect(screen.getAllByText('Matched expert')).toHaveLength(
-        caseDoc.stages.flatMap(({ steps }) => steps).length,
+        caseDoc.stages
+          .flatMap(({ steps }) => steps)
+          .filter(({ type }) => type !== 'anatomy_explore').length,
       )
     },
     20_000,
@@ -402,6 +499,7 @@ describe('configured Case Lab flows', () => {
     initializeLearningProgressHandlers(registry)
     renderCaseRoute(`/challenge/${DAILY_CHALLENGE_ID}/play`, registry)
 
+    expect(screen.getByRole('button', { name: 'Start' })).toBeVisible()
     await completeCase(user, quickCase, registry)
 
     await waitFor(() => {
@@ -414,7 +512,7 @@ describe('configured Case Lab flows', () => {
       completions: 1,
       bestTotal: 100,
     })
-    expect(screen.getByText('100 points')).toBeVisible()
+    expect(screen.getByText('100/100')).toBeVisible()
     expect(events).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -455,7 +553,7 @@ describe('configured Case Lab flows', () => {
       completions: 1,
       bestTotal: 100,
     })
-    expect(screen.getByText('100 points')).toBeVisible()
+    expect(screen.getByText('100/100')).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Compare' }))
     expect(screen.getByRole('heading', { name: 'You versus Configured expert' })).toBeVisible()
     expect(screen.getAllByText('Matched expert')).toHaveLength(2)
@@ -464,7 +562,7 @@ describe('configured Case Lab flows', () => {
   it('has no detectable WCAG A/AA violations in the active unavailable-3D case state', async () => {
     const user = userEvent.setup()
     const { container } = renderCaseRoute('/learn/cases/asthma-foundation/play', registry)
-    await user.click(screen.getByRole('button', { name: /^(Start|Resume)$/ }))
+    await user.click(await screen.findByRole('button', { name: 'Begin stage' }))
 
     expect(screen.getByRole('status')).toHaveTextContent('3D anatomy unavailable')
     expect((await axe.run(container, axeOptions)).violations).toEqual([])

@@ -1,6 +1,7 @@
 import type { PrimitiveInteraction } from '@/primitives/types'
 import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
 import type { CaseDocument } from '@/content/schema'
+import type { CaseClueOpenContext } from '@/engines/cases/clues'
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
@@ -37,6 +38,8 @@ export interface EventPayloads {
     clueId: string
     essential: boolean
     stageId: string
+    context: CaseClueOpenContext
+    beforeResponse: boolean
   }
   case_stage_completed: { caseId: string; stageId: string; stageIndex: number }
   case_completed: {
@@ -114,6 +117,7 @@ export interface EventPayloads {
   dicom_viewer_failed: DicomEventContext & { reason: string }
   anatomy_structure_selected: AnatomyEventContext & { structureId: string }
   anatomy_waypoint_reached: AnatomyEventContext & { waypointId: string }
+  anatomy_finding_inspected: AnatomyEventContext & { findingId: string }
   anatomy_view_changed: AnatomyEventContext & {
     position: AnatomyVector3
     target: AnatomyVector3

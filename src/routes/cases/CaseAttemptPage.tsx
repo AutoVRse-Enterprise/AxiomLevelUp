@@ -2,10 +2,9 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
-import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
 import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseResults } from '@/player/case/CaseResults'
-import type { CaseAttemptResult } from '@/player/case/types'
+import { presentCaseAttemptRecord } from '@/player/case/types'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCaseCompare, selectCaseResults } from '@/state/selectors'
 
@@ -32,35 +31,7 @@ export function CaseAttemptPage() {
   }
 
   const attempt = selected.attempt
-  const optionalClueIds = new Set(
-    caseDoc.clues.filter(({ essential }) => !essential).map(({ id }) => id),
-  )
-  const optionalOpened = new Set(
-    attempt.openedClueIds.filter((clueId) => optionalClueIds.has(clueId)),
-  ).size
-  const penalty = Math.min(
-    caseLab.scoring.cluePenalty.cap,
-    optionalOpened * caseLab.scoring.cluePenalty.perOptionalClue,
-  )
-  const breakdown: CaseScoreBreakdown = {
-    anatomy: attempt.anatomy,
-    diagnosis: attempt.diagnosis,
-    speed: attempt.speed,
-    perStepSpeed: attempt.speed,
-    caseSpeed: attempt.speed,
-    penalty,
-    total: attempt.total,
-    weights: caseLab.scoring.weights,
-    durationSeconds: attempt.durationSeconds,
-    openedClueIds: attempt.openedClueIds,
-  }
-  const result: CaseAttemptResult = {
-    caseId,
-    attemptId: attempt.attemptId,
-    breakdown,
-    stepResults: attempt.stepResults,
-    completedAt: attempt.completedAt,
-  }
+  const result = presentCaseAttemptRecord(caseId, attempt)
   const introPath = `/learn/cases/${caseId}`
   const playPath = `${introPath}/play`
 
@@ -78,7 +49,6 @@ export function CaseAttemptPage() {
     <CaseResults
       caseDoc={caseDoc}
       clues={caseDoc.clues}
-      completionXp={caseLab.xp.caseComplete}
       result={result}
       starThresholds={registry.appConfig.gamification.stars}
       onCompare={() => setSearchParams({ view: 'compare' })}

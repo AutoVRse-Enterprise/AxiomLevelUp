@@ -17,7 +17,11 @@ import {
   PASSIVE_DICOM_MAX_AGE_SECONDS,
   PASSIVE_DICOM_MAX_ENTRIES,
   VERIFIED_COURSE_CACHE,
+  VERSIONED_MODEL_CACHE,
+  VERSIONED_MODEL_MAX_AGE_SECONDS,
+  VERSIONED_MODEL_MAX_ENTRIES,
 } from '@/pwa/cachePolicy'
+import { isVersionedGlbRequest } from '@/pwa/modelCache'
 import { isDicomRequest, isDownloadableAssetRequest } from '@/pwa/requestPolicy'
 
 declare let self: ServiceWorkerGlobalScope & {
@@ -41,9 +45,10 @@ function openSettings() {
 async function readSimulatedOffline() {
   const database = await openSettings()
   return new Promise<boolean>((resolve, reject) => {
-    const request = database.transaction(settingsStore).objectStore(settingsStore).get(
-      simulatedOfflineKey,
-    )
+    const request = database
+      .transaction(settingsStore)
+      .objectStore(settingsStore)
+      .get(simulatedOfflineKey)
     request.onsuccess = () => resolve(request.result === true)
     request.onerror = () => reject(request.error)
   }).finally(() => database.close())
@@ -78,22 +83,35 @@ const passiveDicomStrategy = new CacheFirst({
   ],
 })
 
+const versionedModelStrategy = new CacheFirst({
+  cacheName: VERSIONED_MODEL_CACHE,
+  plugins: [
+    new ExpirationPlugin({
+      maxEntries: VERSIONED_MODEL_MAX_ENTRIES,
+      maxAgeSeconds: VERSIONED_MODEL_MAX_AGE_SECONDS,
+    }),
+    new CacheableResponsePlugin({ statuses: [0, 200] }),
+  ],
+})
+
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 clientsClaim()
 
 registerRoute(
-  ({ request, url }) =>
-    request.method === 'GET' && isDownloadableAssetRequest(url, dicomBaseUrl),
+  ({ request, url }) => request.method === 'GET' && isVersionedGlbRequest(url),
+  versionedModelStrategy,
+)
+
+registerRoute(
+  ({ request, url }) => request.method === 'GET' && isDownloadableAssetRequest(url, dicomBaseUrl),
   async ({ request, url, event }) => {
     await settingsReady
     const verified = await (
       await caches.open(VERIFIED_COURSE_CACHE)
     ).match(request, { ignoreVary: true })
     if (verified) {
-      return request.headers.has('range')
-        ? createPartialResponse(request, verified)
-        : verified
+      return request.headers.has('range') ? createPartialResponse(request, verified) : verified
     }
     if (simulatedOffline) return Response.error()
     if (isDicomRequest(url, dicomBaseUrl)) {

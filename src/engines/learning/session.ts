@@ -1,4 +1,5 @@
 import type { Source } from '@/content/schema'
+import type { CaseClueOpenRecord } from '@/engines/cases/clues'
 import type { ActivityPlan, ActivityStep } from '@/engines/learning/plan'
 
 export type SessionPhase = 'intro' | 'step' | 'feedback' | 'complete'
@@ -22,6 +23,7 @@ export interface PrimitiveProgress {
 
 export interface CaseProgress {
   openedClueIds: string[]
+  clueOpenContexts: Record<string, CaseClueOpenRecord>
   stepElapsedMs: Record<string, number>
   caseElapsedMs: number
   caseClockExpired: boolean

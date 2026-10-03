@@ -13,7 +13,18 @@ function updateStatus(update: Partial<typeof status>) {
   listeners.forEach((listener) => listener())
 }
 
+function registrationIsUnavailable(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  return /blocked|disabled|denied|not supported|insecure context/i.test(message)
+}
+
 export function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    updateServiceWorker = null
+    updateStatus(initialStatus)
+    return
+  }
+
   updateServiceWorker = registerSW({
     immediate: true,
     onRegisteredSW() {
@@ -26,7 +37,11 @@ export function registerServiceWorker() {
       updateStatus({ offlineReady: true })
     },
     onRegisterError(error) {
-      console.error('Service worker registration failed', error)
+      updateServiceWorker = null
+      updateStatus(initialStatus)
+      if (!registrationIsUnavailable(error)) {
+        console.error('Service worker registration failed', error)
+      }
     },
   })
 }

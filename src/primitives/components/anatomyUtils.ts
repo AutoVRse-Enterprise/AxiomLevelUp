@@ -1,5 +1,6 @@
 import { useContent } from '@/app/contentContext'
 import type { AnatomyExplorePrimitive, AnatomyLocatePrimitive } from '@/content/schema/primitives'
+import { versionedModelUrl } from '@/pwa/modelCache'
 
 export class AnatomyAssetUnavailableError extends Error {
   constructor(message: string) {
@@ -24,5 +25,5 @@ export function useAnatomyPrimitiveContext(
     throw new AnatomyAssetUnavailableError(`Anatomy model "${map.modelAssetId}" is unavailable.`)
   }
 
-  return { appConfig, map, model }
+  return { appConfig, map, model, modelUrl: versionedModelUrl(model) }
 }

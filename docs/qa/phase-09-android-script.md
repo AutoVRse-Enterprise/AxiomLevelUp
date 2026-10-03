@@ -66,14 +66,19 @@ blocking console/network error appears.
 6. Enter and exit imaging five times. Confirm no blank canvas, crash or severe progressive delay;
    capture Chrome memory information if available.
 
-## 6. Phase 10 addendum: Case Lab 3D anatomy
+## 6. Case Lab addendum: 3D anatomy and clues
 
-1. Open all three Case Lab tiers and the daily quick case. Confirm each configured entry view loads:
-   overview marker, clue first and endoscopic.
+Run this addendum against the Phase 11 candidate build. Phase 10 completion alone is not a device
+or demo-readiness pass.
+
+1. Open the three catalogue cases. Confirm the Foundation overview marker remains visible after
+   model load, Intermediate presents its clue-first evidence and Advanced loads its endoscopic
+   entry. Open the daily quick case separately; it has no effective 3D entry in the Phase 10 build.
 2. In portrait and landscape, orbit with one finger, pinch to zoom and pan with two fingers.
    Confirm the page and browser navigation do not steal active viewer gestures.
-3. Select a lobe by tapping the model, then complete the same localisation using the structure
-   list and a hardware/Bluetooth keyboard if available.
+3. Select the intended lobe by tapping its visible mesh and verify the canvas records that exact
+   structure. Then complete the equivalent path using the list and a hardware/Bluetooth keyboard
+   if available; do not count list-only success as a model-tap pass.
 4. Enter and exit the expanded anatomy view, rotate twice and confirm controls, safe areas, focus
    return and the current selection remain intact.
 5. Enable Android reduced motion. Confirm waypoint and endoscopic transitions cut immediately
@@ -82,8 +87,13 @@ blocking console/network error appears.
    structure list remain usable; restore the model and retry.
 7. Enter and exit a 3D case five times. Record frame stability, memory where available, context-loss
    warnings, blank canvases and progressive delay.
-8. Complete one case through results and expert comparison. Confirm the clue sheet, score breakdown
-   and replay actions remain usable in both orientations.
+8. At 375px portrait, activate Start case and Clues without manually scrolling them away from fixed
+   chrome. Confirm hit-testing reaches the intended controls.
+9. Verify clue-first opens the evidence sheet; opening from the trigger records the clue exactly
+   once; closing without consuming it does not count as consumed; and Reopen clue both records and
+   visibly presents the clue without adding a post-answer penalty.
+10. Complete one case through results and expert comparison. Confirm the clue sheet, explainable
+    `/100` score, actual reward summary and replay actions remain usable in both orientations.
 
 ## 7. Accessibility and evidence
 
