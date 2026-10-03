@@ -319,7 +319,10 @@ function buildResult(
     breakdown,
     stepResults,
     reviewedClueIds: [...caseProgress.reviewedClueIds],
-    evidence: structuredClone(caseProgress.evidence),
+    evidence: {
+      ...structuredClone(caseProgress.evidence),
+      inspectedFindingIds: [...selectInspectedFindingIds(session)],
+    },
     differential: { ...caseProgress.differential },
     timeoutCreditApplied: scoredSteps.some(
       ({ primitive }) => session.progress[primitive.id]?.firstTimeoutCreditApplied === true,
@@ -346,6 +349,7 @@ function CompletionFlow({
   onResetProgress: () => void
 }) {
   const [view, setView] = useState<'results' | 'compare'>('results')
+  const [evidenceAnchor, setEvidenceAnchor] = useState<string | null>(null)
   const result = useMemo(
     () => buildResult(caseDoc, context.plan as CasePlan, context.session, caseProgress, config),
     [caseDoc, caseProgress, config, context.plan, context.session],
@@ -374,8 +378,12 @@ function CompletionFlow({
       caseDoc={caseDoc}
       result={presentedResult}
       clues={caseDoc.clues}
+      clueReview={caseLab.clueReview}
       starThresholds={config.gamification.stars}
-      onCompare={() => setView('compare')}
+      onCompare={(anchor) => {
+        setEvidenceAnchor(anchor ?? null)
+        setView('compare')
+      }}
       onContinue={context.onContinue}
       onReplay={replay}
     />
@@ -385,6 +393,7 @@ function CompletionFlow({
       result={presentedResult}
       history={attemptHistory}
       historyLimit={caseLab.historyLimit}
+      evidenceAnchor={evidenceAnchor}
       onBack={() => setView('results')}
       onContinue={context.onContinue}
       onReplay={replay}

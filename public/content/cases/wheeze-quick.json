@@ -197,10 +197,53 @@
         { "nodeId": "quick-check", "choiceId": "educational-conclusion" }
       ]
     },
+    "rationales": {
+      "quick-structure": "Variable expiratory narrowing is most directly associated with the conducting airway.",
+      "quick-diagnosis": "The trigger pattern and improved flow support variable obstruction while the conclusion remains educational."
+    },
+    "path": [
+      {
+        "label": "Recognise the pattern",
+        "detail": "Combine trigger-linked episodes with improvement after a reliever."
+      },
+      {
+        "label": "Keep the conclusion proportionate",
+        "detail": "Select the best answer for the fictional case without turning it into personal advice."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "quick-history" },
+        "weight": "decisive",
+        "note": "Brief trigger-linked episodes establish variability."
+      },
+      {
+        "ref": { "kind": "clue", "id": "quick-flow" },
+        "weight": "decisive",
+        "note": "Improvement after reliever supports reversible airflow limitation."
+      },
+      {
+        "ref": { "kind": "clue", "id": "quick-wheeze" },
+        "weight": "supporting",
+        "note": "The sound sample supports conducting-airway narrowing."
+      }
+    ],
+    "diagnosisRationale": "The authored pattern combines trigger-linked recurrence, expiratory wheeze and improved flow after a reliever, while remaining an educational conclusion.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 1 }
   },
   "debrief": {
     "summary": "Educational demo only—not clinical guidance. Brief trigger-linked symptoms plus improved expiratory flow support variable airflow obstruction in this fictional quick case.",
-    "keyClueIds": ["quick-history", "quick-flow"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "quick-history" },
+        "stepIds": ["quick-structure", "quick-diagnosis"],
+        "why": "The recurring trigger pattern establishes that the obstruction is variable."
+      },
+      {
+        "ref": { "kind": "clue", "id": "quick-flow" },
+        "stepIds": ["quick-diagnosis"],
+        "why": "The improved post-reliever flow supports reversibility."
+      }
+    ]
   }
 }

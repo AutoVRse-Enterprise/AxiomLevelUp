@@ -1,6 +1,7 @@
 import { ArrowLeft, RotateCcw } from 'lucide-react'
+import { useEffect } from 'react'
 
-import { Button, Card } from '@/components/ui'
+import { Button, Card, Chip } from '@/components/ui'
 import type { CaseDocument } from '@/content/schema'
 import { caseResponsesEqual } from '@/engines/cases/responses'
 import type { CaseAttemptHistoryItem, CaseResultPresentation } from '@/player/case/types'
@@ -11,6 +12,7 @@ interface CaseCompareProps {
   result: CaseResultPresentation
   history: readonly CaseAttemptHistoryItem[]
   historyLimit: number
+  evidenceAnchor?: string | null
   onBack: () => void
   onContinue: () => void
   onReplay: () => void
@@ -30,16 +32,27 @@ export function CaseCompare({
   result,
   history,
   historyLimit,
+  evidenceAnchor,
   onBack,
   onContinue,
   onReplay,
 }: CaseCompareProps) {
+  useEffect(() => {
+    if (!evidenceAnchor) return
+    const target = document.getElementById(evidenceAnchor)
+    target?.scrollIntoView?.({ block: 'center' })
+    target?.focus()
+  }, [evidenceAnchor])
+
   const recent = history
     .filter(({ attemptId }) => attemptId !== result.attemptId)
     .slice(-historyLimit)
   const best = recent.length
     ? Math.max(...recent.map(({ total }) => total), result.breakdown.total)
     : result.breakdown.total
+  const stepIndexes = new Map(
+    caseDoc.stages.flatMap(({ steps }) => steps).map(({ id }, index) => [id, index]),
+  )
   const authoredSteps = new Map(
     caseDoc.stages.flatMap(({ steps }) =>
       steps.flatMap((step) => {
@@ -66,6 +79,40 @@ export function CaseCompare({
       : result.breakdown.speedScored === true
         ? percentage(value)
         : 'Unavailable'
+  const inspectedFindingIds = new Set(
+    result.evidence?.inspectedFindingIds ??
+      result.stepResults.flatMap(({ response }) => {
+        if (!response || typeof response !== 'object') return []
+        const inspected = Reflect.get(response, 'inspectedFindingIds')
+        return Array.isArray(inspected)
+          ? inspected.filter((id): id is string => typeof id === 'string')
+          : []
+      }),
+  )
+  result.evidence?.pinned.forEach(({ kind, id }) => {
+    if (kind === 'finding') inspectedFindingIds.add(id)
+  })
+  const weightedEvidence = caseDoc.expertBenchmark.evidenceWeights.flatMap((evidence, index) => {
+    const clue =
+      evidence.ref.kind === 'clue'
+        ? caseDoc.clues.find(({ id }) => id === evidence.ref.id)
+        : undefined
+    const finding =
+      evidence.ref.kind === 'finding'
+        ? caseDoc.findings?.find(({ id }) => id === evidence.ref.id)
+        : undefined
+    if (!clue && !finding) return []
+    const reviewed =
+      evidence.ref.kind === 'clue'
+        ? result.reviewedClueIds === undefined
+          ? null
+          : result.reviewedClueIds.includes(evidence.ref.id)
+        : inspectedFindingIds.has(evidence.ref.id)
+    return [{ evidence, index, label: clue?.title ?? finding!.label, reviewed }]
+  })
+  const expertDifferentialId = caseDoc.differential?.find(({ id }) =>
+    Object.values(caseDoc.expertBenchmark.responses).some((response) => response === id),
+  )?.id
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-8 sm:py-12">
@@ -125,36 +172,6 @@ export function CaseCompare({
               </dd>
             </div>
           </dl>
-          <section className="mt-6 border-t border-neutral-200 pt-5">
-            <h3 className="font-semibold text-neutral-900">Step differences</h3>
-            <ul className="mt-3 space-y-2 text-small">
-              {scoredStepResults.map((step) => {
-                const expertResponse = caseDoc.expertBenchmark.responses[step.primitiveId]
-                const authored = authoredSteps.get(step.primitiveId)!
-                const matched =
-                  expertResponse !== undefined && caseResponsesEqual(expertResponse, step.response)
-                return (
-                  <li className="rounded-lg bg-neutral-50 p-3" key={step.primitiveId}>
-                    <div className="flex justify-between gap-3">
-                      <span className="text-neutral-700">{authored.label}</span>
-                      <span className={matched ? 'text-success-700' : 'text-warning-700'}>
-                        {matched
-                          ? 'Matched expert'
-                          : `${Math.round(step.firstAttemptScore * 100)}%`}
-                      </span>
-                    </div>
-                    {authored.rationale ? (
-                      <p className="mt-2 text-neutral-600">{authored.rationale}</p>
-                    ) : null}
-                  </li>
-                )
-              })}
-            </ul>
-            <p className="mt-4 text-small text-neutral-600">
-              Comparisons use the first submitted response for each scored task. Retries are not
-              substituted.
-            </p>
-          </section>
         </Card>
 
         <Card>
@@ -193,6 +210,129 @@ export function CaseCompare({
           )}
         </Card>
       </div>
+
+      <Card className="mt-5">
+        <section aria-labelledby="expert-path-heading">
+          <h2 className="text-heading font-bold text-neutral-950" id="expert-path-heading">
+            How the expert approached it
+          </h2>
+          <ol className="mt-4 space-y-3">
+            {caseDoc.expertBenchmark.path.map(({ label, detail }, index) => (
+              <li className="flex gap-3" key={label}>
+                <span
+                  aria-hidden="true"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-caption font-bold text-brand-800"
+                >
+                  {index + 1}
+                </span>
+                <div>
+                  <p className="font-semibold text-neutral-900">{label}</p>
+                  <p className="mt-1 text-small text-neutral-700">{detail}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section
+          className="mt-7 border-t border-neutral-200 pt-6"
+          aria-labelledby="evidence-heading"
+        >
+          <h2 className="text-heading font-bold text-neutral-950" id="evidence-heading">
+            Evidence that mattered
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {weightedEvidence.map(({ evidence, index, label, reviewed }) => (
+              <li
+                className="rounded-lg border border-neutral-200 p-4 focus-visible:outline-2"
+                id={`expert-evidence-${index}`}
+                key={index}
+                tabIndex={-1}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold text-neutral-950">{label}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <Chip>{evidence.weight[0]!.toUpperCase() + evidence.weight.slice(1)}</Chip>
+                    <Chip tone={reviewed ? 'success' : 'neutral'}>
+                      {reviewed === null
+                        ? 'Status unavailable'
+                        : evidence.ref.kind === 'clue'
+                          ? reviewed
+                            ? 'Reviewed'
+                            : 'Not reviewed'
+                          : reviewed
+                            ? 'Inspected'
+                            : 'Not inspected'}
+                    </Chip>
+                  </div>
+                </div>
+                <p className="mt-2 text-small text-neutral-700">{evidence.note}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          className="mt-7 border-t border-neutral-200 pt-6"
+          aria-labelledby="reasoning-heading"
+        >
+          <h2 className="text-heading font-bold text-neutral-950" id="reasoning-heading">
+            Diagnostic reasoning
+          </h2>
+          {caseDoc.differential?.length ? (
+            <ul className="mt-4 space-y-2">
+              {caseDoc.differential.map((hypothesis) => (
+                <li
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-neutral-50 p-3"
+                  key={hypothesis.id}
+                >
+                  <span className="font-semibold text-neutral-900">{hypothesis.label}</span>
+                  <span className="text-small text-neutral-700">
+                    You: {result.differential?.[hypothesis.id] ?? 'Not rated'}
+                    {expertDifferentialId === hypothesis.id ? ' · Expert benchmark' : ''}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <p className="mt-4 text-neutral-700">{caseDoc.expertBenchmark.diagnosisRationale}</p>
+        </section>
+
+        <section className="mt-7 border-t border-neutral-200 pt-6" aria-labelledby="steps-heading">
+          <h2 className="text-heading font-bold text-neutral-950" id="steps-heading">
+            Step-by-step comparison
+          </h2>
+          <ul className="mt-3 space-y-2 text-small">
+            {scoredStepResults.map((step) => {
+              const expertResponse = caseDoc.expertBenchmark.responses[step.primitiveId]
+              const authored = authoredSteps.get(step.primitiveId)!
+              const matched =
+                expertResponse !== undefined && caseResponsesEqual(expertResponse, step.response)
+              return (
+                <li
+                  className="rounded-lg bg-neutral-50 p-3"
+                  id={`expert-step-${stepIndexes.get(step.primitiveId) ?? 0}`}
+                  key={step.primitiveId}
+                >
+                  <div className="flex justify-between gap-3">
+                    <span className="text-neutral-700">{authored.label}</span>
+                    <span className={matched ? 'text-success-700' : 'text-warning-700'}>
+                      {matched ? 'Matched expert' : `${Math.round(step.firstAttemptScore * 100)}%`}
+                    </span>
+                  </div>
+                  {authored.rationale ? (
+                    <p className="mt-2 text-neutral-600">{authored.rationale}</p>
+                  ) : null}
+                </li>
+              )
+            })}
+          </ul>
+          <p className="mt-4 text-small text-neutral-600">
+            Comparisons use the first submitted response for each scored task. Retries are not
+            substituted.
+          </p>
+        </section>
+      </Card>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Button onClick={onContinue}>Continue</Button>

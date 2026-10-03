@@ -82,6 +82,20 @@
     "rationales": {
       "missing-rationale-step": "This rationale points to an unavailable step."
     },
+    "path": [
+      {
+        "label": "Attempt the invalid fixture",
+        "detail": "This authored path is structurally valid while its references remain invalid."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "missing-benchmark-clue" },
+        "weight": "decisive",
+        "note": "This intentionally unresolved clue exercises semantic validation."
+      }
+    ],
+    "diagnosisRationale": "This nonempty rationale keeps the fixture structurally valid.",
     "breakdown": {
       "anatomy": 0,
       "diagnosis": 1,
@@ -90,6 +104,12 @@
   },
   "debrief": {
     "summary": "Invalid fixture.",
-    "keyClueIds": ["missing-debrief-clue"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "missing-debrief-clue" },
+        "stepIds": ["missing-step"],
+        "why": "These unresolved references intentionally exercise semantic validation."
+      }
+    ]
   }
 }

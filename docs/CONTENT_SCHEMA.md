@@ -25,12 +25,9 @@ fetches and parses every listed document, then exposes ordered `cases` and `anat
 collections plus `caseById` and `anatomyMapById` registries.
 
 A case document contains patient context, a tier, an anatomy-map entry mode, optional configured
-findings, an optional authored differential, a content-only clue catalogue, ordered stages of
-reusable primitives, timing targets, an expert benchmark and a debrief. A differential, when
-present, contains at least two hypotheses with a stable ID, learner-facing label and optional short
-description; three to four hypotheses are recommended and IDs must be unique within the case. A
-finding has a stable ID, learner-facing label and description, one of four organ-agnostic kinds
-(`lumen_narrowing`, `lumen_occlusion`,
+findings, a content-only clue catalogue, ordered stages of reusable primitives, timing targets, an
+expert benchmark and a debrief. A finding has a stable ID, learner-facing label and description,
+one of four organ-agnostic kinds (`lumen_narrowing`, `lumen_occlusion`,
 `wall_thickening`, `region`), normalized severity, clue references and either a `structure`
 anchor or `waypoint`, `toWaypoint` and position `t` along one directed edge. Stage kinds are
 unique and follow `orient`,
@@ -216,7 +213,6 @@ target modes use answer completion.
 - Case finding IDs are unique; finding anchors resolve against the case anatomy map, waypoint
   anchors follow an authored directed edge, clue IDs resolve locally and anatomy-step finding IDs
   resolve within the same case.
-- Authored differential IDs are unique within their case.
 - Gamification XP keys, levels, star thresholds, weekly-goal defaults and mastery weights are
   strictly configured.
 - Badge criteria and weekly challenge progress rules resolve referenced courses, lessons,
@@ -232,8 +228,8 @@ target modes use answer completion.
 - Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
   semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
-  pinned evidence, the latest mapped location, authored differential confidence and XP from the
-  central gamification activity result.
+  pinned evidence, inspected-finding IDs, differential ratings and XP from the central
+  gamification activity result.
   Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
   unavailable details.
 - Device-scoped offline course records are persisted separately from learner state.
@@ -287,5 +283,3 @@ the engagement and cooldown thresholds for installation prompts.
   result-v6 records remain readable without synthesizing result-v7 detail.
 - In-flight activity sessions are persisted independently at version 5; older supported sessions
   migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.
-  Evidence pins reference reviewed clues or inspected findings, current location references an
-  anatomy waypoint or structure, and differential values are `unlikely`, `possible` or `likely`.

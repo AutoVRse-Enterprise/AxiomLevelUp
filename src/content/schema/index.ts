@@ -754,6 +754,7 @@ const caseEvidenceSchema = z.strictObject({
       id: idSchema,
     }),
   ),
+  inspectedFindingIds: z.array(idSchema).optional(),
   currentLocation: z
     .strictObject({
       kind: z.enum(['waypoint', 'structure']),

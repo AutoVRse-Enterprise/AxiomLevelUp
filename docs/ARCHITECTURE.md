@@ -212,6 +212,21 @@ safe-area-aware sheet, and either sheet pauses case and step timing. Pin and hyp
 emit typed learner events but remain reflective and unscored. Completion copies the session-v5
 workspace into result-v7 without reconstructing unavailable legacy evidence.
 
+## Case teaching and debrief
+
+Case debriefs use authored `keyEvidence` references to clues or configured findings. Each entry
+explains why the evidence mattered and links to one or more affected case tasks. Results resolve
+those references to learner-facing labels, show review or inspection status and reopen evidence in
+an accessible read-only remediation sheet. Clues reuse the shared clue content renderer without
+opening penalties or progress mutations; findings render their configured label and description.
+
+Expert comparison is also configuration-driven. An ordered authored path explains the approach,
+weighted evidence marks each clue or finding as decisive, supporting or context, and diagnosis
+rationale explains the final synthesis. Result-v7 supplies reviewed clues, persisted evidence and
+differential ratings to both live and saved routes. Legacy result-v5/v6 attempts remain readable
+and display unavailable review state rather than fabricating it. Presentation resolves all
+references to labels and uses local comparison anchors without rendering raw IDs.
+
 ## Offline runtime
 
 Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. GLB model

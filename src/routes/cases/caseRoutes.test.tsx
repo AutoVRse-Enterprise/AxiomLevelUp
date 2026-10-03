@@ -48,6 +48,17 @@ const truthfulAttempt = {
   actualAwardedXp: 30,
   actualAwardedXpSource: 'gamification_activity_result' as const,
 }
+const teachingAttempt = {
+  ...truthfulAttempt,
+  resultVersion: 7 as const,
+  attemptId: 'teaching-attempt',
+  speedModel: 'time_eligible' as const,
+  speedEligibility: { minStepScore: 0.5, eligibleSteps: 0, totalScoredSteps: 0 },
+  reviewedClueIds: ['clue-context'],
+  evidence: { pinned: [{ kind: 'clue' as const, id: 'clue-context' }] },
+  differential: {},
+  timeoutCreditApplied: false,
+}
 
 function renderCaseRoute(path: string, content: ContentRegistry = registry) {
   const router = createMemoryRouter(
@@ -195,6 +206,19 @@ describe('Case Lab routes', () => {
     expect(within(details).getByText('−2 points')).toBeVisible()
     expect(screen.getByText('30 XP awarded')).toBeVisible()
     expect(screen.getByText('3:00')).toBeVisible()
+  })
+
+  it('supplies saved v7 review and evidence state to results and comparison', async () => {
+    const user = userEvent.setup()
+    useLearnerStore.setState({
+      caseAttempts: { [fixtureCase.id]: [teachingAttempt] },
+    })
+    renderCaseRoute(`/learn/cases/${fixtureCase.id}/attempts/${teachingAttempt.attemptId}`)
+
+    expect(screen.getByText('Reviewed')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'See expert comparison' }))
+    expect(screen.getByRole('heading', { name: 'Evidence that mattered' })).toBeVisible()
+    expect(screen.getByText('Reviewed')).toBeVisible()
   })
 
   it('handles an unknown or not-yet-configured case', () => {

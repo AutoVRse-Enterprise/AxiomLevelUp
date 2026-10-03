@@ -59,6 +59,28 @@ export const caseDifferentialItemSchema = z.strictObject({
   description: nonEmptyStringSchema.optional(),
 })
 
+export const caseEvidenceRefSchema = z.strictObject({
+  kind: z.enum(['clue', 'finding']),
+  id: idSchema,
+})
+
+export const caseExpertPathItemSchema = z.strictObject({
+  label: nonEmptyStringSchema,
+  detail: nonEmptyStringSchema,
+})
+
+export const caseEvidenceWeightSchema = z.strictObject({
+  ref: caseEvidenceRefSchema,
+  weight: z.enum(['decisive', 'supporting', 'context']),
+  note: nonEmptyStringSchema,
+})
+
+export const caseKeyEvidenceSchema = z.strictObject({
+  ref: caseEvidenceRefSchema,
+  stepIds: z.array(idSchema),
+  why: nonEmptyStringSchema,
+})
+
 export const caseStageSchema = z.strictObject({
   id: idSchema,
   kind: caseStageKindSchema,
@@ -124,7 +146,10 @@ export const caseDocumentSchema = z.strictObject({
     durationSeconds: z.number().int().positive(),
     openedClueIds: z.array(idSchema),
     responses: z.record(idSchema, z.unknown()),
-    rationales: z.record(idSchema, nonEmptyStringSchema).optional(),
+    rationales: z.record(idSchema, nonEmptyStringSchema),
+    path: z.array(caseExpertPathItemSchema).min(1),
+    evidenceWeights: z.array(caseEvidenceWeightSchema).min(1),
+    diagnosisRationale: nonEmptyStringSchema,
     breakdown: z.strictObject({
       anatomy: z.number().min(0).max(1),
       diagnosis: z.number().min(0).max(1),
@@ -133,7 +158,7 @@ export const caseDocumentSchema = z.strictObject({
   }),
   debrief: z.strictObject({
     summary: nonEmptyStringSchema,
-    keyClueIds: z.array(idSchema),
+    keyEvidence: z.array(caseKeyEvidenceSchema).min(1),
   }),
 })
 

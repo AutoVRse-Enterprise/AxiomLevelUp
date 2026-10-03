@@ -1537,3 +1537,33 @@ a differential exists but never require it.
 resume and result-v7 completion preserve exactly what the learner recorded, while older migrated
 sessions retain the empty placeholders established by ADR-085. The runtime stores stable IDs for
 referential integrity but never renders unresolved identifiers to learners.
+
+## ADR-089: Case teaching is authored and reference-safe
+
+**Status:** Accepted
+
+**Context:** Case results identified missed clues only by title, while comparison showed score and
+per-step differences without explaining the expert's reasoning path, evidence weighting or
+diagnostic synthesis. A teaching debrief also needs to include configured findings, connect
+evidence to affected tasks and remain truthful for legacy attempts that predate reviewed-clue and
+evidence persistence.
+
+**Decision:** Replace `debrief.keyClueIds` with non-empty typed `keyEvidence` entries containing a
+clue or finding reference, affected step IDs and authored significance text. Require every
+learner-visible case task to have an expert rationale. Add a strict ordered expert path of
+`{ label, detail }`, typed evidence weights and notes, and an authored diagnosis rationale.
+Semantic validation resolves all teaching references and rejects evidence that is not exposed
+through a case stage.
+
+Results render labelled key-evidence cards with learner review or inspection state, affected task
+labels and links into comparison. Evidence review is a read-only remediation sheet: clue content
+uses the shared renderer without opening, review or penalty mutations, while findings show their
+configured description. Comparison presents expert approach, weighted evidence, diagnosis
+reasoning and then the existing first-response task comparison. Result-v7 data drives current
+status and differential ratings; result-v5/v6 remains readable and reports unavailable status
+instead of inventing history.
+
+**Consequences:** Teaching content remains deterministic, validated and independent of React.
+Authors must now supply complete rationale, path, evidence-weight and debrief fields for every
+learner-visible case. Stable IDs remain persistence and reference keys but are resolved to authored
+labels before learner presentation.

@@ -48,6 +48,7 @@ export type PrimitiveType = (typeof primitiveTypes)[number]
 
 export const primitiveTypeSet: ReadonlySet<string> = new Set(primitiveTypes)
 export const contentPrimitiveTypeSet: ReadonlySet<string> = new Set(contentPrimitiveTypes)
+export const assessmentPrimitiveTypeSet: ReadonlySet<string> = new Set(assessmentPrimitiveTypes)
 export const dicomPrimitiveTypeSet: ReadonlySet<string> = new Set(dicomPrimitiveTypes)
 export const anatomyPrimitiveTypeSet: ReadonlySet<string> = new Set(anatomyPrimitiveTypes)
 export const timerCompatibleTypeSet: ReadonlySet<string> = new Set(timerCompatibleTypes)

@@ -1,16 +1,20 @@
-import { RotateCcw, Scale } from 'lucide-react'
+import { ArrowRight, RotateCcw, Scale } from 'lucide-react'
+import { useState } from 'react'
 
-import { Button, Card, Chip } from '@/components/ui'
-import type { CaseClue, CaseDocument } from '@/content/schema'
+import { Button, Card, Chip, Sheet } from '@/components/ui'
+import type { CaseClue, CaseDocument, CaseLabConfig } from '@/content/schema'
 import { starsForScore } from '@/engines/gamification/stars'
+import { ClueContent } from '@/player/case/ClueBoard'
 import type { CaseResultPresentation } from '@/player/case/types'
+import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 
 interface CaseResultsProps {
   caseDoc: CaseDocument
   result: CaseResultPresentation
   clues: readonly CaseClue[]
+  clueReview: CaseLabConfig['clueReview']
   starThresholds: { one: number; two: number; three: number }
-  onCompare: () => void
+  onCompare: (evidenceAnchor?: string) => void
   onContinue: () => void
   onReplay: () => void
 }
@@ -32,11 +36,13 @@ export function CaseResults({
   caseDoc,
   result,
   clues,
+  clueReview,
   starThresholds,
   onCompare,
   onContinue,
   onReplay,
 }: CaseResultsProps) {
+  const [reviewIndex, setReviewIndex] = useState<number | null>(null)
   const { breakdown } = result
   const stars = starsForScore(breakdown.total, starThresholds)
   const completeBreakdown =
@@ -44,12 +50,72 @@ export function CaseResults({
     breakdown.clueCostPoints !== undefined &&
     breakdown.speedScored !== undefined
   const reviewedClueIds = result.reviewedClueIds ?? []
-  const missedDebriefClues = caseDoc.debrief.keyClueIds
-    .filter((id) => !reviewedClueIds.includes(id))
-    .flatMap((id) => {
-      const clue = clues.find((candidate) => candidate.id === id)
-      return clue ? [clue] : []
-    })
+  const stepLabels = new Map(
+    caseDoc.stages
+      .flatMap(({ steps }) => steps)
+      .flatMap((step, index) => {
+        const resolved = resolvePrimitiveDefinition(step)
+        return resolved
+          ? ([
+              [
+                step.id,
+                {
+                  label: resolved.definition.reviewPrompt(resolved.primitive),
+                  anchor: resolved.definition.scored(resolved.primitive)
+                    ? `expert-step-${index}`
+                    : null,
+                },
+              ],
+            ] as const)
+          : []
+      }),
+  )
+  const inspectedFindingIds = new Set(
+    result.evidence?.inspectedFindingIds ??
+      result.stepResults.flatMap(({ response }) => {
+        if (!response || typeof response !== 'object') return []
+        const inspected = Reflect.get(response, 'inspectedFindingIds')
+        return Array.isArray(inspected)
+          ? inspected.filter((id): id is string => typeof id === 'string')
+          : []
+      }),
+  )
+  result.evidence?.pinned.forEach(({ kind, id }) => {
+    if (kind === 'finding') inspectedFindingIds.add(id)
+  })
+  const evidenceItems = caseDoc.debrief.keyEvidence.flatMap((entry, index) => {
+    const clue =
+      entry.ref.kind === 'clue'
+        ? clues.find((candidate) => candidate.id === entry.ref.id)
+        : undefined
+    const finding =
+      entry.ref.kind === 'finding'
+        ? caseDoc.findings?.find((candidate) => candidate.id === entry.ref.id)
+        : undefined
+    if (!clue && !finding) return []
+    const reviewed =
+      entry.ref.kind === 'clue'
+        ? result.reviewedClueIds === undefined
+          ? null
+          : reviewedClueIds.includes(entry.ref.id)
+        : inspectedFindingIds.has(entry.ref.id)
+    return [
+      {
+        entry,
+        index,
+        clue,
+        finding,
+        label: clue?.title ?? finding!.label,
+        reviewed,
+        tasks: entry.stepIds.flatMap((id) => {
+          const task = stepLabels.get(id)
+          return task ? [task] : []
+        }),
+      },
+    ]
+  })
+  const selectedEvidence =
+    reviewIndex === null ? null : (evidenceItems.find(({ index }) => index === reviewIndex) ?? null)
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-8 sm:py-12">
@@ -162,20 +228,91 @@ export function CaseResults({
       <Card className="mt-5">
         <h2 className="text-heading font-bold text-neutral-950">Debrief</h2>
         <p className="mt-3 text-neutral-700">{caseDoc.debrief.summary}</p>
-        {missedDebriefClues.length ? (
-          <div className="mt-4">
-            <h3 className="font-semibold text-neutral-900">Key evidence not reviewed</h3>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-small text-neutral-700">
-              {missedDebriefClues.map((clue) => (
-                <li key={clue.id}>{clue.title}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        <div className="mt-5">
+          <h3 className="font-semibold text-neutral-900">Key evidence</h3>
+          <ul className="mt-3 space-y-3">
+            {evidenceItems.map(({ entry, index, label, reviewed, tasks }) => (
+              <li className="rounded-lg border border-neutral-200 p-4" key={index}>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="font-semibold text-neutral-950">{label}</p>
+                  <Chip tone={reviewed ? 'success' : 'neutral'}>
+                    {reviewed === null
+                      ? 'Status unavailable'
+                      : entry.ref.kind === 'clue'
+                        ? reviewed
+                          ? 'Reviewed'
+                          : 'Not reviewed'
+                        : reviewed
+                          ? 'Inspected'
+                          : 'Not inspected'}
+                  </Chip>
+                </div>
+                <p className="mt-2 text-small text-neutral-700">{entry.why}</p>
+                {tasks.length ? (
+                  <p className="mt-2 text-caption text-neutral-600">
+                    Affected tasks:{' '}
+                    {tasks.map(({ anchor, label: taskLabel }, taskIndex) => (
+                      <span key={`${taskLabel}:${taskIndex}`}>
+                        {taskIndex > 0 ? '; ' : ''}
+                        {anchor ? (
+                          <button
+                            className="font-semibold text-brand-800 underline underline-offset-2 focus-visible:outline-2"
+                            type="button"
+                            onClick={() => onCompare(anchor)}
+                          >
+                            {taskLabel}
+                          </button>
+                        ) : (
+                          <span className="font-semibold text-neutral-700">{taskLabel}</span>
+                        )}
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" onClick={() => setReviewIndex(index)}>
+                    Review
+                  </Button>
+                  <Button
+                    leadingIcon={<ArrowRight aria-hidden="true" size={16} />}
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onCompare(`expert-evidence-${index}`)}
+                  >
+                    See expert comparison
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </Card>
 
+      <Sheet
+        open={selectedEvidence !== null}
+        title={selectedEvidence?.label ?? 'Review evidence'}
+        description="Read-only remediation. Reviewing here does not change your score or clue history."
+        onOpenChange={(open) => {
+          if (!open) setReviewIndex(null)
+        }}
+      >
+        {selectedEvidence?.clue ? (
+          <ClueContent
+            active={false}
+            clue={selectedEvidence.clue}
+            clueReview={clueReview}
+            context="remediation-read-only"
+          />
+        ) : selectedEvidence?.finding ? (
+          <div>
+            <p className="text-small font-semibold text-neutral-600">Configured finding</p>
+            <p className="mt-2 text-neutral-800">{selectedEvidence.finding.description}</p>
+          </div>
+        ) : null}
+      </Sheet>
+
       <div className="mt-8 flex flex-wrap gap-3">
-        <Button leadingIcon={<Scale aria-hidden="true" size={18} />} onClick={onCompare}>
+        <Button leadingIcon={<Scale aria-hidden="true" size={18} />} onClick={() => onCompare()}>
           Compare
         </Button>
         <Button variant="secondary" onClick={onContinue}>

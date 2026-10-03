@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T04 is complete; P12-T05 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T05 is complete; P12-T06 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -94,17 +94,27 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   blocking mobile sheet; mobile Clues and Notes both pause case and step clocks.
 - Persisted session-v5 evidence and differential updates through result v7, emitted typed pin and
   hypothesis events, exported the case schema and recorded ADR-088.
+- Replaced `debrief.keyClueIds` with validated typed key-evidence references, affected task links
+  and authored significance; all catalogue cases and fixtures now use the contract.
+- Added required expert path, evidence weights, diagnosis rationale and per-scored-step rationale,
+  including a complete golden-case teaching model with the inspected mucus finding.
+- Rebuilt results as actionable evidence cards with accessible read-only clue/finding review and
+  anchored comparison links. Comparison now presents expert approach, evidence status/weight,
+  learner differential ratings, diagnosis reasoning and labelled per-step rationale without raw
+  IDs.
+- Persisted inspected finding IDs with new result-v7 completions while keeping existing v5/v6 and
+  earlier v7 records readable. Exported schemas and recorded ADR-089.
 
 ## In progress
 
-- P12-T05 is ready to make key-evidence debrief and expert teaching actionable.
+- P12-T06 is ready to re-author the non-golden case catalogue using the teaching contracts.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Implement P12-T05 actionable key-evidence debrief and expert teaching.
-2. Re-author catalogue breadth in P12-T06 using the new evidence contracts.
+1. Re-author catalogue breadth in P12-T06 using the new evidence contracts.
+2. Standardize configured metadata and quick-case history in P12-T07.
 3. Preserve the 18-test real-WebGL gate after every task.
 
 ## Blockers/questions for the user
@@ -172,6 +182,14 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   - the first browser run exposed the two-action mobile bar wrapping over a projected canvas
     target; compact visible labels with complete accessible names restored the touch pick, and its
     focused check plus the complete rerun passed.
+- P12-T05 verification:
+  - focused tests pass 8 files / 100 tests;
+  - schema export and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - full `npm run check` passes 63 files / 428 tests, production build and all bundle budgets;
+  - the complete serial real-WebGL suite passes 18/18 across desktop and 375 px touch emulation;
+  - IDE diagnostics and `git diff --check` pass. No commit was created, and
+    `docs/reference docs/` was not touched.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.

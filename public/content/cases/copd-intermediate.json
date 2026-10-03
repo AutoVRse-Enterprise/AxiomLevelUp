@@ -455,10 +455,68 @@
         { "nodeId": "copd-qualify", "choiceId": "case-supported" }
       ]
     },
+    "rationales": {
+      "copd-localise": "Localise from the respiratory system to the alveolar unit where the configured structural change is represented.",
+      "copd-structure-effect": "Loss of alveolar attachments reduces elastic recoil and supports airflow limitation.",
+      "copd-key-observations": "Exposure history and persistent post-bronchodilator obstruction carry the most diagnostic weight.",
+      "copd-sort-evidence": "Separating structural from functional evidence makes their convergence explicit.",
+      "copd-persistence": "Persistence after bronchodilator distinguishes this pattern from fully reversible obstruction.",
+      "copd-differential": "The comparator sound is context rather than evidence recorded from this fictional patient.",
+      "copd-best-diagnosis": "The exposure, persistent physiology and emphysematous change converge on COPD.",
+      "copd-diagnosis-path": "Integrate the evidence while keeping the conclusion proportional to the authored case."
+    },
+    "path": [
+      {
+        "label": "Localise structural change",
+        "detail": "Connect the configured alveolar finding with reduced elastic recoil."
+      },
+      {
+        "label": "Establish persistent obstruction",
+        "detail": "Prioritise exposure and post-bronchodilator physiology."
+      },
+      {
+        "label": "Test the differential",
+        "detail": "Exclude comparator material that was not observed in the patient."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "copd-history" },
+        "weight": "decisive",
+        "note": "The long exposure history establishes essential disease context."
+      },
+      {
+        "ref": { "kind": "clue", "id": "copd-spirometry" },
+        "weight": "decisive",
+        "note": "Persistent post-bronchodilator obstruction is the strongest functional evidence."
+      },
+      {
+        "ref": { "kind": "clue", "id": "emphysema" },
+        "weight": "supporting",
+        "note": "The structural image supports the physiological pattern."
+      }
+    ],
+    "diagnosisRationale": "Long exposure, persistent post-bronchodilator obstruction and supportive emphysematous structural change form the strongest authored synthesis.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.88 }
   },
   "debrief": {
     "summary": "Educational demo only—not clinical guidance. The strongest pattern is long exposure plus persistent post-bronchodilator obstruction, supported by emphysematous alveolar destruction. A comparator sound must not be treated as this patient's evidence.",
-    "keyClueIds": ["copd-history", "copd-spirometry", "emphysema"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "copd-history" },
+        "stepIds": ["copd-key-observations", "copd-best-diagnosis", "copd-diagnosis-path"],
+        "why": "The exposure history gives the persistent physiological pattern its disease context."
+      },
+      {
+        "ref": { "kind": "clue", "id": "copd-spirometry" },
+        "stepIds": ["copd-key-observations", "copd-sort-evidence", "copd-persistence", "copd-best-diagnosis"],
+        "why": "Persistent obstruction after bronchodilator is the case's decisive functional evidence."
+      },
+      {
+        "ref": { "kind": "clue", "id": "emphysema" },
+        "stepIds": ["copd-localise", "copd-structure-effect", "copd-sort-evidence"],
+        "why": "The structural change explains reduced recoil and supports the functional findings."
+      }
+    ]
   }
 }

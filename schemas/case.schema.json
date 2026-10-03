@@ -1160,6 +1160,81 @@
             "minLength": 1
           }
         },
+        "path": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "label",
+              "detail"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "evidenceWeights": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "clue",
+                      "finding"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "weight": {
+                "type": "string",
+                "enum": [
+                  "decisive",
+                  "supporting",
+                  "context"
+                ]
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "ref",
+              "weight",
+              "note"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "diagnosisRationale": {
+          "type": "string",
+          "minLength": 1
+        },
         "breakdown": {
           "type": "object",
           "properties": {
@@ -1192,6 +1267,10 @@
         "durationSeconds",
         "openedClueIds",
         "responses",
+        "rationales",
+        "path",
+        "evidenceWeights",
+        "diagnosisRationale",
         "breakdown"
       ],
       "additionalProperties": false
@@ -1203,18 +1282,59 @@
           "type": "string",
           "minLength": 1
         },
-        "keyClueIds": {
+        "keyEvidence": {
+          "minItems": 1,
           "type": "array",
           "items": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            "type": "object",
+            "properties": {
+              "ref": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "clue",
+                      "finding"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "stepIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                }
+              },
+              "why": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "ref",
+              "stepIds",
+              "why"
+            ],
+            "additionalProperties": false
           }
         }
       },
       "required": [
         "summary",
-        "keyClueIds"
+        "keyEvidence"
       ],
       "additionalProperties": false
     }

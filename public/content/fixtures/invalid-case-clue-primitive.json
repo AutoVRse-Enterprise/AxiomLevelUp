@@ -59,6 +59,21 @@
     "durationSeconds": 60,
     "openedClueIds": ["clue-question"],
     "responses": {},
+    "rationales": {},
+    "path": [
+      {
+        "label": "Review the fixture",
+        "detail": "The invalid clue primitive remains the single intended schema failure."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "clue-question" },
+        "weight": "decisive",
+        "note": "The clue is the only evidence in this fixture."
+      }
+    ],
+    "diagnosisRationale": "The fixture has no scored case task.",
     "breakdown": {
       "anatomy": 0,
       "diagnosis": 1,
@@ -67,6 +82,12 @@
   },
   "debrief": {
     "summary": "Invalid fixture.",
-    "keyClueIds": ["clue-question"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "clue-question" },
+        "stepIds": [],
+        "why": "This intentionally invalid clue is the fixture's key evidence."
+      }
+    ]
   }
 }

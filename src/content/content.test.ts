@@ -503,6 +503,24 @@ describe('content loader', () => {
     expect(Object.keys(goldenCase.expertBenchmark.rationales ?? {})).toEqual(
       goldenSteps.map(({ id }) => id),
     )
+    expect(goldenCase.expertBenchmark.path).toHaveLength(4)
+    expect(goldenCase.expertBenchmark.evidenceWeights).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ref: { kind: 'finding', id: 'exac-posterior-basal-plug' },
+          weight: 'supporting',
+        }),
+      ]),
+    )
+    expect(goldenCase.expertBenchmark.diagnosisRationale).toContain('rising PaCO₂')
+    expect(goldenCase.debrief.keyEvidence).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          ref: { kind: 'finding', id: 'exac-posterior-basal-plug' },
+          stepIds: ['exac-explore-airway', 'exac-localise'],
+        }),
+      ]),
+    )
     expect(
       registry.anatomyMapById
         .get('lung-map')
@@ -647,7 +665,54 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'expertBenchmark.rationales.missing-rationale-step',
           }),
-          expect.objectContaining({ path: 'debrief.keyClueIds.0' }),
+          expect.objectContaining({
+            path: 'expertBenchmark.rationales.duplicate-primitive',
+          }),
+          expect.objectContaining({
+            path: 'expertBenchmark.evidenceWeights.0.ref.id',
+          }),
+          expect.objectContaining({ path: 'debrief.keyEvidence.0.ref.id' }),
+          expect.objectContaining({ path: 'debrief.keyEvidence.0.stepIds.0' }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires nonempty key evidence and complete authored expert teaching fields', () => {
+    const missingTeaching = structuredClone(caseFixture)
+    missingTeaching.debrief.keyEvidence = []
+    missingTeaching.expertBenchmark.path = []
+    missingTeaching.expertBenchmark.evidenceWeights = []
+    missingTeaching.expertBenchmark.diagnosisRationale = ''
+
+    const parsed = caseDocumentSchema.safeParse(missingTeaching)
+    expect(parsed.success).toBe(false)
+    if (parsed.success) return
+    expect(parsed.error.issues.map(({ path }) => path.join('.'))).toEqual(
+      expect.arrayContaining([
+        'debrief.keyEvidence',
+        'expertBenchmark.path',
+        'expertBenchmark.evidenceWeights',
+        'expertBenchmark.diagnosisRationale',
+      ]),
+    )
+  })
+
+  it('rejects evidence that exists but is not usable through a case stage', () => {
+    const unusableEvidence = structuredClone(caseFixture)
+    unusableEvidence.expertBenchmark.evidenceWeights[0]!.ref = {
+      kind: 'finding',
+      id: 'fixture-region',
+    }
+    const bundle = withCaseFixture(unusableEvidence)
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'expertBenchmark.evidenceWeights.0.ref.id',
+            message: expect.stringContaining('not available through a case stage'),
+          }),
         ]),
       }),
     )

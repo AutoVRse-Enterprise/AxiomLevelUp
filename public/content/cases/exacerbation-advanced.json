@@ -490,10 +490,82 @@
       "exac-best-diagnosis": "Variable airway symptoms and the acute objective trajectory form the most coherent synthesis.",
       "exac-immediate-consequence": "The combined deterioration signals justify urgent escalation through the applicable emergency pathway."
     },
+    "path": [
+      {
+        "label": "Trace and localise the obstruction",
+        "detail": "Follow the right lower-lobe route, inspect the dominant mucus plug and localise it to the posterior basal segmental bronchus."
+      },
+      {
+        "label": "Grade the deterioration",
+        "detail": "Prioritise speech limitation, falling expiratory flow, hypoxaemia and the rising PaCO₂ trend."
+      },
+      {
+        "label": "Interpret physiology in context",
+        "detail": "Read the PaCO₂ rise alongside worsening work of breathing, flow and oxygenation rather than in isolation."
+      },
+      {
+        "label": "Synthesize diagnosis and consequence",
+        "detail": "Combine the variable-airway history and objective trajectory, then identify the need for urgent escalation."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "exac-history" },
+        "weight": "decisive",
+        "note": "Variable prior symptoms plus abrupt worsening establish the disease pattern and acuity."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-flow" },
+        "weight": "decisive",
+        "note": "The serial decline supplies objective evidence of worsening airflow limitation."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-gas" },
+        "weight": "decisive",
+        "note": "Hypoxaemia and rising PaCO₂ during distress indicate diminishing ventilatory reserve."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-airway-reference" },
+        "weight": "context",
+        "note": "The anatomy reference supports accurate route tracing and localisation."
+      },
+      {
+        "ref": { "kind": "finding", "id": "exac-posterior-basal-plug" },
+        "weight": "supporting",
+        "note": "The inspected focal obstruction adds spatial pathology but does not determine the diagnosis alone."
+      }
+    ],
+    "diagnosisRationale": "Prior variable airway symptoms, rapidly falling expiratory flow, hypoxaemia and a rising PaCO₂ during ongoing distress converge on severe asthma exacerbation with diminishing ventilatory reserve. The focal mucus plug supports the obstructive picture but must not be interpreted alone.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.94 }
   },
   "debrief": {
     "summary": "The spatial task identified a dominant posterior basal mucus obstruction against diffuse airway-wall change. The diagnostic task kept disease identity separate from severity, then integrated falling flow, hypoxaemia and a rising PaCO₂ into a high-risk deterioration pattern.",
-    "keyClueIds": ["exac-history", "exac-flow", "exac-gas", "exac-airway-reference"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "exac-history" },
+        "stepIds": ["exac-severity-signals", "exac-best-diagnosis", "exac-immediate-consequence"],
+        "why": "Speech limitation and the variable-airway history distinguish disease pattern from acute severity."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-flow" },
+        "stepIds": ["exac-severity-signals", "exac-co2-reasoning", "exac-best-diagnosis", "exac-immediate-consequence"],
+        "why": "The serial fall to 170 L/min makes the deterioration objective and changes the urgency of interpretation."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-gas" },
+        "stepIds": ["exac-severity-signals", "exac-co2-reasoning", "exac-best-diagnosis", "exac-immediate-consequence"],
+        "why": "Falling oxygen saturation and rising PaCO₂ during distress signal reduced ventilatory reserve."
+      },
+      {
+        "ref": { "kind": "clue", "id": "exac-airway-reference" },
+        "stepIds": ["exac-explore-airway", "exac-localise"],
+        "why": "The branching reference supports route tracing and precise lobe-to-structure localisation."
+      },
+      {
+        "ref": { "kind": "finding", "id": "exac-posterior-basal-plug" },
+        "stepIds": ["exac-explore-airway", "exac-localise"],
+        "why": "Inspecting the dominant posterior basal mucus plug connects the endoscopic route to the localisation task."
+      }
+    ]
   }
 }

@@ -24,7 +24,12 @@ import {
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
 import { validateAnatomyVolumes } from './anatomyVolumeValidation'
-import { contentPrimitiveTypeSet, primitiveTypeSet, timerCompatibleTypeSet } from './primitiveTypes'
+import {
+  assessmentPrimitiveTypeSet,
+  contentPrimitiveTypeSet,
+  primitiveTypeSet,
+  timerCompatibleTypeSet,
+} from './primitiveTypes'
 
 export interface ContentIssue {
   file: string
@@ -944,6 +949,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   })
 
   const stageOrder = ['orient', 'observe', 'interpret', 'diagnose'] as const
+  const learnerVisibleCaseIds = new Set(appConfig.caseLab?.caseIds ?? [])
   cases.forEach((caseDocument, caseIndex) => {
     const file = input.caseFiles[caseIndex]?.file ?? `case:${caseDocument.id}`
     const clueIds = new Set(caseDocument.clues.map(({ id }) => id))
@@ -951,6 +957,10 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const anatomyMap = anatomyMapById.get(caseDocument.anatomyMapId)
     const findingIds = new Set<string>()
     const hypothesisIds = new Set<string>()
+    const usableClueIds = new Set<string>(
+      caseDocument.entry.mode === 'clue_first' ? [caseDocument.entry.clueId] : [],
+    )
+    const usableFindingIds = new Set<string>()
 
     requireRef(anatomyMapIds, caseDocument.anatomyMapId, file, 'anatomyMapId', 'anatomy map')
     caseDocument.conceptIds.forEach((id, conceptIndex) =>
@@ -1026,6 +1036,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const duplicateClueIds = new Set<string>()
     const seenPrimitiveIds = new Set<string>()
     const stepIds = new Set<string>()
+    const scoredStepIds = new Set<string>()
     caseDocument.clues.forEach((clue, clueIndex) => {
       if (duplicateClueIds.has(clue.id)) {
         issues.push({
@@ -1081,6 +1092,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     let priorStageOrder = -1
 
     caseDocument.stages.forEach((stage, stageIndex) => {
+      stage.clueIds.forEach((id) => usableClueIds.add(id))
       if (seenStageIds.has(stage.id)) {
         issues.push({
           file,
@@ -1125,9 +1137,21 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         stepIds.add(step.id)
         validatePrimitive(step, file, path)
         const parsedStep = parsePrimitive(step).primitive
+        if (
+          parsedStep &&
+          (assessmentPrimitiveTypeSet.has(parsedStep.type) ||
+            parsedStep.type === 'scenario' ||
+            parsedStep.type === 'dicom_identify_region' ||
+            parsedStep.type === 'dicom_measure' ||
+            (parsedStep.type === 'dicom_guided' && Boolean(parsedStep.content.checkpoint)) ||
+            (parsedStep.type === 'image_hotspot' && parsedStep.content.mode === 'assess'))
+        ) {
+          scoredStepIds.add(step.id)
+        }
         if (parsedStep?.type === 'anatomy_explore' || parsedStep?.type === 'anatomy_locate') {
           const anatomyStep = parsedStep as AnatomyExplorePrimitive | AnatomyLocatePrimitive
           const referencedFindingIds = anatomyStep.content.findingIds ?? []
+          referencedFindingIds.forEach((id) => usableFindingIds.add(id))
           referencedFindingIds.forEach((id, findingIndex) =>
             requireRef(
               findingIds,
@@ -1184,9 +1208,43 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     Object.keys(caseDocument.expertBenchmark.rationales ?? {}).forEach((id) =>
       requireRef(stepIds, id, file, `expertBenchmark.rationales.${id}`, 'case primitive'),
     )
-    caseDocument.debrief.keyClueIds.forEach((id, clueIndex) =>
-      requireRef(clueIds, id, file, `debrief.keyClueIds.${clueIndex}`, 'clue'),
+    if (learnerVisibleCaseIds.has(caseDocument.id)) {
+      scoredStepIds.forEach((id) => {
+        if (!caseDocument.expertBenchmark.rationales[id]) {
+          issues.push({
+            file,
+            path: `expertBenchmark.rationales.${id}`,
+            message: `Learner-visible scored task "${id}" requires an expert rationale.`,
+            severity: 'error',
+          })
+        }
+      })
+    }
+
+    const validateEvidenceRef = (ref: { kind: 'clue' | 'finding'; id: string }, path: string) => {
+      const ids = ref.kind === 'clue' ? clueIds : findingIds
+      const usableIds = ref.kind === 'clue' ? usableClueIds : usableFindingIds
+      requireRef(ids, ref.id, file, `${path}.id`, `case ${ref.kind}`)
+      if (ids.has(ref.id) && !usableIds.has(ref.id)) {
+        issues.push({
+          file,
+          path: `${path}.id`,
+          message: `Case ${ref.kind} "${ref.id}" is not available through a case stage.`,
+          severity: 'error',
+        })
+      }
+    }
+
+    caseDocument.expertBenchmark.evidenceWeights.forEach(({ ref }, evidenceIndex) =>
+      validateEvidenceRef(ref, `expertBenchmark.evidenceWeights.${evidenceIndex}.ref`),
     )
+    caseDocument.debrief.keyEvidence.forEach(({ ref, stepIds: affectedStepIds }, evidenceIndex) => {
+      const path = `debrief.keyEvidence.${evidenceIndex}`
+      validateEvidenceRef(ref, `${path}.ref`)
+      affectedStepIds.forEach((id, stepIndex) =>
+        requireRef(stepIds, id, file, `${path}.stepIds.${stepIndex}`, 'case primitive'),
+      )
+    })
 
     if (caseDocument.entry.mode === 'clue_first') {
       requireRef(clueIds, caseDocument.entry.clueId, file, 'entry.clueId', 'clue')

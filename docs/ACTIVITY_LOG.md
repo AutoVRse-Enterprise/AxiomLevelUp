@@ -2610,3 +2610,31 @@ schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
   touched.
 - **Follow-ups:** Start P12-T05 actionable key-evidence debrief and expert teaching. Clinical/client
   sign-off and Phase 9 physical-device gates remain external blockers.
+
+### [2026-10-03 22:15] P12-T05 - Add actionable expert teaching
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced clue-only debrief IDs with typed clue/finding key evidence, affected task
+  references and authored significance. Added strict expert path, evidence weight/note, diagnosis
+  rationale and per-scored-task rationale contracts with semantic reference and usability checks.
+  Populated the golden case with the complete teaching model including its mucus finding and added
+  temporary valid teaching fields to the other cases. Rebuilt results with status-aware evidence
+  cards, read-only remediation sheets and comparison anchors; expanded comparison with expert path,
+  weighted evidence, differential ratings and diagnosis reasoning. Persisted inspected finding IDs
+  in new result-v7 attempts while preserving older result readability. Recorded ADR-089.
+- **Files changed:** Case and learner-result schemas, semantic loader and primitive-type metadata;
+  all four case documents and case fixtures; Case player, clue renderer, results, comparison and
+  saved-result route; focused schema/UI/route tests; generated schemas; architecture, content
+  schema, Phase 12 checklist, decisions, handoff, activity log and refreshed automated Phase 11
+  browser evidence.
+- **Commands run:** Targeted Prettier; focused Vitest (8 files / 100 tests); `npm run
+  schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`; full `npm run
+  check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright browser cache; IDE
+  diagnostics; `git diff --check`.
+- **Result/verification:** P12-T05 is complete. The full quality gate passes 63 Vitest files / 428
+  tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all bundle budgets. The complete real-WebGL demo suite passes all 18 tests
+  on desktop and 375 px touch emulation. No commit was created, and the user's untracked
+  `docs/reference docs/` was not touched.
+- **Follow-ups:** Re-author the non-golden catalogue in P12-T06. Clinical/client sign-off and Phase
+  9 physical-device gates remain external blockers.

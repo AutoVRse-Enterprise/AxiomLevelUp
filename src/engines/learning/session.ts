@@ -33,6 +33,7 @@ export interface CaseProgress {
   evidence: {
     pinned: Array<{ kind: 'clue' | 'finding'; id: string }>
     currentLocation?: { kind: 'waypoint' | 'structure'; id: string }
+    inspectedFindingIds?: string[]
   }
   differential: Record<string, 'unlikely' | 'possible' | 'likely'>
 }

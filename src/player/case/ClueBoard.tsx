@@ -28,16 +28,18 @@ interface ClueBoardProps {
   renderNotes?: (openClue: (clueId: string) => void) => ReactNode
 }
 
-function ClueContent({
+export function ClueContent({
   clue,
   active,
   clueReview,
   onReview,
+  context = 'case',
 }: {
   clue: CaseClue
   active: boolean
   clueReview: CaseLabConfig['clueReview']
-  onReview: (method: CaseClueReviewMethod) => void
+  onReview?: (method: CaseClueReviewMethod) => void
+  context?: 'case' | 'remediation-read-only'
 }) {
   const [draft, setDraft] = useState<unknown>(null)
   const onReviewRef = useRef(onReview)
@@ -56,7 +58,7 @@ function ClueContent({
           clueReview.mediaProgressThreshold,
         )
       ) {
-        onReviewRef.current('dwell')
+        onReviewRef.current?.('dwell')
       }
     }, clueReview.minVisibleMs)
     return () => window.clearTimeout(timer)
@@ -71,7 +73,7 @@ function ClueContent({
         clueReview.mediaProgressThreshold,
       )
     ) {
-      onReviewRef.current('completion')
+      onReviewRef.current?.('completion')
     }
   }, [active, clue.primitive.type, clueReview.mediaProgressThreshold])
 
@@ -85,7 +87,7 @@ function ClueContent({
         active &&
         isClueReviewSignal(clue.primitive.type, signal, clueReview.mediaProgressThreshold)
       ) {
-        onReviewRef.current(signal.method)
+        onReviewRef.current?.(signal.method)
       }
     },
     [active, clue.primitive.type, clueReview.mediaProgressThreshold],
@@ -97,10 +99,10 @@ function ClueContent({
       attempt={0}
       mode="interactive"
       draft={draft}
-      onDraftChange={setDraft}
-      onComplete={handleComplete}
-      onInteract={handleInteract}
-      onSubmit={handleComplete}
+      onDraftChange={context === 'case' ? setDraft : () => undefined}
+      onComplete={context === 'case' ? handleComplete : () => undefined}
+      onInteract={context === 'case' ? handleInteract : () => undefined}
+      onSubmit={context === 'case' ? handleComplete : () => undefined}
     />
   )
 }

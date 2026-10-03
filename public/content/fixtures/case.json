@@ -136,6 +136,20 @@
       "identify-location": "The configured evidence localizes the target structure.",
       "select-conclusion": "The conclusion follows from the configured evidence."
     },
+    "path": [
+      {
+        "label": "Review the configured context",
+        "detail": "Use the authored evidence before localising the target and drawing a conclusion."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "clue-context" },
+        "weight": "decisive",
+        "note": "The context supplies the evidence needed by both fixture tasks."
+      }
+    ],
+    "diagnosisRationale": "The configured conclusion follows directly from the reviewed context and target localisation.",
     "breakdown": {
       "anatomy": 1,
       "diagnosis": 1,
@@ -144,6 +158,12 @@
   },
   "debrief": {
     "summary": "The fixture verifies configured case loading and references.",
-    "keyClueIds": ["clue-context"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "clue-context" },
+        "stepIds": ["identify-location", "select-conclusion"],
+        "why": "This context supports both the localisation and the final conclusion."
+      }
+    ]
   }
 }

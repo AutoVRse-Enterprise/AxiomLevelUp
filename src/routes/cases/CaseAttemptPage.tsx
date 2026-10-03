@@ -40,6 +40,7 @@ export function CaseAttemptPage() {
       caseDoc={caseDoc}
       history={comparison.history}
       historyLimit={caseLab.historyLimit}
+      evidenceAnchor={searchParams.get('evidence')}
       result={result}
       onBack={() => setSearchParams({})}
       onContinue={() => navigate(introPath)}
@@ -49,9 +50,12 @@ export function CaseAttemptPage() {
     <CaseResults
       caseDoc={caseDoc}
       clues={caseDoc.clues}
+      clueReview={caseLab.clueReview}
       result={result}
       starThresholds={registry.appConfig.gamification.stars}
-      onCompare={() => setSearchParams({ view: 'compare' })}
+      onCompare={(evidence) =>
+        setSearchParams(evidence ? { view: 'compare', evidence } : { view: 'compare' })
+      }
       onContinue={() => navigate(introPath)}
       onReplay={() => navigate(playPath)}
     />

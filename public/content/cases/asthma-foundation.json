@@ -434,10 +434,68 @@
         { "nodeId": "asthma-phenotype", "choiceId": "supports-phenotype" }
       ]
     },
+    "rationales": {
+      "asthma-localise": "Begin with the conducting airway and localise from the respiratory system to the bronchiole.",
+      "asthma-airway-function": "The conducting airway is the structure whose calibre changes in variable airflow obstruction.",
+      "asthma-key-observations": "Triggered variability and reversible airflow limitation are the strongest observations.",
+      "asthma-sort-evidence": "Separate airflow measurements from inflammatory context before combining them.",
+      "asthma-reversibility": "Improvement after bronchodilator supports reversible rather than fixed airflow limitation.",
+      "asthma-mechanism": "The inflammatory findings support a type 2 pattern without establishing the diagnosis alone.",
+      "asthma-best-diagnosis": "The combined variability and reversibility pattern best supports asthma in this exercise.",
+      "asthma-diagnosis-path": "Commit from the integrated pattern, then keep phenotype evidence in a supporting role."
+    },
+    "path": [
+      {
+        "label": "Orient to the airway",
+        "detail": "Localise the conducting airway before interpreting function."
+      },
+      {
+        "label": "Prioritise variability",
+        "detail": "Use the trigger pattern and reversible flow change as the main diagnostic signal."
+      },
+      {
+        "label": "Add supporting context",
+        "detail": "Use wheeze and inflammatory evidence to support, not replace, the core pattern."
+      }
+    ],
+    "evidenceWeights": [
+      {
+        "ref": { "kind": "clue", "id": "history" },
+        "weight": "decisive",
+        "note": "Repeated trigger-linked episodes establish symptom variability."
+      },
+      {
+        "ref": { "kind": "clue", "id": "spirometry" },
+        "weight": "decisive",
+        "note": "The reversible expiratory-flow change supplies the strongest functional evidence."
+      },
+      {
+        "ref": { "kind": "clue", "id": "wheeze" },
+        "weight": "supporting",
+        "note": "The sound sample is compatible with airway narrowing but is not diagnostic alone."
+      }
+    ],
+    "diagnosisRationale": "Variable trigger-linked symptoms together with reversible airflow limitation form the most coherent authored diagnosis; inflammatory markers and wheeze remain supporting evidence.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.9 }
   },
   "debrief": {
     "summary": "Educational demo only—not clinical guidance. The strongest pattern is variable triggered symptoms plus reversible airflow limitation; inflammatory markers and histology are supportive, not independently diagnostic.",
-    "keyClueIds": ["history", "spirometry", "wheeze"]
+    "keyEvidence": [
+      {
+        "ref": { "kind": "clue", "id": "history" },
+        "stepIds": ["asthma-key-observations", "asthma-best-diagnosis", "asthma-diagnosis-path"],
+        "why": "The trigger-linked, variable history distinguishes the pattern from fixed obstruction."
+      },
+      {
+        "ref": { "kind": "clue", "id": "spirometry" },
+        "stepIds": ["asthma-sort-evidence", "asthma-reversibility", "asthma-best-diagnosis"],
+        "why": "The before-and-after measurements demonstrate reversible airflow limitation."
+      },
+      {
+        "ref": { "kind": "clue", "id": "wheeze" },
+        "stepIds": ["asthma-airway-function", "asthma-key-observations"],
+        "why": "The expiratory sound supports conducting-airway narrowing when interpreted with the other evidence."
+      }
+    ]
   }
 }

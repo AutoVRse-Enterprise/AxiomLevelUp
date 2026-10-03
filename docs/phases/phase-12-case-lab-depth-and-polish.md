@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T04 complete
+**Status:** Active — P12-T05 complete
 
 ## Goal
 
@@ -99,7 +99,7 @@ physical-device approval.
       replacing the licensed lung GLB (F10).
 - [x] P12-T04 — Add local case notes with pinned evidence, current location and an authored
       evolving differential (F31).
-- [ ] P12-T05 — Add actionable key-evidence debrief and expert path/evidence/diagnosis teaching
+- [x] P12-T05 — Add actionable key-evidence debrief and expert path/evidence/diagnosis teaching
       (F32, F33).
 - [ ] P12-T06 — Re-author the foundation, intermediate and quick cases, enrich the golden teaching
       fields and validate entry, stage and benchmark semantics (F28, F29, F51).
