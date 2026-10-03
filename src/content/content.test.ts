@@ -245,6 +245,49 @@ describe('content schemas', () => {
     expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
   })
 
+  it('accepts an optional authored differential with at least two hypotheses', () => {
+    const withDifferential = {
+      ...structuredClone(caseFixture),
+      differential: [
+        { id: 'hypothesis-a', label: 'Hypothesis A' },
+        {
+          id: 'hypothesis-b',
+          label: 'Hypothesis B',
+          description: 'A short learner-facing description.',
+        },
+      ],
+    }
+
+    expect(caseDocumentSchema.parse(withDifferential).differential).toHaveLength(2)
+    expect(
+      caseDocumentSchema.safeParse({
+        ...withDifferential,
+        differential: [{ id: 'hypothesis-a', label: 'Hypothesis A' }],
+      }).success,
+    ).toBe(false)
+  })
+
+  it('rejects duplicate differential hypothesis ids semantically', () => {
+    const duplicateDifferential = {
+      ...structuredClone(caseFixture),
+      differential: [
+        { id: 'same-hypothesis', label: 'Hypothesis A' },
+        { id: 'same-hypothesis', label: 'Hypothesis B' },
+      ],
+    }
+
+    expect(() => validateContentBundle(withCaseFixture(duplicateDifferential))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'differential.1.id',
+            message: 'Duplicate case differential id "same-hypothesis".',
+          }),
+        ]),
+      }),
+    )
+  })
+
   it('accepts exclusive mesh and ellipsoid structure bindings', () => {
     const map = structuredClone(anatomyMapFixture) as {
       levels: Array<{ id: string; label: string }>

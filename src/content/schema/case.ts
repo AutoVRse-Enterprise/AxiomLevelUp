@@ -53,6 +53,12 @@ export const caseClueSchema = z.strictObject({
   primitive: caseCluePrimitiveSchema,
 })
 
+export const caseDifferentialItemSchema = z.strictObject({
+  id: idSchema,
+  label: nonEmptyStringSchema,
+  description: nonEmptyStringSchema.optional(),
+})
+
 export const caseStageSchema = z.strictObject({
   id: idSchema,
   kind: caseStageKindSchema,
@@ -109,6 +115,7 @@ export const caseDocumentSchema = z.strictObject({
   anatomyMapId: idSchema,
   entry: caseEntrySchema,
   findings: z.array(caseFindingSchema).optional(),
+  differential: z.array(caseDifferentialItemSchema).min(2).optional(),
   clues: z.array(caseClueSchema).min(1),
   stages: z.array(caseStageSchema).min(1).max(4),
   timing: caseTimingSchema.optional(),
@@ -208,6 +215,7 @@ export const caseLabConfigSchema = z
 export type CaseDocument = z.infer<typeof caseDocumentSchema>
 export type CaseFinding = z.infer<typeof caseFindingSchema>
 export type CaseFindingAnchor = z.infer<typeof caseFindingAnchorSchema>
+export type CaseDifferentialItem = z.infer<typeof caseDifferentialItemSchema>
 export type CaseStep = z.infer<typeof caseStepSchema>
 export type CaseClue = z.infer<typeof caseClueSchema>
 export type CaseStage = z.infer<typeof caseStageSchema>

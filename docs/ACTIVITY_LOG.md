@@ -2582,3 +2582,31 @@ registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl
 - **Follow-ups:** Start P12-T04 local evidence notes, current location and differential confidence.
   Obtain the outstanding clinical/anatomy/client review and complete the Phase 9 physical-device
   gates before external approval.
+
+### [2026-10-03 21:57] P12-T04 - Add local case notes
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added optional authored case differentials with semantic ID uniqueness and four
+  featured-case hypotheses. Built the reflective Case notes workspace with eligible clue/finding
+  pins, remediation reopening, mapped location labels and confidence controls. Integrated
+  Clues/Notes tabs in the desktop rail and separate compact mobile actions using the same
+  timing-pausing sheet behavior. Persisted session-v5 state into result v7, emitted typed pin and
+  hypothesis events, prompted note review at stage boundaries, exported schemas and recorded
+  ADR-088.
+- **Files changed:** Case schema/loader and generated case schema; featured case content; evidence
+  helpers and tests; typed events; Case player, clue board and new Case notes component; case/pipeline
+  tests; architecture/content contracts; ADR-088; Phase 12 checklist; handoff; refreshed automated
+  Phase 11 screenshots.
+- **Commands run:** Targeted Prettier; focused Vitest (4 files / 68 tests); `npm run
+schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`; `npm run test`;
+  focused touch-phone P11-T03 Playwright; two full serial `npm run test:e2e` runs; `npm run check`;
+  IDE diagnostics; `git diff --check`; repository status/diff review.
+- **Result/verification:** P12-T04 is complete. The final full quality gate passes 62 Vitest files /
+  421 tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all bundle budgets. The final real-WebGL suite passes 18/18 on desktop and
+  375 px touch emulation. The first browser run found that the initial two-action mobile label could
+  wrap over a projected canvas target; compact visible text with the full status retained in the
+  accessible name fixed the regression. No commit was created, and `docs/reference docs/` was not
+  touched.
+- **Follow-ups:** Start P12-T05 actionable key-evidence debrief and expert teaching. Clinical/client
+  sign-off and Phase 9 physical-device gates remain external blockers.

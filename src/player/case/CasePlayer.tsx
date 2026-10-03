@@ -23,6 +23,12 @@ import {
   type CaseClueReviewMethod,
 } from '@/engines/cases/clues'
 import {
+  canPinCaseEvidence,
+  resolveCaseLocationLabel,
+  updateCaseEvidencePins,
+  type CaseEvidenceItem,
+} from '@/engines/cases/evidence'
+import {
   buildCasePlan,
   stageForStep,
   type CasePlan,
@@ -32,13 +38,14 @@ import { normalizeCaseResponse } from '@/engines/cases/responses'
 import { calculateCaseScore } from '@/engines/cases/scoring'
 import type { ActivitySession, CaseProgress } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
-import { emitEvent } from '@/events/bus'
+import { emitEvent, subscribeToEvents } from '@/events/bus'
 import {
   ActivityPlayer,
   type ActivityPlayerCompletionContext,
   type ActivityPlayerTimedAttempt,
 } from '@/player/ActivityPlayer'
 import { CaseCompare } from '@/player/case/CaseCompare'
+import { CaseNotes } from '@/player/case/CaseNotes'
 import { CaseResults } from '@/player/case/CaseResults'
 import { ClueBoard } from '@/player/case/ClueBoard'
 import { StageHeader } from '@/player/case/StageHeader'
@@ -203,11 +210,13 @@ function StageTransition({
   stage,
   stageIndex,
   stageCount,
+  hasDifferential,
   onContinue,
 }: {
   stage: CaseStageBoundary
   stageIndex: number
   stageCount: number
+  hasDifferential: boolean
   onContinue: () => void
 }) {
   return (
@@ -228,12 +237,26 @@ function StageTransition({
           {stage.intro ? (
             <Dialog.Description className="mt-4 text-neutral-700">{stage.intro}</Dialog.Description>
           ) : null}
+          {hasDifferential ? (
+            <p className="mt-4 rounded-lg bg-brand-50 p-3 text-small text-brand-950">
+              Review or update Case notes as the evidence changes. This reflection is optional and
+              does not block the next stage.
+            </p>
+          ) : null}
           <Button className="mt-7" onClick={onContinue}>
             Begin stage
           </Button>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  )
+}
+
+function selectInspectedFindingIds(session: ActivitySession | null | undefined) {
+  return new Set(
+    Object.values(session?.progress ?? {}).flatMap(({ interactionKeys }) =>
+      interactionKeys.flatMap((key) => (key.startsWith('finding:') ? [key.slice(8)] : [])),
+    ),
   )
 }
 
@@ -427,6 +450,43 @@ export function CasePlayer({
 
   useEffect(
     () =>
+      subscribeToEvents((event) => {
+        if (
+          (event.event !== 'anatomy_waypoint_reached' &&
+            event.event !== 'anatomy_structure_selected') ||
+          event.activityKind !== 'case' ||
+          event.activityId !== caseDoc.id
+        ) {
+          return
+        }
+        const session = useActivitySessionStore.getState().session
+        if (
+          !session ||
+          session.activityKind !== 'case' ||
+          session.activityId !== caseDoc.id ||
+          session.startedAt === null ||
+          session.phase === 'complete'
+        ) {
+          return
+        }
+        const currentLocation =
+          event.event === 'anatomy_waypoint_reached'
+            ? { kind: 'waypoint' as const, id: event.waypointId }
+            : { kind: 'structure' as const, id: event.structureId }
+        const current = caseProgressRef.current.evidence.currentLocation
+        if (current?.kind === currentLocation.kind && current.id === currentLocation.id) return
+        persistProgress({
+          evidence: {
+            ...caseProgressRef.current.evidence,
+            currentLocation,
+          },
+        })
+      }),
+    [caseDoc.id, persistProgress],
+  )
+
+  useEffect(
+    () =>
       useActivitySessionStore.subscribe((state) => {
         const nextSession = state.session
         if (
@@ -518,6 +578,52 @@ export function CasePlayer({
       })
     },
     [caseDoc.id, persistProgress, plan],
+  )
+
+  const updateEvidencePin = useCallback(
+    (item: CaseEvidenceItem, pinned: boolean) => {
+      const inspectedFindingIds = selectInspectedFindingIds(
+        useActivitySessionStore.getState().session,
+      )
+      if (
+        pinned &&
+        !canPinCaseEvidence(item, caseProgressRef.current.reviewedClueIds, inspectedFindingIds)
+      ) {
+        return
+      }
+      const nextPinned = updateCaseEvidencePins(
+        caseProgressRef.current.evidence.pinned,
+        item,
+        pinned,
+      )
+      if (nextPinned === caseProgressRef.current.evidence.pinned) return
+      persistProgress({
+        evidence: { ...caseProgressRef.current.evidence, pinned: [...nextPinned] },
+      })
+      emitEvent({ event: 'case_evidence_pinned', caseId: caseDoc.id, evidence: item, pinned })
+    },
+    [caseDoc.id, persistProgress],
+  )
+
+  const updateHypothesis = useCallback(
+    (hypothesisId: string, confidence: CaseProgress['differential'][string]) => {
+      if (
+        !caseDoc.differential?.some(({ id }) => id === hypothesisId) ||
+        caseProgressRef.current.differential[hypothesisId] === confidence
+      ) {
+        return
+      }
+      persistProgress({
+        differential: { ...caseProgressRef.current.differential, [hypothesisId]: confidence },
+      })
+      emitEvent({
+        event: 'case_hypothesis_updated',
+        caseId: caseDoc.id,
+        hypothesisId,
+        confidence,
+      })
+    },
+    [caseDoc.differential, caseDoc.id, persistProgress],
   )
 
   const handleAttempt = useCallback(
@@ -653,7 +759,7 @@ export function CasePlayer({
             if (to) setPendingStage(to)
           }
         }}
-        renderChrome={({ stepIndex }) => {
+        renderChrome={({ stepIndex, session }) => {
           const stage = stageForStep(plan, stepIndex) ?? plan.stageBoundaries[0]!
           const stageClues = stage.clueIds.flatMap((id) => {
             const clue = plan.clueMap.get(id)
@@ -679,10 +785,25 @@ export function CasePlayer({
             optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
             clueReview: caseLab.clueReview,
             onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
+            onOpenNoteClue: (clueId: string) => presentClue(clueId, 'remediation'),
             onReviewClue: markClueReviewed,
             onPresenterOpenChange: (presenterOpen: boolean) =>
               setCluePresentation((current) => ({ ...current, presenterOpen })),
             onBlockingChange: setCluePresenterBlocking,
+            renderNotes: (openClue: (clueId: string) => void) => (
+              <CaseNotes
+                caseDoc={caseDoc}
+                progress={caseProgress}
+                inspectedFindingIds={selectInspectedFindingIds(session)}
+                currentLocationLabel={resolveCaseLocationLabel(
+                  anatomyMap,
+                  caseProgress.evidence.currentLocation,
+                )}
+                onOpenClue={openClue}
+                onPinChange={updateEvidencePin}
+                onHypothesisChange={updateHypothesis}
+              />
+            ),
           }
           return {
             header: (
@@ -731,6 +852,7 @@ export function CasePlayer({
             ({ stageId }) => stageId === pendingStage.stageId,
           )}
           stageCount={plan.stageBoundaries.length}
+          hasDifferential={Boolean(caseDoc.differential?.length)}
           onContinue={() => {
             const isFirstStage = pendingStage.stageId === plan.stageBoundaries[0]?.stageId
             setPendingStage(null)

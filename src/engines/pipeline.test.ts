@@ -109,8 +109,17 @@ function caseCompletion(attemptId: string, total = 100): LearnerEventDraft {
     durationSeconds: 100,
     openedClueIds: ['clue-context'],
     reviewedClueIds: ['clue-context', 'clue-context'],
-    evidence: { pinned: [] },
-    differential: {},
+    evidence: {
+      pinned: [
+        { kind: 'clue', id: 'clue-context' },
+        { kind: 'finding', id: 'fixture-occlusion' },
+      ],
+      currentLocation: { kind: 'waypoint', id: 'entry-waypoint' },
+    },
+    differential: {
+      'supported-hypothesis': 'likely',
+      'alternative-hypothesis': 'unlikely',
+    },
     timeoutCreditApplied: false,
     stepResults: [
       {
@@ -263,8 +272,17 @@ describe('learner event pipeline', () => {
       actualAwardedXp: 140,
       actualAwardedXpSource: 'gamification_activity_result',
       reviewedClueIds: ['clue-context'],
-      evidence: { pinned: [] },
-      differential: {},
+      evidence: {
+        pinned: [
+          { kind: 'clue', id: 'clue-context' },
+          { kind: 'finding', id: 'fixture-occlusion' },
+        ],
+        currentLocation: { kind: 'waypoint', id: 'entry-waypoint' },
+      },
+      differential: {
+        'supported-hypothesis': 'likely',
+        'alternative-hypothesis': 'unlikely',
+      },
       timeoutCreditApplied: false,
       stepResults: [
         expect.objectContaining({

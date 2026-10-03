@@ -950,6 +950,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const clueCategoryIds = new Set(appConfig.caseLab?.clueCategories.map(({ id }) => id) ?? [])
     const anatomyMap = anatomyMapById.get(caseDocument.anatomyMapId)
     const findingIds = new Set<string>()
+    const hypothesisIds = new Set<string>()
 
     requireRef(anatomyMapIds, caseDocument.anatomyMapId, file, 'anatomyMapId', 'anatomy map')
     caseDocument.conceptIds.forEach((id, conceptIndex) =>
@@ -958,6 +959,17 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     if (caseDocument.patient.imageAssetId) {
       requireAsset(caseDocument.patient.imageAssetId, file, 'patient.imageAssetId', 'image')
     }
+    caseDocument.differential?.forEach((hypothesis, hypothesisIndex) => {
+      if (hypothesisIds.has(hypothesis.id)) {
+        issues.push({
+          file,
+          path: `differential.${hypothesisIndex}.id`,
+          message: `Duplicate case differential id "${hypothesis.id}".`,
+          severity: 'error',
+        })
+      }
+      hypothesisIds.add(hypothesis.id)
+    })
 
     const structureIds = new Set(anatomyMap?.structures.map(({ id }) => id) ?? [])
     const waypointById = new Map(

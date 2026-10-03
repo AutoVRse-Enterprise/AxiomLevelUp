@@ -1507,3 +1507,33 @@ and the runtime remains configuration-driven and organ-agnostic. Validation catc
 parents, out-of-envelope volumes and excessive same-level overlap, but model-bound checks are an
 authoring safeguard rather than anatomical segmentation proof. The added regions and airway paths
 remain illustrative and require anatomy/clinical review before external claims.
+
+## ADR-088: Case notes are local reflective evidence
+
+**Status:** Accepted
+
+**Context:** Case Lab needs a compact way to retain reviewed evidence, preserve spatial context and
+revise a small authored differential without turning the learning runtime into clinical
+decision-support or adding a synchronized notes backend. Session v5 and result v7 already reserve
+evidence, current-location and differential fields, but no authored hypothesis contract or
+learner-facing workspace populates them.
+
+**Decision:** Allow an optional top-level case `differential` with at least two uniquely identified
+learner-facing hypotheses; three to four are the authoring recommendation. Present clues and notes
+as tabs in the desktop right rail and as separate Clues and Notes actions in the mobile bottom bar.
+Only reviewed clues and inspected configured findings may be pinned. Reopening a pinned clue uses
+the existing remediation context, so the action cannot add a clue penalty.
+
+Derive current location while a case is active from typed anatomy waypoint and structure events,
+persist the stable reference in session v5 and resolve only configured structure or waypoint labels
+for display. Unknown references use neutral fallback copy rather than exposing raw IDs. Infer
+finding inspection from persisted primitive interaction keys. Differential confidence is one of
+`unlikely`, `possible` or `likely`; updates and pin transitions emit typed
+`case_hypothesis_updated` and `case_evidence_pinned` events. Mobile notes are blocking UI and pause
+case and step clocks; the desktop rail remains non-blocking. Stage transitions prompt review when
+a differential exists but never require it.
+
+**Consequences:** Evidence synthesis remains local, authored, reflective and unscored. Session
+resume and result-v7 completion preserve exactly what the learner recorded, while older migrated
+sessions retain the empty placeholders established by ADR-085. The runtime stores stable IDs for
+referential integrity but never renders unresolved identifiers to learners.

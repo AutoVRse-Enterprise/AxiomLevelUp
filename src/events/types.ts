@@ -50,6 +50,16 @@ export interface EventPayloads {
     stageId: string
     method: CaseClueReviewMethod
   }
+  case_evidence_pinned: {
+    caseId: string
+    evidence: { kind: 'clue' | 'finding'; id: string }
+    pinned: boolean
+  }
+  case_hypothesis_updated: {
+    caseId: string
+    hypothesisId: string
+    confidence: 'unlikely' | 'possible' | 'likely'
+  }
   case_stage_completed: { caseId: string; stageId: string; stageIndex: number }
   case_completed: {
     caseId: string

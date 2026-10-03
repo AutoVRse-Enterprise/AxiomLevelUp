@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T03 is complete; P12-T04 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T04 is complete; P12-T05 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -86,18 +86,26 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   outside the anatomy adapter.
 - Moved the foundation apical segment level onto the real 3D volume path and added a projected-point
   real-WebGL test across both browser projects. Exported schemas and recorded ADR-087.
+- Added optional authored case differentials with a two-item minimum and semantic ID uniqueness;
+  authored four hypotheses for the featured golden case.
+- Added the local Case notes workspace with reviewed-clue and inspected-finding pins, mapped
+  learner-facing location, reflective confidence controls and stage-transition prompts.
+- Integrated Clues/Notes tabs in the non-blocking desktop rail and compact separate actions in the
+  blocking mobile sheet; mobile Clues and Notes both pause case and step clocks.
+- Persisted session-v5 evidence and differential updates through result v7, emitted typed pin and
+  hypothesis events, exported the case schema and recorded ADR-088.
 
 ## In progress
 
-- P12-T04 is ready to add local evidence notes, location and differential confidence.
+- P12-T05 is ready to make key-evidence debrief and expert teaching actionable.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Implement P12-T04 local evidence notes, location and differential confidence.
-2. Implement P12-T05 actionable key-evidence debrief and expert teaching.
-3. Preserve the Phase 11 golden-path gate after every task.
+1. Implement P12-T05 actionable key-evidence debrief and expert teaching.
+2. Re-author catalogue breadth in P12-T06 using the new evidence contracts.
+3. Preserve the 18-test real-WebGL gate after every task.
 
 ## Blockers/questions for the user
 
@@ -154,6 +162,16 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   - the complete browser suite passes all 18 tests across both projects with `--workers=1`; an
     initial two-worker run had one transient timeout in the pre-existing desktop finding stability
     poll while its touch and full-path equivalents passed.
+- P12-T04 verification:
+  - focused tests pass 4 files / 68 tests;
+  - schema export, typecheck, lint and content validation pass with 5 courses, 13 lessons, 4 cases,
+    1 anatomy map and zero warnings;
+  - full `npm run check` passes 62 files / 421 tests, production build and all bundle budgets;
+  - the final complete browser suite passes 18/18 serially across desktop and 375 px touch
+    emulation;
+  - the first browser run exposed the two-action mobile bar wrapping over a projected canvas
+    target; compact visible labels with complete accessible names restored the touch pick, and its
+    focused check plus the complete rerun passed.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.

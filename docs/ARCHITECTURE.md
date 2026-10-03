@@ -198,6 +198,20 @@ camera cuts. Viewer interactions are emitted as typed learner events; primitives
 or reward state. The endoscopic lumen and findings are illustrative authored geometry, not
 patient-derived or anatomically validated reconstruction.
 
+## Case evidence workspace
+
+Case notes consume typed clue-review and anatomy interactions above primitives rather than mutating
+the 3D viewer or scoring engine. The active session owns reviewed-clue eligibility, pinned clue and
+finding references, the latest anatomy waypoint or structure and authored differential confidence.
+Finding inspection is derived from persisted primitive interaction keys; location display resolves
+the active case's anatomy-map labels and never falls back to raw IDs.
+
+The existing Case Lab right rail hosts Clues and Notes tabs on desktop without pausing either clock.
+At mobile widths the bottom bar exposes separate Clues and Notes actions into the same
+safe-area-aware sheet, and either sheet pauses case and step timing. Pin and hypothesis transitions
+emit typed learner events but remain reflective and unscored. Completion copies the session-v5
+workspace into result-v7 without reconstructing unavailable legacy evidence.
+
 ## Offline runtime
 
 Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. GLB model

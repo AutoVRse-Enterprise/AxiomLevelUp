@@ -4,12 +4,14 @@ import { createMemoryRouter, RouterProvider } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import fixtureCaseJson from '../../../public/content/fixtures/case.json'
+import anatomyMapFixture from '../../../public/content/fixtures/anatomy-map.json'
 
 import type { AnatomyViewerProps } from '@/anatomy3d/viewer/AnatomyViewer'
 import { ContentContext } from '@/app/contentContext'
 import { validateContentBundle } from '@/content/loader'
 import {
   appConfigSchema,
+  anatomyMapSchema,
   caseDocumentSchema,
   type AppConfig,
   type CaseDocument,
@@ -17,7 +19,7 @@ import {
 import { buildCasePlan } from '@/engines/cases/plan'
 import { createActivitySession, sessionReducer } from '@/engines/learning/session'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
-import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
+import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
 import type { LearnerEvent } from '@/events/types'
 import { CasePlayer, type CasePlayerProps } from '@/player/case/CasePlayer'
 import { makeValidContentBundle } from '@/test/contentFixtures'
@@ -97,6 +99,7 @@ function renderCase(
           <CasePlayer
             caseDoc={caseDoc}
             config={config}
+            anatomyMap={anatomyMapSchema.parse(anatomyMapFixture)}
             previousAttempts={0}
             previousBestScore={null}
             continuePath="/done"
@@ -392,6 +395,18 @@ describe('case player integration', () => {
     expect(screen.getByLabelText('Case time remaining: 4:59')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await act(() => vi.advanceTimersByTimeAsync(1_000))
+    expect(screen.getByRole('timer', { name: 'Time remaining: 0:01' })).toBeVisible()
+    expect(screen.getByLabelText('Case time remaining: 4:58')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Notes' }))
+    await act(async () => Promise.resolve())
+    expect(screen.getByRole('dialog', { name: 'Case notes' })).toBeVisible()
+    await act(() => vi.advanceTimersByTimeAsync(5_000))
+    expect(screen.getByRole('timer', { name: 'Time remaining: 0:01' })).toBeVisible()
+    expect(screen.getByLabelText('Case time remaining: 4:58')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     await act(() => vi.advanceTimersByTimeAsync(2_000))
     expect(useActivitySessionStore.getState().session?.progress['identify-location']).toMatchObject(
       {
@@ -424,6 +439,10 @@ describe('case player integration', () => {
     const user = userEvent.setup()
     const caseDoc = caseDocumentSchema.parse({
       ...structuredClone(fixtureCaseJson),
+      differential: [
+        { id: 'supported-hypothesis', label: 'Supported hypothesis' },
+        { id: 'alternative-hypothesis', label: 'Alternative hypothesis' },
+      ],
       stages: fixtureCaseJson.stages.map((stage) =>
         stage.id === 'stage-diagnose' ? { ...stage, clueIds: ['clue-context'] } : stage,
       ),
@@ -451,8 +470,11 @@ describe('case player integration', () => {
         stepElapsedMs: { 'identify-location': 2_500 },
         caseElapsedMs: 4_200,
         caseClockExpired: false,
-        evidence: { pinned: [] },
-        differential: {},
+        evidence: {
+          pinned: [{ kind: 'clue', id: 'clue-context' }],
+          currentLocation: { kind: 'structure', id: 'target-structure' },
+        },
+        differential: { 'supported-hypothesis': 'likely' },
       },
     })
 
@@ -471,7 +493,21 @@ describe('case player integration', () => {
       openedClueIds: ['clue-context'],
       reviewedClueIds: ['clue-context'],
       caseElapsedMs: expect.any(Number),
+      evidence: {
+        pinned: [{ kind: 'clue', id: 'clue-context' }],
+        currentLocation: { kind: 'structure', id: 'target-structure' },
+      },
+      differential: { 'supported-hypothesis': 'likely' },
     })
+    await user.click(screen.getByRole('button', { name: /Open clue board/ }))
+    await user.click(screen.getByRole('tab', { name: /notes/i }))
+    expect(screen.getByText('Target structure')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Unpin clue' })).toBeVisible()
+    expect(
+      within(screen.getByText('Supported hypothesis').closest('fieldset')!).getByRole('button', {
+        name: 'Likely',
+      }),
+    ).toHaveAttribute('aria-pressed', 'true')
     expect(events).toContainEqual(
       expect.objectContaining({
         event: 'case_started',
@@ -480,6 +516,83 @@ describe('case player integration', () => {
         tier: 'foundation',
       }),
     )
+  })
+
+  it('persists pins, mapped location and reflective differential updates', async () => {
+    const user = userEvent.setup()
+    const caseDoc = caseDocumentSchema.parse({
+      ...structuredClone(fixtureCaseJson),
+      differential: [
+        {
+          id: 'supported-hypothesis',
+          label: 'Supported hypothesis',
+          description: 'Fits the configured evidence.',
+        },
+        { id: 'alternative-hypothesis', label: 'Alternative hypothesis' },
+      ],
+    })
+    const config = caseConfig('none')
+    config.caseLab!.clueReview.minVisibleMs = 1
+    const events: LearnerEvent[] = []
+    subscribeToEvents((event) => events.push(event))
+    renderCase(caseDoc, config)
+
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(screen.getByRole('dialog', { name: 'Orient' })).toHaveTextContent(
+      'Review or update Case notes',
+    )
+    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
+
+    emitEvent({
+      event: 'anatomy_waypoint_reached',
+      activityKind: 'case',
+      activityId: caseDoc.id,
+      primitiveId: 'identify-location',
+      primitiveType: 'anatomy_explore',
+      waypointId: 'entry-waypoint',
+    })
+    await user.click(screen.getByRole('button', { name: /Open clue board/ }))
+    await user.click(screen.getByRole('button', { name: /Context.*Unopened/ }))
+    await waitFor(() =>
+      expect(useActivitySessionStore.getState().session?.caseProgress?.reviewedClueIds).toEqual([
+        'clue-context',
+      ]),
+    )
+
+    await user.click(screen.getByRole('tab', { name: /notes/i }))
+    expect(screen.getByText('Entry waypoint')).toBeVisible()
+    expect(screen.queryByText('entry-waypoint')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Pin clue' })).toBeEnabled()
+    expect(screen.getAllByRole('button', { name: 'Pin finding' })[0]).toBeDisabled()
+
+    await user.click(screen.getByRole('button', { name: 'Pin clue' }))
+    const supportedHypothesis = screen.getByText('Supported hypothesis').closest('fieldset')!
+    await user.click(within(supportedHypothesis).getByRole('button', { name: 'Possible' }))
+    await user.click(within(supportedHypothesis).getByRole('button', { name: 'Possible' }))
+
+    expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
+      evidence: {
+        pinned: [{ kind: 'clue', id: 'clue-context' }],
+        currentLocation: { kind: 'waypoint', id: 'entry-waypoint' },
+      },
+      differential: { 'supported-hypothesis': 'possible' },
+    })
+    expect(events.filter(({ event }) => event === 'case_evidence_pinned')).toEqual([
+      expect.objectContaining({
+        evidence: { kind: 'clue', id: 'clue-context' },
+        pinned: true,
+      }),
+    ])
+    expect(events.filter(({ event }) => event === 'case_hypothesis_updated')).toEqual([
+      expect.objectContaining({
+        hypothesisId: 'supported-hypothesis',
+        confidence: 'possible',
+      }),
+    ])
+
+    await user.click(screen.getByRole('button', { name: 'Context' }))
+    expect(screen.getByRole('tab', { name: /clues/i })).toHaveAttribute('aria-selected', 'true')
+    expect(events.filter(({ event }) => event === 'case_clue_opened')).toHaveLength(1)
   })
 
   it('reviews a static clue only after its configured visible dwell and emits once', async () => {

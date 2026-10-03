@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T03 complete
+**Status:** Active — P12-T04 complete
 
 ## Goal
 
@@ -97,7 +97,7 @@ physical-device approval.
 - [x] P12-T02 — Separate clue review from opening and show stable case/stage totals (F12, F26).
 - [x] P12-T03 — Add configured procedural segment volumes and segmental waypoints without
       replacing the licensed lung GLB (F10).
-- [ ] P12-T04 — Add local case notes with pinned evidence, current location and an authored
+- [x] P12-T04 — Add local case notes with pinned evidence, current location and an authored
       evolving differential (F31).
 - [ ] P12-T05 — Add actionable key-evidence debrief and expert path/evidence/diagnosis teaching
       (F32, F33).

@@ -1,5 +1,5 @@
-import { Lightbulb, X } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Lightbulb, NotebookTabs, X } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { Button, Chip, Sheet } from '@/components/ui'
 import type { CaseClue, CaseLabConfig } from '@/content/schema'
@@ -21,9 +21,11 @@ interface ClueBoardProps {
   clueReview: CaseLabConfig['clueReview']
   variant: 'mobile' | 'desktop'
   onPresentClue: (clueId: string) => void
+  onOpenNoteClue?: (clueId: string) => void
   onReviewClue: (clueId: string, method: CaseClueReviewMethod) => void
   onPresenterOpenChange: (open: boolean) => void
   onBlockingChange?: (blocking: boolean) => void
+  renderNotes?: (openClue: (clueId: string) => void) => ReactNode
 }
 
 function ClueContent({
@@ -214,6 +216,41 @@ export function ClueBoard(props: ClueBoardProps) {
   const mobileOpen = variant === 'mobile' && mobileViewport && props.presenterOpen
   const reviewedCount = props.reviewedClueIds.length
   const status = `Case: ${reviewedCount}/${props.caseClueCount} reviewed`
+  const [activeTab, setActiveTab] = useState<'clues' | 'notes'>('clues')
+
+  const openClues = useCallback(
+    (clueId: string) => {
+      setActiveTab('clues')
+      const openNoteClue = props.onOpenNoteClue ?? props.onPresentClue
+      openNoteClue(clueId)
+    },
+    [props],
+  )
+
+  const tabs = props.renderNotes ? (
+    <div
+      className="mb-4 grid grid-cols-2 rounded-lg bg-neutral-100 p-1"
+      role="tablist"
+      aria-label="Case workspace"
+    >
+      {(['clues', 'notes'] as const).map((tab) => (
+        <button
+          key={tab}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === tab}
+          className={`min-h-10 rounded-md px-3 py-2 text-small font-semibold capitalize focus-visible:outline-2 ${
+            activeTab === tab ? 'bg-white text-brand-800 shadow-sm' : 'text-neutral-700'
+          }`}
+          onClick={() => setActiveTab(tab)}
+        >
+          {tab}
+        </button>
+      ))}
+    </div>
+  ) : null
+  const workspace =
+    activeTab === 'notes' && props.renderNotes ? props.renderNotes(openClues) : <Board {...props} />
 
   useEffect(() => {
     if (variant !== 'mobile') return
@@ -254,7 +291,8 @@ export function ClueBoard(props: ClueBoardProps) {
                 Close clues
               </Button>
             </div>
-            <Board {...props} />
+            {tabs}
+            {workspace}
           </div>
         )}
       </>
@@ -267,27 +305,49 @@ export function ClueBoard(props: ClueBoardProps) {
       className="fixed inset-x-0 bottom-0 z-nav border-t border-neutral-200 bg-white/95 px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-overlay backdrop-blur-lg md:hidden"
       data-case-clue-actions=""
     >
-      <Button
-        className="w-full"
-        disabled={props.clues.length === 0}
-        leadingIcon={<Lightbulb aria-hidden="true" size={18} />}
-        variant="secondary"
-        onClick={() => props.onPresenterOpenChange(true)}
-      >
-        Clues · {status} · Available this stage: {props.availableClueCount}
-      </Button>
+      <div className={`grid gap-2 ${props.renderNotes ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <Button
+          className="w-full"
+          disabled={props.clues.length === 0}
+          leadingIcon={<Lightbulb aria-hidden="true" size={18} />}
+          variant="secondary"
+          aria-label={`Clues. ${status}. Available this stage: ${props.availableClueCount}`}
+          onClick={() => {
+            setActiveTab('clues')
+            props.onPresenterOpenChange(true)
+          }}
+        >
+          Clues · {reviewedCount}/{props.caseClueCount}
+        </Button>
+        {props.renderNotes ? (
+          <Button
+            className="w-full"
+            leadingIcon={<NotebookTabs aria-hidden="true" size={18} />}
+            variant="secondary"
+            onClick={() => {
+              setActiveTab('notes')
+              props.onPresenterOpenChange(true)
+            }}
+          >
+            Notes
+          </Button>
+        ) : null}
+      </div>
       <Sheet
         open={mobileOpen}
-        title={selected?.title ?? 'Clue board'}
+        title={activeTab === 'notes' ? 'Case notes' : (selected?.title ?? 'Clue board')}
         description={
-          selected
-            ? (props.categoryLabels.get(selected.category) ?? selected.category)
-            : 'Review the available evidence.'
+          activeTab === 'notes'
+            ? 'Review pinned evidence, location and your differential.'
+            : selected
+              ? (props.categoryLabels.get(selected.category) ?? selected.category)
+              : 'Review the available evidence.'
         }
         className="pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
         onOpenChange={props.onPresenterOpenChange}
       >
-        <Board {...props} />
+        {tabs}
+        {workspace}
       </Sheet>
     </div>
   )

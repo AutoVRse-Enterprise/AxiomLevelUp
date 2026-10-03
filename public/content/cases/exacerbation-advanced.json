@@ -54,6 +54,28 @@
       "clueIds": ["exac-airway-reference", "exac-pathology-reference"]
     }
   ],
+  "differential": [
+    {
+      "id": "severe-asthma-exacerbation",
+      "label": "Severe asthma exacerbation",
+      "description": "Variable airway symptoms with acute physiological deterioration."
+    },
+    {
+      "id": "copd-exacerbation",
+      "label": "COPD exacerbation",
+      "description": "Acute airflow limitation in the context of chronic obstructive disease."
+    },
+    {
+      "id": "lobar-pneumonia",
+      "label": "Lobar pneumonia",
+      "description": "Focal pulmonary infection as the primary explanation."
+    },
+    {
+      "id": "pulmonary-embolism",
+      "label": "Pulmonary embolism",
+      "description": "Acute vascular obstruction as the primary explanation."
+    }
+  ],
   "clues": [
     {
       "id": "exac-history",

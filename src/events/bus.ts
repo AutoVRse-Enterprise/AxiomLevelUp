@@ -23,7 +23,9 @@ export function emitEvent(draft: LearnerEventDraft): LearnerEvent {
 
 export function subscribeToEvents(subscriber: EventSubscriber) {
   subscribers.add(subscriber)
-  return () => subscribers.delete(subscriber)
+  return () => {
+    subscribers.delete(subscriber)
+  }
 }
 
 export function clearEventSubscribersForTests() {
