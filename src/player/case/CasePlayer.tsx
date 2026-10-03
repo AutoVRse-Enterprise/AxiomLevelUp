@@ -15,7 +15,13 @@ import {
   type CaseClockMode,
   type CaseClockState,
 } from '@/engines/cases/clock'
-import { openClue, type CaseClueOpenContext, type CaseClueOpenRecord } from '@/engines/cases/clues'
+import {
+  openClue,
+  reviewClue,
+  type CaseClueOpenContext,
+  type CaseClueOpenRecord,
+  type CaseClueReviewMethod,
+} from '@/engines/cases/clues'
 import {
   buildCasePlan,
   stageForStep,
@@ -59,8 +65,8 @@ function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
   return {
     ...EMPTY_CASE_PROGRESS,
     ...progress,
-    openedClueIds: [...(progress?.openedClueIds ?? [])],
-    reviewedClueIds: [...(progress?.reviewedClueIds ?? [])],
+    openedClueIds: [...new Set(progress?.openedClueIds ?? [])],
+    reviewedClueIds: [...new Set(progress?.reviewedClueIds ?? [])],
     clueOpenContexts: { ...(progress?.clueOpenContexts ?? {}) },
     stepElapsedMs: { ...(progress?.stepElapsedMs ?? {}) },
     evidence: {
@@ -490,6 +496,30 @@ export function CasePlayer({
     presentClue(entry.clueId, 'entry')
   }, [caseDoc.entry, presentClue])
 
+  const markClueReviewed = useCallback(
+    (clueId: string, method: CaseClueReviewMethod) => {
+      const clue = plan.clueMap.get(clueId)
+      if (!clue || !caseProgressRef.current.openedClueIds.includes(clueId)) return
+      const result = reviewClue(caseProgressRef.current.reviewedClueIds, clueId)
+      if (!result.newlyReviewed) return
+      const currentSession = useActivitySessionStore.getState().session
+      const currentStepIndex = currentSession?.stepIndex ?? 0
+      const stageId =
+        stageForStep(plan, currentStepIndex)?.stageId ?? plan.stageBoundaries[0]?.stageId ?? ''
+      persistProgress({ reviewedClueIds: [...result.reviewedClueIds] })
+      emitEvent({
+        event: 'case_clue_reviewed',
+        caseId: caseDoc.id,
+        clueId,
+        primitiveId: clue.primitive.id,
+        primitiveType: clue.primitive.type,
+        stageId,
+        method,
+      })
+    },
+    [caseDoc.id, persistProgress, plan],
+  )
+
   const handleAttempt = useCallback(
     (attempt: ActivityPlayerTimedAttempt) => {
       const step = plan.steps[attempt.stepIndex]
@@ -638,13 +668,18 @@ export function CasePlayer({
               : stageClues
           const commonClueProps = {
             clues: visibleClues,
+            caseClueCount: caseDoc.clues.length,
+            availableClueCount: stageClues.length,
             categoryLabels,
             openedClueIds: caseProgress.openedClueIds,
+            reviewedClueIds: caseProgress.reviewedClueIds.filter((id) => plan.clueMap.has(id)),
             selectedClueId: cluePresentation.selectedClueId,
             presenterOpen: cluePresentation.presenterOpen,
             labelEssentialClues: plan.tierPreset.labelEssentialClues,
             optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
+            clueReview: caseLab.clueReview,
             onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
+            onReviewClue: markClueReviewed,
             onPresenterOpenChange: (presenterOpen: boolean) =>
               setCluePresentation((current) => ({ ...current, presenterOpen })),
             onBlockingChange: setCluePresenterBlocking,

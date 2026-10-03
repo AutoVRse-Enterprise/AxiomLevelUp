@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T01 complete
+**Status:** Active — P12-T02 complete
 
 ## Goal
 
@@ -94,7 +94,7 @@ physical-device approval.
       audit findings and whole-app demo gaps, rescope this phase and record ADR-083.
 - [x] P12-T01 — Define time-only speed eligibility, committed-progress timeout credit and the
       session-v5/learner-state-v7/result-v7 migration (F47 and general timeout credit).
-- [ ] P12-T02 — Separate clue review from opening and show stable case/stage totals (F12, F26).
+- [x] P12-T02 — Separate clue review from opening and show stable case/stage totals (F12, F26).
 - [ ] P12-T03 — Add configured procedural segment volumes and segmental waypoints without
       replacing the licensed lung GLB (F10).
 - [ ] P12-T04 — Add local case notes with pinned evidence, current location and an authored

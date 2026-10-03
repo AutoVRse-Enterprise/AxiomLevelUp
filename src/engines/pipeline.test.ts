@@ -27,6 +27,7 @@ function registryWithCase(historyLimit = 2, badges: AppConfig['badges'] = []) {
       caseIds: [caseDocument.id],
       dailyQuickCaseId: caseDocument.id,
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
+      clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
       tiers: {
         foundation: {
           label: 'Basic',
@@ -107,7 +108,7 @@ function caseCompletion(attemptId: string, total = 100): LearnerEventDraft {
     breakdown: { ...perfectBreakdown, total },
     durationSeconds: 100,
     openedClueIds: ['clue-context'],
-    reviewedClueIds: [],
+    reviewedClueIds: ['clue-context', 'clue-context'],
     evidence: { pinned: [] },
     differential: {},
     timeoutCreditApplied: false,
@@ -261,7 +262,7 @@ describe('learner event pipeline', () => {
       weights: { anatomy: 0.5, diagnosis: 0.5, speed: 0 },
       actualAwardedXp: 140,
       actualAwardedXpSource: 'gamification_activity_result',
-      reviewedClueIds: [],
+      reviewedClueIds: ['clue-context'],
       evidence: { pinned: [] },
       differential: {},
       timeoutCreditApplied: false,

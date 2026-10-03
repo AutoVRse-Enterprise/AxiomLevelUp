@@ -170,6 +170,10 @@ export const caseLabConfigSchema = z
         }),
       )
       .min(1),
+    clueReview: z.strictObject({
+      minVisibleMs: z.number().int().positive(),
+      mediaProgressThreshold: z.number().positive().max(1),
+    }),
     tiers: z.strictObject({
       foundation: caseTierPresetSchema,
       intermediate: caseTierPresetSchema,

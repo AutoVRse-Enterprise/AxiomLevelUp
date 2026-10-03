@@ -10,7 +10,13 @@ import {
   scenarioPrimitiveSchema,
   trueFalsePrimitiveSchema,
 } from '@/content/schema/primitives'
-import { openClue, resolveMissedClueIds, resolveMissedClues } from '@/engines/cases/clues'
+import {
+  isClueReviewSignal,
+  openClue,
+  resolveMissedClueIds,
+  resolveMissedClues,
+  reviewClue,
+} from '@/engines/cases/clues'
 
 const base = {
   conceptIds: [],
@@ -293,6 +299,28 @@ describe('case clue resolution', () => {
     expect(openClue(opened, 'clue-b')).toEqual({
       openedClueIds: ['clue-a', 'clue-b'],
       newlyOpened: true,
+    })
+  })
+
+  it('separates review signals for static, media and interactive clues', () => {
+    expect(isClueReviewSignal('rich_text', { method: 'completion' }, 0.8)).toBe(false)
+    expect(isClueReviewSignal('rich_text', { method: 'dwell' }, 0.8)).toBe(true)
+    expect(isClueReviewSignal('audio', { method: 'media_progress', progress: 0.75 }, 0.8)).toBe(
+      false,
+    )
+    expect(isClueReviewSignal('audio', { method: 'media_progress', progress: 0.8 }, 0.8)).toBe(true)
+    expect(isClueReviewSignal('video', { method: 'completion' }, 0.8)).toBe(true)
+    expect(isClueReviewSignal('image_compare', { method: 'interaction' }, 0.8)).toBe(true)
+  })
+
+  it('reviews each clue idempotently', () => {
+    const reviewed = ['clue-a']
+    const repeated = reviewClue(reviewed, 'clue-a')
+    expect(repeated).toEqual({ reviewedClueIds: reviewed, newlyReviewed: false })
+    expect(repeated.reviewedClueIds).toBe(reviewed)
+    expect(reviewClue(reviewed, 'clue-b')).toEqual({
+      reviewedClueIds: ['clue-a', 'clue-b'],
+      newlyReviewed: true,
     })
   })
 })

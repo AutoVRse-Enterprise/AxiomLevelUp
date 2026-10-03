@@ -29,12 +29,31 @@ export interface OpenClueResult {
   newlyOpened: boolean
 }
 
+export interface ReviewClueResult {
+  reviewedClueIds: readonly string[]
+  newlyReviewed: boolean
+}
+
 export type CaseClueOpenContext = 'entry' | 'browse' | 'remediation'
 
 export interface CaseClueOpenRecord {
   context: CaseClueOpenContext
   beforeResponse: boolean
 }
+
+export type CaseClueReviewMethod = 'dwell' | 'completion' | 'interaction' | 'media_progress'
+
+export type CaseClueReviewSignal =
+  | { method: 'dwell' | 'completion' | 'interaction' }
+  | { method: 'media_progress'; progress: number }
+
+const mediaClueTypes = new Set(['audio', 'video'])
+const interactiveClueTypes = new Set([
+  'carousel',
+  'image_compare',
+  'image_hotspot',
+  'zoomable_image',
+])
 
 function unique(ids: readonly string[]): string[] {
   return [...new Set(ids)]
@@ -199,4 +218,28 @@ export function openClue(openedClueIds: readonly string[], clueId: string): Open
     return { openedClueIds, newlyOpened: false }
   }
   return { openedClueIds: [...openedClueIds, clueId], newlyOpened: true }
+}
+
+export function reviewClue(reviewedClueIds: readonly string[], clueId: string): ReviewClueResult {
+  if (reviewedClueIds.includes(clueId)) {
+    return { reviewedClueIds, newlyReviewed: false }
+  }
+  return { reviewedClueIds: [...reviewedClueIds, clueId], newlyReviewed: true }
+}
+
+export function isClueReviewSignal(
+  primitiveType: string,
+  signal: CaseClueReviewSignal,
+  mediaProgressThreshold: number,
+): boolean {
+  if (mediaClueTypes.has(primitiveType)) {
+    return (
+      signal.method === 'completion' ||
+      (signal.method === 'media_progress' && signal.progress >= mediaProgressThreshold)
+    )
+  }
+  if (interactiveClueTypes.has(primitiveType)) {
+    return signal.method === 'completion' || signal.method === 'interaction'
+  }
+  return signal.method === 'dwell'
 }

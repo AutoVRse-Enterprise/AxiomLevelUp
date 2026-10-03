@@ -43,8 +43,9 @@ export function CaseResults({
     breakdown.weights !== undefined &&
     breakdown.clueCostPoints !== undefined &&
     breakdown.speedScored !== undefined
+  const reviewedClueIds = result.reviewedClueIds ?? []
   const missedDebriefClues = caseDoc.debrief.keyClueIds
-    .filter((id) => !breakdown.openedClueIds.includes(id))
+    .filter((id) => !reviewedClueIds.includes(id))
     .flatMap((id) => {
       const clue = clues.find((candidate) => candidate.id === id)
       return clue ? [clue] : []
@@ -163,7 +164,7 @@ export function CaseResults({
         <p className="mt-3 text-neutral-700">{caseDoc.debrief.summary}</p>
         {missedDebriefClues.length ? (
           <div className="mt-4">
-            <h3 className="font-semibold text-neutral-900">Key evidence not opened</h3>
+            <h3 className="font-semibold text-neutral-900">Key evidence not reviewed</h3>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-small text-neutral-700">
               {missedDebriefClues.map((clue) => (
                 <li key={clue.id}>{clue.title}</li>

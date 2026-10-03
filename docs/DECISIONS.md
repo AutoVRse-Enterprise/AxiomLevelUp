@@ -1450,3 +1450,31 @@ result-v5 or result-v6 attempts.
 engine. Localisation can preserve demonstrated progress while maintaining an explicit timeout and
 zero step speed. Future primitives must opt in deliberately; existing primitive behavior is
 unchanged by default.
+
+## ADR-086: Clue review is distinct from clue opening
+
+**Status:** Accepted
+
+**Context:** Opening a clue currently records its scoring context and optional-clue penalty, but it
+does not prove that the learner consumed the evidence. Treating the two actions as equivalent also
+makes result debriefs overstate reviewed evidence, while stage-scoped clue counts change as the
+learner progresses and obscure the stable size of the case catalogue.
+
+**Decision:** Keep ADR-079 opening and penalty semantics unchanged, and add a separate idempotent
+review transition. Configure the review thresholds at `caseLab.clueReview`: static clues require an
+uninterrupted visible dwell, media clues require primitive completion or configured playback
+progress, and interactive visual clues require a primitive interaction or completion signal.
+`CasePlayer` persists reviewed clue IDs in the existing session-v5/result-v7 fields and emits one
+typed `case_clue_reviewed` event per clue per case session. Sessions migrated from versions before
+v5 start with no reviewed clues.
+
+Display a stable `Case: reviewed/total` count from the complete case clue catalogue and a separate
+stage-availability count. Cards expose unopened, opened and reviewed states. Tiers with
+`labelEssentialClues: false` expose neither essential/recommended nor optional labels. Results
+derive missed key evidence from reviewed clues rather than opened clues.
+
+**Consequences:** Opening remains the auditable hint-cost action while review becomes the durable
+evidence-consumption fact. Resume preserves reviews without emitting duplicate events, and
+remediation can open a clue without claiming it was reviewed. Existing result-v5/v6 records remain
+readable but cannot prove review, so their missed-evidence display conservatively treats key clues
+as unreviewed.

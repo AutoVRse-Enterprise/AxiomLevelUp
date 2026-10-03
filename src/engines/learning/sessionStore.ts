@@ -60,7 +60,8 @@ export function migrateActivitySessionState(
       ...session,
       caseProgress: {
         ...session.caseProgress,
-        reviewedClueIds: session.caseProgress.reviewedClueIds ?? [],
+        reviewedClueIds:
+          version < ACTIVITY_SESSION_VERSION ? [] : (session.caseProgress.reviewedClueIds ?? []),
         evidence: session.caseProgress.evidence ?? { pinned: [] },
         differential: session.caseProgress.differential ?? {},
       },

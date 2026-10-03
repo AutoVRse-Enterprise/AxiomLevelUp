@@ -384,6 +384,7 @@ describe('activity planning and sessions', () => {
       ...createActivitySession(plan),
       caseProgress: {
         openedClueIds: ['legacy-clue'],
+        reviewedClueIds: ['untrusted-legacy-review'],
         stepElapsedMs: {},
         caseElapsedMs: 1_000,
         caseClockExpired: false,

@@ -2527,3 +2527,29 @@ registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl
   the user's untracked `docs/reference docs/` was not touched.
 - **Follow-ups:** Start P12-T02 clue review and stable totals. Clinical/client sign-off and Phase 9
   physical-device gates remain external blockers.
+
+### [2026-10-03 21:18] P12-T02 - Separate clue review from opening
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added configured clue-review dwell and media thresholds; separated idempotent review
+  from ADR-079 clue opening and its unchanged penalty semantics. Wired clue primitive completion,
+  interaction and media-progress signals; persisted reviewed clues in session v5/result v7 and
+  emitted one typed review event per clue per session. Replaced stage-relative opened totals with
+  stable case reviewed totals plus stage availability, added accessible clue states, suppressed
+  importance labels for advanced tiers and based missed key evidence on reviews. Recorded ADR-086
+  and closed P12-T02. Refreshed the Phase 11 evidence captures through the required real-WebGL
+  demo run.
+- **Files changed:** Case Lab config and generated app-config schema; clue engine/event/session,
+  player, board and results; focused unit/integration tests; ADR-086; Phase 12 checklist; handoff
+  and activity log; `docs/qa/evidence/phase-11/*.png`.
+- **Commands run:** Targeted Prettier; focused Vitest (9 files / 99 tests); `npm run typecheck`;
+  `npm run lint`; `npm run validate:content`; `npm run schema:export`; two `npm run check:demo`
+  runs with the installed Playwright browser path; IDE diagnostics; `git diff --check`.
+- **Result/verification:** Focused tests pass 99/99. TypeScript, lint and content validation pass
+  with 5 courses, 13 lessons, 4 cases, 1 anatomy map and zero warnings. Schema export passes. The
+  first demo run found a clue-trigger accessible-name compatibility regression; after restoring
+  the established `Clues` prefix, the full Phase 11 gate passed all 16 desktop/touch-phone real-
+  WebGL checks in 213.947 seconds. No commit was created, and the user's untracked
+  `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T03 configured procedural segment volumes and segmental waypoints.
+  Clinical/client sign-off and Phase 9 physical-device gates remain external blockers.

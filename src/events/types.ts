@@ -1,7 +1,7 @@
 import type { PrimitiveInteraction } from '@/primitives/types'
 import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
 import type { CaseDocument } from '@/content/schema'
-import type { CaseClueOpenContext } from '@/engines/cases/clues'
+import type { CaseClueOpenContext, CaseClueReviewMethod } from '@/engines/cases/clues'
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
 import type { CaseProgress } from '@/engines/learning/session'
 
@@ -41,6 +41,14 @@ export interface EventPayloads {
     stageId: string
     context: CaseClueOpenContext
     beforeResponse: boolean
+  }
+  case_clue_reviewed: {
+    caseId: string
+    clueId: string
+    primitiveId: string
+    primitiveType: string
+    stageId: string
+    method: CaseClueReviewMethod
   }
   case_stage_completed: { caseId: string; stageId: string; stageIndex: number }
   case_completed: {

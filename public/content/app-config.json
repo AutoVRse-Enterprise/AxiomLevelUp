@@ -176,6 +176,10 @@
       { "id": "physiology", "label": "Physiology" },
       { "id": "biomarker", "label": "Biomarkers" }
     ],
+    "clueReview": {
+      "minVisibleMs": 1200,
+      "mediaProgressThreshold": 0.8
+    },
     "tiers": {
       "foundation": {
         "label": "Foundation",

@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T01 is complete; P12-T02 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T02 is complete; P12-T03 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -70,17 +70,24 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   current-location, differential and timeout-credit placeholders. Result-v5/v6 attempts remain
   discriminated legacy records without invented facts.
 - Exported the updated schemas and recorded ADR-084 and ADR-085.
+- Separated clue review from ADR-079 clue opening: static evidence uses configured visible dwell,
+  media uses configured playback progress or completion and interactive visual evidence uses
+  primitive interaction/completion.
+- Persisted one review per clue in session v5/result v7, added `case_clue_reviewed`, based missed
+  key evidence on reviews and added stable case totals plus separate stage availability.
+- Exposed accessible unopened/opened/reviewed states while suppressing importance labels for
+  advanced tiers; exported the config schema and recorded ADR-086.
 
 ## In progress
 
-- P12-T02 is ready to separate clue review from opening and expose stable case/stage totals.
+- P12-T03 is ready to add configured procedural segment volumes and segmental waypoints.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Implement P12-T02 clue review and stable totals before case content is re-authored.
-2. Implement P12-T03 configured procedural segment volumes and segmental waypoints.
+1. Implement P12-T03 configured procedural segment volumes and segmental waypoints.
+2. Implement P12-T04 local evidence notes, location and differential confidence.
 3. Preserve the Phase 11 golden-path gate after every task.
 
 ## Blockers/questions for the user
@@ -121,6 +128,15 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   - `npm run check:demo` passes all 16 desktop/touch-phone real-WebGL checks;
   - `npm run schema:export` passes;
   - generated app-config and learner-seed schemas include the new contracts.
+- P12-T02 verification:
+  - focused Vitest passes 9 files / 99 tests;
+  - typecheck, lint and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - `npm run schema:export` passes and the generated app-config schema includes `clueReview`;
+  - final `npm run check:demo` passes all 16 desktop/touch-phone real-WebGL checks in 213.947
+    seconds;
+  - the first demo run exposed an accessible-name compatibility regression on the desktop clue
+    trigger; restoring its `Clues` prefix fixed the P11-T09 locator and the complete rerun passed.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.
