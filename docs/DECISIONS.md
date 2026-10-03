@@ -1048,10 +1048,13 @@ proven the lazy imperative-controller pattern.
 **Decision:** Use plain three.js (GLTF loading, orbit controls, raycast picking) behind
 `src/anatomy3d/three/createAnatomyController.ts`, the only module allowed to import `three`. Do not use
 React Three Fiber. Add a `model` asset type for GLB files, a reference-counted model cache and
-explicit disposal, and a dedicated bundle-budget role. Models are online-only for this phase.
+explicit disposal, and a dedicated bundle-budget role. Models are online-only for this phase. Mount
+the imperative renderer into a dedicated empty child element; React-owned loading and error
+overlays remain sibling nodes and are never children of the controller's mount.
 
 **Consequences:** The entry chunk is unaffected, and 3D follows the same review, testing and cleanup
-rules as imaging. Offline packaging and physical-device 3D evidence are deferred.
+rules as imaging. React reconciliation cannot remove or reorder the controller-owned canvas.
+Offline packaging and physical-device 3D evidence are deferred.
 
 ## ADR-071: Configured anatomy hierarchy, waypoints and drill-down localisation
 

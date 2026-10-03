@@ -51,6 +51,9 @@ clue-category labels, all three tier presets, normalized component and speed-ble
 defaults, clue penalties, XP and attempt-history limit. Every configured case ID and clue category
 used by a case must resolve.
 
+A challenge may contain ordinary `items` or a `caseId`, never both. The configured daily quick case
+must resolve to the same case referenced by the case-backed daily challenge.
+
 ## Primitive registry
 
 The canonical registry contains 27 strict primitive types: 23 standard types and 4 DICOM types.
@@ -181,12 +184,17 @@ target modes use answer completion.
 ## Gamification and learner state
 
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
-  challenge completions, first-attempt correctness and authored primitive rewards.
+  challenge completions, first-attempt correctness, authored primitive rewards, case completion
+  counts by tier, case component thresholds with optional-clue limits and duration-to-target ratios.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 4 stores reward idempotency, challenge periods, counters, the active reward
-  run, latest activity/question results, celebrations and an abstract digital reward ledger.
+- Learner state version 5 stores reward idempotency, challenge periods, case counters and rewards,
+  bounded `caseAttempts` history, the active reward run, latest activity/question results,
+  celebrations and an abstract digital reward ledger.
+- Case attempt records contain the configured score breakdown, duration, opened clues and
+  step-response summaries used by the comparison surface.
 - Device-scoped offline course records are persisted separately from learner state.
-- XP, star, mastery, streak and period rules are reduced from typed learner events.
+- XP, star, mastery, streak, case and period rules are reduced from typed learner events. Case
+  questions contribute mastery but not per-question XP.
 
 ## Asset manifest
 
@@ -227,5 +235,6 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: `0.1`
 - Course documents also include an independent `courseVersion`.
-- Persisted learner state is version 4 and migrates older snapshots.
-- In-flight activity sessions are persisted independently at version 2; version 1 sessions restart.
+- Persisted learner state is version 5 and migrates older snapshots.
+- In-flight activity sessions are persisted independently at version 3. Version 2 sessions migrate
+  with default case fields; version 1 sessions restart.

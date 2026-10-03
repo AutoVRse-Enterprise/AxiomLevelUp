@@ -11,7 +11,7 @@
 | 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                    |
 | 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                  |
 | 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
-| 10    | Case Lab capability demo       | Active   | Three respiratory cases play through the case player; new cases need content only        |
+| 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only        |
 
 ## Sequencing note
 
@@ -63,4 +63,11 @@ Phase 10 was redefined on 2026-10-03 (ADR-066). Instead of a prospect-specific c
 reusable case-game capability: case documents, a staged case player, clue-linked feedback,
 composite anatomy/diagnosis/speed scoring, lazy three.js anatomy and drill-down localisation. Three
 respiratory sample cases and a daily quick case demonstrate it. The implementation plan was
-approved on 2026-10-03, and Phase 9 physical-device gates continue in parallel.
+approved on 2026-10-03.
+
+Phase 10 closed with first-class case and anatomy-map contracts, a reusable staged player, central
+case rewards and mastery, learner-state v5 attempt history, two anatomy primitives and a lazy
+Three.js boundary. Automated flows complete all four configured cases and a loader-added fixture;
+production Chromium QA passes the four target viewports, keyboard localisation, reduced motion,
+WebGL recovery and heap-release checks. Phase 9 remains active for physical Android/iOS DICOM and
+3D anatomy evidence.

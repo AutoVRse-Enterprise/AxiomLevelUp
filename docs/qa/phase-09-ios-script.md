@@ -17,7 +17,7 @@ home-screen app. Record results in `phase-09-device-results-template.md`.
 
 ## 2. Standard primitives and system behavior
 
-1. Open the internal showcase and confirm it reports 26 activities.
+1. Open the internal showcase and confirm it reports 28 activities covering 27 primitive types.
 2. Start in Safari and rotate during image, carousel, data-table and ordering steps.
 3. Confirm no content clipping or unexpected document-level horizontal scroll.
 4. Pan the zoomable image with one finger and pinch with two; page scroll/zoom must not steal the
@@ -55,13 +55,32 @@ Repeat the marked steps in Safari and the installed app:
    host is restored.
 7. Enter and exit all DICOM modes repeatedly and record reload, canvas, WebGL or memory warnings.
 
-## 5. Accessibility and evidence
+## 5. Phase 10 addendum: Case Lab 3D anatomy
+
+Repeat in Safari and the installed app:
+
+1. Open all three Case Lab tiers and the daily quick case. Confirm the overview-marker, clue-first
+   and endoscopic entry views load.
+2. In portrait and landscape, orbit with one finger, pinch to zoom and pan with two fingers.
+   Confirm Safari navigation and page scrolling do not steal active viewer gestures.
+3. Select a lobe on the model, then complete the same localisation using the equivalent structure
+   list and an external keyboard if available.
+4. Enter the fixed immersive anatomy view, rotate twice and exit. Confirm safe areas, controls,
+   focus return and current selection survive.
+5. Enable Reduce Motion and confirm waypoint and endoscopic transitions use immediate camera cuts.
+6. Exercise a blocked model or WebGL context loss. Confirm the error, Retry action and structure
+   list remain usable, then retry after restoring the model.
+7. Enter and exit a 3D case five times. Record frame stability, Safari memory warnings, context
+   loss, blank canvases and progressive delay.
+8. Complete one case through results and expert comparison in both contexts.
+
+## 6. Accessibility and evidence
 
 1. With VoiceOver, verify names for the DICOM viewport, tools, presets, slice slider, instructions
-   sheet and immersive exit.
+   sheet, 3D anatomy viewport, structure list, clue sheet and immersive exits.
 2. Confirm the instructions sheet traps focus while open, dismisses predictably and restores focus.
 3. With an external keyboard if available, verify focus order, visible focus, pan/zoom keys and
-   Escape behavior.
-4. Attach Safari and installed-app screenshots in both orientations, a gesture/immersive recording,
-   an offline-reload recording and available Web Inspector logs.
+   structure selection and Escape behavior.
+4. Attach Safari and installed-app screenshots in both orientations, DICOM and anatomy
+   gesture/immersive recordings, an offline-reload recording and available Web Inspector logs.
 5. Record pass/fail/block for every shared checklist item and link each defect.

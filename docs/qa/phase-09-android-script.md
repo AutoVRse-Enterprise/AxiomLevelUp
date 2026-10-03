@@ -20,7 +20,7 @@ blocking console/network error appears.
 
 ## 2. Responsive shell and standard primitives
 
-1. Open the internal showcase and confirm it reports 26 activities.
+1. Open the internal showcase and confirm it reports 28 activities covering 27 primitive types.
 2. Start in portrait. Capture the opening screen and first activity.
 3. Rotate to landscape and back during image, carousel, data-table and ordering steps.
 4. Confirm no content is clipped, document-level horizontal scrolling appears only inside intended
@@ -66,12 +66,32 @@ blocking console/network error appears.
 6. Enter and exit imaging five times. Confirm no blank canvas, crash or severe progressive delay;
    capture Chrome memory information if available.
 
-## 6. Accessibility and evidence
+## 6. Phase 10 addendum: Case Lab 3D anatomy
+
+1. Open all three Case Lab tiers and the daily quick case. Confirm each configured entry view loads:
+   overview marker, clue first and endoscopic.
+2. In portrait and landscape, orbit with one finger, pinch to zoom and pan with two fingers.
+   Confirm the page and browser navigation do not steal active viewer gestures.
+3. Select a lobe by tapping the model, then complete the same localisation using the structure
+   list and a hardware/Bluetooth keyboard if available.
+4. Enter and exit the expanded anatomy view, rotate twice and confirm controls, safe areas, focus
+   return and the current selection remain intact.
+5. Enable Android reduced motion. Confirm waypoint and endoscopic transitions cut immediately
+   without animated flight.
+6. Block the GLB request or force WebGL context loss. Confirm the error, Retry action and equivalent
+   structure list remain usable; restore the model and retry.
+7. Enter and exit a 3D case five times. Record frame stability, memory where available, context-loss
+   warnings, blank canvases and progressive delay.
+8. Complete one case through results and expert comparison. Confirm the clue sheet, score breakdown
+   and replay actions remain usable in both orientations.
+
+## 7. Accessibility and evidence
 
 1. Enable Android's reduced-motion preference and confirm non-essential movement stops.
 2. With TalkBack, verify names for the viewport, active tool, presets, slice slider, instructions
-   sheet and immersive exit.
+   sheet, 3D anatomy viewport, structure list, clue sheet and immersive exits.
 3. With a hardware/Bluetooth keyboard if available, verify focus order, visible focus, pan/zoom
-   keys and Escape from sheets/immersive mode.
-4. Attach portrait/landscape screenshots, a gesture recording, offline-reload recording and logs.
+   keys, structure selection and Escape from sheets/immersive mode.
+4. Attach portrait/landscape screenshots, DICOM and anatomy gesture recordings, offline-reload
+   recording and logs.
 5. Record pass/fail/block for every shared checklist item and link each defect.

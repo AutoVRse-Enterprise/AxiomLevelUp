@@ -2053,3 +2053,20 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   state has no detected axe WCAG A/AA violations.
 - **Follow-ups:** Complete P10-T17 documentation, add the physical-device 3D addendum and run the
   final quality gate.
+
+### [2026-10-03 06:25] P10-T17 - Close Case Lab capability phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Closed the Phase 10 architecture and schema narratives, recorded the imperative-canvas
+  ownership detail in ADR-070, marked the roadmap and phase complete, rewrote the handoff and added
+  3D anatomy checks to the Phase 9 Android, iOS, shared-checklist and evidence templates.
+- **Files changed:** `docs/ARCHITECTURE.md`, `docs/CONTENT_SCHEMA.md`, `docs/DECISIONS.md`,
+  `docs/ROADMAP.md`, `docs/HANDOFF.md`, Phase 9/10 phase files, Phase 9 device scripts/templates and
+  activity log.
+- **Commands run:** `npm run check`, `git diff --check`, documentation and repository-state audits.
+- **Result/verification:** The complete gate passes: TypeScript and lint are clean, 52 test files /
+  356 tests pass, 5 courses / 13 lessons / 4 cases / 1 anatomy map validate with zero warnings, the
+  production build succeeds and entry, imaging, anatomy3d and confetti bundle roles remain within
+  budget.
+- **Follow-ups:** Run or explicitly waive Phase 9's physical Android/iOS gate, including the new 3D
+  anatomy addendum.

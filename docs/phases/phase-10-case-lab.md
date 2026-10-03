@@ -1,6 +1,7 @@
 # Phase 10: Case Lab capability demo
 
-**Status:** In progress — P10-T16 complete; P10-T17 close-out next
+**Status:** Complete — runtime, content, automated QA and Chromium QA passed; physical 3D evidence
+continues under the Phase 9 device gate
 
 ## Goal
 
@@ -184,7 +185,7 @@ case
       benchmarks, badges, concepts and integrated assets with asset-manifest hashes.
 - [x] P10-T16 — QA: automated end-to-end coverage for each case, browser QA across the four target
       viewports, accessibility, motion, performance and 3D memory checks.
-- [ ] P10-T17 — Close: architecture, schema, decisions, roadmap, handoff and final gate.
+- [x] P10-T17 — Close: architecture, schema, decisions, roadmap, handoff and final gate.
 
 ## Sequencing
 

@@ -20,6 +20,7 @@ primitive registry and the Android/iOS matrix is completed or explicitly waived.
 - Cross-origin DICOM verification, visited-series offline reload and timing/cache evidence.
 - Executable Android Chrome and iOS Safari/installed-app scripts with a consistent evidence record.
 - Physical touch, installation, haptic, memory-pressure and mobile-browser validation.
+- Phase 10 addendum for physical 3D anatomy gestures, entry modes, WebGL recovery and disposal.
 - Out of scope: prospect-specific Sanofi content, clinical claims and diagnostic validation.
 
 ## Execution boundary
@@ -89,6 +90,7 @@ primitive registry and the Android/iOS matrix is completed or explicitly waived.
 ## Known external gates
 
 - A production HTTPS app URL and CORS-capable DICOM host are not yet supplied.
-- Physical Android and iOS devices or an approved remote-device service are not connected.
+- Physical Android and iOS devices or an approved remote-device service are not connected; the
+  same gate now includes the Phase 10 3D anatomy addendum.
 - The DICOM technical note remains unavailable.
 - The educational tracheal target and measurement reference still require SME approval.

@@ -50,3 +50,17 @@ Before testing, complete `phase-09-hosting-prerequisites.md`. Execute
 - [ ] Capture screenshots for both orientations and a short recording of touch gestures.
 - [ ] Attach console errors, device logs and exact reproduction steps for every failure.
 - [ ] Add the completed matrix and deviations to the Phase 9 closeout before release approval.
+
+## Phase 10 addendum: Case Lab 3D anatomy
+
+- [ ] Open the foundation, intermediate, advanced and daily quick cases.
+- [ ] Verify overview-marker, clue-first and endoscopic entry views.
+- [ ] Verify one-finger orbit, two-finger pinch/pan and page-gesture isolation.
+- [ ] Select the same structure by model tap and by the keyboard/list alternative.
+- [ ] Verify portrait, landscape, safe areas and expanded-view focus restoration.
+- [ ] Confirm reduced motion replaces camera flights with immediate cuts.
+- [ ] Confirm a blocked model or lost WebGL context offers Retry and leaves the structure list usable.
+- [ ] Enter and exit 3D five times without a blank canvas, crash or severe progressive delay.
+- [ ] Record frame stability, memory and WebGL/context warnings where the platform exposes them.
+- [ ] Complete a case through clues, localisation, results and expert comparison.
+- [ ] Capture portrait/landscape screenshots and a recording of 3D touch gestures.

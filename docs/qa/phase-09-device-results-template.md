@@ -28,6 +28,8 @@ each result. A failure must include reproducible steps and an issue link.
 - Heap/browser memory, if available:
 - DICOM cache response count:
 - Console/network/WebGL warnings:
+- 3D model first render:
+- 3D loaded/unmounted memory, if available:
 
 ## Results
 
@@ -52,12 +54,21 @@ each result. A failure must include reproducible steps and an issue link.
 - Missing-study recovery:
 - Repeated-entry memory/WebGL recovery:
 - Educational-only labeling:
+- Case entry modes:
+- 3D orbit/pinch/pan gesture isolation:
+- Model-tap localisation:
+- Keyboard/list localisation:
+- Anatomy reduced-motion cuts:
+- Missing-model/context-loss recovery:
+- Repeated 3D entry and disposal:
+- Case results and expert comparison:
 
 ## Evidence
 
 - Portrait screenshot:
 - Landscape screenshot:
-- Gesture recording:
+- DICOM gesture recording:
+- 3D anatomy gesture recording:
 - Offline-reload recording:
 - Console/device log:
 - Network trace:

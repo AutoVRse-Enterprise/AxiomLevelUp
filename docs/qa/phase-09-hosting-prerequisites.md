@@ -31,7 +31,7 @@ In a private browser session:
 2. Confirm 26 showcase cards appear.
 3. Confirm all four DICOM cards report a 125-slice series.
 4. Open `https://<app-host>/learn/courses/runtime-showcase/lessons/primitive-showcase`.
-5. Confirm the lesson reports 26 activities and can start.
+5. Confirm the lesson reports 28 activities covering 27 primitive types and can start.
 6. In browser storage tools, confirm `dicom-studies-v1` is populated only after visiting imaging.
 7. Confirm the service worker controls a reload and no mixed-content or CORS error is logged.
 
