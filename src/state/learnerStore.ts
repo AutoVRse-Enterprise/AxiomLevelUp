@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 6
+export const LEARNER_STATE_VERSION = 7
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -134,7 +134,7 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
       Object.entries(persistedCaseAttempts ?? {}).map(([caseId, attempts]) => [
         caseId,
         attempts.map((attempt) =>
-          attempt.resultVersion === 5 || attempt.resultVersion === 6
+          attempt.resultVersion === 5 || attempt.resultVersion === 6 || attempt.resultVersion === 7
             ? attempt
             : { ...attempt, resultVersion: 5 },
         ),

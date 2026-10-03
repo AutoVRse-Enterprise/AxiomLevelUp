@@ -199,6 +199,7 @@
     "scoring": {
       "weights": { "anatomy": 0.4, "diagnosis": 0.4, "speed": 0.2 },
       "speedBlend": { "perStep": 0.5, "perCase": 0.5 },
+      "speedEligibility": { "minStepScore": 0.5 },
       "defaultStepTargetSeconds": 45,
       "defaultStepMaxSeconds": 90,
       "cluePenalty": { "perOptionalClue": 2, "cap": 10 }

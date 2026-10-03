@@ -1402,3 +1402,51 @@ verdict instead of two partially polished demonstrations. Procedural segment reg
 illustrative learning geometry and require explicit review language, overlap validation and
 real-WebGL coverage. Clinical/client sign-off and Phase 9 physical Android/iOS evidence remain
 external approval gates.
+
+## ADR-084: Case speed is time-only for eligible first attempts
+
+**Status:** Accepted
+
+**Context:** The previous Case Lab formula multiplied per-step timing by answer accuracy and
+multiplied case elapsed-time performance by mean anatomy and diagnosis accuracy. This mixed speed
+and correctness twice, allowed low-quality responses to dilute the step-speed average and made the
+displayed speed component difficult to explain.
+
+**Decision:** Use `time_eligible` as the result-v7 speed model. A scored step is eligible for
+per-step speed only when its first-attempt score is at least the configured
+`caseLab.scoring.speedEligibility.minStepScore`, defaulting to `0.5`. Average time factors only
+across eligible steps; retain the eligible and total scored counts, and return zero per-step speed
+when none qualify. Timed-out eligible steps remain in that average with zero speed. Case speed is
+the case elapsed-time factor alone. Untimed tiers continue to redistribute the configured speed
+weight across anatomy and diagnosis.
+
+**Consequences:** Accuracy remains represented by anatomy and diagnosis components while speed is
+independently understandable. Fast wrong or sub-threshold steps receive no step-speed contribution,
+but case-level time remains a pure clock measure. Result v7 persists the model, configured
+threshold and eligible/total counts so saved results never reinterpret history through later
+configuration; result-v5 and result-v6 attempts remain legacy records.
+
+## ADR-085: Timeout credit is a primitive-definition policy
+
+**Status:** Accepted
+
+**Context:** `ActivityPlayer` previously forced every timer expiration to score zero even when a
+multi-level primitive had valid committed progress. Implementing anatomy-specific timeout behavior
+inside Case Lab would fork the shared player and make future primitive policies inconsistent.
+
+**Decision:** Every resolved primitive definition exposes a pure `timeoutCredit` policy with a
+default of `none`. `anatomy_locate` opts into `committed_progress`; on expiry the shared player
+evaluates its current draft through the existing primitive evaluator, which awards weighted credit
+for valid completed levels and marks missing levels as missed. The submission remains timed out and
+its step-speed factor is zero. Definitions using `none` retain forced zero-on-timeout behavior.
+
+Session v5 also initializes local Phase 12 placeholders for reviewed clue IDs, pinned clue/finding
+evidence, current waypoint/structure and differential confidence. Learner state and result v7
+persist those fields plus whether committed-progress timeout handling was applied. Migration adds
+empty session placeholders where required but does not synthesize unavailable facts into legacy
+result-v5 or result-v6 attempts.
+
+**Consequences:** Timeout scoring remains generic, deterministic and testable without a second case
+engine. Localisation can preserve demonstrated progress while maintaining an explicit timeout and
+zero step speed. Future primitives must opt in deliberately; existing primitive behavior is
+unchanged by default.

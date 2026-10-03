@@ -1245,6 +1245,23 @@
               ],
               "additionalProperties": false
             },
+            "speedEligibility": {
+              "default": {
+                "minStepScore": 0.5
+              },
+              "type": "object",
+              "properties": {
+                "minStepScore": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "minStepScore"
+              ],
+              "additionalProperties": false
+            },
             "defaultStepTargetSeconds": {
               "type": "integer",
               "exclusiveMinimum": 0,
@@ -1278,6 +1295,7 @@
           "required": [
             "weights",
             "speedBlend",
+            "speedEligibility",
             "defaultStepTargetSeconds",
             "defaultStepMaxSeconds",
             "cluePenalty"

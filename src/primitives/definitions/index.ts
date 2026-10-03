@@ -105,3 +105,15 @@ export function evaluatePrimitive(primitive: Primitive, response: unknown): Eval
     explanation: evaluation?.explanation ?? null,
   }
 }
+
+export function evaluatePrimitiveTimeout(
+  primitive: Primitive,
+  response: unknown,
+): EvaluationResult & { timeoutCreditApplied: boolean } {
+  const timeoutCreditApplied =
+    resolvePrimitiveDefinition(primitive)?.definition.timeoutCredit === 'committed_progress'
+  const evaluation = timeoutCreditApplied
+    ? evaluatePrimitive(primitive, response)
+    : { score: 0, correct: false, explanation: null }
+  return { ...evaluation, timeoutCreditApplied }
+}

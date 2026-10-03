@@ -46,10 +46,13 @@ import { useLearnerStore } from '@/state/learnerStore'
 
 const EMPTY_CASE_PROGRESS: CaseProgress = {
   openedClueIds: [],
+  reviewedClueIds: [],
   clueOpenContexts: {},
   stepElapsedMs: {},
   caseElapsedMs: 0,
   caseClockExpired: false,
+  evidence: { pinned: [] },
+  differential: {},
 }
 
 function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
@@ -57,8 +60,16 @@ function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
     ...EMPTY_CASE_PROGRESS,
     ...progress,
     openedClueIds: [...(progress?.openedClueIds ?? [])],
+    reviewedClueIds: [...(progress?.reviewedClueIds ?? [])],
     clueOpenContexts: { ...(progress?.clueOpenContexts ?? {}) },
     stepElapsedMs: { ...(progress?.stepElapsedMs ?? {}) },
+    evidence: {
+      pinned: [...(progress?.evidence?.pinned ?? [])],
+      ...(progress?.evidence?.currentLocation
+        ? { currentLocation: { ...progress.evidence.currentLocation } }
+        : {}),
+    },
+    differential: { ...(progress?.differential ?? {}) },
   }
 }
 
@@ -278,6 +289,12 @@ function buildResult(
     attemptId: `${caseDoc.id}:${session.startedAt ?? session.completedAt ?? 'attempt'}`,
     breakdown,
     stepResults,
+    reviewedClueIds: [...caseProgress.reviewedClueIds],
+    evidence: structuredClone(caseProgress.evidence),
+    differential: { ...caseProgress.differential },
+    timeoutCreditApplied: scoredSteps.some(
+      ({ primitive }) => session.progress[primitive.id]?.firstTimeoutCreditApplied === true,
+    ),
     completedAt: session.completedAt ?? new Date().toISOString(),
   }
 }
@@ -518,6 +535,10 @@ export function CasePlayer({
         durationSeconds: result.breakdown.durationSeconds,
         openedClueIds: result.breakdown.openedClueIds,
         stepResults: result.stepResults,
+        reviewedClueIds: result.reviewedClueIds,
+        evidence: result.evidence,
+        differential: result.differential,
+        timeoutCreditApplied: result.timeoutCreditApplied,
         ...(challengeId ? { challengeId } : {}),
       })
       if (challengeId) {

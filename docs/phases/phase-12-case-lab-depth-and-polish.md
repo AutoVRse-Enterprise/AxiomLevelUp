@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T00 in progress
+**Status:** Active — P12-T01 complete
 
 ## Goal
 
@@ -90,9 +90,9 @@ physical-device approval.
 
 ## Checklist
 
-- [ ] P12-T00 — Commit the complete Phase 11 baseline, run both quality gates, rebaseline residual
+- [x] P12-T00 — Commit the complete Phase 11 baseline, run both quality gates, rebaseline residual
       audit findings and whole-app demo gaps, rescope this phase and record ADR-083.
-- [ ] P12-T01 — Define time-only speed eligibility, committed-progress timeout credit and the
+- [x] P12-T01 — Define time-only speed eligibility, committed-progress timeout credit and the
       session-v5/learner-state-v7/result-v7 migration (F47 and general timeout credit).
 - [ ] P12-T02 — Separate clue review from opening and show stable case/stage totals (F12, F26).
 - [ ] P12-T03 — Add configured procedural segment volumes and segmental waypoints without

@@ -93,9 +93,11 @@ An anatomy map is strict and requires \`schemaVersion\`, \`id\`, a model asset r
 hierarchy levels, structures and waypoints. Each structure belongs to a level, binds one or more
 prepared model mesh names and, below the first level, has a parent on a prior level. Waypoints
 declare position, look-at target, outgoing waypoint IDs and an optional positive radius used by
-procedural lumen rendering. Semantic validation enforces unique level, structure and waypoint IDs,
-model-asset typing, parent and level references, prepared mesh-name references, resolved waypoint
-edges and an acyclic waypoint graph.
+procedural lumen rendering. Anatomy primitive start views select overview, marker, waypoint or
+endoscopic mode, while \`navigation\` selects \`orbit\`, \`flythrough\` or \`both\`. Semantic validation
+enforces unique level, structure and waypoint IDs, model-asset typing, parent and level references,
+prepared mesh-name references, resolved waypoint edges, acyclic waypoint graphs and non-ambiguous
+same-level mesh bindings.
 
 \`product.anatomy3d.findingStyles\` configures generic geometry and materials for each finding kind,
 including deterministic occlusion blobs, local narrowing, wall thickening and translucent regions.
@@ -108,8 +110,8 @@ per-step finding map, so React and Three.js contain no course- or organ-specific
 The optional \`caseLab\` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
 clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, clue penalties, XP and attempt-history limit. Every configured case ID and clue category
-used by a case must resolve.
+defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
+and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
 
 ## Primitive registry
 
@@ -146,6 +148,8 @@ inspection part of its scored response. The loader resolves anatomy maps, levels
 finding anchors, directed waypoint edges, finding clue references and typed image assets. Unknown
 types are retained with a warning so development playback can render the unsupported fallback.
 Every lesson primitive and challenge item passes through the same parser and semantic validation.
+Primitive definitions default timeout credit to \`none\`; \`anatomy_locate\` opts into
+\`committed_progress\` so its evaluator can retain weighted completed-level credit on expiry.
 
 ### DICOM primitive content
 
@@ -204,12 +208,14 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 6 stores reward idempotency, challenge periods, counters, the active reward
+- Learner state version 7 stores reward idempotency, challenge periods, counters, the active reward
   run, latest activity/question results, celebrations and an abstract digital reward ledger.
-- Case attempt result-v6 records retain both speed components, effective score weights, clue cost,
-  timing semantics, normalized first responses, actual duration and XP from the central
-  gamification activity result. Migrated result-v5 records remain explicitly legacy and do not
-  fabricate unavailable details.
+- Case attempt result-v7 records use the \`time_eligible\` speed model and retain both time-only
+  speed components, eligibility threshold and counts, effective score weights, clue cost, timing
+  semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
+  local evidence/differential placeholders and XP from the central gamification activity result.
+  Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
+  unavailable details.
 - Device-scoped offline course records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
 
@@ -232,6 +238,11 @@ mapping's target, applies meshopt compression, and emits \`model.glb\` plus matc
 \`targetTriangles\` and optional \`simplificationError\`. The asset hash command refreshes model
 size and SHA-256 while preserving the online-only flags.
 
+Runtime model URLs carry the validated SHA-256 as a \`v\` query parameter. The featured-case intro
+may prefetch that exact URL, and the service worker accepts only hash-versioned GLB requests into
+the bounded \`versioned-case-models-v1\` presentation cache. This does not change the model's
+\`offlineRequired: false\` contract or include it in a course offline package.
+
 The hosted DICOM manifest is independently validated at runtime as schema version \`0.2\`. It contains
 series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets
 and ordered files with path, byte size and lowercase SHA-256. Hosted geometry must exactly match the
@@ -252,8 +263,10 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: \`0.1\`
 - Course documents also include an independent \`courseVersion\`.
-- Persisted learner state is version 4 and migrates older snapshots.
-- In-flight activity sessions are persisted independently at version 2; version 1 sessions restart.
+- Persisted learner state is version 7 and migrates older snapshots. Legacy case result-v5 and
+  result-v6 records remain readable without synthesizing result-v7 detail.
+- In-flight activity sessions are persisted independently at version 5; older supported sessions
+  migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.
 `
 
 await writeFile(resolve(root, 'docs/CONTENT_SCHEMA.md'), document)

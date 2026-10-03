@@ -22,6 +22,9 @@ export interface CaseCluePenaltyConfig {
 export interface CaseScoringConfig {
   weights: CaseScoringWeights
   speedBlend: CaseSpeedBlend
+  speedEligibility: {
+    minStepScore: number
+  }
   defaultStepTargetSeconds: number
   defaultStepMaxSeconds: number
   cluePenalty: CaseCluePenaltyConfig
@@ -62,6 +65,12 @@ export interface CaseScoreBreakdown {
   speed: number
   perStepSpeed: number
   caseSpeed: number
+  speedModel: 'time_eligible'
+  speedEligibility: {
+    minStepScore: number
+    eligibleSteps: number
+    totalScoredSteps: number
+  }
   speedScored: boolean
   timingMode: CaseClockMode
   penalty: number
@@ -76,6 +85,7 @@ interface ResolvedStep {
   score: number
   weight: number
   speed: number
+  speedEligible: boolean
 }
 
 const clamp = (value: number, minimum: number, maximum: number) =>
@@ -116,8 +126,14 @@ function resolveEffectiveWeights(
   }
 }
 
-function resolveStepSpeed(step: CaseScoringStepInput, score: number, config: CaseScoringConfig) {
-  if (step.timedOut || score === 0) return 0
+function resolveMinStepScore(config: CaseScoringConfig) {
+  return Number.isFinite(config.speedEligibility.minStepScore)
+    ? clamp(config.speedEligibility.minStepScore, 0, 1)
+    : 0.5
+}
+
+function resolveStepSpeed(step: CaseScoringStepInput, config: CaseScoringConfig) {
+  if (step.timedOut) return 0
 
   const elapsedMs = step.elapsedMs
   if (elapsedMs === undefined || !Number.isFinite(elapsedMs) || elapsedMs < 0) return 0
@@ -145,17 +161,16 @@ function resolveStepSpeed(step: CaseScoringStepInput, score: number, config: Cas
   }
 
   const elapsedSeconds = elapsedMs / 1_000
-  return clamp((maxSeconds - elapsedSeconds) / (maxSeconds - targetSeconds), 0, 1) * score
+  return clamp((maxSeconds - elapsedSeconds) / (maxSeconds - targetSeconds), 0, 1)
 }
 
 function resolveSteps(
   steps: readonly CaseScoringStepInput[],
   config: CaseScoringConfig,
 ): ResolvedStep[] {
+  const minStepScore = resolveMinStepScore(config)
   return steps
-    .filter(
-      ({ component, scored }) => scored && (component === 'anatomy' || component === 'diagnosis'),
-    )
+    .filter(({ scored }) => scored)
     .map((step) => {
       const score = scoreOrZero(step.firstAttemptScore)
       const weight =
@@ -169,7 +184,8 @@ function resolveSteps(
         component: step.component,
         score,
         weight,
-        speed: resolveStepSpeed(step, score, config),
+        speed: resolveStepSpeed(step, config),
+        speedEligible: score >= minStepScore,
       }
     })
 }
@@ -191,7 +207,7 @@ function mean(values: readonly number[]) {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length
 }
 
-function resolveCaseSpeed(input: CaseScoreInput, anatomy: number, diagnosis: number) {
+function resolveCaseSpeed(input: CaseScoreInput) {
   if (input.caseClockExpired) return 0
   if (!Number.isFinite(input.durationMs) || input.durationMs < 0) return 0
 
@@ -209,8 +225,7 @@ function resolveCaseSpeed(input: CaseScoreInput, anatomy: number, diagnosis: num
   }
 
   const durationSeconds = input.durationMs / 1_000
-  const timeFactor = clamp((maxSeconds - durationSeconds) / (maxSeconds - targetSeconds), 0, 1)
-  return timeFactor * ((anatomy + diagnosis) / 2)
+  return clamp((maxSeconds - durationSeconds) / (maxSeconds - targetSeconds), 0, 1)
 }
 
 function uniqueOpenedClueIds(openedClueIds: readonly string[]) {
@@ -252,8 +267,11 @@ export function calculateCaseScore(input: CaseScoreInput): CaseScoreBreakdown {
     input.config.cluePenalty,
   )
 
-  const perStepSpeed = input.timingMode === 'none' ? 0 : mean(steps.map(({ speed }) => speed))
-  const caseSpeed = input.timingMode === 'none' ? 0 : resolveCaseSpeed(input, anatomy, diagnosis)
+  const eligibleSteps = steps.filter(({ speedEligible }) => speedEligible)
+  const minStepScore = resolveMinStepScore(input.config)
+  const perStepSpeed =
+    input.timingMode === 'none' ? 0 : mean(eligibleSteps.map(({ speed }) => speed))
+  const caseSpeed = input.timingMode === 'none' ? 0 : resolveCaseSpeed(input)
   const speedBlend = normalizeParts(input.config.speedBlend)
   const speed =
     input.timingMode === 'none'
@@ -271,6 +289,12 @@ export function calculateCaseScore(input: CaseScoreInput): CaseScoreBreakdown {
     speed,
     perStepSpeed,
     caseSpeed,
+    speedModel: 'time_eligible',
+    speedEligibility: {
+      minStepScore,
+      eligibleSteps: eligibleSteps.length,
+      totalScoredSteps: steps.length,
+    },
     speedScored: input.timingMode !== 'none',
     timingMode: input.timingMode,
     penalty,

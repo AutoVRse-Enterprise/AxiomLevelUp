@@ -12,6 +12,8 @@ export interface PrimitiveProgress {
   lastScore: number | null
   firstTimedOut: boolean
   lastTimedOut: boolean
+  firstTimeoutCreditApplied: boolean
+  lastTimeoutCreditApplied: boolean
   firstResponse: unknown
   response: unknown
   draft: unknown
@@ -23,10 +25,16 @@ export interface PrimitiveProgress {
 
 export interface CaseProgress {
   openedClueIds: string[]
+  reviewedClueIds: string[]
   clueOpenContexts: Record<string, CaseClueOpenRecord>
   stepElapsedMs: Record<string, number>
   caseElapsedMs: number
   caseClockExpired: boolean
+  evidence: {
+    pinned: Array<{ kind: 'clue' | 'finding'; id: string }>
+    currentLocation?: { kind: 'waypoint' | 'structure'; id: string }
+  }
+  differential: Record<string, 'unlikely' | 'possible' | 'likely'>
 }
 
 export interface ActivitySession {
@@ -60,6 +68,7 @@ export type SessionAction =
       score: number
       completed: boolean
       timedOut?: boolean
+      timeoutCreditApplied?: boolean
     }
   | { type: 'complete_current'; primitiveId: string }
   | { type: 'retry' }
@@ -74,6 +83,8 @@ const emptyProgress = (): PrimitiveProgress => ({
   lastScore: null,
   firstTimedOut: false,
   lastTimedOut: false,
+  firstTimeoutCreditApplied: false,
+  lastTimeoutCreditApplied: false,
   firstResponse: null,
   response: null,
   draft: null,
@@ -177,6 +188,11 @@ export function sessionReducer(state: ActivitySession, action: SessionAction): A
             lastScore: score,
             firstTimedOut: attempts === 1 ? (action.timedOut ?? false) : current.firstTimedOut,
             lastTimedOut: action.timedOut ?? false,
+            firstTimeoutCreditApplied:
+              attempts === 1
+                ? (action.timeoutCreditApplied ?? false)
+                : current.firstTimeoutCreditApplied,
+            lastTimeoutCreditApplied: action.timeoutCreditApplied ?? false,
             firstResponse: attempts === 1 ? action.response : current.firstResponse,
             response: action.response,
             completed: action.completed,

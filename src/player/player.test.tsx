@@ -272,6 +272,8 @@ describe('activity player', () => {
       response: 'supported',
       firstScore: 0,
       lastTimedOut: true,
+      firstTimeoutCreditApplied: false,
+      lastTimeoutCreditApplied: false,
       completed: false,
     })
     expect(events.find((event) => event.event === 'question_answered')).toMatchObject({

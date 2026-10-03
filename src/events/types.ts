@@ -3,6 +3,7 @@ import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
 import type { CaseDocument } from '@/content/schema'
 import type { CaseClueOpenContext } from '@/engines/cases/clues'
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
+import type { CaseProgress } from '@/engines/learning/session'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
 export type EventActivityKind = 'lesson' | 'challenge' | 'case'
@@ -50,6 +51,10 @@ export interface EventPayloads {
     durationSeconds: number
     openedClueIds: string[]
     stepResults: CaseEventStepResult[]
+    reviewedClueIds: string[]
+    evidence: CaseProgress['evidence']
+    differential: CaseProgress['differential']
+    timeoutCreditApplied: boolean
     challengeId?: string
   }
   primitive_viewed: {

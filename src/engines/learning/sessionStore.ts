@@ -9,7 +9,7 @@ import {
 } from '@/engines/learning/session'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
-export const ACTIVITY_SESSION_VERSION = 4
+export const ACTIVITY_SESSION_VERSION = 5
 
 export function migrateActivitySessionState(
   persistedState: unknown,
@@ -31,12 +31,38 @@ export function migrateActivitySessionState(
       ),
     }
   }
+  if (session?.progress) {
+    session = {
+      ...session,
+      progress: Object.fromEntries(
+        Object.entries(session.progress).map(([id, progress]) => [
+          id,
+          {
+            ...progress,
+            firstTimeoutCreditApplied: progress.firstTimeoutCreditApplied ?? false,
+            lastTimeoutCreditApplied: progress.lastTimeoutCreditApplied ?? false,
+          },
+        ]),
+      ),
+    }
+  }
   if (session?.caseProgress && !session.caseProgress.clueOpenContexts) {
     session = {
       ...session,
       caseProgress: {
         ...session.caseProgress,
         clueOpenContexts: {},
+      },
+    }
+  }
+  if (session?.caseProgress) {
+    session = {
+      ...session,
+      caseProgress: {
+        ...session.caseProgress,
+        reviewedClueIds: session.caseProgress.reviewedClueIds ?? [],
+        evidence: session.caseProgress.evidence ?? { pinned: [] },
+        differential: session.caseProgress.differential ?? {},
       },
     }
   }

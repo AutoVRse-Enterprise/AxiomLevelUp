@@ -454,14 +454,16 @@ describe('configured Case Lab flows', () => {
       const attempts = state.caseAttempts[caseId] ?? []
       expect(attempts).toHaveLength(priorAttempts + 1)
       expect(attempts.at(-1)).toMatchObject({
-        resultVersion: 6,
+        resultVersion: 7,
         anatomy: 1,
         diagnosis: 1,
         actualAwardedXpSource: 'gamification_activity_result',
       })
       const completedAttempt = attempts.at(-1)
       const awardedXp =
-        completedAttempt?.resultVersion === 6 ? completedAttempt.actualAwardedXp : null
+        completedAttempt && completedAttempt.resultVersion !== 5
+          ? completedAttempt.actualAwardedXp
+          : null
       expect(awardedXp).not.toBeNull()
       expect(screen.getByText(`${awardedXp} XP awarded`)).toBeVisible()
       expect(attempts.at(-1)!.total).toBeGreaterThanOrEqual(90)

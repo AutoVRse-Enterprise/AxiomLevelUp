@@ -93,7 +93,7 @@ describe('learner store persistence', () => {
     expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
   })
 
-  it.each([3, 4])('migrates learner state v%i to empty v6 case state', (stateVersion) => {
+  it.each([3, 4])('migrates learner state v%i to empty v7 case state', (stateVersion) => {
     const legacy = structuredClone(freshSeed) as unknown as Record<string, unknown>
     legacy.stateVersion = stateVersion
     delete legacy.caseProgress
@@ -108,7 +108,7 @@ describe('learner store persistence', () => {
 
     const migrated = migrateLearnerState(legacy)
 
-    expect(migrated.stateVersion).toBe(6)
+    expect(migrated.stateVersion).toBe(7)
     expect(migrated.caseProgress).toEqual({})
     expect(migrated.caseAttempts).toEqual({})
     expect(migrated.gamification.caseRewards).toEqual({})
@@ -132,11 +132,22 @@ describe('learner store persistence', () => {
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['asthma-foundation']![0]!
 
-    expect(migrated.stateVersion).toBe(6)
+    expect(migrated.stateVersion).toBe(7)
     expect(attempt.resultVersion).toBe(5)
     expect(attempt).not.toHaveProperty('perStepSpeed')
     expect(attempt).not.toHaveProperty('caseSpeed')
     expect(attempt).not.toHaveProperty('clueCostPoints')
     expect(attempt).not.toHaveProperty('actualAwardedXp')
+  })
+
+  it('preserves result-v6 attempts as legacy records without v7 placeholders', () => {
+    const migrated = migrateLearnerState(structuredClone(advancedSeed))
+    const attempt = migrated.caseAttempts['exacerbation-advanced']![0]!
+
+    expect(migrated.stateVersion).toBe(7)
+    expect(attempt.resultVersion).toBe(6)
+    expect(attempt).not.toHaveProperty('speedModel')
+    expect(attempt).not.toHaveProperty('reviewedClueIds')
+    expect(attempt).not.toHaveProperty('timeoutCreditApplied')
   })
 })

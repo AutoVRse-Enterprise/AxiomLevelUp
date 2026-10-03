@@ -2504,3 +2504,26 @@ registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl
 - **Follow-ups:** P12-T01 defines speed eligibility, committed-progress timeout credit and the next
   durable session/result contracts. Clinical/client sign-off and Phase 9 physical-device gates
   remain external blockers.
+
+### [2026-10-03 21:01] P12-T01 - Define scoring and persistence contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced accuracy-adjusted speed with configured time-only eligibility, including
+  eligible/total step counts and an explanatory result display. Added primitive-definition timeout
+  credit with a conservative default and committed-progress evaluation for `anatomy_locate`.
+  Upgraded sessions to v5 and learner state/current attempts to v7 with reviewed-clue, evidence,
+  location, differential and timeout-credit fields while preserving result-v5/v6 records as
+  legacy. Exported schemas, recorded ADR-084/ADR-085 and closed P12-T01.
+- **Files changed:** Case scoring, progress, event and player/result contracts; primitive
+  definitions and anatomy evaluation; session/learner migrations; app config and seeds; focused
+  tests; schema exporter and generated schemas/content documentation; Phase 12 checklist,
+  decisions, handoff and activity log.
+- **Commands run:** Targeted Vitest (10 files / 114 tests); `npm run typecheck`; `npm run lint`;
+  `npm run validate:content`; `npm run schema:export`; `npm run check:demo`; targeted Prettier; IDE
+  diagnostics; `git diff --check`.
+- **Result/verification:** All targeted tests pass. TypeScript, lint and content validation pass
+  with 5 courses, 13 lessons, 4 cases, 1 anatomy map and zero warnings. Schema export passes, and
+  the Phase 11 real-WebGL demo gate passes all 16 desktop/touch-phone checks. No commit was created;
+  the user's untracked `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T02 clue review and stable totals. Clinical/client sign-off and Phase 9
+  physical-device gates remain external blockers.

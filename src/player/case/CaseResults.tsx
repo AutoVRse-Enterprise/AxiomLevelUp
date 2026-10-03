@@ -110,6 +110,14 @@ export function CaseResults({
       {completeBreakdown ? (
         <Card className="mt-5">
           <h2 className="text-heading font-bold text-neutral-950">Score details</h2>
+          {breakdown.speedModel === 'time_eligible' && breakdown.speedEligibility ? (
+            <p className="mt-2 text-small text-neutral-600">
+              Speed uses time only. First-attempt scores of{' '}
+              {percent(breakdown.speedEligibility.minStepScore)} or higher are eligible (
+              {breakdown.speedEligibility.eligibleSteps}/
+              {breakdown.speedEligibility.totalScoredSteps} steps).
+            </p>
+          ) : null}
           <dl className="mt-4 grid grid-cols-2 gap-4 text-small sm:grid-cols-4">
             <div>
               <dt className="text-neutral-600">Step speed</dt>
@@ -136,6 +144,12 @@ export function CaseResults({
               <dd className="font-semibold">−{breakdown.clueCostPoints} points</dd>
             </div>
           </dl>
+          {result.timeoutCreditApplied ? (
+            <p className="mt-4 text-small text-neutral-600">
+              Timeout credit includes committed progress; timed-out steps receive no step-speed
+              credit.
+            </p>
+          ) : null}
         </Card>
       ) : (
         <p className="mt-5 rounded-lg bg-neutral-100 p-4 text-small text-neutral-700">

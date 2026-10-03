@@ -61,8 +61,8 @@ per-step finding map, so React and Three.js contain no course- or organ-specific
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
 clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, clue penalties, XP and attempt-history limit. Every configured case ID and clue category
-used by a case must resolve.
+defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
+and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
 
 ## Primitive registry
 
@@ -143,6 +143,8 @@ inspection part of its scored response. The loader resolves anatomy maps, levels
 finding anchors, directed waypoint edges, finding clue references and typed image assets. Unknown
 types are retained with a warning so development playback can render the unsupported fallback.
 Every lesson primitive and challenge item passes through the same parser and semantic validation.
+Primitive definitions default timeout credit to `none`; `anatomy_locate` opts into
+`committed_progress` so its evaluator can retain weighted completed-level credit on expiry.
 
 ### DICOM primitive content
 
@@ -201,12 +203,14 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 6 stores reward idempotency, challenge periods, counters, the active reward
+- Learner state version 7 stores reward idempotency, challenge periods, counters, the active reward
   run, latest activity/question results, celebrations and an abstract digital reward ledger.
-- Case attempt result-v6 records retain both speed components, effective score weights, clue cost,
-  timing semantics, normalized first responses, actual duration and XP from the central
-  gamification activity result. Migrated result-v5 records remain explicitly legacy and do not
-  fabricate unavailable details.
+- Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
+  speed components, eligibility threshold and counts, effective score weights, clue cost, timing
+  semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
+  local evidence/differential placeholders and XP from the central gamification activity result.
+  Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
+  unavailable details.
 - Device-scoped offline course records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
 
@@ -254,7 +258,7 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: `0.1`
 - Course documents also include an independent `courseVersion`.
-- Persisted learner state is version 6 and migrates older snapshots. Legacy case result-v5 records
-  remain readable without synthesizing result-v6 detail.
-- In-flight activity sessions are persisted independently at version 4; older sessions migrate
-  forward, including an empty clue-open context map where that fact was not previously recorded.
+- Persisted learner state is version 7 and migrates older snapshots. Legacy case result-v5 and
+  result-v6 records remain readable without synthesizing result-v7 detail.
+- In-flight activity sessions are persisted independently at version 5; older supported sessions
+  migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.

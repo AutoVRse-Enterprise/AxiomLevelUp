@@ -10,6 +10,7 @@ import {
 const defaultConfig: CaseScoringConfig = {
   weights: { anatomy: 0.4, diagnosis: 0.4, speed: 0.2 },
   speedBlend: { perStep: 0.5, perCase: 0.5 },
+  speedEligibility: { minStepScore: 0.5 },
   defaultStepTargetSeconds: 20,
   defaultStepMaxSeconds: 90,
   cluePenalty: { perOptionalClue: 2, cap: 10 },
@@ -50,13 +51,15 @@ describe('calculateCaseScore', () => {
     expect(result).toEqual({
       anatomy: 1,
       diagnosis: 0.5,
-      perStepSpeed: 0.625,
-      caseSpeed: 0.75,
-      speed: 0.6875,
+      perStepSpeed: 0.75,
+      caseSpeed: 1,
+      speed: 0.875,
+      speedModel: 'time_eligible',
+      speedEligibility: { minStepScore: 0.5, eligibleSteps: 2, totalScoredSteps: 2 },
       speedScored: true,
       timingMode: 'stopwatch',
       penalty: 0,
-      total: 74,
+      total: 78,
       weights: { anatomy: 0.4, diagnosis: 0.4, speed: 0.2 },
       durationSeconds: 300,
       openedClueIds: [],
@@ -198,7 +201,7 @@ describe('calculateCaseScore', () => {
     expect(calculateCaseScore({ ...baseInput, ...input })).toMatchObject(expected)
   })
 
-  it('awards no speed for a fast wrong answer', () => {
+  it('excludes a wrong step while keeping case speed time-only', () => {
     const result = calculateCaseScore({
       ...baseInput,
       durationMs: 0,
@@ -209,9 +212,10 @@ describe('calculateCaseScore', () => {
       anatomy: 0,
       diagnosis: 0,
       perStepSpeed: 0,
-      caseSpeed: 0,
-      speed: 0,
-      total: 0,
+      caseSpeed: 1,
+      speed: 0.5,
+      speedEligibility: { minStepScore: 0.5, eligibleSteps: 0, totalScoredSteps: 1 },
+      total: 10,
     })
   })
 
@@ -228,6 +232,25 @@ describe('calculateCaseScore', () => {
     })
 
     expect(result.perStepSpeed).toBe(expected)
+  })
+
+  it('averages time only across steps meeting the configured first-attempt threshold', () => {
+    const result = calculateCaseScore({
+      ...baseInput,
+      config: { ...defaultConfig, speedEligibility: { minStepScore: 0.75 } },
+      steps: [
+        step('anatomy', 0.74, 90_000),
+        step('anatomy', 0.75, 20_000),
+        step('diagnosis', 1, 55_000),
+      ],
+    })
+
+    expect(result.perStepSpeed).toBe(0.75)
+    expect(result.speedEligibility).toEqual({
+      minStepScore: 0.75,
+      eligibleSteps: 2,
+      totalScoredSteps: 3,
+    })
   })
 
   it.each([
@@ -268,10 +291,15 @@ describe('calculateCaseScore', () => {
 
     expect(result.anatomy).toBe(0.25)
     expect(result.diagnosis).toBe(1)
-    expect(result.perStepSpeed).toBeCloseTo(2 / 3)
-    expect(result.caseSpeed).toBe(0.3125)
-    expect(result.speed).toBeCloseTo(0.4010416667)
-    expect(result.total).toBe(55)
+    expect(result.perStepSpeed).toBe(1)
+    expect(result.caseSpeed).toBe(0.5)
+    expect(result.speed).toBe(0.625)
+    expect(result.speedEligibility).toEqual({
+      minStepScore: 0.5,
+      eligibleSteps: 2,
+      totalScoredSteps: 3,
+    })
+    expect(result.total).toBe(66)
   })
 
   it('excludes unscored exploration from component and per-step speed means', () => {
@@ -312,7 +340,12 @@ describe('calculateCaseScore', () => {
     {
       name: 'no scored components',
       steps: [step('none', 1)],
-      expected: { anatomy: 0, diagnosis: 0, total: 0 },
+      expected: {
+        anatomy: 0,
+        diagnosis: 0,
+        speedEligibility: { minStepScore: 0.5, eligibleSteps: 1, totalScoredSteps: 1 },
+        total: 0,
+      },
     },
   ])('handles $name deterministically', ({ steps, expected }) => {
     const result = calculateCaseScore({
@@ -354,6 +387,8 @@ describe('calculateCaseScore', () => {
       speed: 0,
       perStepSpeed: 0,
       caseSpeed: 0,
+      speedModel: 'time_eligible',
+      speedEligibility: { minStepScore: 0.5, eligibleSteps: 0, totalScoredSteps: 2 },
       speedScored: true,
       timingMode: 'stopwatch',
       penalty: 0,

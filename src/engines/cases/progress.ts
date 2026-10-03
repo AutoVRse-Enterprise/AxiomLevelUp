@@ -19,7 +19,7 @@ export function applyCaseProgressEvent(
     lastCompletedAt: null,
   }
   const record: CaseAttemptRecord = {
-    resultVersion: 6,
+    resultVersion: 7,
     attemptId: event.attemptId,
     tier: event.tier,
     total: event.breakdown.total,
@@ -28,6 +28,8 @@ export function applyCaseProgressEvent(
     speed: event.breakdown.speed,
     perStepSpeed: event.breakdown.perStepSpeed,
     caseSpeed: event.breakdown.caseSpeed,
+    speedModel: event.breakdown.speedModel,
+    speedEligibility: structuredClone(event.breakdown.speedEligibility),
     clueCostPoints: event.breakdown.penalty,
     speedScored: event.breakdown.speedScored,
     timingMode: event.breakdown.timingMode,
@@ -36,6 +38,10 @@ export function applyCaseProgressEvent(
     actualAwardedXpSource: null,
     durationSeconds: event.durationSeconds,
     openedClueIds: [...new Set(event.openedClueIds)],
+    reviewedClueIds: [...new Set(event.reviewedClueIds)],
+    evidence: structuredClone(event.evidence),
+    differential: structuredClone(event.differential),
+    timeoutCreditApplied: event.timeoutCreditApplied,
     stepResults: event.stepResults.map((step) => ({
       ...structuredClone(step),
       response: normalizeCaseResponse(step.response),
@@ -71,7 +77,7 @@ export function attachCaseAttemptRewardResult(state: LearnerData, event: Learner
   const attempt = state.caseAttempts[event.caseId]?.find(
     (candidate) => candidate.attemptId === event.attemptId,
   )
-  if (!attempt || attempt.resultVersion !== 6) return
+  if (!attempt || attempt.resultVersion === 5) return
   attempt.actualAwardedXp = activityResult.xpEarned
   attempt.actualAwardedXpSource = 'gamification_activity_result'
 }

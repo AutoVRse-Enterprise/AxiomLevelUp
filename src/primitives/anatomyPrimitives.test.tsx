@@ -17,7 +17,11 @@ import {
   isAnatomyExploreComplete,
   parseAnatomyLocateResponse,
 } from '@/primitives/definitions/anatomy'
-import { evaluatePrimitive, resolvePrimitiveDefinition } from '@/primitives/definitions'
+import {
+  evaluatePrimitive,
+  evaluatePrimitiveTimeout,
+  resolvePrimitiveDefinition,
+} from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import type { PrimitiveInteraction } from '@/primitives/types'
 import { validateContentBundle } from '@/content/loader'
@@ -167,6 +171,7 @@ describe('anatomy localisation schema and evaluation', () => {
       family: 'assessment',
       layout: 'viewer',
       timerCompatible: true,
+      timeoutCredit: 'committed_progress',
     })
     expect(anatomyLocateCorrectResponse(value)).toEqual({
       lobe: 'right-lower-lobe',
@@ -232,6 +237,17 @@ describe('anatomy localisation schema and evaluation', () => {
     expect(evaluatePrimitive(value, null)).toMatchObject({
       score: 0,
       items: { lobe: 'missed', segment: 'missed', structure: 'missed' },
+    })
+  })
+
+  it('evaluates committed localisation levels for timeout partial credit', () => {
+    const value = locatePrimitive()
+
+    expect(evaluatePrimitiveTimeout(value, { lobe: 'right-lower-lobe' })).toMatchObject({
+      score: 1 / 3,
+      correct: false,
+      items: { lobe: 'correct', segment: 'missed', structure: 'missed' },
+      timeoutCreditApplied: true,
     })
   })
 

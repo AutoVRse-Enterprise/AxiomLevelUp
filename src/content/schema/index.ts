@@ -678,7 +678,7 @@ const legacyCaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
   resultVersion: z.literal(5),
 })
 
-const currentCaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
+const resultV6CaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
   resultVersion: z.literal(6),
   perStepSpeed: z.number().min(0).max(1),
   caseSpeed: z.number().min(0).max(1),
@@ -694,8 +694,44 @@ const currentCaseAttemptRecordSchema = caseAttemptRecordBaseSchema.extend({
   actualAwardedXpSource: z.literal('gamification_activity_result').nullable(),
 })
 
+const caseEvidenceSchema = z.strictObject({
+  pinned: z.array(
+    z.strictObject({
+      kind: z.enum(['clue', 'finding']),
+      id: idSchema,
+    }),
+  ),
+  currentLocation: z
+    .strictObject({
+      kind: z.enum(['waypoint', 'structure']),
+      id: idSchema,
+    })
+    .optional(),
+})
+
+const currentCaseAttemptRecordSchema = resultV6CaseAttemptRecordSchema
+  .omit({ resultVersion: true })
+  .extend({
+    resultVersion: z.literal(7),
+    speedModel: z.literal('time_eligible'),
+    speedEligibility: z
+      .strictObject({
+        minStepScore: z.number().min(0).max(1),
+        eligibleSteps: z.number().int().nonnegative(),
+        totalScoredSteps: z.number().int().nonnegative(),
+      })
+      .refine(({ eligibleSteps, totalScoredSteps }) => eligibleSteps <= totalScoredSteps, {
+        message: 'Eligible speed steps cannot exceed total scored steps.',
+      }),
+    reviewedClueIds: z.array(idSchema),
+    evidence: caseEvidenceSchema,
+    differential: z.record(idSchema, z.enum(['unlikely', 'possible', 'likely'])),
+    timeoutCreditApplied: z.boolean(),
+  })
+
 export const caseAttemptRecordSchema = z.discriminatedUnion('resultVersion', [
   legacyCaseAttemptRecordSchema,
+  resultV6CaseAttemptRecordSchema,
   currentCaseAttemptRecordSchema,
 ])
 

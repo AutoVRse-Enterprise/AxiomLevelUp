@@ -1,5 +1,6 @@
 import type { CaseAttemptRecord } from '@/content/schema'
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
+import type { CaseProgress } from '@/engines/learning/session'
 import type { CaseEventStepResult } from '@/events/types'
 
 export type CaseStepResult = CaseEventStepResult
@@ -9,12 +10,19 @@ export interface CaseAttemptResult {
   attemptId: string
   breakdown: CaseScoreBreakdown
   stepResults: CaseStepResult[]
+  reviewedClueIds: string[]
+  evidence: CaseProgress['evidence']
+  differential: CaseProgress['differential']
+  timeoutCreditApplied: boolean
   completedAt: string
 }
 
 export type CaseAttemptHistoryItem = CaseAttemptRecord
 
-export type CaseResultPresentation = Omit<CaseAttemptResult, 'breakdown'> & {
+export type CaseResultPresentation = Omit<
+  CaseAttemptResult,
+  'breakdown' | 'reviewedClueIds' | 'evidence' | 'differential' | 'timeoutCreditApplied'
+> & {
   breakdown: Pick<
     CaseScoreBreakdown,
     'anatomy' | 'diagnosis' | 'speed' | 'total' | 'durationSeconds' | 'openedClueIds'
@@ -22,13 +30,23 @@ export type CaseResultPresentation = Omit<CaseAttemptResult, 'breakdown'> & {
     Partial<
       Pick<
         CaseScoreBreakdown,
-        'perStepSpeed' | 'caseSpeed' | 'speedScored' | 'timingMode' | 'weights'
+        | 'perStepSpeed'
+        | 'caseSpeed'
+        | 'speedModel'
+        | 'speedEligibility'
+        | 'speedScored'
+        | 'timingMode'
+        | 'weights'
       >
     > & {
       clueCostPoints?: number
     }
   actualAwardedXp?: number | null
-  resultVersion: 5 | 6
+  reviewedClueIds?: string[]
+  evidence?: CaseProgress['evidence']
+  differential?: CaseProgress['differential']
+  timeoutCreditApplied?: boolean
+  resultVersion: 5 | 6 | 7
 }
 
 export function presentLiveCaseResult(
@@ -37,13 +55,15 @@ export function presentLiveCaseResult(
 ): CaseResultPresentation {
   return {
     ...result,
-    resultVersion: 6,
+    resultVersion: 7,
     breakdown: {
       anatomy: result.breakdown.anatomy,
       diagnosis: result.breakdown.diagnosis,
       speed: result.breakdown.speed,
       perStepSpeed: result.breakdown.perStepSpeed,
       caseSpeed: result.breakdown.caseSpeed,
+      speedModel: result.breakdown.speedModel,
+      speedEligibility: result.breakdown.speedEligibility,
       speedScored: result.breakdown.speedScored,
       timingMode: result.breakdown.timingMode,
       clueCostPoints: result.breakdown.penalty,
@@ -53,7 +73,9 @@ export function presentLiveCaseResult(
       openedClueIds: result.breakdown.openedClueIds,
     },
     actualAwardedXp:
-      persistedAttempt?.resultVersion === 6 ? persistedAttempt.actualAwardedXp : undefined,
+      persistedAttempt && persistedAttempt.resultVersion !== 5
+        ? persistedAttempt.actualAwardedXp
+        : undefined,
   }
 }
 
@@ -62,7 +84,7 @@ export function presentCaseAttemptRecord(
   attempt: CaseAttemptRecord,
 ): CaseResultPresentation {
   const details =
-    attempt.resultVersion === 6
+    attempt.resultVersion !== 5
       ? {
           perStepSpeed: attempt.perStepSpeed,
           caseSpeed: attempt.caseSpeed,
@@ -70,6 +92,12 @@ export function presentCaseAttemptRecord(
           timingMode: attempt.timingMode,
           clueCostPoints: attempt.clueCostPoints,
           weights: attempt.weights,
+          ...(attempt.resultVersion === 7
+            ? {
+                speedModel: attempt.speedModel,
+                speedEligibility: attempt.speedEligibility,
+              }
+            : {}),
         }
       : {}
 
@@ -87,7 +115,15 @@ export function presentCaseAttemptRecord(
       ...details,
     },
     stepResults: attempt.stepResults,
+    ...(attempt.resultVersion === 7
+      ? {
+          reviewedClueIds: attempt.reviewedClueIds,
+          evidence: attempt.evidence,
+          differential: attempt.differential,
+          timeoutCreditApplied: attempt.timeoutCreditApplied,
+        }
+      : {}),
     completedAt: attempt.completedAt,
-    actualAwardedXp: attempt.resultVersion === 6 ? attempt.actualAwardedXp : undefined,
+    actualAwardedXp: attempt.resultVersion !== 5 ? attempt.actualAwardedXp : undefined,
   }
 }

@@ -193,6 +193,9 @@ describe('case player integration', () => {
     expect(screen.getAllByText('50% weight · 50 points')).toHaveLength(2)
     expect(screen.getByText('−0 points')).toBeVisible()
     expect(screen.getByText(/first submitted response/i)).toBeVisible()
+    expect(
+      screen.getByText(/First-attempt scores of 50% or higher are eligible \(2\/2 steps\)/i),
+    ).toBeVisible()
     expect(screen.queryByText('100 completion XP')).not.toBeInTheDocument()
     expect(screen.getAllByText('Not scored')).toHaveLength(3)
     await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1))
@@ -309,7 +312,8 @@ describe('case player integration', () => {
     expect(result.breakdown).toMatchObject({
       anatomy: 0,
       diagnosis: 1,
-      perStepSpeed: 0.5,
+      perStepSpeed: 1,
+      speedEligibility: { minStepScore: 0.5, eligibleSteps: 1, totalScoredSteps: 2 },
     })
     expect(result.stepResults).toEqual([
       expect.objectContaining({
@@ -439,12 +443,15 @@ describe('case player integration', () => {
       ...session,
       caseProgress: {
         openedClueIds: ['clue-context'],
+        reviewedClueIds: [],
         clueOpenContexts: {
           'clue-context': { context: 'browse', beforeResponse: true },
         },
         stepElapsedMs: { 'identify-location': 2_500 },
         caseElapsedMs: 4_200,
         caseClockExpired: false,
+        evidence: { pinned: [] },
+        differential: {},
       },
     })
 

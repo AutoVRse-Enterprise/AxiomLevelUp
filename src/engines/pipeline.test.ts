@@ -87,6 +87,8 @@ const perfectBreakdown = {
   speed: 0,
   perStepSpeed: 0,
   caseSpeed: 0,
+  speedModel: 'time_eligible' as const,
+  speedEligibility: { minStepScore: 0.5, eligibleSteps: 1, totalScoredSteps: 1 },
   speedScored: false,
   timingMode: 'none' as const,
   penalty: 0,
@@ -105,6 +107,10 @@ function caseCompletion(attemptId: string, total = 100): LearnerEventDraft {
     breakdown: { ...perfectBreakdown, total },
     durationSeconds: 100,
     openedClueIds: ['clue-context'],
+    reviewedClueIds: [],
+    evidence: { pinned: [] },
+    differential: {},
+    timeoutCreditApplied: false,
     stepResults: [
       {
         primitiveId: 'identify-location',
@@ -244,15 +250,21 @@ describe('learner event pipeline', () => {
     })
     expect(state.caseAttempts[caseDocument.id]).toHaveLength(1)
     expect(state.caseAttempts[caseDocument.id]?.[0]).toMatchObject({
-      resultVersion: 6,
+      resultVersion: 7,
       perStepSpeed: 0,
       caseSpeed: 0,
+      speedModel: 'time_eligible',
+      speedEligibility: { minStepScore: 0.5, eligibleSteps: 1, totalScoredSteps: 1 },
       clueCostPoints: 0,
       speedScored: false,
       timingMode: 'none',
       weights: { anatomy: 0.5, diagnosis: 0.5, speed: 0 },
       actualAwardedXp: 140,
       actualAwardedXpSource: 'gamification_activity_result',
+      reviewedClueIds: [],
+      evidence: { pinned: [] },
+      differential: {},
+      timeoutCreditApplied: false,
       stepResults: [
         expect.objectContaining({
           response: { choices: ['a', 'b'], metadata: { a: 2, z: 1 } },
@@ -266,6 +278,7 @@ describe('learner event pipeline', () => {
       masteryDelta: { 'thoracic-imaging': 3 },
       revision: false,
     })
+    expect(() => learnerSeedSchema.parse({ schemaVersion: '0.1', ...state })).not.toThrow()
 
     state = reduceCase(caseCompletion('attempt-1')).state
     expect(state.xp.total).toBe(140)
@@ -495,7 +508,7 @@ describe('learner event pipeline', () => {
     }
 
     const migrated = migrateLearnerState(legacy)
-    expect(migrated.stateVersion).toBe(6)
+    expect(migrated.stateVersion).toBe(7)
     expect(migrated.gamification.lessonRewards['imaging-orientation']).toEqual({
       completionAwarded: true,
       perfectAwarded: true,

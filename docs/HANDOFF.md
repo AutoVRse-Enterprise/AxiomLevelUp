@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T00 is complete; P12-T01 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T01 is complete; P12-T02 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -60,18 +60,27 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   W01/W02 for the disabled Leaderboard periods and inert weekly-challenge cards.
 - Expanded Phase 12 to close the whole PRD product tour and recorded ADR-083. Segment depth will
   use configured procedural volumes and waypoints without introducing a new GLB.
+- Replaced accuracy-adjusted speed with result-v7 `time_eligible` scoring: step speed averages only
+  first-attempt scores at or above the configured threshold, case speed is time-only and untimed
+  redistribution remains intact.
+- Added definition-level timeout credit with a conservative `none` default and
+  `anatomy_locate: committed_progress`; timed-out localisation keeps weighted completed-level
+  credit while its step speed remains zero.
+- Upgraded active sessions to v5 and learner state/results to v7 with reviewed-clue, evidence,
+  current-location, differential and timeout-credit placeholders. Result-v5/v6 attempts remain
+  discriminated legacy records without invented facts.
+- Exported the updated schemas and recorded ADR-084 and ADR-085.
 
 ## In progress
 
-- P12-T01 is ready to define speed, timeout and persisted result/session contracts.
+- P12-T02 is ready to separate clue review from opening and expose stable case/stage totals.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Implement P12-T01 speed eligibility, committed-progress timeout credit and the
-   session-v5/result-v7 migration.
-2. Implement P12-T02 clue review and stable totals before case content is re-authored.
+1. Implement P12-T02 clue review and stable totals before case content is re-authored.
+2. Implement P12-T03 configured procedural segment volumes and segmental waypoints.
 3. Preserve the Phase 11 golden-path gate after every task.
 
 ## Blockers/questions for the user
@@ -105,6 +114,13 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   - `npm run check` passes with 59 Vitest files / 400 tests;
   - `npm run check:demo` passes 16/16;
   - Phase 11 baseline commit: `e4d36d3`.
+- P12-T01 verification:
+  - focused Vitest passes 10 files / 114 tests;
+  - typecheck, lint and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - `npm run check:demo` passes all 16 desktop/touch-phone real-WebGL checks;
+  - `npm run schema:export` passes;
+  - generated app-config and learner-seed schemas include the new contracts.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.

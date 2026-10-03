@@ -90,7 +90,7 @@ function isKnownSelection(level: AnatomyLocateLevel, selectionId: string): boole
   }
 }
 
-export function parseAnatomyLocateResponse(
+function parseAnatomyLocateSelections(
   primitive: AnatomyLocatePrimitive,
   response: unknown,
 ): AnatomyLocateResponse | null {
@@ -100,11 +100,10 @@ export function parseAnatomyLocateResponse(
   const expectedLevelIds = new Set(primitive.content.levels.map(({ levelId }) => levelId))
   const entries = Object.entries(parsed.data)
   if (
-    entries.length !== expectedLevelIds.size ||
     entries.some(([levelId]) => !expectedLevelIds.has(levelId)) ||
     primitive.content.levels.some(
       (level) =>
-        !(level.levelId in parsed.data) ||
+        level.levelId in parsed.data &&
         !isKnownSelection(level, parsed.data[level.levelId] as string),
     )
   ) {
@@ -112,6 +111,16 @@ export function parseAnatomyLocateResponse(
   }
 
   return parsed.data
+}
+
+export function parseAnatomyLocateResponse(
+  primitive: AnatomyLocatePrimitive,
+  response: unknown,
+): AnatomyLocateResponse | null {
+  const selections = parseAnatomyLocateSelections(primitive, response)
+  return selections && Object.keys(selections).length === primitive.content.levels.length
+    ? selections
+    : null
 }
 
 export function anatomyLocateCorrectResponse(
@@ -128,9 +137,10 @@ export const anatomyLocateDefinition = definePrimitive<AnatomyLocatePrimitive>({
   label: 'Anatomy localisation',
   layout: 'viewer',
   timerCompatible: timerCompatibleTypeSet.has('anatomy_locate'),
+  timeoutCredit: 'committed_progress',
   scored: () => true,
   evaluate: (primitive, response) => {
-    const selections = parseAnatomyLocateResponse(primitive, response)
+    const selections = parseAnatomyLocateSelections(primitive, response)
     const totalWeight = primitive.content.levels.reduce(
       (total, level) => total + (level.weight ?? 1),
       0,
@@ -152,7 +162,7 @@ export const anatomyLocateDefinition = definePrimitive<AnatomyLocatePrimitive>({
       items: Object.fromEntries(
         primitive.content.levels.map((level) => [
           level.levelId,
-          selections
+          selections && level.levelId in selections
             ? selections[level.levelId] === anatomyLocateTargetId(level)
               ? 'correct'
               : 'incorrect'

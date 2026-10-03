@@ -30,7 +30,7 @@ import { StepFrame } from '@/player/StepFrame'
 import { TimerBadge } from '@/player/TimerBadge'
 import { useActiveElapsed } from '@/player/useActiveElapsed'
 import { useAttemptTimer } from '@/player/useAttemptTimer'
-import { evaluatePrimitive } from '@/primitives/definitions'
+import { evaluatePrimitive, evaluatePrimitiveTimeout } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import { useLearnerStore } from '@/state/learnerStore'
 
@@ -60,6 +60,7 @@ export interface ActivityPlayerTimedAttempt {
   attempt: number
   elapsedMs: number
   timedOut: boolean
+  timeoutCreditApplied: boolean
   score: number
   correct: boolean
   response: unknown
@@ -257,8 +258,9 @@ export function ActivityPlayer({
         : submittedResponse
       flushDraft()
       const result = timedOut
-        ? { score: 0, correct: false }
-        : evaluatePrimitive(step.primitive, response)
+        ? evaluatePrimitiveTimeout(step.primitive, response)
+        : { ...evaluatePrimitive(step.primitive, response), timeoutCreditApplied: false }
+      const { timeoutCreditApplied } = result
       const attempts = stepProgress.attempts + 1
       const completed = isPrimitiveComplete(step.primitive, {
         attempts,
@@ -278,6 +280,7 @@ export function ActivityPlayer({
         score: result.score,
         completed,
         timedOut,
+        timeoutCreditApplied,
       })
       if (step.scored) {
         onAttemptTimed?.({
@@ -286,6 +289,7 @@ export function ActivityPlayer({
           attempt: attempts,
           elapsedMs,
           timedOut,
+          timeoutCreditApplied,
           score: result.score,
           correct: result.correct,
           response,

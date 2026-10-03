@@ -178,6 +178,11 @@ export const caseLabConfigSchema = z
     scoring: z.strictObject({
       weights: normalizedWeightsSchema,
       speedBlend: speedBlendSchema,
+      speedEligibility: z
+        .strictObject({
+          minStepScore: z.number().min(0).max(1),
+        })
+        .default({ minStepScore: 0.5 }),
       defaultStepTargetSeconds: z.number().int().positive(),
       defaultStepMaxSeconds: z.number().int().positive(),
       cluePenalty: z.strictObject({

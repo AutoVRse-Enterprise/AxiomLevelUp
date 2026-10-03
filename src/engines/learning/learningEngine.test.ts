@@ -357,8 +357,8 @@ describe('activity planning and sessions', () => {
     expect(isPrimitiveComplete(ordering, { ...context, attempts: 2, correct: false })).toBe(true)
   })
 
-  it('restarts v1 sessions and migrates v2 and legacy case sessions into session v4', () => {
-    expect(ACTIVITY_SESSION_VERSION).toBe(4)
+  it('restarts v1 sessions and migrates legacy case sessions into session v5', () => {
+    expect(ACTIVITY_SESSION_VERSION).toBe(5)
     expect(migrateActivitySessionState({ session: { activityId: 'legacy' } }, 1)).toEqual({
       session: null,
     })
@@ -371,7 +371,11 @@ describe('activity planning and sessions', () => {
     expect(migrated).toMatchObject({
       activityId: versionTwo.activityId,
       progress: {
-        'fixture-question': { firstTimedOut: false },
+        'fixture-question': {
+          firstTimedOut: false,
+          firstTimeoutCreditApplied: false,
+          lastTimeoutCreditApplied: false,
+        },
       },
     })
     expect(migrated?.caseProgress).toBeUndefined()
@@ -389,6 +393,9 @@ describe('activity planning and sessions', () => {
       {
         ...versionThree.caseProgress,
         clueOpenContexts: {},
+        reviewedClueIds: [],
+        evidence: { pinned: [] },
+        differential: {},
       },
     )
   })
