@@ -2070,3 +2070,18 @@ requirement.pdf` plus three images sent separately in chat) against the runtime.
   budget.
 - **Follow-ups:** Run or explicitly waive Phase 9's physical Android/iOS gate, including the new 3D
   anatomy addendum.
+
+### [2026-10-03 06:26] P10-T17 - Correct BodyParts3D licence attribution
+
+- **Agent/session:** Cursor implementation session with asset-research follow-up
+- **Action:** Rechecked the official BodyParts3D publisher licence and corrected the respiratory
+  model provenance from the legacy source-comment notice to the current CC BY 4.0 terms and
+  required attribution. Retained the legacy notice only as explanatory history.
+- **Files changed:** Model provenance in `public/content/assets.json`, the anatomy spike report,
+  spike asset README, preparation helper, handoff and activity log.
+- **Commands run:** Official licence-page fetch and search, repository provenance audit,
+  `npm run validate:content`, `git diff --check`.
+- **Result/verification:** The publisher's licence page was updated on 2025-02-27 and identifies CC
+  BY 4.0 as current. Runtime provenance and reproducible preparation documentation now agree.
+- **Follow-ups:** None for Phase 10; retain the HRA unified lung GLB as a possible future
+  higher-detail alternative if segment-level model geometry is required.

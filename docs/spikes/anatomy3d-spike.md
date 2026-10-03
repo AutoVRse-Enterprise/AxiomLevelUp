@@ -21,9 +21,12 @@ source mesh contains an endoscopic surface.
 
 - Dataset: BodyParts3D 4.0, PART-OF 99%-reduced polygon archive.
 - Source: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
-- Licence: Creative Commons Attribution-ShareAlike 2.1 Japan.
+- Current publisher licence: Creative Commons Attribution 4.0 International, updated 2025-02-27.
+- Licence terms: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
 - Required attribution: “BodyParts3D, © The Database Center for Life Science licensed under CC
-  Attribution-ShareAlike 2.1 Japan.”
+  Attribution 4.0 International.”
+- Note: source OBJ comments retain the legacy CC BY-SA 2.1 Japan notice; the current publisher
+  licence above supersedes that text for distribution and adaptation.
 - Source archive: `partof_BP3D_4.0_obj_99.zip`, 64,888,505 bytes.
 - Selected structures:
   - right upper lobe (`FMA7333`);

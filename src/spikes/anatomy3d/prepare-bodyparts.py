@@ -91,7 +91,8 @@ def build_obj(archive: Path, mapping: Path, output: Path) -> dict[str, int]:
 
     with zipfile.ZipFile(archive) as source_zip, output.open("w", encoding="utf-8") as target:
         target.write("# BodyParts3D respiratory subset, grouped for the Case Lab spike.\n")
-        target.write("# Source: BodyParts3D 4.0, CC BY-SA 2.1 Japan.\n")
+        target.write("# Source: BodyParts3D 4.0, CC BY 4.0 International.\n")
+        target.write("# Attribution: BodyParts3D, © The Database Center for Life Science.\n")
         target.write(f"mtllib {material_path.name}\n")
 
         archive_names = {Path(name).name: name for name in source_zip.namelist()}

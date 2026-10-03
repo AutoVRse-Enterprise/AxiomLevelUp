@@ -20,6 +20,8 @@ and iOS gates P9-M01 through P9-M03, now including the Phase 10 3D anatomy adden
   bounded case attempts and migrates previous snapshots.
 - Added Case Lab Home/Learn/routes, the daily quick-case challenge, Autovrse LevelUp identity, three
   respiratory catalogue cases and sourced demo assets with provenance.
+- Verified the current BodyParts3D publisher terms and records the respiratory model under CC BY
+  4.0 with the required Database Center for Life Science attribution.
 - Automated flows complete all three catalogue cases, the daily quick case and a loader-added
   fourth fixture. Chromium QA passes 375×812, 812×375, 768×900 and 1280×900 with no document
   overflow, plus keyboard, reduced-motion, failure and heap-release checks.
@@ -57,7 +59,8 @@ and iOS gates P9-M01 through P9-M03, now including the Phase 10 3D anatomy adden
 - Local cross-origin QA: `npm run dicom:serve`, set
   `VITE_DICOM_BASE_URL=http://localhost:4174/`, then build/preview on another origin.
 - The user's untracked `docs/reference docs/` remains outside Phase 10 commits.
-- P10-T16 is commit `3258439`; the Phase 10 close-out commit follows it.
+- P10-T16 is commit `3258439`; the main Phase 10 close-out is `d2d017c`; the attribution correction
+  is the current HEAD.
 
 ## Gotchas
 
