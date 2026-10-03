@@ -16,7 +16,6 @@ export function CaseLabCard({
 }) {
   return (
     <Link
-      aria-label={`Open case: ${caseView.title}`}
       className="block rounded-lg focus-visible:outline-2"
       to={`/learn/cases/${caseView.caseId}`}
     >

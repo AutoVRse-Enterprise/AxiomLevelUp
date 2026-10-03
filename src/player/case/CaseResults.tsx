@@ -151,7 +151,7 @@ export function CaseResults({
         but do not replace the scored response.
       </p>
 
-      <dl className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
         {(
           [
             ['Anatomy', 'anatomy', breakdown.anatomy],
@@ -164,10 +164,12 @@ export function CaseResults({
           const weight = breakdown.weights?.[component]
           return (
             <Card key={label}>
-              <dt className="text-small text-neutral-600">{label}</dt>
-              <dd className="mt-1 text-title font-bold text-neutral-950">
-                {notScored ? 'Not scored' : unavailable ? 'Unavailable' : percent(value)}
-              </dd>
+              <dl>
+                <dt className="text-small text-neutral-600">{label}</dt>
+                <dd className="mt-1 text-title font-bold text-neutral-950">
+                  {notScored ? 'Not scored' : unavailable ? 'Unavailable' : percent(value)}
+                </dd>
+              </dl>
               {weight !== undefined ? (
                 <p className="mt-1 text-small text-neutral-600">
                   {percent(weight)} weight · {points(value * weight * 100)} points
@@ -184,7 +186,7 @@ export function CaseResults({
             </Card>
           )
         })}
-      </dl>
+      </div>
 
       {completeBreakdown ? (
         <Card className="mt-5">

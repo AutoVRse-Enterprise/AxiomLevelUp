@@ -128,9 +128,12 @@ async function completeFoundationExploration(page: Page) {
 async function dismissCelebrations(page: Page) {
   for (let index = 0; index < 5; index += 1) {
     const dialog = page.getByRole('dialog')
-    if ((await dialog.count()) === 0) return
+    const appeared = await dialog
+      .waitFor({ state: 'visible', timeout: index === 0 ? 2_000 : 500 })
+      .then(() => true)
+      .catch(() => false)
+    if (!appeared) return
     const continueButton = dialog.getByRole('button', { name: 'Continue' })
-    if ((await continueButton.count()) === 0) return
     await continueButton.click()
   }
 }
@@ -161,6 +164,9 @@ test('opens the golden case with real WebGL and deterministic state', async ({
 
   expect(snapshot.renderer.webglVersion).toBeGreaterThanOrEqual(1)
   expect(snapshot.renderer.renderer).not.toHaveLength(0)
+  expect(snapshot.performance.sampleCount).toBeGreaterThan(0)
+  expect(snapshot.performance.medianFrameMs).toBeGreaterThan(0)
+  expect(snapshot.performance.medianFps).toBeGreaterThan(0)
   expect(snapshot.structures.length).toBeGreaterThan(0)
   expect(snapshot.findings.some(({ id }) => id === 'exac-posterior-basal-plug')).toBe(true)
   console.log(`[phase-11-qa] ${testInfo.project.name} ${JSON.stringify(snapshot.renderer)}`)

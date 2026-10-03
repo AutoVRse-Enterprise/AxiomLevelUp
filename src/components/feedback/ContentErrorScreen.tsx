@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react'
 
 import { Button, Card } from '@/components/ui'
-import { ContentValidationError } from '@/content/loader'
+import { ContentValidationError } from '@/content/errors'
 
 export function ContentErrorScreen({ error }: { error: Error }) {
   const issues =
@@ -15,8 +15,8 @@ export function ContentErrorScreen({ error }: { error: Error }) {
         <AlertTriangle aria-hidden="true" className="text-danger-700" />
         <h1 className="mt-4 text-title font-bold">Course content could not be loaded</h1>
         <p className="mt-2 text-neutral-600">
-          The course configuration did not pass validation. Reload after the content source has
-          been corrected.
+          The course configuration did not pass validation. Reload after the content source has been
+          corrected.
         </p>
         <details className="mt-5 rounded-lg bg-danger-50 p-4">
           <summary className="cursor-pointer font-semibold text-danger-700">

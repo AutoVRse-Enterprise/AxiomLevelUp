@@ -224,7 +224,7 @@ function StageTransition({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/60" />
         <Dialog.Content
-          className="fixed top-1/2 left-1/2 z-50 w-[calc(100%_-_2.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-7 shadow-overlay outline-none"
+          className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%_-_2.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-7 shadow-overlay outline-none"
           onEscapeKeyDown={(event) => event.preventDefault()}
           onPointerDownOutside={(event) => event.preventDefault()}
         >

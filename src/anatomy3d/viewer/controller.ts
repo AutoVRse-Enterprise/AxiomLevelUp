@@ -34,15 +34,24 @@ export interface AnatomyRendererDiagnostics {
   unmaskedVendor: string | null
 }
 
+export interface AnatomyPerformanceSnapshot {
+  medianFrameMs: number | null
+  medianFps: number | null
+  sampleCount: number
+}
+
 export interface AnatomyTestSnapshot {
   structures: readonly AnatomyProjectedScreenPoint[]
   findings: readonly AnatomyProjectedScreenPoint[]
   markers: readonly AnatomyProjectedScreenPoint[]
   renderer: AnatomyRendererDiagnostics
+  performance: AnatomyPerformanceSnapshot
 }
 
 export interface AnatomyTestBridge {
   snapshot(): AnatomyTestSnapshot
+  loseContext(): boolean
+  restoreContext(): boolean
 }
 
 export interface AnatomyViewState {
@@ -138,6 +147,8 @@ export interface CreateAnatomyControllerOptions {
   element: HTMLDivElement
   config: AnatomyControllerConfig
   onViewChanged?: (view: AnatomyViewState) => void
+  onContextLost?: () => void
+  onContextRestored?: () => void
 }
 
 export interface AnatomyViewerController {
@@ -159,5 +170,7 @@ export interface AnatomyViewerController {
   frameStructures(structureIds: readonly string[], options?: { animate?: boolean }): void
   resetView(): void
   getTestSnapshot(): AnatomyTestSnapshot
+  loseContext(): boolean
+  restoreContext(): boolean
   dispose(): void
 }

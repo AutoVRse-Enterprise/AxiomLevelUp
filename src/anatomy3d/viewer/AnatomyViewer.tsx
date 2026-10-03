@@ -8,6 +8,8 @@ import { useResolvedMotion } from '@/design/motion/useResolvedMotion'
 import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type {
   AnatomyLoadResult,
+  AnatomyPerformanceSnapshot,
+  AnatomyRendererDiagnostics,
   AnatomyStartView,
   AnatomyViewState,
 } from '@/anatomy3d/viewer/controller'
@@ -67,6 +69,10 @@ export function AnatomyViewer({
   const [listOpen, setListOpen] = useState(false)
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(null)
   const [authoringView, setAuthoringView] = useState<AnatomyViewState | null>(null)
+  const [debugPerformance, setDebugPerformance] = useState<{
+    renderer: AnatomyRendererDiagnostics
+    performance: AnatomyPerformanceSnapshot
+  } | null>(null)
   const pointerStart = useRef<{ x: number; y: number } | null>(null)
   const pointerLast = useRef<{ x: number; y: number } | null>(null)
   const endoscopicRef = useRef(endoscopic)
@@ -133,15 +139,32 @@ export function AnatomyViewer({
   }, [controller, map, motion, selectableLevelKey, state.status])
 
   useEffect(() => {
-    if (import.meta.env.VITE_E2E !== 'true' || !controller || state.status !== 'ready') return
+    if (import.meta.env.VITE_E2E !== 'true' || !controller) return
     const bridge = {
       snapshot: () => controller.getTestSnapshot(),
+      loseContext: () => controller.loseContext(),
+      restoreContext: () => controller.restoreContext(),
     }
     window.__anatomyTest = bridge
     return () => {
       if (window.__anatomyTest === bridge) delete window.__anatomyTest
     }
-  }, [controller, state.status])
+  }, [controller])
+
+  useEffect(() => {
+    if (!import.meta.env.DEV || !anatomyDebugEnabled || !controller || state.status !== 'ready')
+      return
+    const update = () => {
+      const snapshot = controller.getTestSnapshot()
+      setDebugPerformance({
+        renderer: snapshot.renderer,
+        performance: snapshot.performance,
+      })
+    }
+    update()
+    const interval = window.setInterval(update, 1_000)
+    return () => window.clearInterval(interval)
+  }, [anatomyDebugEnabled, controller, state.status])
 
   const selectStructure = useCallback(
     (structureId: string, focusListAlternative = false) => {
@@ -229,6 +252,12 @@ export function AnatomyViewer({
             pointerLast.current = null
           }}
           onPointerDown={(event) => {
+            if (
+              event.target instanceof HTMLElement &&
+              event.target.closest('button, a, input, select, textarea')
+            ) {
+              return
+            }
             pointerStart.current = { x: event.clientX, y: event.clientY }
             pointerLast.current = { x: event.clientX, y: event.clientY }
             event.currentTarget.setPointerCapture?.(event.pointerId)
@@ -312,6 +341,26 @@ export function AnatomyViewer({
               <dd>{authoringView ? formatAuthoringVector(authoringView.position) : 'pending'}</dd>
               <dt>Target</dt>
               <dd>{authoringView ? formatAuthoringVector(authoringView.target) : 'pending'}</dd>
+              <dt>Median frame</dt>
+              <dd>
+                {debugPerformance?.performance.medianFrameMs === null ||
+                debugPerformance?.performance.medianFrameMs === undefined
+                  ? 'collecting'
+                  : `${debugPerformance.performance.medianFrameMs.toFixed(1)} ms`}
+              </dd>
+              <dt>Median FPS</dt>
+              <dd>
+                {debugPerformance?.performance.medianFps === null ||
+                debugPerformance?.performance.medianFps === undefined
+                  ? 'collecting'
+                  : debugPerformance.performance.medianFps.toFixed(1)}
+              </dd>
+              <dt>Renderer</dt>
+              <dd className="break-all">
+                {debugPerformance?.renderer.unmaskedRenderer ??
+                  debugPerformance?.renderer.renderer ??
+                  'pending'}
+              </dd>
             </dl>
           </details>
         ) : null}

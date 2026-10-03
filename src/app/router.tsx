@@ -5,9 +5,7 @@ import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
 import { LoadingState } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
-const HomePage = lazy(() =>
-  import('@/routes/home/HomePage').then((module) => ({ default: module.HomePage })),
-)
+import { HomePage } from '@/routes/home/HomePage'
 const LearnPage = lazy(() =>
   import('@/routes/learn/LearnPage').then((module) => ({ default: module.LearnPage })),
 )
@@ -66,12 +64,12 @@ function lazyPage(page: ReactNode) {
   return (
     <Suspense
       fallback={
-        <main className="mx-auto w-full max-w-3xl p-5 sm:p-8">
+        <div className="mx-auto w-full max-w-3xl p-5 sm:p-8">
           <LoadingState
             message="Loading this part of your learning experience."
             title="Opening screen"
           />
-        </main>
+        </div>
       }
     >
       {page}
@@ -84,7 +82,7 @@ export const router = createBrowserRouter([
     element: <AppShell />,
     errorElement: <RouteErrorPage />,
     children: [
-      { index: true, element: lazyPage(<HomePage />), handle: { title: 'Home' } },
+      { index: true, element: <HomePage />, handle: { title: 'Home' } },
       { path: 'learn', element: lazyPage(<LearnPage />), handle: { title: 'Learn' } },
       {
         path: 'learn/pathways/:pathwayId',

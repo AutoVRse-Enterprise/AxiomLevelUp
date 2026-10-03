@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 
+import type { AnatomyTestBridge } from '../src/anatomy3d/viewer/controller'
 import { VERIFIED_PACKAGE_CACHE, VERSIONED_MODEL_CACHE } from '../src/pwa/cachePolicy'
+import { resetDemo } from './helpers/case-driver'
 
 test.describe('P11-T12 model preflight', () => {
   test.use({ serviceWorkers: 'allow' })
@@ -101,5 +103,118 @@ test.describe('P12-T09 offline case package', () => {
     await expect
       .poll(() => clueImage.evaluate((image: HTMLImageElement) => image.naturalWidth))
       .toBe(1200)
+  })
+})
+
+test.describe('P12-T10 anatomy and session resilience', () => {
+  test.beforeEach(async ({ page }) => {
+    await resetDemo(page)
+  })
+
+  test('recovers after a WebGL context loss when the extension is available', async ({ page }) => {
+    await page.goto('/learn/cases/asthma-foundation/play')
+    await page.getByRole('button', { name: 'Begin stage' }).click()
+    await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible()
+    const supported = await page.evaluate(
+      () =>
+        (
+          window as typeof window & { __anatomyTest?: AnatomyTestBridge }
+        ).__anatomyTest?.loseContext() ?? false,
+    )
+    test.skip(!supported, 'WEBGL_lose_context is unavailable in this Chromium renderer.')
+
+    await expect(page.getByText('3D anatomy unavailable')).toBeVisible()
+    expect(
+      await page.evaluate(
+        () =>
+          (
+            window as typeof window & { __anatomyTest?: AnatomyTestBridge }
+          ).__anatomyTest?.restoreContext() ?? false,
+      ),
+    ).toBe(true)
+    await expect(page.getByText('3D anatomy unavailable')).toHaveCount(0)
+    await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible()
+  })
+
+  test('retries the model after a deterministic request failure', async ({ page }) => {
+    let failed = false
+    let modelRequests = 0
+    await page.route('**/assets/models/**/*.glb*', async (route) => {
+      modelRequests += 1
+      if (!failed) {
+        failed = true
+        await route.fulfill({
+          status: 503,
+          headers: { 'cache-control': 'no-store' },
+          body: 'Deterministic model failure',
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
+    await page.goto('/learn/cases/asthma-foundation/play')
+    await page.getByRole('button', { name: 'Begin stage' }).click()
+    await expect(page.getByText('3D anatomy unavailable')).toBeVisible()
+    await page.getByRole('button', { name: 'Retry' }).click()
+
+    await expect.poll(() => modelRequests).toBeGreaterThanOrEqual(2)
+    await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible({ timeout: 15_000 })
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () =>
+            ((
+              window as typeof window & { __anatomyTest?: AnatomyTestBridge }
+            ).__anatomyTest?.snapshot().structures.length ?? 0) > 0,
+        ),
+      )
+      .toBe(true)
+  })
+
+  test('resumes the same stage and pinned evidence after navigation', async ({ page }) => {
+    await page.goto('/learn/cases/asthma-foundation/play')
+    await page.getByRole('button', { name: 'Begin stage' }).click()
+    await page.getByText('Choose from list').click()
+    await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
+    await page.getByText('Inspect findings').click()
+    await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
+
+    await page.getByRole('button', { name: /^Clues/ }).click()
+    const notesTab = page.getByRole('tab', { name: 'Notes' })
+    if (await notesTab.isVisible()) {
+      await notesTab.click()
+    } else {
+      await page.getByRole('button', { name: 'Close' }).click()
+      await page.getByRole('button', { name: 'Notes', exact: true }).click()
+    }
+    const finding = page.locator('li').filter({ hasText: 'Illustrative upper-lobe region' })
+    await finding.getByRole('button', { name: 'Pin finding' }).click()
+    const close = page.getByRole('button', { name: 'Close' })
+    if (await close.isVisible()) await close.click()
+
+    await page.getByRole('button', { name: 'Continue', exact: true }).click()
+    await page.getByText('Choose from list').click()
+    await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
+    await page.getByRole('button', { name: 'Next level' }).click()
+    await expect(page.getByText('Level 2 of 3')).toBeVisible()
+
+    await page.goto('/learn')
+    await page.goto('/learn/cases/asthma-foundation/play')
+    await expect(page.getByText('Stage 1 of 4')).toBeVisible()
+    await expect(page.getByText('Task 2 of 2')).toBeVisible()
+    await page.getByRole('button', { name: /^Clues/ }).click()
+    if (await notesTab.isVisible()) {
+      await notesTab.click()
+    } else {
+      await page.getByRole('button', { name: 'Close' }).click()
+      await page.getByRole('button', { name: 'Notes', exact: true }).click()
+    }
+    await expect(
+      page
+        .locator('li')
+        .filter({ hasText: 'Illustrative upper-lobe region' })
+        .getByRole('button', { name: 'Unpin finding' }),
+    ).toBeVisible()
   })
 })

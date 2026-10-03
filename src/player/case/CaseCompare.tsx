@@ -148,7 +148,10 @@ export function CaseCompare({
               ],
               ['Speed', result.breakdown.speed, caseDoc.expertBenchmark.breakdown.speed],
             ].map(([label, learner, expert]) => (
-              <div className="grid grid-cols-[1fr_auto_auto] gap-4" key={label as string}>
+              <div
+                className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:gap-4"
+                key={label as string}
+              >
                 <dt className="font-semibold text-neutral-800">{label}</dt>
                 <dd className="text-right text-small">
                   <span className="block text-neutral-500">You</span>
@@ -162,7 +165,7 @@ export function CaseCompare({
                 </dd>
               </div>
             ))}
-            <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-t border-neutral-200 pt-4">
+            <div className="grid min-w-0 grid-cols-1 gap-2 border-t border-neutral-200 pt-4 sm:grid-cols-[1fr_auto_auto] sm:gap-4">
               <dt className="font-semibold text-neutral-800">Time</dt>
               <dd className="text-right text-small">
                 {formatDuration(result.breakdown.durationSeconds)}
@@ -171,7 +174,7 @@ export function CaseCompare({
                 {formatDuration(caseDoc.expertBenchmark.durationSeconds)}
               </dd>
             </div>
-            <div className="grid grid-cols-[1fr_auto_auto] gap-4">
+            <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:gap-4">
               <dt className="font-semibold text-neutral-800">Clues</dt>
               <dd className="text-right text-small">{result.breakdown.openedClueIds.length}</dd>
               <dd className="text-right text-small">
@@ -236,7 +239,7 @@ export function CaseCompare({
                 >
                   {index + 1}
                 </span>
-                <div>
+                <div className="min-w-0">
                   <p className="font-semibold text-neutral-900">{label}</p>
                   <p className="mt-1 text-small text-neutral-700">{detail}</p>
                 </div>
@@ -325,9 +328,11 @@ export function CaseCompare({
                   id={`expert-step-${stepIndexes.get(step.primitiveId) ?? 0}`}
                   key={step.primitiveId}
                 >
-                  <div className="flex justify-between gap-3">
-                    <span className="text-neutral-700">{authored.label}</span>
-                    <span className={matched ? 'text-success-700' : 'text-warning-700'}>
+                  <div className="flex min-w-0 flex-wrap justify-between gap-3">
+                    <span className="min-w-0 text-neutral-700">{authored.label}</span>
+                    <span
+                      className={`min-w-0 ${matched ? 'text-success-700' : 'text-warning-700'}`}
+                    >
                       {matched ? 'Matched expert' : `${Math.round(step.firstAttemptScore * 100)}%`}
                     </span>
                   </div>

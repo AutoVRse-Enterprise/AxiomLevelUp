@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/navigation/PageHeader'
 import { primaryNavigation } from '@/components/navigation/primaryNavigation'
 import { RouteTransition } from '@/components/navigation/RouteTransition'
 import { PwaPromptHost } from '@/components/pwa/PwaPromptHost'
-import { CelebrationHost } from '@/components/rewards/CelebrationHost'
+import { DeferredCelebrationHost } from '@/components/rewards/DeferredCelebrationHost'
 import { cn } from '@/lib/cn'
 
 export function AppShell() {
@@ -17,7 +17,7 @@ export function AppShell() {
       >
         Skip to content
       </a>
-      <CelebrationHost />
+      <DeferredCelebrationHost />
       <PwaPromptHost />
       <PageHeader />
 

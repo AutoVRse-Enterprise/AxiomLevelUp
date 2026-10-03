@@ -108,7 +108,7 @@ physical-device approval.
 - [x] P12-T08 — Close the whole-app W-series demo gaps and enforce learner-facing terminology.
 - [x] P12-T09 — Add integrity-verified, quota-aware offline Case Lab packages including the
       versioned model.
-- [ ] P12-T10 — Complete catalogue-wide accessibility, text-scaling, performance and resilience
+- [x] P12-T10 — Complete catalogue-wide accessibility, text-scaling, performance and resilience
       evidence.
 - [ ] P12-T11 — Add breadth and product-tour browser coverage, durable screenshots and one unified
       presenter runbook.

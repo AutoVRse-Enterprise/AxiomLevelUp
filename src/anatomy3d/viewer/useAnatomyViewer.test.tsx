@@ -1,6 +1,6 @@
 import appConfigDocument from '../../../public/content/app-config.json'
 import anatomyMapDocument from '../../../public/content/fixtures/anatomy-map.json'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAnatomyViewer } from '@/anatomy3d/viewer/useAnatomyViewer'
@@ -96,6 +96,24 @@ describe('useAnatomyViewer', () => {
     await waitFor(() => expect(result.current.state.status).toBe('error'))
     expect(result.current.state.message).toBe('WebGL unavailable')
     expect(onFailed).toHaveBeenCalledWith('WebGL unavailable')
+  })
+
+  it('bypasses a failed model response when retrying', async () => {
+    const element = document.createElement('div')
+    mocked.controller.load.mockRejectedValueOnce(new Error('Service unavailable'))
+    const { result } = renderHook(() =>
+      useAnatomyViewer({
+        element,
+        modelUrl: '/model.glb?v=model-hash',
+        map,
+        config,
+      }),
+    )
+
+    await waitFor(() => expect(result.current.state.status).toBe('error'))
+    act(() => result.current.retry())
+    await waitFor(() => expect(result.current.state.status).toBe('ready'))
+    expect(mocked.controller.load).toHaveBeenLastCalledWith('/model.glb?v=model-hash&retry=1', map)
   })
 
   it('warns when configured triangle limits are exceeded', async () => {

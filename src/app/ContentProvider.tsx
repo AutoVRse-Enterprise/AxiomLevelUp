@@ -3,7 +3,8 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { ContentContext } from '@/app/contentContext'
 import { ContentErrorScreen } from '@/components/feedback/ContentErrorScreen'
 import { LoadingState } from '@/components/ui'
-import { loadContent, type ContentRegistry } from '@/content/loader'
+import type { ContentRegistry } from '@/content/loader'
+import { loadRuntimeContent } from '@/content/runtime'
 import { OfflineReconciler } from '@/offline/OfflineReconciler'
 
 export function ContentProvider({ children }: { children: ReactNode }) {
@@ -12,7 +13,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true
-    void loadContent()
+    void loadRuntimeContent()
       .then((content) => {
         if (active) setRegistry(content)
       })

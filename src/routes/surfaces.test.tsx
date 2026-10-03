@@ -118,7 +118,7 @@ describe('application surfaces', () => {
     const caseRegistry = makeCaseRegistry()
     renderSurface(<HomePage />, '/', '/', caseRegistry)
 
-    const homeCase = screen.getByRole('link', { name: `Open case: ${fixtureCase.title}` })
+    const homeCase = screen.getByRole('link', { name: new RegExp(fixtureCase.title) })
     expect(homeCase).toBeVisible()
     expect(
       homeCase.compareDocumentPosition(screen.getByText('Continue learning')) &
@@ -127,7 +127,7 @@ describe('application surfaces', () => {
     cleanup()
 
     renderSurface(<LearnPage />, '/learn', '/learn', caseRegistry)
-    expect(screen.getByRole('link', { name: `Open case: ${fixtureCase.title}` })).toBeVisible()
+    expect(screen.getByRole('link', { name: new RegExp(fixtureCase.title) })).toBeVisible()
     expect(screen.getByText('Basic')).toBeVisible()
     expect(screen.getByText('Generic')).toBeVisible()
     expect(screen.getByText('Daily')).toBeVisible()

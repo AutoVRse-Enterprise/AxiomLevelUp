@@ -74,6 +74,12 @@ and media type; scenario graphs, formula syntax, case references, anatomy hierar
 graphs receive content-layer validation. UI receives a read-only registry indexed by identifier,
 plus learner-visible catalogue projections. Parse failures include source file and JSON path.
 
+Production startup performs fetching and the complete validation pipeline in a module worker, then
+structured-clones the validated registry and its identifier maps to the main thread. The provider
+continues to gate all routes on successful validation and reconstructs typed validation errors for
+the eager error screen. Worker scripts and content JSON are precached, preserving the same offline
+startup contract; environments without Worker support retain the direct asynchronous loader.
+
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning
@@ -289,6 +295,13 @@ Playwright boundary exercises real WebGL on desktop and 375 px touch emulation, 
 picking, marker retention, reversible branch travel, configured finding inspection, hit testing and
 the complete six-task golden path. The test-only projection bridge is build-gated by `VITE_E2E`;
 normal production builds omit it.
+
+The browser QA boundary also injects axe-core across stable learner routes and every configured
+Case Lab state, applies deterministic 200% root text resizing, and exercises keyboard-only
+completion plus WebGL/model/session recovery on both viewports. Development anatomy sessions may
+opt into `?anatomyDebug=1`, which reports the rolling median of the latest 120 animation-frame
+intervals, derived FPS and renderer. The visible probe is excluded from production, while the
+`VITE_E2E` bridge retains equivalent diagnostics for automated assertions.
 
 Release evidence is split by capability. Chromium emulation covers repeatable responsive, motion,
 keyboard, recovery, cross-origin, cache and offline checks. Physical Android/iOS scripts own

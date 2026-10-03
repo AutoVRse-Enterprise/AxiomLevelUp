@@ -26,6 +26,21 @@ const mocked = vi.hoisted(() => ({
     lookAround: vi.fn(),
     frameStructures: vi.fn(),
     resetView: vi.fn(),
+    getTestSnapshot: vi.fn(() => ({
+      structures: [],
+      findings: [],
+      markers: [],
+      renderer: {
+        webglVersion: 2,
+        renderer: 'Test renderer',
+        vendor: 'Test vendor',
+        unmaskedRenderer: null,
+        unmaskedVendor: null,
+      },
+      performance: { medianFrameMs: 16.7, medianFps: 59.9, sampleCount: 120 },
+    })),
+    loseContext: vi.fn(),
+    restoreContext: vi.fn(),
     dispose: vi.fn(),
   },
   retry: vi.fn(),
@@ -175,6 +190,9 @@ describe('AnatomyViewer', () => {
     expect(screen.getByText('terminal-waypoint')).toBeVisible()
     expect(screen.getByText('1.23, 2.35, 3.46')).toBeVisible()
     expect(screen.getByText('4.57, 5.68, 6.79')).toBeVisible()
+    expect(screen.getByText('16.7 ms')).toBeVisible()
+    expect(screen.getByText('59.9')).toBeVisible()
+    expect(screen.getByText('Test renderer')).toBeVisible()
   })
 
   it('cuts waypoint motion when reduced motion is active', async () => {

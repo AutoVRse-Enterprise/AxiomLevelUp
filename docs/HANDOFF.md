@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T09 is complete; P12-T10 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T10 is complete; P12-T11 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -148,21 +148,32 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   structures plus a clue image.
 - Exported the asset schema, recorded ADR-092 and closed P12-T09. ADR-091 was already assigned to
   P12-T08 before this task.
+- Added axe-core browser checks for 33 stable learner routes and every stage/step state of all four
+  cases on desktop and 375 px touch projects, totaling 236 scans with zero WCAG A/AA violations.
+- Added 200% root-text checks for CasePlayer, Clues, Notes, saved results and comparison, plus a
+  keyboard-only quick-case completion path on both browser projects.
+- Added a development-only rolling median frame/FPS/renderer readout and deterministic WebGL
+  context-loss, failed-model retry and mid-case resume coverage. Retry now bypasses failed cached
+  responses and viewport pointer capture no longer intercepts nested controls.
+- Captured eight Lighthouse 13.5 JSON reports and documented the results. Every accessibility
+  score is 100; Home is 99 desktop and 86 mobile.
+- Moved unchanged runtime content fetching and complete schema/semantic validation into a precached
+  module worker while preserving the provider gate, typed eager errors, offline startup and a
+  no-Worker fallback. Deferred celebration UI/effects until persisted state contains a pending
+  celebration. Recorded ADR-094.
 
 ## In progress
 
-- P12-T10 is ready for catalogue-wide accessibility, text-scaling, performance and resilience
-  evidence.
+- P12-T11 is ready for product-tour browser breadth, screenshots and presenter runbook work.
 - Clinical, anatomy/pathology and client/legal review of all four catalogue claim ledgers is
   pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Complete catalogue-wide accessibility, text-scaling, performance and resilience evidence in
-   P12-T10.
-2. Add breadth and product-tour browser coverage in P12-T11.
-3. Publish the final Phase 12 QA and readiness verdict in P12-T12.
+1. Add breadth and product-tour browser coverage in P12-T11.
+2. Publish the final Phase 12 QA and readiness verdict in P12-T12.
+3. Complete the outstanding physical-device and clinical/client approval gates.
 
 ## Blockers/questions for the user
 
@@ -281,6 +292,20 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
     `8884cefbb5be256af5dfd46b8d8071af677d4cf4ade8477e3311e2c09086766a`;
   - schema export, IDE diagnostics and `git diff --check` pass. No commit was created, and
     `docs/reference docs/` was not touched.
+- P12-T10 verification:
+  - `npm run check` passes 66 Vitest files / 456 tests, zero content warnings, production build and
+    all bundle budgets;
+  - the complete serial browser suite passes 40 tests with two intentional touch duplicate skips;
+    all 20 P12-T10 project-level tests pass without skips;
+  - axe-core completes 236 WCAG A/AA scans with zero violations; 200% text, keyboard completion and
+    all six resilience project checks pass;
+  - Lighthouse accessibility is 100 on all eight audits. Performance is Home 86/99, Learn 75/75,
+    case intro 76/95 and lesson 75/99 (mobile/desktop);
+  - two isolated post-optimization Home mobile checks score 85 and 86; retained evidence is a third
+    86 run with 2.8 s FCP, 3.1 s LCP, 180 ms blocking time and zero layout shift;
+  - headed workstation Chrome reported 6.1 ms median frame time / 163.9 FPS on ANGLE NVIDIA GeForce
+    RTX 3060 Ti Direct3D11. Automated browser runs use SwiftShader and physical-device gates remain
+    open.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.

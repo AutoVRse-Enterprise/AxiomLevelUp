@@ -76,20 +76,23 @@ export function CoursePage() {
             </div>
             <h1 className="mt-4 text-display font-bold">{course.title}</h1>
             <p className="mt-3 text-neutral-600">{course.description}</p>
-            <dl className="mt-5 grid gap-3 text-small text-neutral-700 sm:grid-cols-3">
-              <div className="flex items-center gap-2">
+            <ul
+              aria-label="Course details"
+              className="mt-5 grid gap-3 text-small text-neutral-700 sm:grid-cols-3"
+            >
+              <li className="flex items-center gap-2">
                 <Clock aria-hidden="true" size={17} />
                 <span>{course.estimatedMinutes} min</span>
-              </div>
-              <div className="flex items-center gap-2 capitalize">
+              </li>
+              <li className="flex items-center gap-2 capitalize">
                 <Gauge aria-hidden="true" size={17} />
                 <span>{course.difficulty}</span>
-              </div>
-              <div className="flex items-center gap-2">
+              </li>
+              <li className="flex items-center gap-2">
                 <Users aria-hidden="true" size={17} />
                 <span>{course.authors.join(', ')}</span>
-              </div>
-            </dl>
+              </li>
+            </ul>
             <p className="mt-4 text-caption text-neutral-600">
               Course version {course.courseVersion}
             </p>

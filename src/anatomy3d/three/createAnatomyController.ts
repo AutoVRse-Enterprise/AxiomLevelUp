@@ -190,6 +190,8 @@ export function createAnatomyController({
   element,
   config,
   onViewChanged,
+  onContextLost,
+  onContextRestored,
 }: CreateAnatomyControllerOptions): AnatomyViewerController {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -250,6 +252,21 @@ export function createAnatomyController({
   let lookPitch = 0
   let tween: CameraTween | null = null
   let disposed = false
+  let previousFrameAt: number | null = null
+  const frameTimes: number[] = []
+
+  const contextLossExtension = renderer.getContext().getExtension('WEBGL_lose_context')
+  const handleContextLost = (event: Event) => {
+    event.preventDefault()
+    onContextLost?.()
+  }
+  const handleContextRestored = () => {
+    previousFrameAt = null
+    frameTimes.length = 0
+    onContextRestored?.()
+  }
+  renderer.domElement.addEventListener('webglcontextlost', handleContextLost)
+  renderer.domElement.addEventListener('webglcontextrestored', handleContextRestored)
 
   const notifyViewChanged = () => {
     const view: AnatomyViewState = {
@@ -276,6 +293,14 @@ export function createAnatomyController({
   resize()
 
   const render = (time: number) => {
+    if (previousFrameAt !== null) {
+      const elapsed = time - previousFrameAt
+      if (elapsed > 0 && elapsed <= 250) {
+        frameTimes.push(elapsed)
+        if (frameTimes.length > 120) frameTimes.shift()
+      }
+    }
+    previousFrameAt = time
     if (tween) {
       const progress = Math.min(1, (time - tween.startedAt) / tween.duration)
       const eased = ease(progress, config.flyThroughEasing)
@@ -1137,6 +1162,10 @@ export function createAnatomyController({
 
       const context = renderer.getContext()
       const debugInfo = context.getExtension('WEBGL_debug_renderer_info')
+      const sortedFrameTimes = [...frameTimes].sort((left, right) => left - right)
+      const medianFrameMs = sortedFrameTimes.length
+        ? sortedFrameTimes[Math.floor(sortedFrameTimes.length / 2)]!
+        : null
       return {
         structures,
         findings: projectedFindings,
@@ -1152,7 +1181,24 @@ export function createAnatomyController({
             ? String(context.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL))
             : null,
         },
+        performance: {
+          medianFrameMs,
+          medianFps: medianFrameMs === null ? null : 1_000 / medianFrameMs,
+          sampleCount: sortedFrameTimes.length,
+        },
       }
+    },
+
+    loseContext() {
+      if (!contextLossExtension) return false
+      contextLossExtension.loseContext()
+      return true
+    },
+
+    restoreContext() {
+      if (!contextLossExtension) return false
+      contextLossExtension.restoreContext()
+      return true
     },
 
     dispose() {
@@ -1162,6 +1208,8 @@ export function createAnatomyController({
       renderer.setAnimationLoop(null)
       controls.removeEventListener('end', notifyViewChanged)
       controls.dispose()
+      renderer.domElement.removeEventListener('webglcontextlost', handleContextLost)
+      renderer.domElement.removeEventListener('webglcontextrestored', handleContextRestored)
       resizeObserver?.disconnect()
       window.removeEventListener('resize', resize)
       releaseModel()

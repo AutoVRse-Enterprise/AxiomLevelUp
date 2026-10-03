@@ -2753,3 +2753,55 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Follow-ups:** Start P12-T10 catalogue-wide accessibility, text-scaling, performance and
   resilience evidence. Clinical/client sign-off and Phase 9 physical-device gates remain external
   blockers.
+
+### [2026-10-04 01:47] P12-T10 - Validate accessibility and resilience
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added shared Playwright axe-core, 200% root-text and keyboard-focus helpers; scanned
+  all stable learner routes and every configured state of all four cases on desktop and touch-phone
+  projects; and added keyboard-only quick-case completion. Added rolling median anatomy frame/FPS
+  and renderer diagnostics under the development-only authoring readout. Added deterministic WebGL
+  context loss/recovery, failed-model retry and mid-case stage/evidence resume checks. Fixed
+  semantic list markup, loading landmarks, neutral text contrast, scaled-text wrapping and a real
+  viewport pointer-capture defect that blocked Retry. Made Home eager to remove its initial layout
+  shift, captured eight Lighthouse reports and recorded ADR-093.
+- **Files changed:** Anatomy controller/viewer and tests; router, shared UI and affected learner
+  surfaces; Playwright accessibility, text-scaling, keyboard and resilience coverage plus helpers;
+  Lighthouse JSON evidence; Phase 12 QA report, architecture, decisions, checklist and handoff.
+- **Commands run:** Focused Vitest and repeated focused resilience Playwright checks;
+  `npm run check`; serial `npm run test:e2e -- --workers=1`; eight Lighthouse 13.5 mobile/desktop
+  audits against production preview; IDE diagnostics; `git diff --check`.
+- **Result/verification:** `npm run check` passes 65 files / 454 tests, validates 5 courses /
+  13 lessons / 4 cases / 1 anatomy map with zero warnings, builds production and passes all bundle
+  budgets. Full Playwright passes 40 tests with two intentional touch duplicate skips; all 20
+  P12-T10 project-level tests pass. Axe-core completes 236 WCAG A/AA scans with zero violations.
+  Lighthouse accessibility is 100 throughout; performance is Home 78/99, Learn 75/75, case intro
+  76/95 and lesson 75/99 (mobile/desktop). No commit was created, and `docs/reference docs/` was
+  not touched.
+- **Follow-ups:** Home's simulated-mobile Lighthouse score remains below the 85 target because
+  hydrated shared-runtime startup still drives 3.0 s FCP, 3.6 s LCP and 310 ms blocking time.
+  Continue with P12-T11; clinical/client review and Phase 9 physical-device gates remain external.
+
+### [2026-10-04 02:10] P12-T10 - Meet Home mobile performance target
+
+- **Agent/session:** Cursor implementation continuation
+- **Action:** Investigated the retained Lighthouse bootup and main-thread diagnostics, which
+  attributed roughly 700 ms of simulated CPU time to initial script evaluation. Moved the unchanged
+  runtime content fetch and full Zod/cross-reference/semantic validation pipeline into a module
+  worker while preserving the blocking provider boundary, structured registry maps, typed eager
+  error display, direct no-Worker fallback and service-worker precache/offline path. Deferred the
+  celebration dialog/effects chunk until persisted state contains a pending celebration and made
+  the browser celebration dismissal helper wait for that lazy boundary. Recorded ADR-094.
+- **Files changed:** Runtime content worker, loader errors/runtime boundary and focused tests;
+  ContentProvider and content error screen; deferred celebration host and both layouts; golden-path
+  browser helper; Home Lighthouse JSON evidence; architecture, decisions, QA report and handoff.
+- **Commands run:** Focused typecheck/Vitest and production builds; three unchanged-profile isolated
+  Home mobile Lighthouse audits after the optimization; `npm run check`; focused desktop golden
+  path; complete serial Playwright rerun; formatting, IDE diagnostics and `git diff --check`.
+- **Result/verification:** Isolated Home mobile verification scored 85 and 86; retained evidence is
+  a third 86 run with accessibility 100, 2.8 s FCP, 3.1 s LCP, 2.8 s Speed Index, 180 ms total
+  blocking time and zero layout shift. `npm run check` passes 66 files / 456 tests, validates
+  5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds the worker and
+  production app, and passes all bundle budgets.
+- **Follow-ups:** Continue P12-T11. Physical-device and clinical/client approval gates remain
+  external; no Lighthouse profile or threshold was changed.

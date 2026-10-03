@@ -1653,3 +1653,47 @@ launch under the worker's simulated-offline mode and an undownloaded or stale ca
 models occupy one verified cache entry until their final package reference is removed. The existing
 `offline-courses-v1` cache name is retained for deployed-cache continuity even though its contents
 are now generic verified packages.
+
+## ADR-093: Browser quality evidence follows runtime state
+
+**Status:** Accepted
+
+**Context:** Static component checks did not prove accessibility across every configured Case Lab
+stage, nested localisation level or scenario consequence. Browser emulation also needed repeatable
+text-resize, keyboard and recovery evidence without presenting SwiftShader frame timing as
+hardware-GPU performance.
+
+**Decision:** Drive all four catalogue cases from their validated documents and run axe-core at
+each stage, step, feedback, nested level, scenario and result state on desktop and 375 px touch
+projects. Test 200% text resizing by setting the root font size while retaining viewport dimensions,
+and keep keyboard interaction on semantic controls, including the list equivalent for canvas
+selection. Expose a development-only anatomy readout under `?anatomyDebug=1` using the median of the
+latest 120 animation-frame intervals and renderer diagnostics. Keep deterministic WebGL context,
+failed-model retry and session-resume checks in the production-preview browser boundary.
+
+**Consequences:** New catalogue states and stable learner routes have an executable WCAG A/AA
+regression gate, and layout/recovery regressions are checked on both configured viewports. Frame
+intervals describe observed presentation cadence rather than GPU execution time; automated
+SwiftShader results remain distinct from headed workstation and physical-device evidence.
+
+## ADR-094: Runtime content validation executes off the main thread
+
+**Status:** Accepted
+
+**Context:** Lighthouse attributed the remaining Home mobile deficit primarily to main-thread
+script evaluation. The runtime content loader imports strict schemas, primitive definitions,
+scoring and semantic checks and must complete before any learner route renders. Removing or
+deferring validation until after Home would weaken correctness and eager error handling.
+
+**Decision:** Run the existing content fetch and complete validation pipeline in a module worker.
+Keep `ContentProvider` as the route gate, structured-clone the validated registry and identifier
+maps back to the main thread, and serialize/reconstruct `ContentValidationError` issues for the
+existing eager error screen. Retain a direct asynchronous loader fallback where Worker is
+unavailable. Include the generated worker in the service-worker precache so online and offline
+startup use the same validated boundary. Load celebration dialog/effects code only when persisted
+state contains a pending celebration.
+
+**Consequences:** Schema and semantic evaluation no longer blocks Home's main thread, while no
+unvalidated content reaches UI or learner state. Worker startup adds a small module request and
+structured-clone cost, but the asset and content remain available offline. Optional celebrations
+may appear after their lazy chunk resolves, while their persisted queue prevents loss.

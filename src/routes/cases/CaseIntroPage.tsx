@@ -194,25 +194,25 @@ export function CaseIntroPage() {
           <Card>
             <h2 className="text-heading font-bold">Case rules</h2>
             <dl className="mt-4 space-y-4 text-small">
-              <div className="flex gap-3">
-                <Clock3 aria-hidden="true" className="mt-0.5 shrink-0 text-brand-700" size={18} />
-                <div>
-                  <dt className="font-semibold">Timing</dt>
-                  <dd className="text-neutral-600">{timingLabels[caseView.timing]}</dd>
-                </div>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3">
+                <dt className="contents font-semibold">
+                  <Clock3 aria-hidden="true" className="mt-0.5 shrink-0 text-brand-700" size={18} />
+                  <span>Timing</span>
+                </dt>
+                <dd className="col-start-2 text-neutral-600">{timingLabels[caseView.timing]}</dd>
               </div>
-              <div className="flex gap-3">
-                <Lightbulb
-                  aria-hidden="true"
-                  className="mt-0.5 shrink-0 text-brand-700"
-                  size={18}
-                />
-                <div>
-                  <dt className="font-semibold">Hints</dt>
-                  <dd className="text-neutral-600">
-                    {caseView.hints === 'full' ? 'Hints are available' : 'Reduced hints'}
-                  </dd>
-                </div>
+              <div className="grid grid-cols-[auto_1fr] gap-x-3">
+                <dt className="contents font-semibold">
+                  <Lightbulb
+                    aria-hidden="true"
+                    className="mt-0.5 shrink-0 text-brand-700"
+                    size={18}
+                  />
+                  <span>Hints</span>
+                </dt>
+                <dd className="col-start-2 text-neutral-600">
+                  {caseView.hints === 'full' ? 'Hints are available' : 'Reduced hints'}
+                </dd>
               </div>
               <div>
                 <dt className="font-semibold">Optional clues</dt>

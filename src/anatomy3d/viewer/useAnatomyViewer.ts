@@ -38,6 +38,12 @@ function loadingState(): AnatomyViewerState {
   }
 }
 
+function retryModelUrl(modelUrl: string, retryToken: number) {
+  if (retryToken === 0) return modelUrl
+  const separator = modelUrl.includes('?') ? '&' : '?'
+  return `${modelUrl}${separator}retry=${retryToken}`
+}
+
 export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
   const [state, setState] = useState<AnatomyViewerState>(loadingState)
   const [controller, setController] = useState<AnatomyViewerController | null>(null)
@@ -73,8 +79,27 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
           element: options.element!,
           config: options.config,
           onViewChanged: (view) => callbacks.current.onViewChanged?.(view),
+          onContextLost: () => {
+            if (!active) return
+            const message = 'The 3D graphics context was lost.'
+            setState((current) => ({ ...current, status: 'error', message }))
+            callbacks.current.onFailed?.(message)
+          },
+          onContextRestored: () => {
+            if (!active) return
+            setState((current) => ({
+              ...current,
+              status: current.loadResult ? 'ready' : 'loading',
+              message: current.loadResult
+                ? 'Interactive anatomy ready'
+                : 'Preparing interactive anatomy',
+            }))
+          },
         })
-        const result = await nextController.load(options.modelUrl, options.map)
+        const result = await nextController.load(
+          retryModelUrl(options.modelUrl, retryToken),
+          options.map,
+        )
         if (!active) {
           nextController.dispose()
           return

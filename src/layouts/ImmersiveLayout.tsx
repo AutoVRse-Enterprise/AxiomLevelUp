@@ -2,7 +2,7 @@ import { ScrollRestoration } from 'react-router'
 
 import { PageHeader } from '@/components/navigation/PageHeader'
 import { RouteTransition } from '@/components/navigation/RouteTransition'
-import { CelebrationHost } from '@/components/rewards/CelebrationHost'
+import { DeferredCelebrationHost } from '@/components/rewards/DeferredCelebrationHost'
 
 export function ImmersiveLayout() {
   return (
@@ -13,7 +13,7 @@ export function ImmersiveLayout() {
       >
         Skip to activity
       </a>
-      <CelebrationHost suppressDuringSession />
+      <DeferredCelebrationHost suppressDuringSession />
       <PageHeader immersive />
       <main className="mx-auto w-full max-w-7xl" id="main-content">
         <RouteTransition />

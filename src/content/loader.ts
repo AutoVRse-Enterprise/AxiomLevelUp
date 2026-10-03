@@ -24,6 +24,7 @@ import {
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
 import { validateAnatomyVolumes } from './anatomyVolumeValidation'
+import { ContentValidationError, type ContentIssue } from './errors'
 import {
   assessmentPrimitiveTypeSet,
   contentPrimitiveTypeSet,
@@ -33,12 +34,7 @@ import {
 import { calculateCaseScore } from '../engines/cases/scoring'
 import { evaluatePrimitive, resolvePrimitiveDefinition } from '../primitives/definitions'
 
-export interface ContentIssue {
-  file: string
-  path: string
-  message: string
-  severity: 'error' | 'warning'
-}
+export { ContentValidationError, type ContentIssue } from './errors'
 
 export interface ContentBundleInput {
   manifestFile: string
@@ -69,13 +65,6 @@ export interface ContentRegistry {
   anatomyMapById: ReadonlyMap<string, AnatomyMap>
   assetById: ReadonlyMap<string, AssetManifest['assets'][number]>
   warnings: readonly ContentIssue[]
-}
-
-export class ContentValidationError extends Error {
-  constructor(readonly issues: ContentIssue[]) {
-    super(`Content validation failed with ${issues.length} issue${issues.length === 1 ? '' : 's'}.`)
-    this.name = 'ContentValidationError'
-  }
 }
 
 function zodIssues(
