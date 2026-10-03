@@ -2866,3 +2866,14 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Follow-ups:** Record clinical, anatomy/pathology and client/legal approvals; complete or waive
   P9-M01 through P9-M03; then commit and deploy one exact candidate through the runbook preflight.
   Unsupervised/external use remains No-go until those gates close.
+
+### [2026-10-04 04:25] P12-T12 - Record committed candidate
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Committed the Phase 12 closeout as `98d0d51` and refreshed final QA and handoff
+  metadata to identify the committed candidate rather than the pre-commit worktree.
+- **Files changed:** Final browser QA, handoff and activity log.
+- **Commands run:** Phase 12 closeout commit; repository status and history review.
+- **Result/verification:** All implementation and closeout changes are committed. The only
+  remaining untracked path is the user's untouched `docs/reference docs/`.
+- **Follow-ups:** External approvals, Phase 9 physical-device evidence and deployment preflight.

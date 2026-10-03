@@ -56,9 +56,8 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
 ## In progress
 
 - No Phase 12 implementation remains.
-- The P12-T12 closeout worktree is intentionally uncommitted.
-- Only external approvals, physical-device gates and deployment of an exact approved candidate
-  remain.
+- Phase 12 implementation and closeout are committed through `98d0d51`; only external approvals,
+  physical-device gates and deployment of an exact approved candidate remain.
 
 ## Next three steps
 
@@ -81,10 +80,9 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
 ## Environment notes
 
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
-- Branch/base: `master` at `73d845f438b1cdb3306f5deccec0358b2bca6699`
-  (`test(P12-T11): rehearse complete demo`)
-- Worktree: uncommitted P12-T12 closeout changes; no P12-T12 commit exists yet. The user's
-  untracked `docs/reference docs/` remains untouched.
+- Branch: `master`; Phase 12 closeout commit `98d0d51`
+  (`docs(P12-T12): close demo readiness phase`).
+- Worktree: clean except for the user's untracked `docs/reference docs/`, which remains untouched.
 - Node/npm/Playwright: 24.19.0 / 11.17.0 / 1.63.0
 - Browser cache override:
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`

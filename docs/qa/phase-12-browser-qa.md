@@ -14,10 +14,10 @@ Audience decisions are recorded separately in `phase-12-demo-readiness-verdict.m
 - Date: 2026-10-04
 - Host: Windows 10 build 19045 (`win32`)
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
-- Git branch/base: `master` at `73d845f438b1cdb3306f5deccec0358b2bca6699`
-  (`test(P12-T11): rehearse complete demo`)
-- Worktree: uncommitted P12-T12 closeout documentation and the learner-copy correction; the user's
-  untracked `docs/reference docs/` remains untouched. No P12-T12 candidate commit exists yet.
+- Git branch/candidate: `master`, with the validated Phase 12 implementation and closeout committed
+  through `98d0d51` (`docs(P12-T12): close demo readiness phase`).
+- Worktree after closeout: clean except for the user's untracked `docs/reference docs/`, which
+  remains untouched.
 - Node: `v24.19.0`
 - npm: `11.17.0`
 - Playwright: `1.63.0`
