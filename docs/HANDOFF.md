@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 11 (Case Lab demo hardening) is complete. P11-T00 through P11-T13 are complete. Phase 12
-(Case Lab depth and polish) is next.
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T00 is complete; P12-T01 is
+next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 
@@ -54,20 +54,25 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   wall. Refreshed screenshots and the complete browser suite confirm the correction.
 - Updated the final architecture, content contracts, audit disposition, roadmap and phase status.
   ADR-074 through ADR-082 remain accepted, sequential and accurately referenced.
+- Committed the complete Phase 11 implementation as `e4d36d3` after `npm run check` and the
+  16-test real-WebGL demo gate passed.
+- Started Phase 12 with a written baseline, kept all 12 approved F-series deferrals open and added
+  W01/W02 for the disabled Leaderboard periods and inert weekly-challenge cards.
+- Expanded Phase 12 to close the whole PRD product tour and recorded ADR-083. Segment depth will
+  use configured procedural volumes and waypoints without introducing a new GLB.
 
 ## In progress
 
-- No Phase 11 implementation is in progress.
+- P12-T01 is ready to define speed, timeout and persisted result/session contracts.
 - Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Start P12-T00 by rebaselining the 12 explicitly deferred findings and confirming no golden-path
-   regression.
-2. Obtain and record the required golden-case SME/anatomy/pathology/client sign-offs before any
-   external presentation.
-3. Complete P9-M01 through P9-M03 on physical hardware or record an authorized waiver.
+1. Implement P12-T01 speed eligibility, committed-progress timeout credit and the
+   session-v5/result-v7 migration.
+2. Implement P12-T02 clue review and stable totals before case content is re-authored.
+3. Preserve the Phase 11 golden-path gate after every task.
 
 ## Blockers/questions for the user
 
@@ -96,6 +101,10 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 - The unoverridden reproducible P11-T12 build ID was `0.1.0+765186c09b76`; deployments may set
   `VITE_BUILD_ID` or supported CI commit metadata.
 - Content validation reports 5 courses, 13 lessons, 4 cases, 1 anatomy map and zero warnings.
+- P12-T00 baseline:
+  - `npm run check` passes with 59 Vitest files / 400 tests;
+  - `npm run check:demo` passes 16/16;
+  - Phase 11 baseline commit: `e4d36d3`.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.
@@ -122,3 +131,4 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 - Case names, labels, thresholds, rewards and pathology parameters remain validated configuration.
 - Chromium emulation, especially the SwiftShader renderer used by Playwright, does not satisfy
   physical install, touch, haptic, Safari safe-area, memory-pressure or 3D GPU acceptance.
+- The only workspace item intentionally left untracked is the user's `docs/reference docs/`.

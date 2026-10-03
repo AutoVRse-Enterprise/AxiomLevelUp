@@ -1,12 +1,17 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Planned — begins after the Phase 11 golden path is stable
+**Status:** Active — P12-T00 in progress
 
 ## Goal
 
 Extend the proven Phase 11 golden path into broader learning depth and a consistently polished Case
 Lab. Differentiate tiers through spatial and diagnostic reasoning, support evidence synthesis and
 turn debrief and expert comparison into teaching experiences rather than score summaries.
+
+Close the whole learner-facing application as one client-demo-ready product. The Phase 12 gate
+therefore also covers the PRD section 80 tour through Home, pathway, lesson, DICOM, completion,
+daily challenge, leaderboard and profile. Technical completion remains distinct from clinical and
+physical-device approval.
 
 ## Source and framing
 
@@ -37,6 +42,8 @@ turn debrief and expert comparison into teaching experiences rather than score s
 - Standardize remaining metadata and catalogue terminology.
 - Complete remaining accessibility, presentation polish and general offline model packaging.
 - Extend automated and browser coverage across the broadened catalogue.
+- Remove the remaining whole-app demo dead ends, unify the demo story and produce one presenter
+  runbook and readiness verdict.
 
 ### Out of scope
 
@@ -83,32 +90,39 @@ turn debrief and expert comparison into teaching experiences rather than score s
 
 ## Checklist
 
-- [ ] P12-T00 — Rebaseline residual audit findings after Phase 11 and confirm no golden-path
-      regressions.
-- [ ] P12-T01 — Differentiate non-golden catalogue cases and remove answer-leading breadth
-      (F28, F29).
-- [ ] P12-T02 — Extend reusable anatomy beyond golden-case waypoints and correct the quick-case
-      entry contract (F10, F51).
-- [ ] P12-T03 — Define general clue consumption, tier totals and broad scoring/schema semantics
-      (F12, F26, F47).
-- [ ] P12-T04 — Add general multi-level timeout partial credit without changing Phase 11's
-      no-hidden-timing invariant.
-- [ ] P12-T05 — Add the compact evidence/evolving-hypothesis workspace and teaching-oriented
-      debrief and expert rationale (F31–F33).
-- [ ] P12-T06 — Resolve remaining metadata and quick-case history behavior (F39, F46).
-- [ ] P12-T07 — Complete catalogue-wide accessibility/presentation polish, general offline model
-      packaging and automated/browser QA.
-- [ ] P12-T08 — Update architecture, schemas, decisions, QA evidence, roadmap and handoff; close
-      only with the residual audit map resolved or explicitly deferred.
+- [ ] P12-T00 — Commit the complete Phase 11 baseline, run both quality gates, rebaseline residual
+      audit findings and whole-app demo gaps, rescope this phase and record ADR-083.
+- [ ] P12-T01 — Define time-only speed eligibility, committed-progress timeout credit and the
+      session-v5/learner-state-v7/result-v7 migration (F47 and general timeout credit).
+- [ ] P12-T02 — Separate clue review from opening and show stable case/stage totals (F12, F26).
+- [ ] P12-T03 — Add configured procedural segment volumes and segmental waypoints without
+      replacing the licensed lung GLB (F10).
+- [ ] P12-T04 — Add local case notes with pinned evidence, current location and an authored
+      evolving differential (F31).
+- [ ] P12-T05 — Add actionable key-evidence debrief and expert path/evidence/diagnosis teaching
+      (F32, F33).
+- [ ] P12-T06 — Re-author the foundation, intermediate and quick cases, enrich the golden teaching
+      fields and validate entry, stage and benchmark semantics (F28, F29, F51).
+- [ ] P12-T07 — Standardize configured metadata and verify quick-case attempt de-duplication
+      (F39, F46).
+- [ ] P12-T08 — Close the whole-app W-series demo gaps and enforce learner-facing terminology.
+- [ ] P12-T09 — Add integrity-verified, quota-aware offline Case Lab packages including the
+      versioned model.
+- [ ] P12-T10 — Complete catalogue-wide accessibility, text-scaling, performance and resilience
+      evidence.
+- [ ] P12-T11 — Add breadth and product-tour browser coverage, durable screenshots and one unified
+      presenter runbook.
+- [ ] P12-T12 — Publish the browser QA and audience-specific readiness verdict; update architecture,
+      schemas, decisions, roadmap and handoff.
 
 ## Sequencing
 
-1. P12-T00 confirms Phase 11's shared-engine baseline and residual scope.
-2. P12-T01 and P12-T02 establish differentiated content and deeper reusable anatomy.
-3. P12-T03 and P12-T04 define broad clue, scoring and timeout semantics.
-4. P12-T05 adds evidence capture, remediation and expert teaching.
-5. P12-T06 resolves remaining catalogue metadata/history behavior.
-6. P12-T07 validates breadth, accessibility, polish and offline packaging; P12-T08 closes.
+1. P12-T00 confirms and commits Phase 11 before any new behavior changes.
+2. P12-T01 and P12-T02 establish scoring, timeout and clue contracts before content is re-authored.
+3. P12-T03, P12-T04 and P12-T05 build anatomy, evidence and teaching depth.
+4. P12-T06 composes those contracts into the differentiated catalogue.
+5. P12-T07 through P12-T09 close metadata, whole-app and offline delivery.
+6. P12-T10 through P12-T12 validate, rehearse and close.
 
 ## Rules
 
@@ -121,6 +135,9 @@ turn debrief and expert comparison into teaching experiences rather than score s
   to complete a spatial task.
 - General offline model support must define version, integrity, quota, eviction and update behavior;
   Phase 11's presentation preload is not that contract.
+- Procedural segment volumes are configured illustrative learning regions. They must not be
+  presented as patient-derived or validated segment meshes.
+- The golden-path browser test passes at the end of every task.
 - No P2/P3 finding is silently dropped; close it, move it with rationale or record an explicit
   deferral.
 - Phase 9 physical results remain authoritative for mobile approval.
@@ -137,7 +154,12 @@ turn debrief and expert comparison into teaching experiences rather than score s
   learner-facing labels.
 - Remaining catalogue metadata and quick-case history are consistent.
 - General model offline behavior and catalogue-wide accessibility/polish have recorded evidence.
-- Catalogue-wide tests and browser QA cover the broadened behavior, and `npm run check` passes.
+- Leaderboard period controls and weekly challenge cards are functional; no learner route exposes
+  raw IDs, primitive names, placeholders or dead actions.
+- Catalogue-wide tests, the whole-product tour and browser QA cover the broadened behavior;
+  `npm run check` and `npm run check:demo` pass.
+- One runbook contains five-minute Case Lab and product-tour scripts plus a combined presentation,
+  and the readiness verdict distinguishes internal, supervised-client and unsupervised use.
 - Every Phase 12 audit finding has evidence of closure or a documented, approved deferral.
 
 ## Risks
@@ -145,9 +167,12 @@ turn debrief and expert comparison into teaching experiences rather than score s
 - Evidence-workspace scope can expand into a full clinical decision-support product; keep it
   authored, local and educational.
 - More realistic distractors and rationale require additional SME time.
-- Deeper anatomy for every tier may require new assets and licences.
+- Segment-volume authoring is coordinate-sensitive and remains illustrative; use the existing
+  debug readout and fail overlapping same-level volumes during validation.
 - Presentation consistency changes can invalidate existing screenshots and device scripts, which
   must be refreshed without treating emulation as physical evidence.
+- Session/state migrations and general offline model packages widen durable contracts; keep legacy
+  records readable and exercise quota, update and eviction behavior.
 
 ## Approved implementation defaults
 
@@ -157,3 +182,5 @@ turn debrief and expert comparison into teaching experiences rather than score s
 4. Expert rationale is authored and deterministic.
 5. Quick-case 3D configuration must either render a real interaction or be removed.
 6. Physical-device sign-off remains under Phase 9.
+7. Phase 12 covers the whole PRD product demo as well as Case Lab.
+8. Segment depth uses configured procedural volumes and authored waypoints; no new GLB is sourced.

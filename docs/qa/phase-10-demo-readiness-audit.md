@@ -102,6 +102,18 @@ The P11-T13 audit on 2026-10-03 reconciled all 52 findings against the approved 
   clinically approved. All claims remain blocked for external presentation until the sign-offs in
   `docs/qa/phase-11-golden-case-content-review.md` are recorded.
 
+## Phase 12 rebaseline
+
+P12-T00 reran both technical gates after committing the complete Phase 11 baseline. `npm run check`
+and the 16-test real-WebGL `npm run check:demo` suite pass. The 12 approved deferrals remain open
+and keep their existing task ownership, with task numbers expanded in
+`docs/phases/phase-12-case-lab-depth-and-polish.md`.
+
+Phase 12 now also closes the whole PRD section 80 product tour. The rebaseline found two additional
+whole-product gaps, recorded as W01 and W02 in `docs/qa/phase-12-baseline.md`: placeholder
+Leaderboard periods and weekly challenge cards without a continuation action. Both are owned by
+P12-T08. No F-series finding is reclassified or hidden by the expanded scope.
+
 ## Evidence interpretation
 
 The source audit combined repository inspection, production desktop and phone playthroughs, saved

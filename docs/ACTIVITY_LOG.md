@@ -2484,3 +2484,23 @@ registerSW.test}.ts(x)`; `src/test/pwaRegisterMock.ts`; `src/content/useAssetUrl
   tests pass. The final browser gate completes in 93.259 seconds.
 - **Follow-ups:** Clinical/client sign-off and Phase 9 physical-device gates remain external
   blockers; Phase 12 begins with the 12 approved deferrals.
+
+### [2026-10-03 20:55] P12-T00 - Rebaseline and start Phase 12
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Ran the complete Phase 11 quality and real-WebGL gates, committed the previously
+  uncommitted 127-file Phase 11 implementation as `e4d36d3`, and preserved the user's untracked
+  `docs/reference docs/`. Rebaselined all 12 deferred Case Lab findings, recorded two whole-product
+  demo gaps (Leaderboard placeholder periods and weekly challenge cards without continuation),
+  expanded Phase 12 to close the PRD product tour and recorded ADR-083. Selected configured
+  procedural segment volumes and authored waypoints rather than a new licensed GLB.
+- **Files changed:** Phase 12 phase file; Phase 10 audit; Phase 12 baseline; decisions; handoff and
+  activity log.
+- **Commands run:** `git status --short`; `git diff --stat`; `git diff --check`; `npm run check`;
+  `npm run check:demo` with the installed Playwright browser path; Phase 11 commit.
+- **Result/verification:** `npm run check` passes with 59 Vitest files / 400 tests, zero content
+  warnings, successful production build and all bundle budgets. `npm run check:demo` passes all
+  16 real-WebGL checks across desktop and 375 px touch emulation. Phase 12 is active.
+- **Follow-ups:** P12-T01 defines speed eligibility, committed-progress timeout credit and the next
+  durable session/result contracts. Clinical/client sign-off and Phase 9 physical-device gates
+  remain external blockers.

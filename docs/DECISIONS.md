@@ -1377,3 +1377,28 @@ immutable model version, and old versions age out within explicit bounds. This i
 performance/freshness caching, not a guarantee that 3D works offline. Operators can compare the
 visible build to deployment notes and follow a documented clean-origin recovery. Source changes
 alter the fallback build ID reproducibly; deployments may supply their own traceable ID.
+
+## ADR-083: Phase 12 closes Case Lab and the whole product demo
+
+**Status:** Accepted
+
+**Context:** Phase 11 established one credible Case Lab golden path, but the PRD's product demo also
+depends on Home, pathway, lesson, DICOM, completion, challenge, leaderboard and profile. Keeping
+Phase 12 limited to Case Lab would leave disabled Leaderboard periods, inert weekly-challenge cards
+and no integrated browser proof or presenter script. The remaining anatomy-depth finding cannot be
+implemented as segment meshes because the licensed GLB exposes only gross lobes and central
+airways.
+
+**Decision:** Expand Phase 12 to close both the 12 deferred Case Lab findings and the whole
+learner-facing PRD section 80 tour. Establish scoring, timeout, clue and persistence contracts
+before re-authoring cases; then add evidence synthesis, teaching debriefs, catalogue breadth,
+metadata, offline packages and whole-product polish. Represent segment-level learning targets as
+configured, pickable procedural volumes inside their parent lobes and add authored airway
+waypoints. Keep bronchiole and alveolar depth as validated choices. Do not source a replacement
+model.
+
+**Consequences:** Phase 12 has one larger readiness gate, one runbook and one audience-specific
+verdict instead of two partially polished demonstrations. Procedural segment regions remain
+illustrative learning geometry and require explicit review language, overlap validation and
+real-WebGL coverage. Clinical/client sign-off and Phase 9 physical Android/iOS evidence remain
+external approval gates.
