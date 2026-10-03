@@ -88,7 +88,7 @@ export const caseStageSchema = z.strictObject({
   title: nonEmptyStringSchema,
   intro: nonEmptyStringSchema.optional(),
   clueIds: z.array(idSchema).default([]),
-  steps: z.array(caseStepSchema).default([]),
+  steps: z.array(caseStepSchema).min(1),
 })
 
 export const caseEntrySchema = z.discriminatedUnion('mode', [
@@ -147,6 +147,13 @@ export const caseDocumentSchema = z.strictObject({
     openedClueIds: z.array(idSchema),
     responses: z.record(idSchema, z.unknown()),
     rationales: z.record(idSchema, nonEmptyStringSchema),
+    stepTimings: z.record(
+      idSchema,
+      z.strictObject({
+        elapsedMs: z.number().nonnegative(),
+        timedOut: z.boolean(),
+      }),
+    ),
     path: z.array(caseExpertPathItemSchema).min(1),
     evidenceWeights: z.array(caseEvidenceWeightSchema).min(1),
     diagnosisRationale: nonEmptyStringSchema,

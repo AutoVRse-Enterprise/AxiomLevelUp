@@ -31,42 +31,230 @@
   "caseProgress": {
     "asthma-foundation": {
       "completions": 1,
-      "bestTotal": 84,
+      "bestTotal": 94,
       "lastCompletedAt": "2026-09-27T10:30:00+05:30"
+    },
+    "copd-intermediate": {
+      "completions": 1,
+      "bestTotal": 93,
+      "lastCompletedAt": "2026-09-29T11:15:00+05:30"
     },
     "exacerbation-advanced": {
       "completions": 1,
-      "bestTotal": 82,
+      "bestTotal": 85,
       "lastCompletedAt": "2026-09-30T14:20:00+05:30"
     }
   },
   "caseAttempts": {
     "asthma-foundation": [
       {
-        "resultVersion": 5,
+        "resultVersion": 7,
         "attemptId": "seed-asthma-foundation-1",
         "tier": "foundation",
-        "total": 84,
-        "anatomy": 0.76,
-        "diagnosis": 0.92,
+        "total": 94,
+        "anatomy": 1,
+        "diagnosis": 0.875,
         "speed": 0,
-        "durationSeconds": 360,
-        "openedClueIds": ["history", "anatomy"],
-        "stepResults": [],
+        "perStepSpeed": 0,
+        "caseSpeed": 0,
+        "clueCostPoints": 0,
+        "speedScored": false,
+        "timingMode": "none",
+        "weights": { "anatomy": 0.5, "diagnosis": 0.5, "speed": 0 },
+        "actualAwardedXp": 100,
+        "actualAwardedXpSource": "gamification_activity_result",
+        "durationSeconds": 330,
+        "openedClueIds": [
+          "foundation-history",
+          "foundation-anatomy",
+          "foundation-wheeze",
+          "foundation-spirometry"
+        ],
+        "stepResults": [
+          {
+            "primitiveId": "foundation-localise",
+            "firstAttemptScore": 1,
+            "elapsedMs": 65000,
+            "timedOut": false,
+            "response": {
+              "lobe": "right-upper-lobe",
+              "segment": "right-upper-apical-segment",
+              "structure": "bronchiole"
+            }
+          },
+          {
+            "primitiveId": "foundation-key-observations",
+            "firstAttemptScore": 0.5,
+            "elapsedMs": 52000,
+            "timedOut": false,
+            "response": ["variable-symptoms"]
+          },
+          {
+            "primitiveId": "foundation-sort-evidence",
+            "firstAttemptScore": 1,
+            "elapsedMs": 48000,
+            "timedOut": false,
+            "response": {
+              "fev1-rise": "function",
+              "markers": "inflammation"
+            }
+          },
+          {
+            "primitiveId": "foundation-reversibility",
+            "firstAttemptScore": 1,
+            "elapsedMs": 34000,
+            "timedOut": false,
+            "response": true
+          },
+          {
+            "primitiveId": "foundation-best-diagnosis",
+            "firstAttemptScore": 1,
+            "elapsedMs": 41000,
+            "timedOut": false,
+            "response": "asthma"
+          }
+        ],
+        "speedModel": "time_eligible",
+        "speedEligibility": {
+          "minStepScore": 0.5,
+          "eligibleSteps": 5,
+          "totalScoredSteps": 5
+        },
+        "reviewedClueIds": [
+          "foundation-history",
+          "foundation-anatomy",
+          "foundation-wheeze",
+          "foundation-spirometry"
+        ],
+        "evidence": {
+          "pinned": [
+            { "kind": "clue", "id": "foundation-history" },
+            { "kind": "clue", "id": "foundation-spirometry" },
+            { "kind": "finding", "id": "foundation-diffuse-wall-change" }
+          ],
+          "inspectedFindingIds": ["foundation-diffuse-wall-change"],
+          "currentLocation": { "kind": "structure", "id": "right-upper-apical-segment" }
+        },
+        "differential": {
+          "asthma": "likely",
+          "copd": "unlikely",
+          "inducible-laryngeal-obstruction": "possible",
+          "bronchiectasis": "unlikely"
+        },
+        "timeoutCreditApplied": false,
         "completedAt": "2026-09-27T10:30:00+05:30"
+      }
+    ],
+    "copd-intermediate": [
+      {
+        "resultVersion": 7,
+        "attemptId": "seed-copd-intermediate-1",
+        "tier": "intermediate",
+        "total": 93,
+        "anatomy": 1,
+        "diagnosis": 0.875,
+        "speed": 0.8955555555555557,
+        "perStepSpeed": 0.7911111111111113,
+        "caseSpeed": 1,
+        "clueCostPoints": 0,
+        "speedScored": true,
+        "timingMode": "stopwatch",
+        "weights": { "anatomy": 0.4, "diagnosis": 0.4, "speed": 0.2 },
+        "actualAwardedXp": 100,
+        "actualAwardedXpSource": "gamification_activity_result",
+        "durationSeconds": 420,
+        "openedClueIds": [
+          "intermediate-emphysema",
+          "intermediate-history",
+          "intermediate-spirometry",
+          "intermediate-anatomy"
+        ],
+        "stepResults": [
+          {
+            "primitiveId": "intermediate-localise",
+            "firstAttemptScore": 1,
+            "elapsedMs": 52000,
+            "timedOut": false,
+            "response": {
+              "lobe": "right-upper-lobe",
+              "segment": "right-upper-apical-segment",
+              "structure": "alveolar-unit"
+            }
+          },
+          {
+            "primitiveId": "intermediate-key-observations",
+            "firstAttemptScore": 1,
+            "elapsedMs": 55000,
+            "timedOut": false,
+            "response": ["exposure", "persistent-ratio"]
+          },
+          {
+            "primitiveId": "intermediate-sort-evidence",
+            "firstAttemptScore": 0.5,
+            "elapsedMs": 60000,
+            "timedOut": false,
+            "response": {
+              "enlarged-spaces": "structure",
+              "low-ratio": "structure"
+            }
+          },
+          {
+            "primitiveId": "intermediate-differential",
+            "firstAttemptScore": 1,
+            "elapsedMs": 48000,
+            "timedOut": false,
+            "response": "weighted-comparison"
+          },
+          {
+            "primitiveId": "intermediate-best-diagnosis",
+            "firstAttemptScore": 1,
+            "elapsedMs": 57000,
+            "timedOut": false,
+            "response": "copd"
+          }
+        ],
+        "speedModel": "time_eligible",
+        "speedEligibility": {
+          "minStepScore": 0.5,
+          "eligibleSteps": 5,
+          "totalScoredSteps": 5
+        },
+        "reviewedClueIds": [
+          "intermediate-emphysema",
+          "intermediate-history",
+          "intermediate-spirometry",
+          "intermediate-anatomy"
+        ],
+        "evidence": {
+          "pinned": [
+            { "kind": "clue", "id": "intermediate-history" },
+            { "kind": "clue", "id": "intermediate-spirometry" },
+            { "kind": "finding", "id": "intermediate-upper-region" }
+          ],
+          "inspectedFindingIds": ["intermediate-upper-region"],
+          "currentLocation": { "kind": "structure", "id": "right-upper-apical-segment" }
+        },
+        "differential": {
+          "copd": "likely",
+          "asthma": "possible",
+          "bronchiectasis": "possible",
+          "heart-failure": "unlikely"
+        },
+        "timeoutCreditApplied": false,
+        "completedAt": "2026-09-29T11:15:00+05:30"
       }
     ],
     "exacerbation-advanced": [
       {
-        "resultVersion": 6,
+        "resultVersion": 7,
         "attemptId": "seed-exacerbation-advanced-1",
         "tier": "advanced",
-        "total": 82,
+        "total": 85,
         "anatomy": 1,
         "diagnosis": 0.6875,
-        "speed": 0.675,
-        "perStepSpeed": 0.75,
-        "caseSpeed": 0.6,
+        "speed": 0.8555555555555556,
+        "perStepSpeed": 0.9444444444444444,
+        "caseSpeed": 0.7666666666666667,
         "clueCostPoints": 0,
         "speedScored": true,
         "timingMode": "countdown",
@@ -121,6 +309,37 @@
             "response": "routine-follow-up"
           }
         ],
+        "speedModel": "time_eligible",
+        "speedEligibility": {
+          "minStepScore": 0.5,
+          "eligibleSteps": 4,
+          "totalScoredSteps": 5
+        },
+        "reviewedClueIds": [
+          "exac-history",
+          "exac-flow",
+          "exac-gas",
+          "exac-airway-reference"
+        ],
+        "evidence": {
+          "pinned": [
+            { "kind": "clue", "id": "exac-flow" },
+            { "kind": "clue", "id": "exac-gas" },
+            { "kind": "finding", "id": "exac-posterior-basal-plug" }
+          ],
+          "inspectedFindingIds": ["exac-posterior-basal-plug"],
+          "currentLocation": {
+            "kind": "waypoint",
+            "id": "right-lower-posterior-basal-segment"
+          }
+        },
+        "differential": {
+          "severe-asthma-exacerbation": "likely",
+          "copd-exacerbation": "unlikely",
+          "lobar-pneumonia": "possible",
+          "pulmonary-embolism": "possible"
+        },
+        "timeoutCreditApplied": false,
         "completedAt": "2026-09-30T14:20:00+05:30"
       }
     ]
@@ -172,6 +391,11 @@
         "perfectAwarded": false,
         "rewardedAttemptIds": ["seed-asthma-foundation-1"]
       },
+      "copd-intermediate": {
+        "completionAwarded": true,
+        "perfectAwarded": false,
+        "rewardedAttemptIds": ["seed-copd-intermediate-1"]
+      },
       "exacerbation-advanced": {
         "completionAwarded": true,
         "perfectAwarded": false,
@@ -189,10 +413,14 @@
       "firstAttemptCorrect": 156,
       "firstAttemptCorrectByType": {},
       "firstAttemptCorrectByConcept": {},
-      "caseCompletions": { "asthma-foundation": 1, "exacerbation-advanced": 1 },
+      "caseCompletions": {
+        "asthma-foundation": 1,
+        "copd-intermediate": 1,
+        "exacerbation-advanced": 1
+      },
       "caseCompletionsByTier": {
         "foundation": 1,
-        "intermediate": 0,
+        "intermediate": 1,
         "advanced": 1
       }
     },
@@ -206,7 +434,7 @@
     "coursesCompleted": 1,
     "lessonsCompleted": 24,
     "challengesCompleted": 6,
-    "casesCompleted": 2,
+    "casesCompleted": 3,
     "questionsAnswered": 184,
     "correctAnswers": 156
   },

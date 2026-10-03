@@ -1,20 +1,20 @@
 {
   "schemaVersion": "0.1",
-  "caseVersion": "1.0",
+  "caseVersion": "2.0",
   "id": "wheeze-quick",
-  "title": "Quick Case: Triggered Wheeze",
-  "summary": "Educational demo only—not clinical guidance. A three-minute synthetic case about variable triggered wheeze.",
+  "title": "Daily Respiratory Review",
+  "summary": "Inspect one airway finding, identify the relevant structure and interpret a short trigger-linked pattern. Training simulation—not clinical guidance.",
   "tier": "foundation",
   "organSystem": "respiratory",
   "estimatedMinutes": 3,
   "conceptIds": ["respiratory-anatomy", "airway-pathophysiology", "respiratory-diagnosis"],
   "patient": {
-    "label": "Daily quick case — synthetic patient",
+    "label": "Daily case — synthetic patient",
     "age": 19,
-    "presentingComplaint": "Educational-only scenario: wheeze during a cold-weather run.",
+    "presentingComplaint": "Wheeze during a cold-weather run.",
     "history": [
       "Similar brief episodes follow exercise and settle between triggers.",
-      "This fictional profile is for learning and is not a basis for patient care."
+      "A reliever was followed by an increase in measured peak flow."
     ]
   },
   "anatomyMapId": "lung-map",
@@ -22,6 +22,44 @@
     "mode": "overview_marker",
     "markerStructureId": "left-upper-lobe"
   },
+  "findings": [
+    {
+      "id": "quick-diffuse-wall-change",
+      "label": "Diffuse airway-wall change",
+      "description": "A short illustrative airway segment shows diffuse wall thickening.",
+      "kind": "wall_thickening",
+      "anchor": {
+        "type": "waypoint",
+        "waypoint": "left-main-airway",
+        "toWaypoint": "left-upper-airway",
+        "t": 0.5
+      },
+      "severity": 0.36,
+      "clueIds": ["quick-history", "quick-wheeze"]
+    }
+  ],
+  "differential": [
+    {
+      "id": "asthma",
+      "label": "Asthma",
+      "description": "Variable trigger-linked airflow limitation."
+    },
+    {
+      "id": "inducible-laryngeal-obstruction",
+      "label": "Inducible laryngeal obstruction",
+      "description": "Intermittent upper-airway narrowing during exertion."
+    },
+    {
+      "id": "acute-bronchitis",
+      "label": "Acute bronchitis",
+      "description": "A transient inflammatory airway illness."
+    },
+    {
+      "id": "physiologic-exertional-breathlessness",
+      "label": "Physiologic exertional breathlessness",
+      "description": "Expected breathlessness without an obstructive pattern."
+    }
+  ],
   "clues": [
     {
       "id": "quick-history",
@@ -34,7 +72,7 @@
         "conceptIds": ["respiratory-diagnosis"],
         "content": {
           "heading": "Brief variable episodes",
-          "body": "Educational-only synthetic history: symptoms follow exercise and cold air, with normal breathing between episodes."
+          "body": "Symptoms follow exercise and cold air, with normal breathing between episodes."
         },
         "assets": [],
         "completion": { "mode": "viewed" },
@@ -44,7 +82,7 @@
     {
       "id": "quick-wheeze",
       "category": "audio",
-      "title": "Sound sample",
+      "title": "Expiratory sound",
       "essential": true,
       "primitive": {
         "id": "quick-clue-wheeze",
@@ -52,9 +90,9 @@
         "conceptIds": ["respiratory-diagnosis"],
         "content": {
           "assetId": "wheeze-audio",
-          "title": "Wheeze recording",
-          "description": "A short educational respiratory-sound sample.",
-          "transcript": "Repeated musical, high-pitched expiratory sounds are audible over the breathing cycle."
+          "title": "Respiratory sound sample",
+          "description": "A short synthetic case sample.",
+          "transcript": "Repeated musical, high-pitched expiratory sounds are audible."
         },
         "assets": ["wheeze-audio"],
         "completion": { "mode": "media_progress", "threshold": 0.8 },
@@ -64,14 +102,14 @@
     {
       "id": "quick-flow",
       "category": "physiology",
-      "title": "Before and after flow",
+      "title": "Before-and-after flow",
       "essential": true,
       "primitive": {
         "id": "quick-clue-flow",
         "type": "data_table",
         "conceptIds": ["airway-pathophysiology"],
         "content": {
-          "caption": "Synthetic educational expiratory-flow check",
+          "caption": "Synthetic expiratory-flow check",
           "columns": [
             { "id": "time", "label": "Time" },
             { "id": "peak", "label": "Peak flow", "unit": "L/min", "alignment": "decimal" }
@@ -105,9 +143,28 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
-      "intro": "Educational-only task: identify the structure most directly responsible for variable expiratory narrowing.",
+      "intro": "Inspect the marked lobe and diffuse airway-wall finding before identifying the relevant structure.",
       "clueIds": ["quick-history", "quick-wheeze"],
       "steps": [
+        {
+          "id": "quick-explore",
+          "type": "anatomy_explore",
+          "clueIds": ["quick-history", "quick-wheeze"],
+          "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Inspect the marked left upper lobe and the diffuse airway-wall finding.",
+            "startView": { "mode": "marker", "structureId": "left-upper-lobe" },
+            "navigation": "both",
+            "findingIds": ["quick-diffuse-wall-change"],
+            "requiredStructureIds": ["left-upper-lobe"],
+            "requiredFindingIds": ["quick-diffuse-wall-change"]
+          },
+          "assets": [],
+          "completion": { "mode": "explored" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": {}
+        },
         {
           "id": "quick-structure",
           "type": "multiple_choice",
@@ -134,14 +191,14 @@
       "id": "quick-diagnose",
       "kind": "diagnose",
       "component": "diagnosis",
-      "title": "Diagnose",
-      "intro": "Educational-only task: make a proportionate conclusion for this fictional three-minute case.",
+      "title": "Conclude",
+      "intro": "Integrate the trigger pattern and measured flow change.",
       "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
       "steps": [
         {
           "id": "quick-diagnosis",
           "type": "scenario",
-          "clueIds": ["quick-history", "quick-flow"],
+          "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
             "startNodeId": "quick-context",
@@ -149,7 +206,7 @@
               {
                 "id": "quick-context",
                 "type": "context",
-                "body": "Educational-only branching scenario: trigger-linked wheeze resolves between episodes and peak flow improves after a reliever.",
+                "body": "Trigger-linked wheeze resolves between episodes and peak flow improves after a reliever.",
                 "next": "quick-commit"
               },
               {
@@ -157,21 +214,59 @@
                 "type": "decision",
                 "prompt": "Which explanation is best supported?",
                 "choices": [
-                  { "id": "variable-obstruction", "label": "Variable airflow obstruction compatible with asthma", "consequence": "This integrates trigger pattern and reversibility.", "next": "quick-check", "score": 1 },
-                  { "id": "fixed-destruction", "label": "Fixed alveolar destruction", "consequence": "This does not explain brief reversible episodes.", "next": "quick-check", "score": 0, "clueIds": ["quick-history", "quick-flow"] }
+                  {
+                    "id": "variable-obstruction",
+                    "label": "Variable airflow obstruction compatible with asthma",
+                    "consequence": "This integrates trigger pattern and reversibility.",
+                    "next": "quick-check",
+                    "score": 1
+                  },
+                  {
+                    "id": "fixed-destruction",
+                    "label": "Fixed alveolar destruction",
+                    "consequence": "This does not explain brief reversible episodes.",
+                    "next": "quick-check",
+                    "score": 0,
+                    "clueIds": ["quick-history", "quick-flow"]
+                  }
                 ]
               },
               {
                 "id": "quick-check",
                 "type": "decision",
-                "prompt": "What is the correct boundary for this conclusion?",
+                "prompt": "How should the conclusion be framed?",
                 "choices": [
-                  { "id": "educational-conclusion", "label": "It is the best answer for this fictional educational case", "consequence": "The conclusion stays within the simulation.", "next": "quick-supported", "score": 1 },
-                  { "id": "personal-advice", "label": "It is personalized clinical advice", "consequence": "The demo cannot provide individual care.", "next": "quick-boundary", "score": 0, "clueIds": ["quick-history"] }
+                  {
+                    "id": "case-supported",
+                    "label": "It is the best-supported hypothesis for this synthetic case",
+                    "consequence": "The conclusion remains proportionate to the authored evidence.",
+                    "next": "quick-supported",
+                    "score": 1
+                  },
+                  {
+                    "id": "single-finding",
+                    "label": "The 3D wall finding proves the diagnosis by itself",
+                    "consequence": "The illustrative finding cannot determine the diagnosis alone.",
+                    "next": "quick-overcalled",
+                    "score": 0,
+                    "clueIds": ["quick-history", "quick-flow"]
+                  }
                 ]
               },
-              { "id": "quick-supported", "type": "outcome", "title": "Quick case solved", "body": "The fictional pattern is compatible with asthma.", "result": "Use variability and reversibility together, within the educational-only boundary." },
-              { "id": "quick-boundary", "type": "outcome", "title": "Boundary crossed", "body": "A learning conclusion was turned into personal advice.", "result": "This case is educational only and not clinical guidance." }
+              {
+                "id": "quick-supported",
+                "type": "outcome",
+                "title": "Pattern integrated",
+                "body": "The trigger-linked, reversible pattern is compatible with asthma.",
+                "result": "Use the history and measured change together."
+              },
+              {
+                "id": "quick-overcalled",
+                "type": "outcome",
+                "title": "Finding over-weighted",
+                "body": "One illustrative spatial finding was treated as diagnostic.",
+                "result": "Reweight the trigger history and before-and-after flow."
+              }
             ]
           },
           "assets": [],
@@ -187,28 +282,41 @@
     "caseMaxSeconds": 300
   },
   "expertBenchmark": {
-    "name": "Respiratory educator benchmark",
-    "durationSeconds": 120,
+    "name": "Authored respiratory-educator benchmark",
+    "durationSeconds": 135,
     "openedClueIds": ["quick-history", "quick-wheeze", "quick-flow"],
     "responses": {
+      "quick-explore": {
+        "selectedStructureIds": ["left-upper-lobe"],
+        "inspectedFindingIds": ["quick-diffuse-wall-change"]
+      },
       "quick-structure": "conducting-airway",
       "quick-diagnosis": [
         { "nodeId": "quick-commit", "choiceId": "variable-obstruction" },
-        { "nodeId": "quick-check", "choiceId": "educational-conclusion" }
+        { "nodeId": "quick-check", "choiceId": "case-supported" }
       ]
     },
     "rationales": {
-      "quick-structure": "Variable expiratory narrowing is most directly associated with the conducting airway.",
-      "quick-diagnosis": "The trigger pattern and improved flow support variable obstruction while the conclusion remains educational."
+      "quick-explore": "The marker opens a brief required inspection of the lobe and diffuse wall finding.",
+      "quick-structure": "The conducting airway is the structure directly associated with variable expiratory narrowing.",
+      "quick-diagnosis": "Trigger-linked recurrence and improved flow support variable obstruction; the illustrative finding remains supporting context."
+    },
+    "stepTimings": {
+      "quick-structure": { "elapsedMs": 30000, "timedOut": false },
+      "quick-diagnosis": { "elapsedMs": 50000, "timedOut": false }
     },
     "path": [
       {
-        "label": "Recognise the pattern",
-        "detail": "Combine trigger-linked episodes with improvement after a reliever."
+        "label": "Inspect the configured airway",
+        "detail": "Confirm the marked lobe and diffuse wall finding before reasoning."
       },
       {
-        "label": "Keep the conclusion proportionate",
-        "detail": "Select the best answer for the fictional case without turning it into personal advice."
+        "label": "Identify the functional structure",
+        "detail": "Connect variable expiratory narrowing with the conducting airway."
+      },
+      {
+        "label": "Combine pattern and measurement",
+        "detail": "Use trigger-linked episodes and improved peak flow together."
       }
     ],
     "evidenceWeights": [
@@ -220,29 +328,39 @@
       {
         "ref": { "kind": "clue", "id": "quick-flow" },
         "weight": "decisive",
-        "note": "Improvement after reliever supports reversible airflow limitation."
+        "note": "Improved flow after reliever supports a reversible component."
+      },
+      {
+        "ref": { "kind": "finding", "id": "quick-diffuse-wall-change" },
+        "weight": "supporting",
+        "note": "The configured finding supports airway orientation but is not diagnostic."
       },
       {
         "ref": { "kind": "clue", "id": "quick-wheeze" },
-        "weight": "supporting",
-        "note": "The sound sample supports conducting-airway narrowing."
+        "weight": "context",
+        "note": "The expiratory sound is compatible with airway narrowing but is non-specific."
       }
     ],
-    "diagnosisRationale": "The authored pattern combines trigger-linked recurrence, expiratory wheeze and improved flow after a reliever, while remaining an educational conclusion.",
-    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 1 }
+    "diagnosisRationale": "The short authored pattern combines recurrent trigger-linked episodes with improved peak flow after reliever, making asthma the best-supported hypothesis. The sound and configured wall finding support airway involvement without proving the diagnosis.",
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0 }
   },
   "debrief": {
-    "summary": "Educational demo only—not clinical guidance. Brief trigger-linked symptoms plus improved expiratory flow support variable airflow obstruction in this fictional quick case.",
+    "summary": "The quick path links a diffuse airway finding to conducting-airway function, then uses trigger-linked recurrence and improved flow to support a variable obstructive pattern.",
     "keyEvidence": [
+      {
+        "ref": { "kind": "finding", "id": "quick-diffuse-wall-change" },
+        "stepIds": ["quick-explore", "quick-structure"],
+        "why": "The required inspection connects the configured spatial finding to the airway-structure question."
+      },
       {
         "ref": { "kind": "clue", "id": "quick-history" },
         "stepIds": ["quick-structure", "quick-diagnosis"],
-        "why": "The recurring trigger pattern establishes that the obstruction is variable."
+        "why": "The recurring trigger pattern establishes variability."
       },
       {
         "ref": { "kind": "clue", "id": "quick-flow" },
         "stepIds": ["quick-diagnosis"],
-        "why": "The improved post-reliever flow supports reversibility."
+        "why": "The before-and-after measurement supports a reversible airflow component."
       }
     ]
   }

@@ -2638,3 +2638,31 @@ schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
   `docs/reference docs/` was not touched.
 - **Follow-ups:** Re-author the non-golden catalogue in P12-T06. Clinical/client sign-off and Phase
   9 physical-device gates remain external blockers.
+
+### [2026-10-03 22:59] P12-T06 - Re-author Case Lab catalogue
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Re-authored foundation and intermediate as six-task cases and the daily case as a
+  three-task case with neutral entry copy, one disclaimer, configured findings, required unscored
+  exploration, deeper localisation, authored differentials and complete teaching metadata.
+  Preserved the advanced golden case composition while adding explicit benchmark timing facts.
+  Enforced nonempty stages, orient-entry consumption, used clues, all-step rationales and pure
+  benchmark scorer agreement. Migrated the three seeded prior attempts to unique result-v7 records,
+  added focused invalid fixtures/tests, published the four-case unreviewed claim ledger and
+  recorded ADR-090.
+- **Files changed:** All four case documents; advanced learner seed; case schema, semantic loader,
+  generated case schema and TypeScript validation configuration; content/state/route/browser tests
+  and invalid fixtures; architecture, content schema, Phase 12 checklist, ADRs, QA ledger, handoff
+  and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (3 files / 64 tests and 7 files / 98 tests);
+  `npm run schema:export`; repeated `npm run typecheck`, `npm run lint` and
+  `npm run validate:content`; full `npm run check`; focused four-test real-WebGL regression; serial
+  `npm run test:e2e -- --workers=1`; IDE diagnostics; `git diff --check`.
+- **Result/verification:** P12-T06 is complete. The final quality gate passes 63 Vitest files / 434
+  tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all bundle budgets. The final real-WebGL suite passes 18/18 on desktop and
+  375 px touch emulation. No commit was created, and the user's untracked `docs/reference docs/`
+  was not touched.
+- **Follow-ups:** Start P12-T07 metadata and quick-case history standardization. All four case claim
+  ledgers remain clinically/anatomically/client unreviewed, and Phase 9 physical-device gates remain
+  external blockers.

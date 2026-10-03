@@ -69,7 +69,24 @@
       "component": "anatomy",
       "title": "Orient too late",
       "clueIds": [],
-      "steps": []
+      "steps": [
+        {
+          "id": "late-orient-exploration",
+          "type": "anatomy_explore",
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "anatomyMapId": "fixture-anatomy",
+            "prompt": "Inspect the fixture anatomy.",
+            "startView": { "mode": "overview" },
+            "navigation": "orbit",
+            "requiredStructureIds": ["target-structure"]
+          },
+          "assets": [],
+          "completion": { "mode": "explored" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
+        }
+      ]
     }
   ],
   "expertBenchmark": {
@@ -81,6 +98,9 @@
     },
     "rationales": {
       "missing-rationale-step": "This rationale points to an unavailable step."
+    },
+    "stepTimings": {
+      "duplicate-primitive": { "elapsedMs": 30000, "timedOut": false }
     },
     "path": [
       {

@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T05 is complete; P12-T06 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T06 is complete; P12-T07 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -104,23 +104,38 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   IDs.
 - Persisted inspected finding IDs with new result-v7 completions while keeping existing v5/v6 and
   earlier v7 records readable. Exported schemas and recorded ADR-089.
+- Re-authored the foundation and intermediate catalogue as six-task compositions and the daily
+  case as a three-task composition, each with a required unscored anatomy exploration, neutral
+  entry copy, one disclaimer and complete differential/teaching metadata.
+- Added configured foundation, intermediate and quick-case findings while preserving the advanced
+  golden case's exact six tasks, route, findings, timing and tested prompts.
+- Added explicit benchmark step timing facts and pure scorer recomputation. Content validation now
+  rejects empty stages, unconsumed orient entries, unreferenced clues, incomplete learner-visible
+  rationales and benchmark breakdown drift.
+- Seeded unique result-v7 foundation and intermediate attempts and migrated the golden prior
+  attempt to result v7 with normalized responses, eligibility, reviewed evidence and differential
+  state.
+- Added the four-case unreviewed claim ledger, exported schemas, recorded ADR-090 and closed
+  P12-T06.
 
 ## In progress
 
-- P12-T06 is ready to re-author the non-golden case catalogue using the teaching contracts.
-- Clinical, anatomy/pathology and client/legal review of the golden-case claim ledger is pending.
+- P12-T07 is ready to standardize configured metadata and verify quick-case history behavior.
+- Clinical, anatomy/pathology and client/legal review of all four catalogue claim ledgers is
+  pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Re-author catalogue breadth in P12-T06 using the new evidence contracts.
-2. Standardize configured metadata and quick-case history in P12-T07.
+1. Standardize configured metadata and quick-case history in P12-T07.
+2. Close whole-app W-series demo gaps in P12-T08.
 3. Preserve the 18-test real-WebGL gate after every task.
 
 ## Blockers/questions for the user
 
 - External presentation approval is blocked on all unapproved clinical, anatomy/pathology and
-  client/legal claims listed in `docs/qa/phase-11-golden-case-content-review.md`.
+  client/legal claims listed in `docs/qa/phase-12-catalogue-content-review.md` and the detailed
+  golden-case ledger it references.
 - Phase 9 requires physical Android/iOS hardware or an approved device service, a production HTTPS
   URL and a CORS-capable DICOM host.
 
@@ -188,6 +203,15 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
     and zero warnings;
   - full `npm run check` passes 63 files / 428 tests, production build and all bundle budgets;
   - the complete serial real-WebGL suite passes 18/18 across desktop and 375 px touch emulation;
+  - IDE diagnostics and `git diff --check` pass. No commit was created, and
+    `docs/reference docs/` was not touched.
+- P12-T06 verification:
+  - focused catalogue, state and route tests pass 3 files / 64 tests; focused affected case tests
+    pass 7 files / 98 tests;
+  - schema export and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - full `npm run check` passes 63 files / 434 tests, production build and all bundle budgets;
+  - the final serial real-WebGL suite passes 18/18 across desktop and 375 px touch emulation;
   - IDE diagnostics and `git diff --check` pass. No commit was created, and
     `docs/reference docs/` was not touched.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime

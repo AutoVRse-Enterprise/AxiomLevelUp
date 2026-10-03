@@ -136,6 +136,10 @@
       "identify-location": "The configured evidence localizes the target structure.",
       "select-conclusion": "The conclusion follows from the configured evidence."
     },
+    "stepTimings": {
+      "identify-location": { "elapsedMs": 20000, "timedOut": false },
+      "select-conclusion": { "elapsedMs": 20000, "timedOut": false }
+    },
     "path": [
       {
         "label": "Review the configured context",
@@ -153,7 +157,7 @@
     "breakdown": {
       "anatomy": 1,
       "diagnosis": 1,
-      "speed": 1
+      "speed": 0
     }
   },
   "debrief": {

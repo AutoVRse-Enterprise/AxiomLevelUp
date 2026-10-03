@@ -30,6 +30,8 @@ import {
   primitiveTypeSet,
   timerCompatibleTypeSet,
 } from './primitiveTypes'
+import { calculateCaseScore } from '../engines/cases/scoring'
+import { evaluatePrimitive, resolvePrimitiveDefinition } from '../primitives/definitions'
 
 export interface ContentIssue {
   file: string
@@ -1090,9 +1092,18 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     const seenStageIds = new Set<string>()
     const seenStageKinds = new Set<string>()
     let priorStageOrder = -1
+    const stageByStepId = new Map<
+      string,
+      { component: 'anatomy' | 'diagnosis' | 'none'; step: Primitive }
+    >()
+    const referencedClueIds = new Set<string>()
+    const orientAnatomySteps: Array<AnatomyExplorePrimitive | AnatomyLocatePrimitive> = []
 
     caseDocument.stages.forEach((stage, stageIndex) => {
-      stage.clueIds.forEach((id) => usableClueIds.add(id))
+      stage.clueIds.forEach((id) => {
+        usableClueIds.add(id)
+        referencedClueIds.add(id)
+      })
       if (seenStageIds.has(stage.id)) {
         issues.push({
           file,
@@ -1135,6 +1146,8 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         }
         seenPrimitiveIds.add(step.id)
         stepIds.add(step.id)
+        stageByStepId.set(step.id, { component: stage.component, step })
+        collectClueIdReferences(step).forEach(({ id }) => referencedClueIds.add(id))
         validatePrimitive(step, file, path)
         const parsedStep = parsePrimitive(step).primitive
         if (
@@ -1150,6 +1163,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         }
         if (parsedStep?.type === 'anatomy_explore' || parsedStep?.type === 'anatomy_locate') {
           const anatomyStep = parsedStep as AnatomyExplorePrimitive | AnatomyLocatePrimitive
+          if (stage.kind === 'orient') orientAnatomySteps.push(anatomyStep)
           const referencedFindingIds = anatomyStep.content.findingIds ?? []
           referencedFindingIds.forEach((id) => usableFindingIds.add(id))
           referencedFindingIds.forEach((id, findingIndex) =>
@@ -1187,6 +1201,50 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       })
     })
 
+    caseDocument.findings?.forEach(({ clueIds: findingClueIds }) =>
+      findingClueIds.forEach((id) => referencedClueIds.add(id)),
+    )
+    caseDocument.expertBenchmark.evidenceWeights.forEach(({ ref }) => {
+      if (ref.kind === 'clue') referencedClueIds.add(ref.id)
+    })
+    caseDocument.debrief.keyEvidence.forEach(({ ref }) => {
+      if (ref.kind === 'clue') referencedClueIds.add(ref.id)
+    })
+    caseDocument.clues.forEach(({ id }, clueIndex) => {
+      if (!referencedClueIds.has(id)) {
+        issues.push({
+          file,
+          path: `clues.${clueIndex}.id`,
+          message: `Case clue "${id}" is not referenced by a stage, step, finding, debrief, or expert evidence.`,
+          severity: 'error',
+        })
+      }
+    })
+
+    const entryConsumed = orientAnatomySteps.some((step) => {
+      if (caseDocument.entry.mode === 'clue_first') {
+        return step.clueIds?.includes(caseDocument.entry.clueId) ?? false
+      }
+      if (caseDocument.entry.mode === 'overview_marker') {
+        return (
+          step.content.startView.mode === 'marker' &&
+          step.content.startView.structureId === caseDocument.entry.markerStructureId
+        )
+      }
+      return (
+        step.content.startView.mode === 'endoscopic' &&
+        step.content.startView.waypointId === caseDocument.entry.waypointId
+      )
+    })
+    if (!entryConsumed) {
+      issues.push({
+        file,
+        path: 'entry',
+        message: `Case entry mode "${caseDocument.entry.mode}" must be consumed by an anatomy primitive in the orient stage.`,
+        severity: 'error',
+      })
+    }
+
     collectClueIdReferences(caseDocument).forEach(({ id, path }) =>
       requireRef(clueIds, id, file, path, 'clue'),
     )
@@ -1208,17 +1266,87 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     Object.keys(caseDocument.expertBenchmark.rationales ?? {}).forEach((id) =>
       requireRef(stepIds, id, file, `expertBenchmark.rationales.${id}`, 'case primitive'),
     )
+    Object.keys(caseDocument.expertBenchmark.stepTimings).forEach((id) =>
+      requireRef(stepIds, id, file, `expertBenchmark.stepTimings.${id}`, 'case primitive'),
+    )
     if (learnerVisibleCaseIds.has(caseDocument.id)) {
-      scoredStepIds.forEach((id) => {
+      stepIds.forEach((id) => {
+        if (!(id in caseDocument.expertBenchmark.responses)) {
+          issues.push({
+            file,
+            path: `expertBenchmark.responses.${id}`,
+            message: `Learner-visible task "${id}" requires a benchmark response.`,
+            severity: 'error',
+          })
+        }
         if (!caseDocument.expertBenchmark.rationales[id]) {
           issues.push({
             file,
             path: `expertBenchmark.rationales.${id}`,
-            message: `Learner-visible scored task "${id}" requires an expert rationale.`,
+            message: `Learner-visible task "${id}" requires an expert rationale.`,
             severity: 'error',
           })
         }
       })
+      scoredStepIds.forEach((id) => {
+        if (!caseDocument.expertBenchmark.stepTimings[id]) {
+          issues.push({
+            file,
+            path: `expertBenchmark.stepTimings.${id}`,
+            message: `Learner-visible scored task "${id}" requires benchmark timing facts.`,
+            severity: 'error',
+          })
+        }
+      })
+    }
+
+    if (appConfig.caseLab) {
+      const timingMode = appConfig.caseLab.tiers[caseDocument.tier].timing
+      const benchmarkScore = calculateCaseScore({
+        timingMode,
+        steps: [...stageByStepId.entries()].map(([id, { component, step }]) => {
+          const resolved = resolvePrimitiveDefinition(step)
+          const timing = caseDocument.expertBenchmark.stepTimings[id]
+          const evaluation = evaluatePrimitive(step, caseDocument.expertBenchmark.responses[id])
+          const scoring = step.scoring as {
+            targetSeconds?: unknown
+            maxSeconds?: unknown
+          }
+          return {
+            component,
+            scored: resolved?.definition.scored(resolved.primitive) ?? false,
+            firstAttemptScore: evaluation.score,
+            weight: step.scoring.weight,
+            elapsedMs: timing?.elapsedMs,
+            targetSeconds:
+              typeof scoring.targetSeconds === 'number' ? scoring.targetSeconds : undefined,
+            maxSeconds:
+              typeof scoring.maxSeconds === 'number'
+                ? scoring.maxSeconds
+                : step.timer?.durationSeconds,
+            timedOut: timing?.timedOut,
+          }
+        }),
+        clues: caseDocument.clues,
+        openedClueIds: caseDocument.expertBenchmark.openedClueIds,
+        clueOpenContexts: {},
+        durationMs: caseDocument.expertBenchmark.durationSeconds * 1_000,
+        caseTargetSeconds: caseDocument.timing?.caseTargetSeconds,
+        caseMaxSeconds: caseDocument.timing?.caseMaxSeconds,
+        caseClockExpired: false,
+        config: appConfig.caseLab.scoring,
+      })
+      const expected = caseDocument.expertBenchmark.breakdown
+      for (const component of ['anatomy', 'diagnosis', 'speed'] as const) {
+        if (Math.abs(benchmarkScore[component] - expected[component]) > 0.000001) {
+          issues.push({
+            file,
+            path: `expertBenchmark.breakdown.${component}`,
+            message: `Expert benchmark ${component} breakdown must equal pure scorer recomputation (${benchmarkScore[component]}).`,
+            severity: 'error',
+          })
+        }
+      }
     }
 
     const validateEvidenceRef = (ref: { kind: 'clue' | 'finding'; id: string }, path: string) => {

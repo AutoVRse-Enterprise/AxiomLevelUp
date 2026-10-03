@@ -1,61 +1,93 @@
 {
   "schemaVersion": "0.1",
-  "caseVersion": "1.0",
+  "caseVersion": "2.0",
   "id": "copd-intermediate",
-  "title": "The Persistent Limitation",
-  "summary": "Educational demo only—not clinical guidance. Integrate exposure history, persistent obstruction and emphysematous change in a synthetic COPD case.",
+  "title": "Persistent Airflow Review",
+  "summary": "Integrate exposure, structural and physiological evidence while comparing several plausible respiratory and cardiac hypotheses. Training simulation—not clinical guidance.",
   "tier": "intermediate",
   "organSystem": "respiratory",
-  "estimatedMinutes": 9,
+  "estimatedMinutes": 7,
   "conceptIds": ["respiratory-anatomy", "airway-pathophysiology", "respiratory-diagnosis"],
   "patient": {
     "label": "Case B — synthetic patient",
     "age": 63,
     "sex": "Male",
-    "presentingComplaint": "Educational-only scenario: progressive exertional breathlessness and chronic productive cough.",
+    "presentingComplaint": "Progressive exertional breathlessness and chronic productive cough.",
     "history": [
-      "Forty pack-year smoking exposure; stopped three years ago.",
-      "Symptoms have progressed over several years with little day-to-day variability.",
-      "This fictional profile is for learning and is not a basis for patient care."
+      "There is a forty pack-year smoking exposure; smoking stopped three years ago.",
+      "Symptoms have progressed over several years with limited day-to-day variability.",
+      "Sputum volume is modest, with no recorded recurrent pneumonias, orthopnoea or ankle swelling."
     ]
   },
   "anatomyMapId": "lung-map",
   "entry": {
     "mode": "clue_first",
-    "clueId": "emphysema"
+    "clueId": "intermediate-emphysema"
   },
-  "clues": [
+  "findings": [
     {
-      "id": "copd-history",
-      "category": "history",
-      "title": "Exposure and time course",
-      "essential": true,
-      "primitive": {
-        "id": "copd-clue-history",
-        "type": "rich_text",
-        "conceptIds": ["respiratory-diagnosis"],
-        "content": {
-          "heading": "Persistent progressive symptoms",
-          "body": "Educational-only synthetic history: long tobacco exposure, chronic sputum and gradually progressive dyspnoea with limited variability."
-        },
-        "assets": [],
-        "completion": { "mode": "viewed" },
-        "feedback": {}
-      }
+      "id": "intermediate-upper-wall-change",
+      "label": "Upper-airway wall change",
+      "description": "Illustrative wall thickening is configured along an upper-lobe airway branch.",
+      "kind": "wall_thickening",
+      "anchor": {
+        "type": "waypoint",
+        "waypoint": "right-upper-airway",
+        "toWaypoint": "right-upper-apical-airway",
+        "t": 0.44
+      },
+      "severity": 0.42,
+      "clueIds": ["intermediate-emphysema", "intermediate-anatomy"]
     },
     {
-      "id": "emphysema",
+      "id": "intermediate-upper-region",
+      "label": "Configured upper-zone region",
+      "description": "A translucent upper-zone region marks the illustrative structural focus.",
+      "kind": "region",
+      "anchor": {
+        "type": "structure",
+        "structure": "right-upper-apical-segment"
+      },
+      "severity": 0.52,
+      "clueIds": ["intermediate-emphysema", "intermediate-anatomy"]
+    }
+  ],
+  "differential": [
+    {
+      "id": "copd",
+      "label": "Chronic obstructive pulmonary disease",
+      "description": "Persistent airflow obstruction associated with exposure and structural lung change."
+    },
+    {
+      "id": "asthma",
+      "label": "Asthma",
+      "description": "Variable airway disease that can coexist with or resemble persistent obstruction."
+    },
+    {
+      "id": "bronchiectasis",
+      "label": "Bronchiectasis",
+      "description": "Chronic airway dilatation often associated with larger sputum burden or recurrent infection."
+    },
+    {
+      "id": "heart-failure",
+      "label": "Heart failure",
+      "description": "Cardiac dysfunction that can produce exertional breathlessness and respiratory findings."
+    }
+  ],
+  "clues": [
+    {
+      "id": "intermediate-emphysema",
       "category": "histology",
-      "title": "Alveolar architecture",
+      "title": "Distal air-space architecture",
       "essential": true,
       "primitive": {
-        "id": "copd-clue-emphysema",
+        "id": "intermediate-clue-emphysema",
         "type": "image",
         "conceptIds": ["airway-pathophysiology"],
         "content": {
           "assetId": "emphysema-histology-image",
-          "alt": "Histology image showing enlarged air spaces and loss of normal alveolar walls in severe emphysema.",
-          "caption": "Illustrative histology; educational use only and not a diagnostic specimen."
+          "alt": "Illustrative histology showing enlarged distal air spaces and reduced alveolar walls.",
+          "caption": "Consider what this structural pattern supports and what it cannot establish alone."
         },
         "assets": ["emphysema-histology-image"],
         "completion": { "mode": "viewed" },
@@ -63,20 +95,38 @@
       }
     },
     {
-      "id": "copd-spirometry",
-      "category": "physiology",
-      "title": "Persistent obstruction",
+      "id": "intermediate-history",
+      "category": "history",
+      "title": "Exposure and time course",
       "essential": true,
       "primitive": {
-        "id": "copd-clue-spirometry",
+        "id": "intermediate-clue-history",
+        "type": "rich_text",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "heading": "Progressive symptoms",
+          "body": "Long tobacco exposure, chronic modest sputum and gradually progressive dyspnoea are recorded, with limited variability and no recurrent pneumonia history."
+        },
+        "assets": [],
+        "completion": { "mode": "viewed" },
+        "feedback": {}
+      }
+    },
+    {
+      "id": "intermediate-spirometry",
+      "category": "physiology",
+      "title": "Before-and-after airflow",
+      "essential": true,
+      "primitive": {
+        "id": "intermediate-clue-spirometry",
         "type": "data_table",
         "conceptIds": ["airway-pathophysiology"],
         "content": {
-          "caption": "Synthetic educational spirometry",
+          "caption": "Synthetic spirometry",
           "columns": [
             { "id": "measure", "label": "Measure" },
-            { "id": "pre", "label": "Pre-bronchodilator", "alignment": "decimal" },
-            { "id": "post", "label": "Post-bronchodilator", "alignment": "decimal" }
+            { "id": "pre", "label": "Before bronchodilator", "alignment": "decimal" },
+            { "id": "post", "label": "After bronchodilator", "alignment": "decimal" }
           ],
           "rows": [
             {
@@ -103,18 +153,18 @@
       }
     },
     {
-      "id": "copd-anatomy",
+      "id": "intermediate-anatomy",
       "category": "anatomy",
-      "title": "Distal gas-exchange unit",
+      "title": "Distal-airway reference",
       "essential": true,
       "primitive": {
-        "id": "copd-clue-anatomy",
+        "id": "intermediate-clue-anatomy",
         "type": "image",
         "conceptIds": ["respiratory-anatomy"],
         "content": {
           "assetId": "airway-comparison-image",
-          "alt": "OpenStax illustration showing bronchioles leading to alveolar ducts and alveoli.",
-          "caption": "Use the distal airway and alveolar landmarks for this educational exercise."
+          "alt": "Illustration of bronchioles, alveolar ducts and alveoli.",
+          "caption": "Use the distal-airway and gas-exchange landmarks for localisation."
         },
         "assets": ["airway-comparison-image"],
         "completion": { "mode": "viewed" },
@@ -122,53 +172,33 @@
       }
     },
     {
-      "id": "copd-crackles",
-      "category": "audio",
-      "title": "Differential sound sample",
-      "essential": false,
-      "primitive": {
-        "id": "copd-clue-crackles",
-        "type": "audio",
-        "conceptIds": ["respiratory-diagnosis"],
-        "content": {
-          "assetId": "crackles-audio",
-          "title": "Inspiratory crackles recording",
-          "description": "An educational comparator from an interstitial lung disease recording; it is not this fictional patient's sound.",
-          "transcript": "Fine, repeated inspiratory crackles are audible. Compare this pattern with the case evidence before weighting it."
-        },
-        "assets": ["crackles-audio"],
-        "completion": { "mode": "media_progress", "threshold": 0.8 },
-        "feedback": {}
-      }
-    },
-    {
-      "id": "copd-oxygenation",
+      "id": "intermediate-cardiac-context",
       "category": "biomarker",
-      "title": "Resting observations",
+      "title": "Cardiac-context observations",
       "essential": false,
       "primitive": {
-        "id": "copd-clue-oxygenation",
+        "id": "intermediate-clue-cardiac",
         "type": "data_table",
         "conceptIds": ["respiratory-diagnosis"],
         "content": {
-          "caption": "Synthetic educational observations",
+          "caption": "Synthetic contextual observations",
           "columns": [
             { "id": "observation", "label": "Observation" },
-            { "id": "value", "label": "Value" }
+            { "id": "result", "label": "Recorded result" }
           ],
           "rows": [
             {
-              "id": "oxygen",
+              "id": "orthopnoea",
               "cells": [
-                { "columnId": "observation", "value": "Resting oxygen saturation" },
-                { "columnId": "value", "value": "94% on room air" }
+                { "columnId": "observation", "value": "Orthopnoea" },
+                { "columnId": "result", "value": "Not reported" }
               ]
             },
             {
-              "id": "respiratory-rate",
+              "id": "oedema",
               "cells": [
-                { "columnId": "observation", "value": "Respiratory rate" },
-                { "columnId": "value", "value": "18/min" }
+                { "columnId": "observation", "value": "Ankle swelling" },
+                { "columnId": "result", "value": "Not observed" }
               ]
             }
           ]
@@ -177,38 +207,77 @@
         "completion": { "mode": "viewed" },
         "feedback": {}
       }
+    },
+    {
+      "id": "intermediate-sound",
+      "category": "audio",
+      "title": "Expiratory sound",
+      "essential": false,
+      "primitive": {
+        "id": "intermediate-clue-sound",
+        "type": "audio",
+        "conceptIds": ["respiratory-diagnosis"],
+        "content": {
+          "assetId": "wheeze-audio",
+          "title": "Respiratory sound sample",
+          "description": "A short synthetic case sample.",
+          "transcript": "A musical expiratory sound is audible; this finding can occur in more than one airway disorder."
+        },
+        "assets": ["wheeze-audio"],
+        "completion": { "mode": "media_progress", "threshold": 0.8 },
+        "feedback": {}
+      }
     }
   ],
   "stages": [
     {
-      "id": "copd-orient",
+      "id": "intermediate-orient",
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
-      "intro": "Educational-only task: follow the affected region from whole lung to distal gas-exchange structure.",
-      "clueIds": ["copd-anatomy", "emphysema"],
+      "intro": "Use the opening structural clue, then inspect and localise the configured upper-zone change.",
+      "clueIds": ["intermediate-emphysema", "intermediate-anatomy"],
       "steps": [
         {
-          "id": "copd-localise",
+          "id": "intermediate-explore",
+          "type": "anatomy_explore",
+          "clueIds": ["intermediate-emphysema", "intermediate-anatomy"],
+          "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
+          "content": {
+            "anatomyMapId": "lung-map",
+            "prompt": "Inspect the configured upper-zone region and the nearby illustrative airway-wall change.",
+            "startView": { "mode": "overview" },
+            "navigation": "both",
+            "findingIds": ["intermediate-upper-wall-change", "intermediate-upper-region"],
+            "requiredStructureIds": ["right-upper-lobe"],
+            "requiredFindingIds": ["intermediate-upper-region"]
+          },
+          "assets": [],
+          "completion": { "mode": "explored" },
+          "scoring": { "weight": 1, "difficulty": "intermediate" },
+          "feedback": {}
+        },
+        {
+          "id": "intermediate-localise",
           "type": "anatomy_locate",
-          "clueIds": ["copd-anatomy", "emphysema"],
+          "clueIds": ["intermediate-emphysema", "intermediate-anatomy"],
           "conceptIds": ["respiratory-anatomy"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Localise the illustrated structural change through four anatomical levels.",
+            "prompt": "Localise the structural focus from lobe to procedural segment and distal structure.",
             "startView": { "mode": "overview" },
+            "navigation": "orbit",
             "levels": [
-              { "levelId": "system", "input": "model", "targetStructureId": "respiratory-system", "weight": 1 },
-              { "levelId": "lobe", "input": "model", "targetStructureId": "right-upper-lobe", "weight": 1 },
+              {
+                "levelId": "lobe",
+                "input": "model",
+                "targetStructureId": "right-upper-lobe",
+                "weight": 1
+              },
               {
                 "levelId": "segment",
-                "input": "choice",
-                "options": [
-                  { "id": "apical-segment", "label": "Apical segment" },
-                  { "id": "posterior-basal-segment", "label": "Posterior basal segment", "clueIds": ["copd-anatomy"] },
-                  { "id": "lingular-segment", "label": "Lingular segment", "clueIds": ["copd-anatomy"] }
-                ],
-                "correctOptionId": "apical-segment",
+                "input": "model",
+                "targetStructureId": "right-upper-apical-segment",
                 "weight": 1
               },
               {
@@ -216,218 +285,154 @@
                 "input": "choice",
                 "options": [
                   { "id": "alveolar-unit", "label": "Alveolar unit" },
-                  { "id": "trachea", "label": "Trachea", "clueIds": ["copd-anatomy"] },
-                  { "id": "pleura", "label": "Pleura", "clueIds": ["copd-anatomy"] }
+                  { "id": "segmental-bronchus", "label": "Segmental bronchus", "clueIds": ["intermediate-anatomy"] },
+                  { "id": "pleura", "label": "Pleura", "clueIds": ["intermediate-anatomy"] }
                 ],
                 "correctOptionId": "alveolar-unit",
                 "weight": 1
               }
             ],
-            "explanation": "Emphysema is defined by destruction and enlargement within distal air spaces."
+            "explanation": "The configured upper-zone focus is paired with an alveolar structural reference."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "hint": "Contrast conducting airway landmarks with alveolar gas-exchange units." },
-          "timer": { "durationSeconds": 90, "mode": "elapsed" }
-        },
-        {
-          "id": "copd-structure-effect",
-          "type": "multiple_choice",
-          "clueIds": ["emphysema"],
-          "conceptIds": ["airway-pathophysiology"],
-          "content": {
-            "prompt": "What functional consequence follows loss of alveolar walls?",
-            "options": [
-              { "id": "less-recoil", "label": "Reduced elastic recoil and gas-exchange surface" },
-              { "id": "more-recoil", "label": "Increased elastic recoil", "clueIds": ["emphysema"] },
-              { "id": "pleural-fluid", "label": "Immediate pleural fluid accumulation", "clueIds": ["copd-anatomy"] }
-            ],
-            "correctOptionId": "less-recoil",
-            "explanation": "Alveolar destruction reduces recoil and available exchange surface."
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 60, "mode": "elapsed" }
+          "feedback": {
+            "retry": true,
+            "hint": "Separate the selected region from the tissue structure represented by the opening image."
+          }
         }
       ]
     },
     {
-      "id": "copd-observe",
+      "id": "intermediate-observe",
       "kind": "observe",
       "component": "diagnosis",
       "title": "Observe",
-      "intro": "Educational-only task: distinguish persistent obstruction from variable symptoms.",
-      "clueIds": ["copd-history", "copd-spirometry", "emphysema", "copd-crackles"],
+      "intro": "Identify the strongest evidence while retaining plausible competing hypotheses.",
+      "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-sound"],
       "steps": [
         {
-          "id": "copd-key-observations",
+          "id": "intermediate-key-observations",
           "type": "multiple_select",
-          "clueIds": ["copd-history", "copd-spirometry"],
+          "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-sound"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
             "prompt": "Which observations most strongly support persistent obstructive disease?",
             "options": [
               { "id": "exposure", "label": "Long inhalational exposure history" },
-              { "id": "persistent-ratio", "label": "Post-bronchodilator FEV1/FVC remains reduced" },
-              { "id": "complete-reversal", "label": "Complete normalization after bronchodilator", "clueIds": ["copd-spirometry"] },
-              { "id": "brief-trigger", "label": "Only brief trigger-linked episodes", "clueIds": ["copd-history"] }
+              { "id": "persistent-ratio", "label": "FEV1/FVC remains reduced after bronchodilator" },
+              { "id": "wheeze-alone", "label": "Expiratory wheeze by itself", "clueIds": ["intermediate-sound"] },
+              { "id": "brief-episodes", "label": "Only brief, fully resolving trigger-linked episodes", "clueIds": ["intermediate-history"] }
             ],
             "correctOptionIds": ["exposure", "persistent-ratio"],
             "scoringMode": "partial",
             "minSelections": 1,
             "shuffle": false,
-            "explanation": "Exposure plus persistent post-bronchodilator obstruction anchors this pattern."
+            "explanation": "Exposure and persistent post-bronchodilator obstruction carry more weight than a non-specific sound."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 60, "mode": "elapsed" }
+          "feedback": { "retry": true }
         },
         {
-          "id": "copd-sort-evidence",
+          "id": "intermediate-sort-evidence",
           "type": "classification",
-          "clueIds": ["copd-spirometry", "emphysema"],
+          "clueIds": ["intermediate-emphysema", "intermediate-spirometry"],
           "conceptIds": ["airway-pathophysiology"],
           "content": {
-            "prompt": "Classify each clue by its primary domain.",
+            "prompt": "Classify each finding by its primary evidence domain.",
             "categories": [
-              { "id": "function", "label": "Airflow function" },
-              { "id": "structure", "label": "Tissue structure" }
+              { "id": "structure", "label": "Tissue structure" },
+              { "id": "function", "label": "Airflow function" }
             ],
             "items": [
-              { "id": "low-ratio", "label": "Persistently low FEV1/FVC", "categoryId": "function" },
-              { "id": "enlarged-spaces", "label": "Enlarged air spaces with lost walls", "categoryId": "structure" }
+              { "id": "enlarged-spaces", "label": "Enlarged distal air spaces with reduced walls", "categoryId": "structure" },
+              { "id": "low-ratio", "label": "Persistently reduced FEV1/FVC", "categoryId": "function" }
             ],
             "scoringMode": "partial",
-            "explanation": "Spirometry assesses function; histology demonstrates structural destruction."
+            "explanation": "The image and spirometry contribute independent structural and functional evidence."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 55, "mode": "elapsed" }
+          "feedback": { "retry": true }
         }
       ]
     },
     {
-      "id": "copd-interpret",
+      "id": "intermediate-interpret",
       "kind": "interpret",
       "component": "diagnosis",
       "title": "Interpret",
-      "intro": "Educational-only task: integrate structure and physiology without making patient-care decisions.",
-      "clueIds": ["copd-spirometry", "emphysema", "copd-crackles"],
+      "intro": "Compare the leading alternatives without treating absent features as absolute exclusions.",
+      "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-cardiac-context", "intermediate-sound"],
       "steps": [
         {
-          "id": "copd-persistence",
-          "type": "true_false",
-          "clueIds": ["copd-spirometry"],
-          "conceptIds": ["airway-pathophysiology"],
-          "content": {
-            "statement": "The post-bronchodilator values remain compatible with persistent airflow obstruction.",
-            "answer": true,
-            "explanation": "The synthetic ratio remains reduced after bronchodilator.",
-            "responseClueIds": { "false": ["copd-spirometry"] }
-          },
-          "assets": [],
-          "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 45, "mode": "elapsed" }
-        },
-        {
-          "id": "copd-differential",
+          "id": "intermediate-differential",
           "type": "multiple_choice",
-          "clueIds": ["copd-crackles", "emphysema"],
+          "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-cardiac-context", "intermediate-sound"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
-            "prompt": "Why should the optional crackles sample not outweigh this case's core evidence?",
+            "prompt": "Which statement best handles the competing hypotheses?",
             "options": [
-              { "id": "comparator", "label": "It is a comparator from another disease and the case pattern is obstructive" },
-              { "id": "proves-fibrosis", "label": "Any crackle proves pulmonary fibrosis", "clueIds": ["copd-crackles"] },
-              { "id": "erases-spirometry", "label": "Sound alone invalidates spirometry", "clueIds": ["copd-spirometry"] }
+              {
+                "id": "weighted-comparison",
+                "label": "COPD is best supported, while asthma, bronchiectasis and heart failure remain less coherent alternatives"
+              },
+              {
+                "id": "wheeze-proves-asthma",
+                "label": "Wheeze alone proves asthma",
+                "clueIds": ["intermediate-sound", "intermediate-spirometry"]
+              },
+              {
+                "id": "sputum-proves-bronchiectasis",
+                "label": "Any sputum proves bronchiectasis",
+                "clueIds": ["intermediate-history"]
+              },
+              {
+                "id": "dyspnoea-proves-heart-failure",
+                "label": "Exertional breathlessness alone proves heart failure",
+                "clueIds": ["intermediate-cardiac-context"]
+              }
             ],
-            "correctOptionId": "comparator",
-            "explanation": "Evidence provenance and the complete pattern matter more than an isolated comparator."
+            "correctOptionId": "weighted-comparison",
+            "explanation": "The alternatives remain plausible in isolation, but the combined exposure, persistent physiology and structural pattern supports COPD most strongly."
           },
           "assets": [],
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 55, "mode": "elapsed" }
+          "feedback": { "retry": true }
         }
       ]
     },
     {
-      "id": "copd-diagnose",
+      "id": "intermediate-diagnose",
       "kind": "diagnose",
       "component": "diagnosis",
-      "title": "Diagnose",
-      "intro": "Educational-only task: commit to the best explanation for this fictional case.",
-      "clueIds": ["copd-history", "copd-spirometry", "emphysema"],
+      "title": "Conclude",
+      "intro": "Choose the hypothesis that best explains the full evidence set.",
+      "clueIds": ["intermediate-history", "intermediate-emphysema", "intermediate-spirometry", "intermediate-cardiac-context"],
       "steps": [
         {
-          "id": "copd-best-diagnosis",
+          "id": "intermediate-best-diagnosis",
           "type": "multiple_choice",
-          "clueIds": ["copd-history", "copd-spirometry", "emphysema"],
+          "clueIds": ["intermediate-history", "intermediate-emphysema", "intermediate-spirometry", "intermediate-cardiac-context"],
           "conceptIds": ["respiratory-diagnosis"],
           "content": {
-            "prompt": "Which diagnosis best fits the complete synthetic pattern?",
+            "prompt": "Which diagnosis is best supported by the complete synthetic pattern?",
             "options": [
-              { "id": "copd", "label": "COPD with emphysematous change" },
-              { "id": "asthma", "label": "Asthma alone", "clueIds": ["copd-history", "copd-spirometry"] },
-              { "id": "ipf", "label": "Idiopathic pulmonary fibrosis", "clueIds": ["emphysema", "copd-crackles"] }
+              { "id": "copd", "label": "Chronic obstructive pulmonary disease with emphysematous change" },
+              { "id": "asthma", "label": "Asthma", "clueIds": ["intermediate-spirometry"] },
+              { "id": "bronchiectasis", "label": "Bronchiectasis", "clueIds": ["intermediate-history"] },
+              { "id": "heart-failure", "label": "Heart failure", "clueIds": ["intermediate-cardiac-context"] }
             ],
             "correctOptionId": "copd",
-            "explanation": "Exposure, persistent obstruction and alveolar destruction best fit COPD in this exercise."
+            "explanation": "Long exposure, persistent post-bronchodilator obstruction and emphysematous structural change converge most strongly on COPD."
           },
           "assets": [],
           "completion": { "mode": "answer" },
-          "scoring": { "weight": 1, "difficulty": "intermediate" },
-          "feedback": { "retry": true },
-          "timer": { "durationSeconds": 50, "mode": "elapsed" }
-        },
-        {
-          "id": "copd-diagnosis-path",
-          "type": "scenario",
-          "clueIds": ["copd-history", "copd-spirometry", "emphysema"],
-          "conceptIds": ["respiratory-diagnosis"],
-          "content": {
-            "startNodeId": "copd-context",
-            "nodes": [
-              {
-                "id": "copd-context",
-                "type": "context",
-                "body": "Educational-only branching scenario: obstruction persists after bronchodilator and emphysematous architecture is shown.",
-                "next": "copd-commit"
-              },
-              {
-                "id": "copd-commit",
-                "type": "decision",
-                "prompt": "Which evidence should anchor the working diagnosis?",
-                "choices": [
-                  { "id": "integrated-pattern", "label": "Exposure, persistent obstruction and structural change together", "consequence": "This uses independent evidence domains.", "next": "copd-qualify", "score": 1 },
-                  { "id": "single-sound", "label": "The optional sound comparator alone", "consequence": "This ignores provenance and stronger case evidence.", "next": "copd-qualify", "score": 0, "clueIds": ["copd-history", "copd-spirometry", "copd-crackles"] }
-                ]
-              },
-              {
-                "id": "copd-qualify",
-                "type": "decision",
-                "prompt": "How should the conclusion be stated?",
-                "choices": [
-                  { "id": "case-supported", "label": "COPD is best supported within this educational case", "consequence": "This keeps the claim within the evidence and context.", "next": "copd-supported", "score": 1 },
-                  { "id": "universal-rule", "label": "One low ratio always proves COPD in every person", "consequence": "That overgeneralizes beyond the exercise.", "next": "copd-overcalled", "score": 0.25, "clueIds": ["copd-history", "copd-spirometry"] }
-                ]
-              },
-              { "id": "copd-supported", "type": "outcome", "title": "Integrated conclusion", "body": "The evidence converges on COPD with emphysematous change in this fictional exercise.", "result": "Best path: integrate exposure, persistent physiology and structural evidence." },
-              { "id": "copd-overcalled", "type": "outcome", "title": "Conclusion overgeneralized", "body": "The likely case answer was reached with an unsafe universal claim.", "result": "Keep conclusions proportional to the educational evidence and context." }
-            ]
-          },
-          "assets": [],
-          "completion": { "mode": "outcome" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
           "feedback": { "retry": true }
         }
@@ -435,87 +440,126 @@
     }
   ],
   "timing": {
-    "caseTargetSeconds": 480,
-    "caseMaxSeconds": 780
+    "caseTargetSeconds": 420,
+    "caseMaxSeconds": 660
   },
   "expertBenchmark": {
-    "name": "Respiratory educator benchmark",
+    "name": "Authored respiratory-educator benchmark",
     "durationSeconds": 390,
-    "openedClueIds": ["copd-history", "emphysema", "copd-spirometry", "copd-anatomy"],
+    "openedClueIds": [
+      "intermediate-emphysema",
+      "intermediate-history",
+      "intermediate-spirometry",
+      "intermediate-anatomy"
+    ],
     "responses": {
-      "copd-localise": { "system": "respiratory-system", "lobe": "right-upper-lobe", "segment": "apical-segment", "structure": "alveolar-unit" },
-      "copd-structure-effect": "less-recoil",
-      "copd-key-observations": ["exposure", "persistent-ratio"],
-      "copd-sort-evidence": { "low-ratio": "function", "enlarged-spaces": "structure" },
-      "copd-persistence": true,
-      "copd-differential": "comparator",
-      "copd-best-diagnosis": "copd",
-      "copd-diagnosis-path": [
-        { "nodeId": "copd-commit", "choiceId": "integrated-pattern" },
-        { "nodeId": "copd-qualify", "choiceId": "case-supported" }
-      ]
+      "intermediate-explore": {
+        "selectedStructureIds": ["right-upper-lobe"],
+        "inspectedFindingIds": ["intermediate-upper-region"]
+      },
+      "intermediate-localise": {
+        "lobe": "right-upper-lobe",
+        "segment": "right-upper-apical-segment",
+        "structure": "alveolar-unit"
+      },
+      "intermediate-key-observations": ["exposure", "persistent-ratio"],
+      "intermediate-sort-evidence": {
+        "enlarged-spaces": "structure",
+        "low-ratio": "function"
+      },
+      "intermediate-differential": "weighted-comparison",
+      "intermediate-best-diagnosis": "copd"
     },
     "rationales": {
-      "copd-localise": "Localise from the respiratory system to the alveolar unit where the configured structural change is represented.",
-      "copd-structure-effect": "Loss of alveolar attachments reduces elastic recoil and supports airflow limitation.",
-      "copd-key-observations": "Exposure history and persistent post-bronchodilator obstruction carry the most diagnostic weight.",
-      "copd-sort-evidence": "Separating structural from functional evidence makes their convergence explicit.",
-      "copd-persistence": "Persistence after bronchodilator distinguishes this pattern from fully reversible obstruction.",
-      "copd-differential": "The comparator sound is context rather than evidence recorded from this fictional patient.",
-      "copd-best-diagnosis": "The exposure, persistent physiology and emphysematous change converge on COPD.",
-      "copd-diagnosis-path": "Integrate the evidence while keeping the conclusion proportional to the authored case."
+      "intermediate-explore": "The opening structural clue is carried into an unscored inspection of the configured upper-zone findings.",
+      "intermediate-localise": "The model lobe and procedural apical segment establish location before the alveolar-unit choice.",
+      "intermediate-key-observations": "Exposure and persistent obstruction are stronger than non-specific wheeze.",
+      "intermediate-sort-evidence": "Structural and functional evidence should be distinguished before their convergence is assessed.",
+      "intermediate-differential": "Each alternative explains part of the presentation, but none explains the full evidence set as coherently.",
+      "intermediate-best-diagnosis": "The exposure, persistent airflow obstruction and structural change most strongly support COPD."
+    },
+    "stepTimings": {
+      "intermediate-localise": { "elapsedMs": 49500, "timedOut": false },
+      "intermediate-key-observations": { "elapsedMs": 49500, "timedOut": false },
+      "intermediate-sort-evidence": { "elapsedMs": 49500, "timedOut": false },
+      "intermediate-differential": { "elapsedMs": 49500, "timedOut": false },
+      "intermediate-best-diagnosis": { "elapsedMs": 49500, "timedOut": false }
     },
     "path": [
       {
-        "label": "Localise structural change",
-        "detail": "Connect the configured alveolar finding with reduced elastic recoil."
+        "label": "Start with structural evidence",
+        "detail": "Inspect the opening image, then connect it to the configured upper-zone region."
       },
       {
-        "label": "Establish persistent obstruction",
-        "detail": "Prioritise exposure and post-bronchodilator physiology."
+        "label": "Separate structure from function",
+        "detail": "Keep distal air-space change distinct from persistent spirometric obstruction."
       },
       {
-        "label": "Test the differential",
-        "detail": "Exclude comparator material that was not observed in the patient."
+        "label": "Weight competing hypotheses",
+        "detail": "Test asthma, bronchiectasis and heart failure against the exposure, time course and missing contextual features."
+      },
+      {
+        "label": "Synthesize the most coherent diagnosis",
+        "detail": "Choose the hypothesis supported across history, physiology and structure."
       }
     ],
     "evidenceWeights": [
       {
-        "ref": { "kind": "clue", "id": "copd-history" },
+        "ref": { "kind": "clue", "id": "intermediate-history" },
         "weight": "decisive",
-        "note": "The long exposure history establishes essential disease context."
+        "note": "Exposure and progressive low-variability symptoms establish the dominant context."
       },
       {
-        "ref": { "kind": "clue", "id": "copd-spirometry" },
+        "ref": { "kind": "clue", "id": "intermediate-spirometry" },
         "weight": "decisive",
         "note": "Persistent post-bronchodilator obstruction is the strongest functional evidence."
       },
       {
-        "ref": { "kind": "clue", "id": "emphysema" },
+        "ref": { "kind": "clue", "id": "intermediate-emphysema" },
         "weight": "supporting",
-        "note": "The structural image supports the physiological pattern."
+        "note": "The structural pattern supports, but does not independently prove, the leading hypothesis."
+      },
+      {
+        "ref": { "kind": "finding", "id": "intermediate-upper-region" },
+        "weight": "context",
+        "note": "The configured region provides spatial context and is not patient-derived imaging."
+      },
+      {
+        "ref": { "kind": "clue", "id": "intermediate-cardiac-context" },
+        "weight": "context",
+        "note": "Absent orthopnoea and oedema reduce coherence for heart failure without excluding it."
       }
     ],
-    "diagnosisRationale": "Long exposure, persistent post-bronchodilator obstruction and supportive emphysematous structural change form the strongest authored synthesis.",
-    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.88 }
+    "diagnosisRationale": "The authored synthesis gives greatest weight to long inhalational exposure, progressive low-variability symptoms and persistent post-bronchodilator obstruction, with emphysematous structural change as support. Asthma, bronchiectasis and heart failure remain plausible partial explanations but fit the full set less well.",
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.95 }
   },
   "debrief": {
-    "summary": "Educational demo only—not clinical guidance. The strongest pattern is long exposure plus persistent post-bronchodilator obstruction, supported by emphysematous alveolar destruction. A comparator sound must not be treated as this patient's evidence.",
+    "summary": "The leading conclusion uses convergent exposure, physiology and structure while retaining asthma, bronchiectasis and heart failure as less coherent alternatives.",
     "keyEvidence": [
       {
-        "ref": { "kind": "clue", "id": "copd-history" },
-        "stepIds": ["copd-key-observations", "copd-best-diagnosis", "copd-diagnosis-path"],
-        "why": "The exposure history gives the persistent physiological pattern its disease context."
+        "ref": { "kind": "clue", "id": "intermediate-history" },
+        "stepIds": ["intermediate-key-observations", "intermediate-differential", "intermediate-best-diagnosis"],
+        "why": "The exposure and progressive low-variability course support persistent disease and help compare alternatives."
       },
       {
-        "ref": { "kind": "clue", "id": "copd-spirometry" },
-        "stepIds": ["copd-key-observations", "copd-sort-evidence", "copd-persistence", "copd-best-diagnosis"],
-        "why": "Persistent obstruction after bronchodilator is the case's decisive functional evidence."
+        "ref": { "kind": "clue", "id": "intermediate-spirometry" },
+        "stepIds": ["intermediate-key-observations", "intermediate-sort-evidence", "intermediate-differential", "intermediate-best-diagnosis"],
+        "why": "Persistent obstruction after bronchodilator is the decisive functional evidence."
       },
       {
-        "ref": { "kind": "clue", "id": "emphysema" },
-        "stepIds": ["copd-localise", "copd-structure-effect", "copd-sort-evidence"],
-        "why": "The structural change explains reduced recoil and supports the functional findings."
+        "ref": { "kind": "clue", "id": "intermediate-emphysema" },
+        "stepIds": ["intermediate-explore", "intermediate-localise", "intermediate-sort-evidence", "intermediate-best-diagnosis"],
+        "why": "The opening structural clue supports the leading diagnosis and frames the anatomy tasks."
+      },
+      {
+        "ref": { "kind": "finding", "id": "intermediate-upper-region" },
+        "stepIds": ["intermediate-explore", "intermediate-localise"],
+        "why": "The illustrative upper-zone region connects observation to lobe-and-segment localisation."
+      },
+      {
+        "ref": { "kind": "clue", "id": "intermediate-cardiac-context" },
+        "stepIds": ["intermediate-differential", "intermediate-best-diagnosis"],
+        "why": "The contextual negatives make heart failure less coherent here but do not act as an absolute exclusion."
       }
     ]
   }

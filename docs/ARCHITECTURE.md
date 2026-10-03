@@ -132,6 +132,12 @@ duration and the XP awarded by the central pipeline. Legacy result-v5 attempts r
 without fabricated detail. Results explain points out of 100; comparison uses authored labels,
 normalized response equality, benchmark rationale and de-duplicated attempt history.
 
+Case benchmark validation is deterministic: authored benchmark responses are evaluated against
+the configured primitives, explicit per-scored-step elapsed/timeout facts are passed to the same
+pure case scorer used by the player, and mismatched authored component breakdowns fail content
+loading. Case semantics also reject empty stages, unconsumed orient entry modes and clues with no
+stage, step, finding or teaching reference.
+
 Development plans preserve unsupported steps for diagnosis. Production plans include all 27
 implemented primitive types, including the four DICOM modes, while retaining the fallback for
 unknown or malformed primitives. An activity with no implemented steps is unavailable. The player

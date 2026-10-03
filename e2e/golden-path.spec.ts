@@ -117,6 +117,14 @@ async function projectedStructurePoint(page: Page, structureId: string) {
   return current!
 }
 
+async function completeFoundationExploration(page: Page) {
+  await page.getByText('Choose from list').click()
+  await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
+  await page.getByText('Inspect findings').click()
+  await page.getByRole('button', { name: 'Configured upper-lobe region' }).click()
+  await page.getByRole('button', { name: 'Continue' }).click()
+}
+
 async function dismissCelebrations(page: Page) {
   for (let index = 0; index < 5; index += 1) {
     const dialog = page.getByRole('dialog')
@@ -187,15 +195,7 @@ test('P11-T03: selects the intended lobe through the rendered canvas', async ({
 }, testInfo) => {
   test.slow()
   await startCase(page, '/learn/cases/asthma-foundation')
-  const systemSnapshot = await anatomySnapshot(page)
-  const system = systemSnapshot.structures.find(
-    ({ id, visible }) => id === 'respiratory-system' && visible,
-  )
-  expect(system, 'respiratory-system must have a visible projected point').toBeDefined()
-  await activateProjectedPoint(page, testInfo, system!)
-  await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
-  await page.getByRole('button', { name: 'Next level' }).click()
-  await expect(page.getByRole('button', { name: 'Next level' })).toBeDisabled()
+  await completeFoundationExploration(page)
   const snapshot = await anatomySnapshot(page)
   const target = snapshot.structures.find(({ id, visible }) => id === 'right-upper-lobe' && visible)
   expect(target, 'right-upper-lobe must have a visible projected point').toBeDefined()
@@ -207,12 +207,8 @@ test('P11-T03: selects the intended lobe through the rendered canvas', async ({
 test('P12-T03: selects a procedural segment through real WebGL', async ({ page }, testInfo) => {
   test.slow()
   await startCase(page, '/learn/cases/asthma-foundation')
+  await completeFoundationExploration(page)
   await page.locator('[data-anatomy-viewer] canvas').scrollIntoViewIfNeeded()
-
-  const system = await projectedStructurePoint(page, 'respiratory-system')
-  await activateProjectedPoint(page, testInfo, system)
-  await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
-  await page.getByRole('button', { name: 'Next level' }).click()
 
   const lobe = await projectedStructurePoint(page, 'right-upper-lobe')
   await activateProjectedPoint(page, testInfo, lobe)

@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T05 complete
+**Status:** Active — P12-T06 complete
 
 ## Goal
 
@@ -101,7 +101,7 @@ physical-device approval.
       evolving differential (F31).
 - [x] P12-T05 — Add actionable key-evidence debrief and expert path/evidence/diagnosis teaching
       (F32, F33).
-- [ ] P12-T06 — Re-author the foundation, intermediate and quick cases, enrich the golden teaching
+- [x] P12-T06 — Re-author the foundation, intermediate and quick cases, enrich the golden teaching
       fields and validate entry, stage and benchmark semantics (F28, F29, F51).
 - [ ] P12-T07 — Standardize configured metadata and verify quick-case attempt de-duplication
       (F39, F46).

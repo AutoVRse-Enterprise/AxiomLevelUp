@@ -181,16 +181,16 @@ async function answerAnatomyExplore(
   response: unknown,
   registry: ContentRegistry,
 ) {
-  if (!('waypointId' in primitive.content.startView)) {
-    throw new Error('Case-flow anatomy exploration requires a waypoint start view.')
-  }
   const observation = response as {
+    selectedStructureIds?: string[]
     reachedWaypointIds?: string[]
     inspectedFindingIds?: string[]
   }
   const map = registry.anatomyMapById.get(primitive.content.anatomyMapId)!
-  let currentId = primitive.content.startView.waypointId
+  let currentId =
+    'waypointId' in primitive.content.startView ? primitive.content.startView.waypointId : null
   for (const targetId of observation.reachedWaypointIds ?? []) {
+    if (!currentId) throw new Error('Waypoint responses require a waypoint start view.')
     const path = waypointPath(registry, primitive.content.anatomyMapId, currentId, targetId)
     for (const nextId of path.slice(1)) {
       const label = map.waypoints.find(({ id }) => id === nextId)?.label
@@ -198,6 +198,11 @@ async function answerAnatomyExplore(
       await user.click(await screen.findByRole('button', { name: label }))
     }
     currentId = targetId
+  }
+  for (const structureId of observation.selectedStructureIds ?? []) {
+    const structure = map.structures.find(({ id }) => id === structureId)
+    if (!structure) throw new Error(`Missing structure "${structureId}".`)
+    await user.click(await screen.findByRole('button', { name: structure.label }))
   }
   for (const findingId of observation.inspectedFindingIds ?? []) {
     const finding = registry.cases
@@ -392,7 +397,38 @@ function fourthCatalogueResponses() {
     triangleCount: 12,
     bounds: { min: [-1, -1, -1], max: [1, 1, 1] },
   })
-  responses.set('/content/cases/case-contract-fixture.json', structuredClone(fixtureCase))
+  const configuredFixture = structuredClone(fixtureCase) as unknown as {
+    stages: Array<{ kind: string; steps: Array<Record<string, unknown>> }>
+    expertBenchmark: {
+      responses: Record<string, unknown>
+      rationales: Record<string, string>
+    }
+  }
+  configuredFixture.stages
+    .find(({ kind }) => kind === 'orient')!
+    .steps.push({
+      id: 'explore-location',
+      type: 'anatomy_explore',
+      clueIds: ['clue-context'],
+      conceptIds: ['thoracic-imaging'],
+      content: {
+        anatomyMapId: 'fixture-anatomy',
+        prompt: 'Inspect the configured target.',
+        startView: { mode: 'marker', structureId: 'target-structure' },
+        navigation: 'orbit',
+        requiredStructureIds: ['target-structure'],
+      },
+      assets: [],
+      completion: { mode: 'explored' },
+      scoring: { weight: 1 },
+      feedback: {},
+    })
+  configuredFixture.expertBenchmark.responses['explore-location'] = {
+    selectedStructureIds: ['target-structure'],
+  }
+  configuredFixture.expertBenchmark.rationales['explore-location'] =
+    'The configured marker opens directly on the target structure.'
+  responses.set('/content/cases/case-contract-fixture.json', configuredFixture)
   responses.set('/content/anatomy/fixture-anatomy.json', structuredClone(fixtureAnatomyMap))
   return responses
 }

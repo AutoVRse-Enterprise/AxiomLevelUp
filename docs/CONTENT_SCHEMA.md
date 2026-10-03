@@ -228,8 +228,7 @@ target modes use answer completion.
 - Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
   semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
-  pinned evidence, inspected-finding IDs, differential ratings and XP from the central
-  gamification activity result.
+  local evidence/differential placeholders and XP from the central gamification activity result.
   Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
   unavailable details.
 - Device-scoped offline course records are persisted separately from learner state.

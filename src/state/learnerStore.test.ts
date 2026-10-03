@@ -127,7 +127,22 @@ describe('learner store persistence', () => {
     const attempts = (legacy.caseAttempts as Record<string, Array<Record<string, unknown>>>)[
       'asthma-foundation'
     ]!
-    delete attempts[0]!.resultVersion
+    const source = attempts[0]!
+    delete source.resultVersion
+    delete source.perStepSpeed
+    delete source.caseSpeed
+    delete source.clueCostPoints
+    delete source.speedScored
+    delete source.timingMode
+    delete source.weights
+    delete source.actualAwardedXp
+    delete source.actualAwardedXpSource
+    delete source.speedModel
+    delete source.speedEligibility
+    delete source.reviewedClueIds
+    delete source.evidence
+    delete source.differential
+    delete source.timeoutCreditApplied
 
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['asthma-foundation']![0]!
@@ -141,7 +156,20 @@ describe('learner store persistence', () => {
   })
 
   it('preserves result-v6 attempts as legacy records without v7 placeholders', () => {
-    const migrated = migrateLearnerState(structuredClone(advancedSeed))
+    const legacy = structuredClone(advancedSeed) as unknown as Record<string, unknown>
+    const attempts = (legacy.caseAttempts as Record<string, Array<Record<string, unknown>>>)[
+      'exacerbation-advanced'
+    ]!
+    const source = attempts[0]!
+    source.resultVersion = 6
+    delete source.speedModel
+    delete source.speedEligibility
+    delete source.reviewedClueIds
+    delete source.evidence
+    delete source.differential
+    delete source.timeoutCreditApplied
+
+    const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['exacerbation-advanced']![0]!
 
     expect(migrated.stateVersion).toBe(7)

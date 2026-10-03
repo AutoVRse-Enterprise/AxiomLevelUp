@@ -1567,3 +1567,35 @@ instead of inventing history.
 Authors must now supply complete rationale, path, evidence-weight and debrief fields for every
 learner-visible case. Stable IDs remain persistence and reference keys but are resolved to authored
 labels before learner presentation.
+
+## ADR-090: Catalogue semantics are executable content contracts
+
+**Status:** Accepted
+
+**Context:** The non-golden catalogue still exposed diagnosis names in entry copy, repeated
+educational warnings, inert entry configuration, overlong task sequences and benchmark breakdowns
+that could drift from the production scorer. Existing semantic validation resolved references but
+did not prove that a stage contained work, that an orient primitive consumed the configured entry,
+that every clue contributed to the case, or that benchmark numbers followed from authored
+responses and timing facts.
+
+**Decision:** Re-author the foundation, intermediate and daily cases as synthetic,
+configuration-only compositions with one case-summary disclaimer, neutral entry copy, required
+unscored anatomy observation and five-to-six tasks for full cases or three for the daily case.
+Preserve the advanced golden case's exact six tasks, route, findings, timing and tested prompts.
+Require every stage to contain a step, every entry mode to be consumed by an anatomy primitive in
+the orient stage, every clue to be referenced by stage/step evidence, findings or teaching, and
+every learner-visible task to have an authored benchmark response and rationale.
+
+Add explicit benchmark `stepTimings` with elapsed milliseconds and timeout state for every scored
+task. Evaluate benchmark responses and pass the resulting scores and timing facts through the
+production pure case scorer; reject any authored anatomy, diagnosis or speed component that differs
+from recomputation. Seed one unique result-v7 attempt for foundation, intermediate and advanced
+with normalized first responses, speed eligibility, reviewed clues, evidence and differential
+state. Keep all four clinical claim ledgers explicitly unreviewed.
+
+**Consequences:** Catalogue intent is enforceable rather than dependent on review convention, and
+benchmark displays cannot claim unsupported scores. Authors must provide complete timing facts even
+for untimed-tier benchmark tasks because those records make scoring inputs explicit and future
+changes auditable. The configured findings and clinical teaching remain illustrative drafts;
+technical validation does not confer clinical, anatomy or legal approval.

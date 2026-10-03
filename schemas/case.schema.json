@@ -735,7 +735,7 @@
             }
           },
           "steps": {
-            "default": [],
+            "minItems": 1,
             "type": "array",
             "items": {
               "type": "object",
@@ -1160,6 +1160,31 @@
             "minLength": 1
           }
         },
+        "stepTimings": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "elapsedMs": {
+                "type": "number",
+                "minimum": 0
+              },
+              "timedOut": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "elapsedMs",
+              "timedOut"
+            ],
+            "additionalProperties": false
+          }
+        },
         "path": {
           "minItems": 1,
           "type": "array",
@@ -1268,6 +1293,7 @@
         "openedClueIds",
         "responses",
         "rationales",
+        "stepTimings",
         "path",
         "evidenceWeights",
         "diagnosisRationale",

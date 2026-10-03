@@ -490,6 +490,13 @@
       "exac-best-diagnosis": "Variable airway symptoms and the acute objective trajectory form the most coherent synthesis.",
       "exac-immediate-consequence": "The combined deterioration signals justify urgent escalation through the applicable emergency pathway."
     },
+    "stepTimings": {
+      "exac-localise": { "elapsedMs": 48000, "timedOut": false },
+      "exac-severity-signals": { "elapsedMs": 52000, "timedOut": false },
+      "exac-co2-reasoning": { "elapsedMs": 50000, "timedOut": false },
+      "exac-best-diagnosis": { "elapsedMs": 51000, "timedOut": false },
+      "exac-immediate-consequence": { "elapsedMs": 51000, "timedOut": false }
+    },
     "path": [
       {
         "label": "Trace and localise the obstruction",

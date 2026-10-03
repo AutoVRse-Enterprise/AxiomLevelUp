@@ -21,10 +21,58 @@ import {
   parsePrimitive,
 } from '@/content/schema'
 import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures'
+import {
+  emptyStageFixture,
+  incompleteBenchmarkTimingFixture,
+  mismatchedBenchmarkFixture,
+  unconsumedEntryFixture,
+  unreferencedClueFixture,
+} from '@/test/invalidCaseCatalogueFixtures'
 
 function withCaseFixture(caseDocument: unknown = caseFixture) {
   const bundle = makeValidContentBundle()
-  bundle.caseFiles = [{ file: 'fixtures/case.json', data: structuredClone(caseDocument) }]
+  const data = structuredClone(caseDocument) as {
+    id?: string
+    stages?: Array<{ kind?: string; steps?: Array<{ type?: string }> }>
+    expertBenchmark?: {
+      responses?: Record<string, unknown>
+      rationales?: Record<string, string>
+    }
+  }
+  const orient = data.stages?.find(({ kind }) => kind === 'orient')
+  if (
+    data.id === 'case-contract-fixture' &&
+    orient?.steps &&
+    !orient.steps.some(({ type }) => type === 'anatomy_explore' || type === 'anatomy_locate')
+  ) {
+    orient.steps.push({
+      id: 'explore-location',
+      type: 'anatomy_explore',
+      clueIds: ['clue-context'],
+      conceptIds: ['thoracic-imaging'],
+      content: {
+        anatomyMapId: 'fixture-anatomy',
+        prompt: 'Inspect the configured target.',
+        startView: { mode: 'marker', structureId: 'target-structure' },
+        navigation: 'orbit',
+        requiredStructureIds: ['target-structure'],
+      },
+      assets: [],
+      completion: { mode: 'explored' },
+      scoring: { weight: 1 },
+      feedback: {},
+    } as never)
+    if (data.expertBenchmark?.responses) {
+      data.expertBenchmark.responses['explore-location'] = {
+        selectedStructureIds: ['target-structure'],
+      }
+    }
+    if (data.expertBenchmark?.rationales) {
+      data.expertBenchmark.rationales['explore-location'] =
+        'The configured marker opens directly on the target structure.'
+    }
+  }
+  bundle.caseFiles = [{ file: 'fixtures/case.json', data }]
   bundle.anatomyMapFiles.push({
     file: 'fixtures/anatomy-map.json',
     data: structuredClone(anatomyMapFixture),
@@ -399,9 +447,49 @@ describe('content schemas', () => {
     expect(caseBadges).toHaveLength(3)
     expect(seededAttempts).toHaveLength(1)
     expect(seededAttempts[0]?.attemptId).toBe('seed-asthma-foundation-1')
+    expect(seededAttempts[0]?.resultVersion).toBe(7)
     expect(seededAttempts[0]?.openedClueIds.every((id) => clueIds.has(id))).toBe(true)
+    expect(advancedSeed.caseAttempts['copd-intermediate']).toHaveLength(1)
+    expect(
+      Object.values(advancedSeed.caseAttempts)
+        .flat()
+        .map(({ attemptId }) => attemptId),
+    ).toHaveLength(
+      new Set(
+        Object.values(advancedSeed.caseAttempts)
+          .flat()
+          .map(({ attemptId }) => attemptId),
+      ).size,
+    )
     expect(freshSeed.caseProgress).toEqual({})
     expect(freshSeed.caseAttempts).toEqual({})
+  })
+
+  it('ships neutral catalogue entry copy with one disclaimer and no step timers', () => {
+    const cases = [
+      contentResponses.get('/content/cases/asthma-foundation.json'),
+      contentResponses.get('/content/cases/copd-intermediate.json'),
+      contentResponses.get('/content/cases/exacerbation-advanced.json'),
+      contentResponses.get('/content/cases/wheeze-quick.json'),
+    ].map((value) => caseDocumentSchema.parse(value))
+    const forbiddenEntryTerms: Record<string, string[]> = {
+      'asthma-foundation': ['asthma'],
+      'copd-intermediate': ['copd', 'chronic obstructive pulmonary disease'],
+      'wheeze-quick': ['asthma'],
+    }
+
+    for (const caseDocument of cases) {
+      expect(
+        JSON.stringify(caseDocument).match(/Training simulation—not clinical guidance\./g),
+      ).toHaveLength(1)
+      expect(caseDocument.stages.flatMap(({ steps }) => steps).every((step) => !step.timer)).toBe(
+        true,
+      )
+      const entryCopy = `${caseDocument.title} ${caseDocument.summary}`.toLowerCase()
+      for (const term of forbiddenEntryTerms[caseDocument.id] ?? []) {
+        expect(entryCopy).not.toContain(term)
+      }
+    }
   })
 
   it('rejects assessment primitives used as case clues with a useful path', () => {
@@ -465,13 +553,13 @@ describe('content loader', () => {
       const steps = caseDocument.stages.flatMap(({ steps }) => steps)
       const anatomyLocate = steps.find(({ type }) => type === 'anatomy_locate')
       const levels = (anatomyLocate?.content as { levels?: unknown[] }).levels
-      expect([3, 4]).toContain(levels?.length)
+      expect(levels).toHaveLength(3)
       if (caseDocument.id === 'exacerbation-advanced') {
         expect(steps).toHaveLength(6)
       } else {
-        expect(steps).toHaveLength(8)
-        expect(steps.some(({ type }) => type === 'scenario')).toBe(true)
+        expect(steps).toHaveLength(6)
       }
+      expect(steps.every((step) => step.timer === undefined)).toBe(true)
     }
     const goldenCase = registry.caseById.get('exacerbation-advanced')!
     const goldenSteps = goldenCase.stages.flatMap(({ steps }) => steps)
@@ -584,7 +672,7 @@ describe('content loader', () => {
     })
     expect(registry.seed.caseAttempts['exacerbation-advanced']).toEqual([
       expect.objectContaining({
-        resultVersion: 6,
+        resultVersion: 7,
         attemptId: 'seed-exacerbation-advanced-1',
       }),
     ])
@@ -592,6 +680,7 @@ describe('content loader', () => {
     expect(quickCase?.estimatedMinutes).toBe(3)
     expect(quickCase?.clues).toHaveLength(3)
     expect(quickCase?.stages.map(({ kind }) => kind)).toEqual(['orient', 'diagnose'])
+    expect(quickCase?.stages.flatMap(({ steps }) => steps)).toHaveLength(3)
     expect(registry.anatomyMapById.get('lung-map')?.modelAssetId).toBe('lung-model')
     expect(registry.anatomyMaps).toHaveLength(1)
     expect(registry.warnings).toEqual([])
@@ -610,7 +699,7 @@ describe('content loader', () => {
     responses.set('/content/manifest.json', manifest)
     responses.set('/content/app-config.json', appConfig)
     responses.set('/content/assets.json', caseBundle.assetManifest)
-    responses.set('/content/fixtures/case.json', caseFixture)
+    responses.set('/content/fixtures/case.json', caseBundle.caseFiles[0]!.data)
     responses.set('/content/fixtures/anatomy-map.json', anatomyMapFixture)
     vi.stubGlobal(
       'fetch',
@@ -698,6 +787,71 @@ describe('content loader', () => {
     )
   })
 
+  it('rejects empty case stages at the schema boundary', () => {
+    const parsed = caseDocumentSchema.safeParse(emptyStageFixture())
+
+    expect(parsed.success).toBe(false)
+    if (!parsed.success) {
+      expect(parsed.error.issues).toEqual(
+        expect.arrayContaining([expect.objectContaining({ path: ['stages', 0, 'steps'] })]),
+      )
+    }
+  })
+
+  it('rejects orient stages that do not consume the configured entry', () => {
+    expect(() => validateContentBundle(withCaseFixture(unconsumedEntryFixture()))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'entry',
+            message: expect.stringContaining('must be consumed by an anatomy primitive'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects clues that are not connected to authored case evidence', () => {
+    expect(() => validateContentBundle(withCaseFixture(unreferencedClueFixture()))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'clues.1.id',
+            message: expect.stringContaining('is not referenced'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires complete benchmark timing facts for every scored task', () => {
+    expect(() =>
+      validateContentBundle(withCaseFixture(incompleteBenchmarkTimingFixture())),
+    ).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'expertBenchmark.stepTimings.select-conclusion',
+            message: expect.stringContaining('requires benchmark timing facts'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects benchmark breakdowns that differ from pure scorer recomputation', () => {
+    expect(() => validateContentBundle(withCaseFixture(mismatchedBenchmarkFixture()))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'expertBenchmark.breakdown.anatomy',
+            message: expect.stringContaining('pure scorer recomputation'),
+          }),
+        ]),
+      }),
+    )
+  })
+
   it('rejects evidence that exists but is not usable through a case stage', () => {
     const unusableEvidence = structuredClone(caseFixture)
     unusableEvidence.expertBenchmark.evidenceWeights[0]!.ref = {
@@ -742,11 +896,15 @@ describe('content loader', () => {
     const caseDocument = structuredClone(caseFixture) as {
       stages: Array<{
         steps: Array<{
+          type: string
           content: { options?: Array<{ clueIds?: string[] }> }
         }>
       }>
     }
-    caseDocument.stages[0]!.steps[0]!.content.options![1]!.clueIds = ['missing-response-clue']
+    const choiceStep = caseDocument.stages
+      .flatMap(({ steps }) => steps)
+      .find(({ type }) => type === 'multiple_choice')!
+    choiceStep.content.options![1]!.clueIds = ['missing-response-clue']
 
     expect(() => validateContentBundle(withCaseFixture(caseDocument))).toThrow(
       expect.objectContaining({
