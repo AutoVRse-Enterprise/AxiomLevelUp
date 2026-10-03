@@ -160,7 +160,7 @@ ${Object.keys(primitiveContentSchemas)
   .join('\n')}
 
 The four DICOM types require a typed DICOM series asset and strict mode-specific content.
-\`anatomy_explore\` resolves a configured anatomy map and its online-only model asset, and may
+\`anatomy_explore\` resolves a configured anatomy map and its model asset, and may
 require configured structures, waypoints and case findings to be inspected.
 \`anatomy_locate\` adds ordered model, image-region and choice levels, optional positive weights and
 stable level-keyed responses; it may display referenced case findings without making their
@@ -236,7 +236,7 @@ target modes use answer completion.
   local evidence/differential placeholders and XP from the central gamification activity result.
   Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
   unavailable details.
-- Device-scoped offline course records are persisted separately from learner state.
+- Device-scoped offline course and case package records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
 
 ## Asset manifest
@@ -250,18 +250,21 @@ Non-DICOM entries also require lowercase SHA-256; DICOM file hashes remain in th
 manifest.
 
 Model entries are GLB assets with required \`model/gltf-binary\` MIME type, \`offlineRequired: false\`,
-\`offlineAvailable: false\`, unique mesh names, triangle count and axis-aligned \`bounds.min\` and
+configured \`offlineAvailable\`, unique mesh names, triangle count and axis-aligned \`bounds.min\` and
 \`bounds.max\`. \`npm run model:prepare -- <source.glb|gltf> <mapping.json> <out-dir>\` renames
 renderable nodes, removes animations and unused resources, welds and simplifies geometry to the
 mapping's target, applies meshopt compression, and emits \`model.glb\` plus matching
 \`metadata.json\`. Mapping files contain \`nodeNames\` (source-to-prepared name pairs),
 \`targetTriangles\` and optional \`simplificationError\`. The asset hash command refreshes model
-size and SHA-256 while preserving the online-only flags.
+size and SHA-256 while preserving configured model availability and forcing only
+\`offlineRequired: false\`.
 
 Runtime model URLs carry the validated SHA-256 as a \`v\` query parameter. The featured-case intro
 may prefetch that exact URL, and the service worker accepts only hash-versioned GLB requests into
-the bounded \`versioned-case-models-v1\` presentation cache. This does not change the model's
-\`offlineRequired: false\` contract or include it in a course offline package.
+the bounded \`versioned-case-models-v1\` presentation cache. Case packages derive their exact model,
+patient image, clue and stage assets, deduplicate them and fingerprint IDs, hashes and sizes. The
+verified package cache is checked before the presentation model cache; shared assets remain until
+their final package reference is removed.
 
 The hosted DICOM manifest is independently validated at runtime as schema version \`0.2\`. It contains
 series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets

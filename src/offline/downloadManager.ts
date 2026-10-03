@@ -9,7 +9,7 @@ import {
   type OfflineFailureKind,
   useOfflineLibraryStore,
 } from '@/offline/offlineLibraryStore'
-import type { CourseOfflinePackage } from '@/offline/package'
+import { offlinePackageKey, type OfflinePackage, type OfflinePackageKind } from '@/offline/package'
 import {
   browserCacheStore,
   browserStorageAdapter,
@@ -18,7 +18,7 @@ import {
   type FetchLike,
   type StorageAdapter,
 } from '@/offline/platform'
-import { PASSIVE_DICOM_CACHE, VERIFIED_COURSE_CACHE } from '@/pwa/cachePolicy'
+import { PASSIVE_DICOM_CACHE, VERIFIED_PACKAGE_CACHE } from '@/pwa/cachePolicy'
 
 interface DownloadConfiguration {
   downloadConcurrency: number
@@ -36,10 +36,15 @@ interface DownloadManagerDependencies {
 }
 
 export type DownloadManagerEvent =
-  | { type: 'started'; courseId: string; bytes: number }
-  | { type: 'completed'; courseId: string; bytes: number }
-  | { type: 'failed'; courseId: string; reason: OfflineFailureKind }
-  | { type: 'removed'; courseId: string; bytes: number }
+  | { type: 'started'; packageKind: OfflinePackageKind; packageId: string; bytes: number }
+  | { type: 'completed'; packageKind: OfflinePackageKind; packageId: string; bytes: number }
+  | {
+      type: 'failed'
+      packageKind: OfflinePackageKind
+      packageId: string
+      reason: OfflineFailureKind
+    }
+  | { type: 'removed'; packageKind: OfflinePackageKind; packageId: string; bytes: number }
 
 interface DownloadItem {
   assetId: string
@@ -125,30 +130,41 @@ export class DownloadManager {
     this.onEvent = dependencies.onEvent
   }
 
-  cancel(courseId: string) {
-    this.controllers.get(courseId)?.abort()
+  cancel(packageOrKey: OfflinePackage | string) {
+    const key =
+      typeof packageOrKey === 'string'
+        ? packageOrKey
+        : offlinePackageKey(packageOrKey.kind, packageOrKey.id)
+    this.controllers.get(key)?.abort()
   }
 
-  async download(coursePackage: CourseOfflinePackage, registry: ContentRegistry) {
-    this.cancel(coursePackage.id)
+  async download(offlinePackage: OfflinePackage, registry: ContentRegistry) {
+    const key = offlinePackageKey(offlinePackage.kind, offlinePackage.id)
+    this.cancel(key)
     const controller = new AbortController()
-    this.controllers.set(coursePackage.id, controller)
-    const initial = this.createRecord(coursePackage)
+    this.controllers.set(key, controller)
+    const previous = useOfflineLibraryStore.getState().records[key]
+    const initial = this.createRecord(offlinePackage)
     useOfflineLibraryStore.getState().setRecord(initial)
-    this.onEvent?.({ type: 'started', courseId: coursePackage.id, bytes: initial.totalBytes })
+    this.onEvent?.({
+      type: 'started',
+      packageKind: offlinePackage.kind,
+      packageId: offlinePackage.id,
+      bytes: initial.totalBytes,
+    })
 
     try {
-      await this.assertCapacity(coursePackage.totalBytes)
+      await this.assertCapacity(offlinePackage.totalBytes)
       if (this.configuration.requestPersistentStorage) await this.storage.persist()
       if (!this.isOnline()) throw new PauseDownloadError('Download paused while offline.')
 
       const { items, assetUrls, manifestEntries } = await this.expand(
-        coursePackage,
+        offlinePackage,
         registry,
         controller.signal,
       )
       const urls = [...manifestEntries.map(({ url }) => url), ...items.map(({ url }) => url)]
-      useOfflineLibraryStore.getState().updateRecord(coursePackage.id, {
+      useOfflineLibraryStore.getState().updateRecord(key, {
         urls,
         assetUrls,
       })
@@ -156,14 +172,14 @@ export class DownloadManager {
       let downloadedBytes = 0
       const pending: DownloadItem[] = []
       for (const item of items) {
-        const existing = await this.cache.match(VERIFIED_COURSE_CACHE, item.url)
+        const existing = await this.cache.match(VERIFIED_PACKAGE_CACHE, item.url)
         if (existing && (await this.verify(existing, item))) {
           downloadedBytes += item.sizeBytes
         } else {
           pending.push(item)
         }
       }
-      useOfflineLibraryStore.getState().updateRecord(coursePackage.id, {
+      useOfflineLibraryStore.getState().updateRecord(key, {
         downloadedBytes,
         status: 'downloading',
       })
@@ -175,78 +191,88 @@ export class DownloadManager {
         if (!this.isOnline()) throw new PauseDownloadError('Download paused while offline.')
         await this.downloadItem(item, controller.signal)
         downloadedBytes += item.sizeBytes
-        useOfflineLibraryStore.getState().updateRecord(coursePackage.id, { downloadedBytes })
+        useOfflineLibraryStore.getState().updateRecord(key, { downloadedBytes })
       })
 
       const completed: Partial<OfflineDownloadRecord> = {
         status: 'available',
-        downloadedBytes: coursePackage.totalBytes,
+        downloadedBytes: offlinePackage.totalBytes,
         verifiedAt: this.now(),
         error: null,
       }
-      useOfflineLibraryStore.getState().updateRecord(coursePackage.id, completed)
+      useOfflineLibraryStore.getState().updateRecord(key, completed)
+      await this.deleteUnreferenced(previous?.urls ?? [], new Set(urls), key)
       this.onEvent?.({
         type: 'completed',
-        courseId: coursePackage.id,
-        bytes: coursePackage.totalBytes,
+        packageKind: offlinePackage.kind,
+        packageId: offlinePackage.id,
+        bytes: offlinePackage.totalBytes,
       })
     } catch (error) {
       const failure = this.normalizeError(error, controller.signal)
       const paused = error instanceof PauseDownloadError
-      useOfflineLibraryStore.getState().updateRecord(coursePackage.id, {
+      useOfflineLibraryStore.getState().updateRecord(key, {
         status: paused ? 'paused' : 'failed',
         error: paused ? null : { kind: failure.kind, message: failure.message },
       })
       if (!paused) {
-        this.onEvent?.({ type: 'failed', courseId: coursePackage.id, reason: failure.kind })
+        this.onEvent?.({
+          type: 'failed',
+          packageKind: offlinePackage.kind,
+          packageId: offlinePackage.id,
+          reason: failure.kind,
+        })
       }
       if (!paused && failure.kind !== 'cancelled') throw failure
     } finally {
-      if (this.controllers.get(coursePackage.id) === controller) {
-        this.controllers.delete(coursePackage.id)
+      if (this.controllers.get(key) === controller) {
+        this.controllers.delete(key)
       }
     }
   }
 
-  async remove(courseId: string) {
+  async remove(key: string) {
     const { records, removeRecord } = useOfflineLibraryStore.getState()
-    const record = records[courseId]
+    const record = records[key]
     if (!record) return
     const retained = new Set(
       Object.values(records)
-        .filter(
-          (candidate) => candidate.courseId !== courseId && candidate.status === 'available',
-        )
+        .filter((candidate) => candidate.key !== key && candidate.status === 'available')
         .flatMap(({ urls }) => [...urls]),
     )
     await Promise.all(
       record.urls
         .filter((url) => !retained.has(url))
-        .map((url) => this.cache.delete(VERIFIED_COURSE_CACHE, url)),
+        .map((url) => this.cache.delete(VERIFIED_PACKAGE_CACHE, url)),
     )
-    removeRecord(courseId)
-    this.onEvent?.({ type: 'removed', courseId, bytes: record.totalBytes })
+    removeRecord(key)
+    this.onEvent?.({
+      type: 'removed',
+      packageKind: record.packageKind,
+      packageId: record.packageId,
+      bytes: record.totalBytes,
+    })
   }
 
   async removeAll() {
-    const courseIds = Object.keys(useOfflineLibraryStore.getState().records)
-    for (const courseId of courseIds) await this.remove(courseId)
+    const keys = Object.keys(useOfflineLibraryStore.getState().records)
+    for (const key of keys) await this.remove(key)
   }
 
-  async reconcile(packages: ReadonlyMap<string, CourseOfflinePackage>) {
-    const availableUrls = new Set(await this.cache.keys(VERIFIED_COURSE_CACHE))
+  async reconcile(packages: ReadonlyMap<string, OfflinePackage>) {
+    const availableUrls = new Set(await this.cache.keys(VERIFIED_PACKAGE_CACHE))
     const { records, updateRecord } = useOfflineLibraryStore.getState()
     for (const record of Object.values(records)) {
-      const current = packages.get(record.courseId)
+      const current = packages.get(record.key)
       if (current && current.fingerprint !== record.fingerprint) {
-        updateRecord(record.courseId, { status: 'outdated' })
+        updateRecord(record.key, { status: 'outdated' })
         continue
       }
       if (
         record.status === 'available' &&
         record.urls.some((url) => !availableUrls.has(absoluteUrl(url)))
       ) {
-        updateRecord(record.courseId, {
+        updateRecord(record.key, {
           status: 'incomplete',
           error: { kind: 'cache', message: 'Some downloaded files were removed by the browser.' },
         })
@@ -254,15 +280,18 @@ export class DownloadManager {
     }
   }
 
-  private createRecord(coursePackage: CourseOfflinePackage): OfflineDownloadRecord {
+  private createRecord(offlinePackage: OfflinePackage): OfflineDownloadRecord {
+    const key = offlinePackageKey(offlinePackage.kind, offlinePackage.id)
     return {
-      courseId: coursePackage.id,
+      key,
+      packageKind: offlinePackage.kind,
+      packageId: offlinePackage.id,
       status: 'queued',
       downloadedBytes: 0,
-      totalBytes: coursePackage.totalBytes,
+      totalBytes: offlinePackage.totalBytes,
       urls: [],
       assetUrls: {},
-      fingerprint: coursePackage.fingerprint,
+      fingerprint: offlinePackage.fingerprint,
       verifiedAt: null,
       error: null,
     }
@@ -275,13 +304,13 @@ export class DownloadManager {
     if (usage + requiredBytes > usable) {
       throw new DownloadManagerError(
         'quota',
-        'Not enough browser storage is available. Remove an offline course and try again.',
+        'Not enough browser storage is available. Remove an offline download and try again.',
       )
     }
   }
 
   private async expand(
-    coursePackage: CourseOfflinePackage,
+    offlinePackage: OfflinePackage,
     registry: ContentRegistry,
     signal: AbortSignal,
   ) {
@@ -289,7 +318,7 @@ export class DownloadManager {
     const manifestEntries: Array<{ assetId: string; url: string }> = []
     const assetUrls: Record<string, string[]> = {}
 
-    for (const packageAsset of coursePackage.assets) {
+    for (const packageAsset of offlinePackage.assets) {
       if (packageAsset.delivery === 'shell') continue
       const asset = registry.assetById.get(packageAsset.assetId)
       if (!asset) continue
@@ -323,17 +352,16 @@ export class DownloadManager {
         JSON.parse(new TextDecoder().decode(bytes)) as unknown,
       )
       assertManifestMatchesAsset(manifest, asset as DicomAsset)
-      if (manifest.files.length !== manifest.sliceCount || manifest.totalBytes !== asset.sizeBytes) {
+      if (
+        manifest.files.length !== manifest.sliceCount ||
+        manifest.totalBytes !== asset.sizeBytes
+      ) {
         throw new DownloadManagerError(
           'integrity',
           'DICOM manifest counts do not match validated asset metadata.',
         )
       }
-      await this.cache.put(
-        VERIFIED_COURSE_CACHE,
-        packageAsset.url,
-        responseFrom(bytes, response),
-      )
+      await this.cache.put(VERIFIED_PACKAGE_CACHE, packageAsset.url, responseFrom(bytes, response))
       manifestEntries.push({ assetId: asset.assetId, url: packageAsset.url })
       const manifestUrl = absoluteUrl(packageAsset.url)
       const fileUrls = manifest.files.map((file) => new URL(file.path, manifestUrl).href)
@@ -352,6 +380,23 @@ export class DownloadManager {
     return { items, manifestEntries, assetUrls }
   }
 
+  private async deleteUnreferenced(
+    candidateUrls: readonly string[],
+    keepForCurrent: ReadonlySet<string>,
+    currentKey: string,
+  ) {
+    const retained = new Set(
+      Object.values(useOfflineLibraryStore.getState().records)
+        .filter(({ key, status }) => key !== currentKey && status === 'available')
+        .flatMap(({ urls }) => [...urls]),
+    )
+    await Promise.all(
+      candidateUrls
+        .filter((url) => !keepForCurrent.has(url) && !retained.has(url))
+        .map((url) => this.cache.delete(VERIFIED_PACKAGE_CACHE, url)),
+    )
+  }
+
   private async responseFor(url: string, signal: AbortSignal, passiveCacheEligible = true) {
     if (passiveCacheEligible) {
       const promoted = await this.cache.match(PASSIVE_DICOM_CACHE, url)
@@ -363,9 +408,7 @@ export class DownloadManager {
   private async verify(response: Response, item: DownloadItem) {
     try {
       const bytes = await response.arrayBuffer()
-      return (
-        bytes.byteLength === item.sizeBytes && (await sha256Hex(bytes)) === item.sha256
-      )
+      return bytes.byteLength === item.sizeBytes && (await sha256Hex(bytes)) === item.sha256
     } catch {
       return false
     }
@@ -387,12 +430,12 @@ export class DownloadManager {
       )
     }
     try {
-      await this.cache.put(VERIFIED_COURSE_CACHE, item.url, responseFrom(bytes, response))
+      await this.cache.put(VERIFIED_PACKAGE_CACHE, item.url, responseFrom(bytes, response))
     } catch (error) {
       if (isQuotaError(error)) {
         throw new DownloadManagerError(
           'quota',
-          'Browser storage filled during download. Remove an offline course and try again.',
+          'Browser storage filled during download. Remove an offline download and try again.',
           { cause: error },
         )
       }
@@ -406,7 +449,7 @@ export class DownloadManager {
     if (isQuotaError(error)) {
       return new DownloadManagerError(
         'quota',
-        'Browser storage is full. Remove an offline course and try again.',
+        'Browser storage is full. Remove an offline download and try again.',
         { cause: error },
       )
     }

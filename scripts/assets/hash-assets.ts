@@ -27,7 +27,7 @@ export async function updateAssetHashes(manifestPath: string, publicRoot: string
   for (const asset of manifest.assets) {
     if (asset.type === 'model') {
       asset.offlineRequired = false
-      asset.offlineAvailable = false
+      asset.offlineAvailable ??= false
     } else {
       asset.offlineAvailable ??= true
     }

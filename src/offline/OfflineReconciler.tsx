@@ -2,7 +2,12 @@ import { useEffect } from 'react'
 
 import { useContent } from '@/app/contentContext'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
-import { buildCoursePackage } from '@/offline/package'
+import {
+  buildCasePackage,
+  buildCoursePackage,
+  offlinePackageKey,
+  type OfflinePackage,
+} from '@/offline/package'
 import { getDownloadManager } from '@/offline/runtime'
 
 export function OfflineReconciler() {
@@ -11,16 +16,18 @@ export function OfflineReconciler() {
 
   useEffect(() => {
     if (!hydrated) return
-    const packages = new Map(
-      registry.courses.map((course) => [
-        course.id,
-        buildCoursePackage(
-          course,
-          registry,
-          import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
-        ),
-      ]),
-    )
+    const dicomBaseUrl = import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/'
+    const packages = new Map<string, OfflinePackage>()
+    registry.courses.forEach((course) => {
+      const offlinePackage = buildCoursePackage(course, registry, dicomBaseUrl)
+      packages.set(offlinePackageKey(offlinePackage.kind, offlinePackage.id), offlinePackage)
+    })
+    registry.cases.forEach((caseDocument) => {
+      const anatomyMap = registry.anatomyMapById.get(caseDocument.anatomyMapId)
+      if (!anatomyMap) return
+      const offlinePackage = buildCasePackage(caseDocument, anatomyMap, registry, dicomBaseUrl)
+      packages.set(offlinePackageKey(offlinePackage.kind, offlinePackage.id), offlinePackage)
+    })
     void getDownloadManager(registry.appConfig.product.offline).reconcile(packages)
   }, [hydrated, registry])
 

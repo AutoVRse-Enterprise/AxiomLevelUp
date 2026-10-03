@@ -6,6 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ContentContext } from '@/app/contentContext'
 import type { ContentRegistry } from '@/content/loader'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
+import { buildCasePackage, offlinePackageKey } from '@/offline/package'
 import { CaseAttemptPage } from '@/routes/cases/CaseAttemptPage'
 import { CaseIntroPage } from '@/routes/cases/CaseIntroPage'
 import { CasePlayerPage } from '@/routes/cases/CasePlayerPage'
@@ -88,11 +90,13 @@ describe('Case Lab routes', () => {
       vi.fn(async () => new Response('model bytes', { status: 200 })),
     )
     useLearnerStore.getState().replaceWithSeed(registry.seed)
+    useOfflineLibraryStore.setState({ records: {}, hydrated: true })
     useActivitySessionStore.getState().clear()
     await useActivitySessionStore.persist.clearStorage()
   })
 
   afterEach(() => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: true })
     vi.unstubAllGlobals()
   })
 
@@ -108,12 +112,13 @@ describe('Case Lab routes', () => {
       caseAttempts: { [fixtureCase.id]: [savedAttempt] },
     })
 
-    renderCaseRoute(`/learn/cases/${fixtureCase.id}`)
+    renderCaseRoute(`/learn/cases/${fixtureCase.id}`, registryWithFeaturedModel)
 
     expect(screen.getByRole('heading', { name: fixtureCase.title })).toBeVisible()
     expect(screen.getByText(fixtureCase.patient.presentingComplaint)).toBeVisible()
     expect(screen.getByText('No timer')).toBeVisible()
     expect(screen.getByRole('link', { name: /Start case/ })).toBeVisible()
+    expect(screen.getByRole('button', { name: /Download for offline/ })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
   })
 
@@ -171,6 +176,40 @@ describe('Case Lab routes', () => {
     expect(screen.getByRole('button', { name: 'Exit activity' })).toBeVisible()
     expect(screen.queryByRole('progressbar', { name: 'Activity progress' })).not.toBeInTheDocument()
     expect(screen.getByText('Task 1 of 1')).toBeVisible()
+  })
+
+  it('blocks an undownloaded case route while offline', () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    renderCaseRoute(`/learn/cases/${fixtureCase.id}/play`, registryWithFeaturedModel)
+
+    expect(screen.getByRole('heading', { name: 'This case has not been downloaded' })).toBeVisible()
+  })
+
+  it('launches a fingerprint-matched downloaded case while offline', async () => {
+    Object.defineProperty(navigator, 'onLine', { configurable: true, value: false })
+    const anatomyMap = registryWithFeaturedModel.anatomyMapById.get(fixtureCase.anatomyMapId)!
+    const offlinePackage = buildCasePackage(fixtureCase, anatomyMap, registryWithFeaturedModel)
+    const key = offlinePackageKey(offlinePackage.kind, offlinePackage.id)
+    useOfflineLibraryStore.setState({
+      records: {
+        [key]: {
+          key,
+          packageKind: 'case',
+          packageId: fixtureCase.id,
+          status: 'available',
+          downloadedBytes: offlinePackage.totalBytes,
+          totalBytes: offlinePackage.totalBytes,
+          urls: offlinePackage.assets.map(({ url }) => url),
+          assetUrls: {},
+          fingerprint: offlinePackage.fingerprint,
+          verifiedAt: new Date().toISOString(),
+          error: null,
+        },
+      },
+    })
+
+    renderCaseRoute(`/learn/cases/${fixtureCase.id}/play`, registryWithFeaturedModel)
+    expect(await screen.findByRole('dialog', { name: 'Orient' })).toBeVisible()
   })
 
   it('renders saved results and switches to expert comparison', async () => {

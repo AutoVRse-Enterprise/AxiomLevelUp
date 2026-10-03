@@ -16,7 +16,7 @@ import {
   PASSIVE_DICOM_CACHE,
   PASSIVE_DICOM_MAX_AGE_SECONDS,
   PASSIVE_DICOM_MAX_ENTRIES,
-  VERIFIED_COURSE_CACHE,
+  VERIFIED_PACKAGE_CACHE,
   VERSIONED_MODEL_CACHE,
   VERSIONED_MODEL_MAX_AGE_SECONDS,
   VERSIONED_MODEL_MAX_ENTRIES,
@@ -99,21 +99,19 @@ precacheAndRoute(self.__WB_MANIFEST)
 clientsClaim()
 
 registerRoute(
-  ({ request, url }) => request.method === 'GET' && isVersionedGlbRequest(url),
-  versionedModelStrategy,
-)
-
-registerRoute(
   ({ request, url }) => request.method === 'GET' && isDownloadableAssetRequest(url, dicomBaseUrl),
   async ({ request, url, event }) => {
     await settingsReady
     const verified = await (
-      await caches.open(VERIFIED_COURSE_CACHE)
+      await caches.open(VERIFIED_PACKAGE_CACHE)
     ).match(request, { ignoreVary: true })
     if (verified) {
       return request.headers.has('range') ? createPartialResponse(request, verified) : verified
     }
     if (simulatedOffline) return Response.error()
+    if (isVersionedGlbRequest(url)) {
+      return versionedModelStrategy.handle({ request, event })
+    }
     if (isDicomRequest(url, dicomBaseUrl)) {
       return passiveDicomStrategy.handle({ request, event })
     }

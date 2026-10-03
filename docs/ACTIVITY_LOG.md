@@ -2721,3 +2721,35 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   `docs/reference docs/` was not touched.
 - **Follow-ups:** Start P12-T09 general offline Case Lab packages. Clinical/client sign-off and
   Phase 9 physical-device gates remain external blockers.
+
+### [2026-10-04 00:10] P12-T09 - Add offline Case Lab packages
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Generalized the existing verified offline package manager, persisted library and
+  reconciliation flow from course-only records to kind-aware course/case records. Added pure case
+  package derivation across the anatomy model, patient image, clue primitives and stage primitives,
+  with hash-versioned model URLs, exact asset fingerprints, byte totals and deduplication. Enabled
+  the lung GLB for optional offline use while retaining `offlineRequired: false` and its existing
+  verified size/hash. Added shared Case Lab download controls, Learn ready status, accurate offline
+  route gating and verified-cache precedence over the bounded model cache. Added update, eviction,
+  shared-model and real service-worker offline playback coverage. Exported schemas, recorded
+  ADR-092 and closed P12-T09; ADR-091 was already assigned to P12-T08.
+- **Files changed:** Asset schema, manifest and hash pipeline; offline package, manager, store,
+  readiness, reconciliation and controls; Case Lab Learn/intro/player surfaces; service-worker
+  policy; unit/route/service-worker browser tests; refreshed browser evidence captures; generated
+  asset schema; architecture, content schema, Phase 12 checklist, decisions and handoff.
+- **Commands run:** Targeted Prettier; focused Vitest (5 files / 83 tests); repeated typecheck and
+  lint; content validation; schema export; focused desktop Playwright service-worker suite; full
+  `npm run check`; complete serial Playwright suite; IDE diagnostics; model byte/hash verification;
+  `git diff --check`.
+- **Result/verification:** Focused tests and both service-worker checks pass, including retained
+  P11 prefetch coverage and downloaded-case playback with the model deliberately removed from the
+  presentation cache before simulated-offline reload. Full `npm run check` passes 65 files / 453
+  tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all budgets. The complete serial browser suite passes 20 tests with the two
+  intentionally desktop-only checks skipped on touch-phone. The model remains 514,852 bytes with SHA-256
+  `8884cefbb5be256af5dfd46b8d8071af677d4cf4ade8477e3311e2c09086766a`. No commit was created,
+  and `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T10 catalogue-wide accessibility, text-scaling, performance and
+  resilience evidence. Clinical/client sign-off and Phase 9 physical-device gates remain external
+  blockers.

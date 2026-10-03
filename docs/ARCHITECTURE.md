@@ -55,7 +55,7 @@ read-only ContentRegistry -----> routes -----> activity plan
   infrastructure.
 - `src/state`: persisted learner state, reference-date rebasing and pure derived view selectors.
 - `src/lib/clock.ts`: the injectable source of current date/time for deterministic calendar views.
-- `src/offline`: pure course packages and readiness, verified download orchestration, platform
+- `src/offline`: pure course/case packages and readiness, verified download orchestration, platform
   adapters and the device-scoped offline library.
 - `src/pwa`: custom service worker, request/cache policy, registration, install/update UX and real
   plus simulated connectivity state.
@@ -243,28 +243,32 @@ references to labels and uses local comparison anchors without rendering raw IDs
 
 ## Offline runtime
 
-Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. GLB model
-assets remain excluded from course offline packages. Pure package
-derivation walks each course image, primitive asset list and typed primitive references, producing
-deduplicated course and per-lesson requirements. Download records are device-scoped IndexedDB state,
-separate from learner state v6.
+Asset-manifest v0.2 declares exact sizes, offline availability and non-DICOM hashes. GLB models
+remain `offlineRequired: false` but may explicitly opt into package downloads. Pure package
+derivation walks course images and lesson primitives or a case's anatomy model, patient image,
+clue primitives and stage primitives. It deduplicates exact asset IDs, hashes and sizes, versions
+model URLs with the validated hash and produces package fingerprints and total bytes. Download
+records are kind-aware, device-scoped IndexedDB state separate from learner state v7.
 
 The foreground download manager checks estimated quota, requests persistent storage, expands and
 validates DICOM manifests, fetches with bounded concurrency and verifies every file before placing it
-in `offline-courses-v1`. It can promote verified responses from the expiring
+in the existing `offline-courses-v1` verified-package cache. It can promote verified responses from the expiring
 `dicom-studies-v1` cache, resume completed files, cancel, reference-count shared URLs on removal and
-reconcile eviction or changed package fingerprints at startup.
+reconcile eviction or changed package fingerprints at startup. Successful updates delete obsolete
+unreferenced URLs while retaining assets shared by another ready course or case.
 
-The inject-manifest worker precaches the application shell, serves verified course responses before
+The inject-manifest worker precaches the application shell, serves verified package responses before
 the network, supports media range requests and retains passive DICOM caching for ordinary online
-viewing. A separate `versioned-case-models-v1` CacheFirst route accepts only SHA-versioned GLBs and
-retains at most four responses for 14 days. The featured-case intro prefetches its exact validated
-model URL; this presentation preflight is not general offline-3D support. A visible reproducible or
+viewing. A fallback `versioned-case-models-v1` CacheFirst strategy accepts only SHA-versioned GLBs
+and retains at most four responses for 14 days after the verified package cache is checked. The
+featured-case intro still prefetches its exact validated model URL. A visible reproducible or
 deployment-supplied build ID supports stale-worker diagnosis.
 
-Offline route gates use derived lesson readiness. Download lifecycle events are logged but are
-explicitly excluded from the learner reward pipeline. A worker-persisted simulated-offline flag
-makes the URL-only developer control exercise the same cache-only behavior as a disconnected device.
+Offline route gates use derived lesson or case readiness. Case intro and Learn surfaces expose
+package status, and only a matching ready case fingerprint may launch while offline. Course download
+lifecycle events remain logged and excluded from the learner reward pipeline. A worker-persisted
+simulated-offline flag makes the URL-only developer control exercise the same cache-only behavior as
+a disconnected device.
 
 ## Showcase and release evidence
 

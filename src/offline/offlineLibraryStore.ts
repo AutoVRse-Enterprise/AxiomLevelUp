@@ -2,20 +2,17 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 import { idbStorage } from '@/state/persistence/idbStorage'
+import type { OfflinePackageKind } from '@/offline/package'
 
 export type OfflineDownloadStatus =
-  | 'queued'
-  | 'downloading'
-  | 'paused'
-  | 'available'
-  | 'incomplete'
-  | 'outdated'
-  | 'failed'
+  'queued' | 'downloading' | 'paused' | 'available' | 'incomplete' | 'outdated' | 'failed'
 
 export type OfflineFailureKind = 'network' | 'integrity' | 'quota' | 'cancelled' | 'cache'
 
 export interface OfflineDownloadRecord {
-  courseId: string
+  key: string
+  packageKind: OfflinePackageKind
+  packageId: string
   status: OfflineDownloadStatus
   downloadedBytes: number
   totalBytes: number
@@ -31,12 +28,12 @@ interface OfflineLibraryStore {
   hydrated: boolean
   setRecord: (record: OfflineDownloadRecord) => void
   updateRecord: (
-    courseId: string,
+    key: string,
     update:
       | Partial<OfflineDownloadRecord>
       | ((record: OfflineDownloadRecord) => Partial<OfflineDownloadRecord>),
   ) => void
-  removeRecord: (courseId: string) => void
+  removeRecord: (key: string) => void
   clear: () => void
   setHydrated: (hydrated: boolean) => void
 }
@@ -47,18 +44,18 @@ export const useOfflineLibraryStore = create<OfflineLibraryStore>()(
       records: {},
       hydrated: false,
       setRecord: (record) =>
-        set((state) => ({ records: { ...state.records, [record.courseId]: record } })),
-      updateRecord: (courseId, update) =>
+        set((state) => ({ records: { ...state.records, [record.key]: record } })),
+      updateRecord: (key, update) =>
         set((state) => {
-          const current = state.records[courseId]
+          const current = state.records[key]
           if (!current) return state
           const patch = typeof update === 'function' ? update(current) : update
-          return { records: { ...state.records, [courseId]: { ...current, ...patch } } }
+          return { records: { ...state.records, [key]: { ...current, ...patch } } }
         }),
-      removeRecord: (courseId) =>
+      removeRecord: (key) =>
         set((state) => {
           const records = { ...state.records }
-          delete records[courseId]
+          delete records[key]
           return { records }
         }),
       clear: () => set({ records: {} }),
@@ -66,8 +63,27 @@ export const useOfflineLibraryStore = create<OfflineLibraryStore>()(
     }),
     {
       name: 'offline-library',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => idbStorage),
+      migrate: (persistedState) => {
+        const state = persistedState as {
+          records?: Record<string, OfflineDownloadRecord & { courseId?: string }>
+        }
+        const records = Object.fromEntries(
+          Object.entries(state.records ?? {}).map(([key, record]) => [
+            key,
+            record.packageKind
+              ? record
+              : {
+                  ...record,
+                  key,
+                  packageKind: 'course' as const,
+                  packageId: record.courseId ?? key,
+                },
+          ]),
+        )
+        return { ...state, records }
+      },
       partialize: ({ records }) => ({ records }),
       onRehydrateStorage: () => (state) => state?.setHydrated(true),
     },

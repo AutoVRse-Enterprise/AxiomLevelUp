@@ -1623,3 +1623,33 @@ case facts are labelled unavailable rather than inferred.
 **Consequences:** All leaderboard tabs and weekly cards are actionable without hard-coded content
 IDs. Older leaderboard configuration remains readable, new period data is strictly bounded and
 ordered, and completion presentation does not manufacture rewards that were not persisted.
+
+## ADR-092: Offline packages are kind-aware and integrity-verified
+
+**Status:** Accepted
+
+**Context:** Course downloads already provided quota checks, persistent-storage requests, bounded
+concurrency, SHA verification, cancellation, resumption and shared-URL retention. Case Lab's
+separate model preflight used an expiring runtime cache and did not establish that a case's model,
+patient image or evidence assets were complete before offline launch. A parallel case downloader
+would duplicate storage policy and risk conflicting ownership of shared assets.
+
+**Decision:** Generalize the existing package record and manager to `course` and `case` kinds while
+retaining course IDs as their existing record keys and namespacing case keys. Derive a case package
+purely from its case document, anatomy map and asset registry: include the hash-versioned model,
+optional patient image, clue primitive assets and stage primitive assets; deduplicate by asset ID;
+and fingerprint the case version plus each exact asset ID, SHA-256 and byte size.
+
+Models remain `offlineRequired: false` and opt into downloads only through
+`offlineAvailable: true`. Store every verified package response in the existing verified cache.
+The service worker checks that cache before its bounded versioned-model runtime strategy. Readiness
+requires a matching kind, ID, available status and current fingerprint. Reconciliation marks
+fingerprint drift or browser eviction, updates remove obsolete unreferenced URLs, and removal
+retains URLs referenced by another ready course or case.
+
+**Consequences:** Case Lab gains the same quota, integrity, persistence, progress, retry, repair,
+cancel and removal behavior as courses without a second implementation. A downloaded case can
+launch under the worker's simulated-offline mode and an undownloaded or stale case cannot. Shared
+models occupy one verified cache entry until their final package reference is removed. The existing
+`offline-courses-v1` cache name is retained for deployed-cache continuity even though its contents
+are now generic verified packages.

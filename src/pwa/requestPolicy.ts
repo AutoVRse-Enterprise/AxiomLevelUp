@@ -10,6 +10,7 @@ const courseAssetExtensions = new Set([
   'vtt',
   'pdf',
   'txt',
+  'glb',
 ])
 
 export function isDicomRequest(url: URL, dicomBaseUrl: string) {

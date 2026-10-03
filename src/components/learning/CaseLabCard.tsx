@@ -8,9 +8,11 @@ import type { CaseLabCardView } from '@/state/selectors'
 export function CaseLabCard({
   caseView,
   featured = false,
+  offlineReady = false,
 }: {
   caseView: CaseLabCardView
   featured?: boolean
+  offlineReady?: boolean
 }) {
   return (
     <Link
@@ -27,6 +29,7 @@ export function CaseLabCard({
         <div className="flex items-start justify-between gap-4">
           <FlaskConical aria-hidden="true" className="text-brand-700" size={28} />
           <div className="flex flex-wrap justify-end gap-2">
+            {offlineReady ? <Chip tone="success">Available offline</Chip> : null}
             {caseView.daily ? <Chip tone="success">Daily</Chip> : null}
             <Chip tone="brand">{caseView.tierLabel}</Chip>
           </div>

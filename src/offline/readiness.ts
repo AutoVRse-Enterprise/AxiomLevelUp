@@ -1,12 +1,36 @@
 import type { OfflineDownloadRecord } from '@/offline/offlineLibraryStore'
-import type { ChallengeOfflinePackage, CourseOfflinePackage } from '@/offline/package'
+import type {
+  CaseOfflinePackage,
+  ChallengeOfflinePackage,
+  CourseOfflinePackage,
+  OfflinePackage,
+} from '@/offline/package'
+
+export function isOfflinePackageReady(
+  offlinePackage: OfflinePackage,
+  record?: OfflineDownloadRecord,
+) {
+  if (offlinePackage.totalBytes === 0) return true
+  return (
+    record?.packageKind === offlinePackage.kind &&
+    record.packageId === offlinePackage.id &&
+    record.status === 'available' &&
+    record.fingerprint === offlinePackage.fingerprint
+  )
+}
 
 export function isCourseOfflineReady(
   coursePackage: CourseOfflinePackage,
   record?: OfflineDownloadRecord,
 ) {
-  if (coursePackage.totalBytes === 0) return true
-  return record?.status === 'available' && record.fingerprint === coursePackage.fingerprint
+  return isOfflinePackageReady(coursePackage, record)
+}
+
+export function isCaseOfflineReady(
+  casePackage: CaseOfflinePackage,
+  record?: OfflineDownloadRecord,
+) {
+  return isOfflinePackageReady(casePackage, record)
 }
 
 export function isChallengeOfflineReady(challengePackage: ChallengeOfflinePackage) {

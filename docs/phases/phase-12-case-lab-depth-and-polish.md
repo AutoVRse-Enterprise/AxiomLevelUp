@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T08 complete
+**Status:** Active — P12-T09 complete
 
 ## Goal
 
@@ -106,7 +106,7 @@ physical-device approval.
 - [x] P12-T07 — Standardize configured metadata and verify quick-case attempt de-duplication
       (F39, F46).
 - [x] P12-T08 — Close the whole-app W-series demo gaps and enforce learner-facing terminology.
-- [ ] P12-T09 — Add integrity-verified, quota-aware offline Case Lab packages including the
+- [x] P12-T09 — Add integrity-verified, quota-aware offline Case Lab packages including the
       versioned model.
 - [ ] P12-T10 — Complete catalogue-wide accessibility, text-scaling, performance and resilience
       evidence.

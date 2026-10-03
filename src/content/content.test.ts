@@ -272,7 +272,7 @@ describe('content schemas', () => {
     )
   })
 
-  it('requires complete online-only metadata for model assets', () => {
+  it('requires complete model metadata and permits optional offline availability', () => {
     const model = {
       assetId: 'prepared-model',
       path: '/assets/models/prepared.glb',
@@ -299,6 +299,12 @@ describe('content schemas', () => {
       assetManifestSchema.safeParse({
         schemaVersion: '0.2',
         assets: [{ ...model, offlineAvailable: true }],
+      }).success,
+    ).toBe(true)
+    expect(
+      assetManifestSchema.safeParse({
+        schemaVersion: '0.2',
+        assets: [{ ...model, offlineRequired: true, offlineAvailable: true }],
       }).success,
     ).toBe(false)
   })

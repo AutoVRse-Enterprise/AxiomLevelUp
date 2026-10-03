@@ -1,15 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import foundationCaseData from '../../public/content/cases/asthma-foundation.json'
 
 import { validateContentBundle, type ContentRegistry } from '@/content/loader'
+import { caseDocumentSchema } from '@/content/schema'
 import { DownloadManager, type DownloadManagerError } from '@/offline/downloadManager'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
 import {
   buildCoursePackage,
+  buildCasePackage,
+  offlinePackageKey,
   packageFingerprint,
   type CourseOfflinePackage,
 } from '@/offline/package'
 import { MemoryCacheStore, MemoryStorageAdapter } from '@/offline/platform'
-import { isCourseOfflineReady, isLessonOfflineReady } from '@/offline/readiness'
+import { isCaseOfflineReady, isCourseOfflineReady, isLessonOfflineReady } from '@/offline/readiness'
 import { PASSIVE_DICOM_CACHE, VERIFIED_COURSE_CACHE } from '@/pwa/cachePolicy'
 import { isDicomRequest, isDownloadableAssetRequest } from '@/pwa/requestPolicy'
 import { makeValidContentBundle } from '@/test/contentFixtures'
@@ -97,11 +101,66 @@ describe('offline packages and readiness', () => {
     ).toContain('thoracic-ct-series')
   })
 
+  it('derives an exact, deduplicated case package with a versioned model', () => {
+    const caseDocument = caseDocumentSchema.parse(foundationCaseData)
+    const anatomyMap = registry.anatomyMapById.get(caseDocument.anatomyMapId)!
+    const result = buildCasePackage(caseDocument, anatomyMap, registry)
+    const model = registry.assetById.get(anatomyMap.modelAssetId)!
+
+    expect(result.assets.map(({ assetId }) => assetId)).toEqual([
+      'lung-model',
+      'airway-comparison-image',
+      'wheeze-audio',
+    ])
+    expect(result.assets.find(({ assetId }) => assetId === 'lung-model')?.url).toBe(
+      `${model.path}?v=${model.sha256}`,
+    )
+    expect(result.totalBytes).toBe(704_445)
+    expect(result.fingerprint).toContain(`lung-model:${model.sha256}:${model.sizeBytes}`)
+    expect(
+      packageFingerprint(result.version, [
+        ...result.assets.filter(({ assetId }) => assetId !== 'lung-model'),
+        {
+          ...result.assets.find(({ assetId }) => assetId === 'lung-model')!,
+          sha256: 'f'.repeat(64),
+        },
+      ]),
+    ).not.toBe(result.fingerprint)
+
+    const withPatientImage = buildCasePackage(
+      {
+        ...caseDocument,
+        patient: { ...caseDocument.patient, imageAssetId: 'asthma-histology-image' },
+        stages: caseDocument.stages.map((stage, index) =>
+          index === 0
+            ? {
+                ...stage,
+                steps: stage.steps.map((step, stepIndex) =>
+                  stepIndex === 0 ? { ...step, assets: ['crackles-audio'] } : step,
+                ),
+              }
+            : stage,
+        ),
+      },
+      anatomyMap,
+      registry,
+    )
+    expect(withPatientImage.assets.map(({ assetId }) => assetId)).toContain(
+      'asthma-histology-image',
+    )
+    expect(withPatientImage.assets.map(({ assetId }) => assetId)).toContain('crackles-audio')
+    expect(new Set(withPatientImage.assets.map(({ assetId }) => assetId)).size).toBe(
+      withPatientImage.assets.length,
+    )
+  })
+
   it('requires the current verified record for downloadable lesson assets', () => {
     const { coursePackage } = fixture()
     expect(isLessonOfflineReady(coursePackage, 'fixture-lesson')).toBe(false)
     const record = {
-      courseId: coursePackage.id,
+      key: coursePackage.id,
+      packageKind: 'course' as const,
+      packageId: coursePackage.id,
       status: 'available' as const,
       downloadedBytes: 3,
       totalBytes: 3,
@@ -113,9 +172,36 @@ describe('offline packages and readiness', () => {
     }
     expect(isCourseOfflineReady(coursePackage, record)).toBe(true)
     expect(isLessonOfflineReady(coursePackage, 'fixture-lesson', record)).toBe(true)
-    expect(
-      isCourseOfflineReady(coursePackage, { ...record, fingerprint: 'old-version' }),
-    ).toBe(false)
+    expect(isCourseOfflineReady(coursePackage, { ...record, fingerprint: 'old-version' })).toBe(
+      false,
+    )
+  })
+
+  it('requires a matching case kind, id and fingerprint', () => {
+    const caseDocument = caseDocumentSchema.parse(foundationCaseData)
+    const casePackage = buildCasePackage(
+      caseDocument,
+      registry.anatomyMapById.get(caseDocument.anatomyMapId)!,
+      registry,
+    )
+    const key = offlinePackageKey(casePackage.kind, casePackage.id)
+    const record = {
+      key,
+      packageKind: 'case' as const,
+      packageId: casePackage.id,
+      status: 'available' as const,
+      downloadedBytes: casePackage.totalBytes,
+      totalBytes: casePackage.totalBytes,
+      urls: casePackage.assets.map(({ url }) => url),
+      assetUrls: {},
+      fingerprint: casePackage.fingerprint,
+      verifiedAt: new Date().toISOString(),
+      error: null,
+    }
+
+    expect(isCaseOfflineReady(casePackage, record)).toBe(true)
+    expect(isCaseOfflineReady(casePackage, { ...record, packageKind: 'course' })).toBe(false)
+    expect(isCaseOfflineReady(casePackage, { ...record, fingerprint: 'stale' })).toBe(false)
   })
 })
 
@@ -342,6 +428,7 @@ describe('download manager', () => {
     const cache = new MemoryCacheStore()
     await cache.put(VERIFIED_COURSE_CACHE, '/assets/fixture.bin', new Response('abc'))
     const base = {
+      packageKind: 'course' as const,
       status: 'available' as const,
       downloadedBytes: 3,
       totalBytes: 3,
@@ -353,8 +440,12 @@ describe('download manager', () => {
     }
     useOfflineLibraryStore.setState({
       records: {
-        'fixture-course': { ...base, courseId: 'fixture-course' },
-        shared: { ...base, courseId: 'shared' },
+        'fixture-course': {
+          ...base,
+          key: 'fixture-course',
+          packageId: 'fixture-course',
+        },
+        shared: { ...base, key: 'shared', packageId: 'shared' },
       },
     })
     const manager = new DownloadManager(
@@ -374,20 +465,96 @@ describe('download manager', () => {
     expect(useOfflineLibraryStore.getState().records.shared?.status).toBe('incomplete')
 
     useOfflineLibraryStore.setState({
-      records: { shared: { ...base, courseId: 'shared', fingerprint: 'old' } },
+      records: {
+        shared: { ...base, key: 'shared', packageId: 'shared', fingerprint: 'old' },
+      },
     })
     await manager.reconcile(new Map([['shared', { ...coursePackage, id: 'shared' }]]))
     expect(useOfflineLibraryStore.getState().records.shared?.status).toBe('outdated')
+  })
+
+  it('retains a shared model until the final case package is removed', async () => {
+    const cache = new MemoryCacheStore()
+    const modelUrl = '/assets/models/lung.glb?v=abc'
+    await cache.put(VERIFIED_COURSE_CACHE, modelUrl, new Response('model'))
+    const base = {
+      packageKind: 'case' as const,
+      status: 'available' as const,
+      downloadedBytes: 5,
+      totalBytes: 5,
+      urls: [modelUrl],
+      assetUrls: { model: [modelUrl] },
+      fingerprint: 'fingerprint',
+      verifiedAt: new Date().toISOString(),
+      error: null,
+    }
+    useOfflineLibraryStore.setState({
+      records: {
+        'case:first': { ...base, key: 'case:first', packageId: 'first' },
+        'case:second': { ...base, key: 'case:second', packageId: 'second' },
+      },
+    })
+    const manager = new DownloadManager(
+      {
+        downloadConcurrency: 1,
+        quotaSafetyMarginRatio: 0,
+        requestPersistentStorage: false,
+      },
+      { cache, storage: new MemoryStorageAdapter() },
+    )
+
+    await manager.remove('case:first')
+    expect(await cache.match(VERIFIED_COURSE_CACHE, modelUrl)).toBeDefined()
+    await manager.remove('case:second')
+    expect(await cache.match(VERIFIED_COURSE_CACHE, modelUrl)).toBeUndefined()
+  })
+
+  it('replaces obsolete unshared URLs after a package update', async () => {
+    const { coursePackage, fixtureRegistry } = fixture()
+    const cache = new MemoryCacheStore()
+    const oldUrl = '/assets/fixture-old.bin'
+    await cache.put(VERIFIED_COURSE_CACHE, oldUrl, new Response('old'))
+    useOfflineLibraryStore.setState({
+      records: {
+        [coursePackage.id]: {
+          key: coursePackage.id,
+          packageKind: 'course',
+          packageId: coursePackage.id,
+          status: 'outdated',
+          downloadedBytes: 3,
+          totalBytes: 3,
+          urls: [oldUrl],
+          assetUrls: { 'fixture-binary': [oldUrl] },
+          fingerprint: 'old',
+          verifiedAt: new Date().toISOString(),
+          error: null,
+        },
+      },
+    })
+    const manager = new DownloadManager(
+      {
+        downloadConcurrency: 1,
+        quotaSafetyMarginRatio: 0,
+        requestPersistentStorage: false,
+      },
+      {
+        cache,
+        storage: new MemoryStorageAdapter(),
+        fetch: vi.fn(async () => new Response('abc')),
+      },
+    )
+
+    await manager.download(coursePackage, fixtureRegistry)
+
+    expect(await cache.match(VERIFIED_COURSE_CACHE, oldUrl)).toBeUndefined()
+    expect(await cache.match(VERIFIED_COURSE_CACHE, '/assets/fixture.bin')).toBeDefined()
   })
 })
 
 describe('service-worker request policy', () => {
   it('recognizes configured DICOM and downloadable media URLs', () => {
     expect(
-      isDicomRequest(
-        new URL('https://images.example/study/1.dcm'),
-        'https://images.example/',
-      ),
+      isDicomRequest(new URL('https://images.example/study/1.dcm'), 'https://images.example/'),
     ).toBe(true)
     expect(
       isDownloadableAssetRequest(
@@ -401,5 +568,11 @@ describe('service-worker request policy', () => {
         '/assets/dicom/',
       ),
     ).toBe(false)
+    expect(
+      isDownloadableAssetRequest(
+        new URL('/assets/models/lung.glb?v=abc', window.location.origin),
+        '/assets/dicom/',
+      ),
+    ).toBe(true)
   })
 })

@@ -8,8 +8,8 @@ import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
-import { buildCoursePackage } from '@/offline/package'
-import { isCourseOfflineReady } from '@/offline/readiness'
+import { buildCasePackage, buildCoursePackage, offlinePackageKey } from '@/offline/package'
+import { isCaseOfflineReady, isCourseOfflineReady } from '@/offline/readiness'
 import { useConnectivity } from '@/pwa/connectivity'
 import { useLearnerStore } from '@/state/learnerStore'
 import { today } from '@/lib/clock'
@@ -64,6 +64,20 @@ export function LearnPage() {
         import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
       )
       return [course.id, isCourseOfflineReady(coursePackage, offlineRecords[course.id])]
+    }),
+  )
+  const offlineReadyByCase = new Map(
+    caseCards.map(({ caseDoc, caseId }) => {
+      const anatomyMap = registry.anatomyMapById.get(caseDoc.anatomyMapId)
+      if (!anatomyMap) return [caseId, false] as const
+      const casePackage = buildCasePackage(caseDoc, anatomyMap, registry)
+      return [
+        caseId,
+        isCaseOfflineReady(
+          casePackage,
+          offlineRecords[offlinePackageKey(casePackage.kind, casePackage.id)],
+        ),
+      ] as const
     }),
   )
   const matchesFilter = (courseId: string, status: LearningStatus) => {
@@ -149,7 +163,11 @@ export function LearnPage() {
           />
           <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {caseCards.map((caseView) => (
-              <CaseLabCard caseView={caseView} key={caseView.caseId} />
+              <CaseLabCard
+                caseView={caseView}
+                key={caseView.caseId}
+                offlineReady={offlineReadyByCase.get(caseView.caseId)}
+              />
             ))}
           </div>
         </section>

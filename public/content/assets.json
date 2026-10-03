@@ -259,7 +259,7 @@
       "path": "/assets/models/lung-map/model.glb",
       "type": "model",
       "offlineRequired": false,
-      "offlineAvailable": false,
+      "offlineAvailable": true,
       "sizeBytes": 514852,
       "mimeType": "model/gltf-binary",
       "sha256": "8884cefbb5be256af5dfd46b8d8071af677d4cf4ade8477e3311e2c09086766a",

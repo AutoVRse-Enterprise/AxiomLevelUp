@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T08 is complete; P12-T09 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T09 is complete; P12-T10 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -133,20 +133,36 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 - Removed remaining learner-facing placeholder and implementation-oriented copy and added a
   manifest-derived desktop browser guard for raw content IDs and primitive type names.
 - Marked W01/W02 and P12-T08 resolved, exported the app-config schema and recorded ADR-091.
+- Generalized the verified offline library and downloader to kind-aware course and case packages
+  while preserving existing course record keys and behavior.
+- Added pure Case Lab package derivation for the exact hash-versioned model, optional patient image,
+  clue assets and stage assets, with deduplication, byte totals and deterministic fingerprints.
+- Enabled the lung model for optional offline download without making it offline-required or
+  changing its verified size/hash.
+- Added Case Lab download, progress, retry, update, remove and ready states on the intro; surfaced
+  ready status in Learn and gated true-offline launch by the current package fingerprint.
+- Made the worker prefer verified package responses before the bounded model runtime cache, retained
+  shared assets by URL and added update/eviction reconciliation coverage.
+- Added a real service-worker browser test that removes the model from the presentation cache,
+  simulates offline mode, reloads, launches the downloaded foundation case and verifies real WebGL
+  structures plus a clue image.
+- Exported the asset schema, recorded ADR-092 and closed P12-T09. ADR-091 was already assigned to
+  P12-T08 before this task.
 
 ## In progress
 
-- P12-T09 is ready to add general offline Case Lab packages.
+- P12-T10 is ready for catalogue-wide accessibility, text-scaling, performance and resilience
+  evidence.
 - Clinical, anatomy/pathology and client/legal review of all four catalogue claim ledgers is
   pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Add general offline Case Lab packages in P12-T09.
-2. Complete catalogue-wide accessibility, text-scaling, performance and resilience evidence in
+1. Complete catalogue-wide accessibility, text-scaling, performance and resilience evidence in
    P12-T10.
-3. Add breadth and product-tour browser coverage in P12-T11.
+2. Add breadth and product-tour browser coverage in P12-T11.
+3. Publish the final Phase 12 QA and readiness verdict in P12-T12.
 
 ## Blockers/questions for the user
 
@@ -252,6 +268,19 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   - one preceding serial run had the documented transient touch projected-lobe selection miss;
     the immediate complete rerun passed;
   - IDE diagnostics pass. No commit was created, and `docs/reference docs/` was not touched.
+- P12-T09 verification:
+  - focused asset-schema, hash-pipeline, package, downloader, route-gating and model-cache tests pass
+    5 files / 83 tests;
+  - the focused desktop service-worker suite passes both the retained P11 model-prefetch check and
+    the P12 offline case-package playback check;
+  - the complete serial browser suite passes 20 tests across desktop and touch-phone Chromium with
+    the intentionally desktop-only terminology and offline-package checks skipped once each;
+  - full `npm run check` passes 65 files / 453 tests, zero content warnings, production build and
+    all bundle budgets;
+  - the lung GLB remains 514,852 bytes with SHA-256
+    `8884cefbb5be256af5dfd46b8d8071af677d4cf4ade8477e3311e2c09086766a`;
+  - schema export, IDE diagnostics and `git diff --check` pass. No commit was created, and
+    `docs/reference docs/` was not touched.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.
@@ -266,8 +295,8 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   model asset bounds, volume-parent fit samples the child center and rotated axis extremes, and
   same-level overlap uses configured center-line penetration tolerance; these checks are not
   anatomical segmentation validation.
-- `versioned-case-models-v1` caches only SHA-versioned GLBs (four entries, 14 days). It is a
-  targeted demo preload and does not establish general offline 3D.
+- `versioned-case-models-v1` remains a four-entry, 14-day presentation cache. Downloaded case models
+  are SHA-verified in the generic package cache, which the worker checks first.
 - Run the full WebGL Playwright suite with `--workers=2` on this workstation; four concurrent
   workers caused resource-contention timeouts while the two-worker rerun passed all 16 tests.
 - `?anatomyDebug=1` works only in a development build; `window.__anatomyTest` remains restricted to

@@ -50,7 +50,7 @@ export function OfflineStorageManager() {
             size="sm"
             variant="danger"
             onClick={() => {
-              if (window.confirm('Remove all offline course downloads from this device?')) {
+              if (window.confirm('Remove all offline downloads from this device?')) {
                 void manager.removeAll()
               }
             }}
@@ -65,23 +65,22 @@ export function OfflineStorageManager() {
       {downloads.length ? (
         <ul className="mt-5 divide-y divide-neutral-200">
           {downloads.map((record) => {
-            const course = registry.courseById.get(record.courseId)
+            const title =
+              record.packageKind === 'course'
+                ? registry.courseById.get(record.packageId)?.title
+                : registry.caseById.get(record.packageId)?.title
             return (
               <li
                 className="flex flex-wrap items-center justify-between gap-3 py-3"
-                key={record.courseId}
+                key={record.key}
               >
                 <div>
-                  <p className="font-semibold">{course?.title ?? record.courseId}</p>
+                  <p className="font-semibold">{title ?? record.packageId}</p>
                   <p className="text-caption capitalize text-neutral-600">
                     {record.status} · {formatBytes(record.downloadedBytes)}
                   </p>
                 </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => void manager.remove(record.courseId)}
-                >
+                <Button size="sm" variant="ghost" onClick={() => void manager.remove(record.key)}>
                   Remove
                 </Button>
               </li>
@@ -92,12 +91,12 @@ export function OfflineStorageManager() {
         <InlineNotice
           action={
             <Link className="font-semibold underline underline-offset-4" to="/learn">
-              Browse courses
+              Browse learning
             </Link>
           }
           className="mt-5"
-          message="Download a course to learn without a connection."
-          title="No offline courses yet"
+          message="Download a course or case to learn without a connection."
+          title="No offline downloads yet"
         />
       )}
     </Card>

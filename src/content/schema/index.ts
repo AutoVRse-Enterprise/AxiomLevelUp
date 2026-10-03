@@ -921,7 +921,6 @@ const modelAssetSchema = z.strictObject({
   type: z.literal('model'),
   mimeType: z.literal('model/gltf-binary'),
   offlineRequired: z.literal(false),
-  offlineAvailable: z.literal(false),
   sha256: sha256Schema,
   meshNames: z
     .array(z.string().trim().min(1))

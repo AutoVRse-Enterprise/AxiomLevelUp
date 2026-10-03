@@ -16,7 +16,7 @@ afterEach(async () => {
 })
 
 describe('asset hash updater', () => {
-  it('hashes model files and keeps them online-only', async () => {
+  it('hashes model files, keeps them optional and preserves configured availability', async () => {
     const root = await mkdtemp(join(tmpdir(), 'axiom-model-hash-'))
     temporaryDirectories.push(root)
     const publicRoot = join(root, 'public')
@@ -59,7 +59,7 @@ describe('asset hash updater', () => {
     expect(updated.assets[0]).toEqual(
       expect.objectContaining({
         offlineRequired: false,
-        offlineAvailable: false,
+        offlineAvailable: true,
         sizeBytes: bytes.byteLength,
         sha256: createHash('sha256').update(bytes).digest('hex'),
       }),

@@ -1,5 +1,12 @@
 import type { ContentRegistry } from '@/content/loader'
-import { getPrimitiveAssetRefs, type Course, type Primitive } from '@/content/schema'
+import {
+  getPrimitiveAssetRefs,
+  type AnatomyMap,
+  type CaseDocument,
+  type Course,
+  type Primitive,
+} from '@/content/schema'
+import { versionedModelUrl } from '@/pwa/modelCache'
 
 type Asset = ContentRegistry['assetManifest']['assets'][number]
 
@@ -29,6 +36,18 @@ export interface CourseOfflinePackage {
   totalBytes: number
 }
 
+export interface CaseOfflinePackage {
+  kind: 'case'
+  id: string
+  version: string
+  assets: readonly OfflinePackageAsset[]
+  fingerprint: string
+  totalBytes: number
+}
+
+export type OfflinePackage = CourseOfflinePackage | CaseOfflinePackage
+export type OfflinePackageKind = OfflinePackage['kind']
+
 export interface ChallengeOfflinePackage {
   kind: 'challenge'
   id: string
@@ -45,9 +64,7 @@ function extension(path: string) {
 }
 
 function deliveryFor(asset: Asset): OfflinePackageAsset['delivery'] {
-  return asset.type !== 'dicom' && shellExtensions.has(extension(asset.path))
-    ? 'shell'
-    : 'download'
+  return asset.type !== 'dicom' && shellExtensions.has(extension(asset.path)) ? 'shell' : 'download'
 }
 
 function assetUrl(asset: Asset, dicomBaseUrl: string) {
@@ -58,17 +75,22 @@ function assetUrl(asset: Asset, dicomBaseUrl: string) {
 }
 
 function primitiveAssetIds(primitive: Primitive) {
-  return [
-    ...primitive.assets,
-    ...getPrimitiveAssetRefs(primitive).map(({ assetId }) => assetId),
-  ]
+  return [...primitive.assets, ...getPrimitiveAssetRefs(primitive).map(({ assetId }) => assetId)]
 }
 
-function packageAsset(asset: Asset, required: boolean, dicomBaseUrl: string): OfflinePackageAsset {
+function packageAsset(
+  asset: Asset,
+  required: boolean,
+  dicomBaseUrl: string,
+  versionModel = false,
+): OfflinePackageAsset {
   return {
     assetId: asset.assetId,
     type: asset.type,
-    url: assetUrl(asset, dicomBaseUrl),
+    url:
+      versionModel && asset.type === 'model'
+        ? versionedModelUrl(asset)
+        : assetUrl(asset, dicomBaseUrl),
     sizeBytes: asset.sizeBytes,
     sha256: asset.sha256,
     required,
@@ -92,8 +114,12 @@ export function packageFingerprint(
 ): string {
   const parts = [...assets]
     .sort((left, right) => left.assetId.localeCompare(right.assetId))
-    .map((asset) => `${asset.assetId}:${asset.sizeBytes}:${asset.sha256 ?? asset.url}`)
+    .map((asset) => `${asset.assetId}:${asset.sha256 ?? 'unhashed'}:${asset.sizeBytes}`)
   return `${version}|${parts.join('|')}`
+}
+
+export function offlinePackageKey(kind: OfflinePackageKind, id: string) {
+  return kind === 'course' ? id : `${kind}:${id}`
 }
 
 export function buildCoursePackage(
@@ -134,6 +160,34 @@ export function buildCoursePackage(
   }
 }
 
+export function buildCasePackage(
+  caseDocument: CaseDocument,
+  anatomyMap: AnatomyMap,
+  registry: ContentRegistry,
+  dicomBaseUrl = '/assets/dicom/',
+): CaseOfflinePackage {
+  const assetIds = unique([
+    anatomyMap.modelAssetId,
+    ...(caseDocument.patient.imageAssetId ? [caseDocument.patient.imageAssetId] : []),
+    ...caseDocument.clues.flatMap(({ primitive }) => primitiveAssetIds(primitive)),
+    ...caseDocument.stages.flatMap(({ steps }) => steps.flatMap(primitiveAssetIds)),
+  ])
+  const assets = assetIds.flatMap((assetId) => {
+    const asset = registry.assetById.get(assetId)
+    if (!asset?.offlineAvailable) return []
+    return [packageAsset(asset, true, dicomBaseUrl, true)]
+  })
+
+  return {
+    kind: 'case',
+    id: caseDocument.id,
+    version: caseDocument.caseVersion,
+    assets,
+    fingerprint: packageFingerprint(caseDocument.caseVersion, assets),
+    totalBytes: estimateBytes(assets),
+  }
+}
+
 export function challengePackage(
   challengeId: string,
   registry: ContentRegistry,
@@ -144,9 +198,7 @@ export function challengePackage(
   const ids = unique(challenge.items.flatMap(primitiveAssetIds))
   const assets = ids.flatMap((assetId) => {
     const asset = registry.assetById.get(assetId)
-    return asset?.offlineAvailable
-      ? [packageAsset(asset, asset.offlineRequired, dicomBaseUrl)]
-      : []
+    return asset?.offlineAvailable ? [packageAsset(asset, asset.offlineRequired, dicomBaseUrl)] : []
   })
   return {
     kind: 'challenge',

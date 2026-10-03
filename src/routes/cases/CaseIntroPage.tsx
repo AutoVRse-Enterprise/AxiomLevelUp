@@ -13,10 +13,15 @@ import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
+import { CaseOfflineControl } from '@/components/offline/CaseOfflineControl'
 import { Card, Chip } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { formatEstimatedMinutes, formatScore } from '@/engines/cases/formatters'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
+import { useOfflineLibraryStore } from '@/offline/offlineLibraryStore'
+import { buildCasePackage, offlinePackageKey } from '@/offline/package'
+import { isCaseOfflineReady } from '@/offline/readiness'
+import { useConnectivity } from '@/pwa/connectivity'
 import { prefetchVersionedModel, versionedModelUrl } from '@/pwa/modelCache'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCaseLabCards } from '@/state/selectors'
@@ -81,16 +86,35 @@ export function CaseIntroPage() {
   const caseProgress = useLearnerStore((state) => state.caseProgress)
   const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const session = useActivitySessionStore((state) => state.session)
+  const { online } = useConnectivity()
   const caseView = caseId
     ? selectCaseLabCards({ caseProgress, caseAttempts }, registry).find(
         (candidate) => candidate.caseId === caseId,
       )
     : undefined
   const patientImage = useAssetUrl(caseView?.caseDoc.patient.imageAssetId)
+  const anatomyMap = caseView
+    ? registry.anatomyMapById.get(caseView.caseDoc.anatomyMapId)
+    : undefined
+  const offlinePackage =
+    caseView && anatomyMap
+      ? buildCasePackage(
+          caseView.caseDoc,
+          anatomyMap,
+          registry,
+          import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/',
+        )
+      : undefined
+  const offlineRecord = useOfflineLibraryStore((state) =>
+    offlinePackage
+      ? state.records[offlinePackageKey(offlinePackage.kind, offlinePackage.id)]
+      : undefined,
+  )
+  const offlineReady =
+    offlinePackage !== undefined && isCaseOfflineReady(offlinePackage, offlineRecord)
   const featuredModelUrl = (() => {
     if (!caseView || caseView.caseId !== registry.appConfig.caseLab?.featuredCaseId)
       return undefined
-    const anatomyMap = registry.anatomyMapById.get(caseView.caseDoc.anatomyMapId)
     const model = anatomyMap ? registry.assetById.get(anatomyMap.modelAssetId) : undefined
     return model?.type === 'model' ? versionedModelUrl(model) : undefined
   })()
@@ -214,11 +238,28 @@ export function CaseIntroPage() {
                 <dd className="text-title font-bold">{caseView.attempts}</dd>
               </div>
             </dl>
-            <Link className={`${ctaClass} mt-5 w-full`} to={`/learn/cases/${caseDoc.id}/play`}>
-              {resumable ? 'Resume case' : 'Start case'}
-              <ArrowRight aria-hidden="true" size={17} />
-            </Link>
-            {featuredModelUrl ? <FeaturedModelPreflight modelUrl={featuredModelUrl} /> : null}
+            {online || offlineReady ? (
+              <Link className={`${ctaClass} mt-5 w-full`} to={`/learn/cases/${caseDoc.id}/play`}>
+                {resumable ? 'Resume case' : 'Start case'}
+                <ArrowRight aria-hidden="true" size={17} />
+              </Link>
+            ) : (
+              <>
+                <button className={`${ctaClass} mt-5 w-full opacity-60`} disabled type="button">
+                  {resumable ? 'Resume case' : 'Start case'}
+                  <ArrowRight aria-hidden="true" size={17} />
+                </button>
+                <p className="mt-2 text-small text-neutral-600">
+                  Connect or download this case before starting offline.
+                </p>
+              </>
+            )}
+            {anatomyMap ? (
+              <CaseOfflineControl anatomyMap={anatomyMap} caseDocument={caseDoc} />
+            ) : null}
+            {featuredModelUrl && online ? (
+              <FeaturedModelPreflight modelUrl={featuredModelUrl} />
+            ) : null}
           </Card>
         </div>
       </div>
