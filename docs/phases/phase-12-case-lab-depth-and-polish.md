@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T11 complete
+**Status:** Complete — P12-T12 closed 2026-10-04
 
 ## Goal
 
@@ -112,7 +112,7 @@ physical-device approval.
       evidence.
 - [x] P12-T11 — Add breadth and product-tour browser coverage, durable screenshots and one unified
       presenter runbook.
-- [ ] P12-T12 — Publish the browser QA and audience-specific readiness verdict; update architecture,
+- [x] P12-T12 — Publish the browser QA and audience-specific readiness verdict; update architecture,
       schemas, decisions, roadmap and handoff.
 
 ## Sequencing
@@ -161,6 +161,23 @@ physical-device approval.
 - One runbook contains five-minute Case Lab and product-tour scripts plus a combined presentation,
   and the readiness verdict distinguishes internal, supervised-client and unsupervised use.
 - Every Phase 12 audit finding has evidence of closure or a documented, approved deferral.
+
+## Exit criteria disposition
+
+All Phase 12 implementation exit criteria are met. The four differentiated cases, procedural
+anatomy, committed-progress timeout handling, explicit clue review/totals/speed contracts, local
+evidence synthesis, actionable debrief, authored expert teaching, metadata/history consistency,
+offline case packages and whole-product route actions are configuration-driven and covered by the
+final quality and production-preview browser gates.
+
+The Phase 10 audit's 12 Phase 12 findings and the baseline W01/W02 findings are closed with no
+deferral. Final browser and timing evidence is in `docs/qa/phase-12-browser-qa.md`; audience
+decisions are in `docs/qa/phase-12-demo-readiness-verdict.md`.
+
+Phase completion is an app-implementation disposition, not a release approval. F19 remains bounded
+by P9-M01 through P9-M03 physical-device evidence or approved waivers. F21 remains bounded by the
+unreviewed clinical, anatomy/pathology and client/legal claim ledgers. Those external gates keep
+unsupervised/external use at No-go.
 
 ## Risks
 

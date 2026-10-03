@@ -13,7 +13,7 @@
 | 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
 | 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only        |
 | 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                |
-| 12    | Case Lab depth and polish      | Planned  | Remaining case breadth, learning depth and polish findings are resolved                  |
+| 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
 
 ## Sequencing note
 
@@ -81,6 +81,13 @@ The six-task advanced case now demonstrates branch navigation, configured findin
 overlay-free localisation, truthful timing/results/rewards and comparison. Clinical claims remain
 unapproved, and physical-device approval remains under Phase 9.
 
-Phase 12 is next. It retains the 12 explicitly deferred findings covering catalogue breadth, deeper
-anatomy, general clue and timeout semantics, evidence synthesis, debrief/expert-teaching depth,
-metadata/history consistency and learner-facing presentation/offline-model polish.
+Phase 12 closed all 12 assigned Case Lab findings and both whole-product W-series gaps with no
+silent deferral. Four differentiated cases now use explicit clue-review, timeout and speed
+contracts, procedural segment anatomy, local evidence synthesis, actionable debrief, authored
+expert teaching, consistent metadata/history and verified offline packages. Production-preview
+coverage completes all four cases and the PRD product tour on desktop and 375 px touch Chromium,
+with a unified runbook and audience-specific verdict.
+
+This is technical app completion, not external release approval. Phase 9 remains active for
+physical Android/iOS gates or approved waivers, and the clinical, anatomy/pathology and client/legal
+claim ledgers remain unapproved. Unsupervised/external use is therefore still No-go.

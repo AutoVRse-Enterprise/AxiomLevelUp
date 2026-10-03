@@ -26,7 +26,11 @@ collections plus `caseById` and `anatomyMapById` registries.
 
 A case document contains patient context, a tier, an anatomy-map entry mode, optional configured
 findings, a content-only clue catalogue, ordered stages of reusable primitives, timing targets, an
-expert benchmark and a debrief. A finding has a stable ID, learner-facing label and description,
+optional authored differential, an expert benchmark and a teaching debrief. The differential uses
+stable learner-facing hypotheses. The benchmark includes evaluated responses/timings, an ordered
+expert path, typed evidence weights and diagnosis rationale. Debrief `keyEvidence` entries reference
+a clue or finding, affected step IDs and authored significance. A finding has a stable ID,
+learner-facing label and description,
 one of four organ-agnostic kinds (`lumen_narrowing`, `lumen_occlusion`,
 `wall_thickening`, `region`), normalized severity, clue references and either a `structure`
 anchor or `waypoint`, `toWaypoint` and position `t` along one directed edge. Stage kinds are
@@ -81,8 +85,9 @@ nearest mesh parent as context.
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
 clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
-and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
+defaults, the first-attempt minimum score for time-only step-speed eligibility, static/media/visual
+clue-review thresholds, clue penalties, XP and attempt-history limit. Every configured case ID and
+clue category used by a case must resolve.
 
 ## Primitive registry
 
@@ -228,7 +233,8 @@ target modes use answer completion.
 - Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
   semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
-  local evidence/differential placeholders and XP from the central gamification activity result.
+  pinned clue/finding evidence, current location, differential confidence and XP from the central
+  gamification activity result.
   Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
   unavailable details.
 - Device-scoped offline course and case package records are persisted separately from learner state.

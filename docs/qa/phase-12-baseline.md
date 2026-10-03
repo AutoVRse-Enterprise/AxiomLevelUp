@@ -39,10 +39,13 @@ two whole-product demo gaps.
 
 ## Whole-product finding map
 
-| ID  | Severity | Finding                                                                                     | Status   | Resolution evidence                                                                                                                                                                 |
-| --- | -------- | ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W01 | P2       | Leaderboard Monthly and All time controls are disabled placeholder actions                  | Resolved | Period-aware ranking in `src/state/selectors/viewModels.ts`, keyboard tabs in `src/routes/leaderboard/LeaderboardPage.tsx` and route/UI coverage in `src/routes/surfaces.test.tsx`. |
-| W02 | P2       | Weekly challenge cards display progress but offer no path to continue the relevant activity | Resolved | Pure eligibility resolver in `src/engines/learning/weeklyChallengeDestination.ts`, linked cards in `src/routes/challenge/ChallengePage.tsx` and focused resolver tests.             |
+| ID  | Severity | Finding                                                                                     | Status                   | Resolution evidence                                                                                                                                                                 |
+| --- | -------- | ------------------------------------------------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W01 | P2       | Leaderboard Monthly and All time controls are disabled placeholder actions                  | Closed — P12-T08         | Period-aware ranking in `src/state/selectors/viewModels.ts`, keyboard tabs in `src/routes/leaderboard/LeaderboardPage.tsx` and route/UI coverage in `src/routes/surfaces.test.tsx`. |
+| W02 | P2       | Weekly challenge cards display progress but offer no path to continue the relevant activity | Closed — P12-T08         | Pure eligibility resolver in `src/engines/learning/weeklyChallengeDestination.ts`, linked cards in `src/routes/challenge/ChallengePage.tsx` and focused resolver tests.             |
+
+P12-T11 then exercised Weekly, Monthly and All-time Leaderboard views and the configured challenge
+route in both browser projects. P12-T12 closes the baseline with no open W-series finding.
 
 No other placeholder, TODO, FIXME, lorem or unimplemented learner copy was found across Home,
 Learn, Pathway, Course, Lesson, Challenge, Leaderboard and Profile. Route-level loading, empty and

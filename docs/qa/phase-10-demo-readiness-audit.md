@@ -2,7 +2,10 @@
 
 **Date:** 2026-10-03  
 **Source:** `case-lab-demo-readiness-audit.canvas.tsx`  
-**Verdict:** No-go for an unsupervised client-facing demonstration
+**Original Phase 10 verdict:** No-go for an unsupervised client-facing demonstration
+**Phase 12 closeout:** All 12 Phase 12 implementation findings are closed. The unsupervised/external
+approval verdict remains No-go because the F19 physical-device and F21 content-review boundaries
+remain open external gates.
 
 ## Summary
 
@@ -109,10 +112,45 @@ and the 16-test real-WebGL `npm run check:demo` suite pass. The 12 approved defe
 and keep their existing task ownership, with task numbers expanded in
 `docs/phases/phase-12-case-lab-depth-and-polish.md`.
 
-Phase 12 now also closes the whole PRD section 80 product tour. The rebaseline found two additional
+Phase 12 also closes the whole PRD section 80 product tour. The rebaseline found two additional
 whole-product gaps, recorded as W01 and W02 in `docs/qa/phase-12-baseline.md`: placeholder
-Leaderboard periods and weekly challenge cards without a continuation action. Both are owned by
-P12-T08. No F-series finding is reclassified or hidden by the expanded scope.
+Leaderboard periods and weekly challenge cards without a continuation action. P12-T08 closed both.
+No F-series finding was reclassified or hidden by the expanded scope.
+
+## Phase 12 closeout disposition
+
+P12-T12 reconciled every finding assigned to Phase 12. **All 12 are closed, with zero silent
+deferrals:**
+
+| Finding | Closed by | Closure evidence |
+| ------- | --------- | ---------------- |
+| F10 | P12-T03 | ADR-087 and `docs/CONTENT_SCHEMA.md` define validated procedural segment volumes; the foundation segment selection passes in `docs/qa/phase-12-browser-qa.md`. |
+| F12 | P12-T02 | ADR-086 separates idempotent review from opening; catalogue-wide clue states pass the 236-scan accessibility run in `docs/qa/phase-12-accessibility-performance.md`. |
+| F26 | P12-T02 | ADR-086 defines stable case totals separately from stage availability; the four-case browser paths in `docs/qa/phase-12-browser-qa.md` exercise the resulting clue UI. |
+| F28 | P12-T06 | ADR-090 requires neutral entry copy and one case-summary disclaimer; `asthma-foundation` completes in the final browser suite without answer-revealing entry copy. |
+| F29 | P12-T06 | ADR-090 and `docs/qa/phase-12-catalogue-content-review.md` record differentiated foundation, intermediate and quick compositions; all four cases complete in the final browser suite. |
+| F31 | P12-T04 | ADR-088 defines local pinned evidence, current location and authored differential state; state is persisted in result-v7 and exercised by catalogue accessibility/resume coverage. |
+| F32 | P12-T05 | ADR-089 defines actionable key-evidence remediation; each case's results capture and state scan covers debrief evidence in the Phase 12 browser evidence. |
+| F33 | P12-T05 | ADR-089 requires authored expert path, evidence weighting and diagnosis rationale; each case's comparison capture and state scan covers the teaching view. |
+| F39 | P12-T07 | Configured learner-facing metadata formatters replace raw organ-system IDs; the learner-copy browser sweep and all case intros pass. |
+| F46 | P12-T07 | Attempt history explicitly excludes the current attempt; focused route tests and daily challenge comparison in the final browser suite pass without duplication. |
+| F47 | P12-T01 | ADR-084 defines `time_eligible` speed independent of correctness and result-v7 persistence; scoring/migration tests pass in the final `npm run check`. |
+| F51 | P12-T06 | ADR-090 requires entry modes to be consumed; `wheeze-quick` now performs real marker exploration in both final browser projects. |
+
+The general timeout item is also closed by **P12-T01**: ADR-085 makes timeout credit an explicit
+primitive-definition policy, `anatomy_locate` uses `committed_progress`, and the final unit gate
+verifies preserved weighted credit with an explicit timed-out result and zero step-speed factor.
+
+The boundaries that were never assigned as Phase 12 implementation closures remain explicit:
+
+- **F19 physical boundary:** desktop and 375 px Chromium evidence closes browser implementation
+  proof only. P9-M01 through P9-M03 still require physical Android/iOS evidence or approved waivers.
+- **F21 review boundary:** the app and claim ledgers expose the unapproved educational/synthetic
+  boundary, but no clinical, anatomy/pathology, client or legal approval is claimed. The unreviewed
+  items in `docs/qa/phase-12-catalogue-content-review.md` remain release gates.
+
+Audience-specific use is decided in `docs/qa/phase-12-demo-readiness-verdict.md`; implementation
+completeness does not satisfy either boundary.
 
 ## Evidence interpretation
 
@@ -128,8 +166,9 @@ semantics or physical-device acceptance.
 
 ## Demo gate
 
-The no-go may be lifted only after one clinically coherent five-minute exacerbation case completes
-on the presentation build with:
+The original technical no-go is lifted for controlled internal and supervised technical
+demonstration because the presentation build now completes the gate below. The unsupervised or
+external-use no-go remains until the external approvals described after the list are recorded:
 
 1. direct selection of a visible 3D structure;
 2. at least one authored airway branch traversal;
@@ -138,3 +177,7 @@ on the presentation build with:
 5. an explainable `/100` result and non-duplicated expert/history comparison;
 6. real-WebGL browser coverage and a clean deployment/cache rehearsal; and
 7. applicable Phase 9 physical-device evidence, or an explicit authorized waiver.
+
+Items 1–6 now have automated production-preview evidence in
+`docs/qa/phase-12-browser-qa.md`. Item 7 remains open. Clinical, anatomy/pathology and client/legal
+sign-off also remains open, so the complete release gate is not satisfied.

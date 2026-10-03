@@ -2835,3 +2835,34 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   commit was created, `docs/reference docs/` was not touched and Phase 11 evidence was restored.
 - **Follow-ups:** Finalize the browser QA and audience-specific readiness verdict in P12-T12.
   Clinical/client approvals and Phase 9 physical-device gates remain external blockers.
+
+### [2026-10-04 04:15] P12-T12 - Close Phase 12
+
+- **Agent/session:** Cursor implementation continuation
+- **Action:** Finalized the Phase 12 browser QA and removed its draft; published audience-specific
+  internal, supervised-client and unsupervised/external verdicts; reconciled all 12 assigned audit
+  findings plus timeout and W01/W02; marked the phase and roadmap complete; updated PRD,
+  architecture, content-schema and handoff snapshots; and audited ADR-083 through ADR-094 without
+  renumbering accepted decisions. The final learner-copy sweep exposed `reversible-flow` as an
+  authored phrase matching an internal option ID, so the foundation summary and expert note now
+  use learner-facing bronchodilator-response/reversible-airflow wording.
+- **Files changed:** Phase 12 browser QA/verdict and removed draft; Phase 10 audit and Phase 12
+  baseline; Phase 12 checklist, roadmap, PRD, architecture, content schema, handoff and activity
+  log; `public/content/cases/asthma-foundation.json`.
+- **Commands run:** Final `npm run check`; attempted `npm run check:demo -- --workers=1`; focused
+  serial learner-copy Playwright; final
+  `$env:PLAYWRIGHT_BROWSERS_PATH='C:\Users\c0n\AppData\Local\ms-playwright'; npx playwright test --workers=1`;
+  IDE diagnostics; ADR/stale-status searches; `git diff --check`; repository status/diff review.
+  Schema export and asset hashing were not required because schema and asset metadata did not
+  change.
+- **Result/verification:** Final `npm run check` passed in 47.420 seconds: 66 Vitest files /
+  456 tests in 19.10 seconds, 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings,
+  successful production app/worker build and all budgets. Final serial Playwright ran 52 tests:
+  50 passed, 2 intentional project skips and 0 failures in 6.9 minutes (415.861-second command wall
+  time). The non-final nested-npm attempt did not forward `--workers`, ran two workers and exposed
+  the copy leak; the focused correction passed 1 test with 1 intentional skip in 29.8 seconds
+  before the complete serial pass. IDE diagnostics and `git diff --check` are clean. No commit was
+  created; base remains `73d845f`, and `docs/reference docs/` was not touched.
+- **Follow-ups:** Record clinical, anatomy/pathology and client/legal approvals; complete or waive
+  P9-M01 through P9-M03; then commit and deploy one exact candidate through the runbook preflight.
+  Unsupervised/external use remains No-go until those gates close.

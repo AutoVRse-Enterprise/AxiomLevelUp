@@ -3,7 +3,7 @@
   "caseVersion": "2.0",
   "id": "asthma-foundation",
   "title": "Variable Airflow Review",
-  "summary": "Review a trigger-linked respiratory pattern using anatomy, observations and reversible-flow evidence. Training simulation—not clinical guidance.",
+  "summary": "Review a trigger-linked respiratory pattern using anatomy, observations and bronchodilator-response evidence. Training simulation—not clinical guidance.",
   "tier": "foundation",
   "organSystem": "respiratory",
   "estimatedMinutes": 6,
@@ -465,7 +465,7 @@
       {
         "ref": { "kind": "clue", "id": "foundation-spirometry" },
         "weight": "decisive",
-        "note": "The before-and-after measurement supplies objective reversible-flow evidence."
+        "note": "The before-and-after measurement supplies objective evidence of reversible airflow."
       },
       {
         "ref": { "kind": "finding", "id": "foundation-diffuse-wall-change" },

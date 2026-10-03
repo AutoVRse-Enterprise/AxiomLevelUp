@@ -2865,8 +2865,15 @@ Build one five-minute golden exacerbation path and repair shared-engine P0/P1 de
 
 ## Phase 12: Case Lab depth and polish
 
-Extend the golden path into differentiated tiers, evidence synthesis, teaching-oriented debrief and
-remaining learner-facing polish.
+**Status: Complete (technical implementation, 2026-10-04).**
+
+The golden path now extends into differentiated tiers, evidence synthesis, teaching-oriented
+debrief, verified Case Lab offline packages and a complete learner-facing product tour. All 12
+assigned Case Lab findings and both whole-product demo gaps are technically closed.
+
+This status does not confer clinical, anatomy/pathology, client/legal or physical-device approval.
+Unsupervised/external use remains No-go until those reviews and Phase 9 device gates pass or receive
+authorized waivers.
 
 ---
 

@@ -16,7 +16,7 @@ read-only ContentRegistry -----> routes -----> activity plan
         |                                review/completion/evaluation)
         |                                        |
         |                                        v
-        +----> pure view selectors <----- activity/case player + session v4
+        +----> pure view selectors <----- activity/case player + session v5
                         ^                  /                   \
                         |                 v                     v
           learner state + clock   lazy primitive UI      typed event bus
@@ -30,7 +30,7 @@ read-only ContentRegistry -----> routes -----> activity plan
                                                                       +-----------+-----------+
                                                                                   |
                                                                                   v
-                                                                          learner store v6
+                                                                          learner store v7
 ```
 
 ## Boundaries
@@ -39,7 +39,7 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/app`: providers, startup and routing.
 - `src/routes`, `src/layouts`, `src/components`: presentation and user intent.
 - `src/events`: framework-independent event taxonomy and transport.
-- `src/engines/learning`: pure activity planning, session v4, completion, scoring and event
+- `src/engines/learning`: pure activity planning, session v5, completion, scoring and event
   reduction.
 - `src/engines/gamification`: pure XP, stars, levels, calendar, challenge and achievement rules.
 - `src/engines/mastery`: pure deterministic concept-score updates and bounded history.
@@ -133,18 +133,22 @@ confirms the saved exit.
 
 A case document compiles to a flattened `case` activity plan with stage boundaries and resolved
 case-scoped findings. `CasePlayer` uses ActivityPlayer extension points for stage chrome, atomic clue
-presentation, focus-trapped boundary transitions, active timing and completion. Session v4 persists
-opened clues with first-open context, step and case elapsed time and clock expiry. Blocking stage and
-phone clue dialogs pause both question and case clocks; countdown expiry does not truncate actual
-elapsed duration. Only resolved scored steps enter attempt timing, component/speed denominators,
-persisted step results and comparison.
+presentation, focus-trapped boundary transitions, active timing and completion. Session v5 persists
+opened clues with first-open context, independently reviewed clue IDs, local evidence/differential
+state, step and case elapsed time and clock expiry. Blocking stage and phone clue/notes dialogs pause
+both question and case clocks; countdown expiry does not truncate actual elapsed duration. Primitive
+definitions own timeout-credit policy: `anatomy_locate` evaluates committed levels on expiry while
+retaining timed-out state and zero step speed. Only resolved scored steps enter attempt timing,
+component/speed denominators, persisted step results and comparison.
 
-The pure case scorer combines first-attempt anatomy and diagnosis scores with separate step and case
-speed, then applies only eligible pre-response optional-clue cost. Learner-state result-v6 attempts
-persist effective weights, both speed components, timing semantics, normalized responses, actual
-duration and the XP awarded by the central pipeline. Legacy result-v5 attempts remain readable
-without fabricated detail. Results explain points out of 100; comparison uses authored labels,
-normalized response equality, benchmark rationale and de-duplicated attempt history.
+The pure case scorer combines first-attempt anatomy and diagnosis scores with independent time-only
+step and case speed, then applies only eligible pre-response optional-clue cost. Step speed includes
+only first attempts meeting the configured score threshold. Learner-state result-v7 attempts persist
+effective weights, speed eligibility and counts, both speed components, timing/timeout-credit
+semantics, normalized responses, reviewed clues, local evidence/differential state, actual duration
+and the XP awarded by the central pipeline. Legacy result-v5/v6 attempts remain readable without
+fabricated detail. Results explain points out of 100; comparison uses authored labels, normalized
+response equality, expert path/evidence/diagnosis teaching and de-duplicated attempt history.
 
 Case benchmark validation is deterministic: authored benchmark responses are evaluated against
 the configured primitives, explicit per-scored-step elapsed/timeout facts are passed to the same
@@ -289,12 +293,14 @@ including retry and unavailable-DICOM paths, and verifies lifecycle events and r
 developer primitive gallery renders the same content in interactive, review, disabled and
 missing-asset modes without mutating learner progress.
 
-Case Lab adds a second configuration-only integration fixture: automated flows complete the three
-catalogue cases, the daily quick case and a loader-added fourth case. Its production-preview
-Playwright boundary exercises real WebGL on desktop and 375 px touch emulation, including canvas
-picking, marker retention, reversible branch travel, configured finding inspection, hit testing and
-the complete six-task golden path. The test-only projection bridge is build-gated by `VITE_E2E`;
-normal production builds omit it.
+Case Lab adds a second configuration-only integration fixture: automated flows complete every
+configured case plus a loader-added fixture. Its production-preview Playwright boundary completes
+the foundation, intermediate, advanced and daily quick cases on desktop and 375 px touch emulation,
+including canvas picking, marker retention, procedural segment selection, reversible branch travel,
+configured finding inspection, evidence/debrief/comparison and the complete six-task golden path.
+The same boundary runs the product tour through Home, pathway, lesson/DICOM, Imaging Lab,
+completion, Daily Challenge, all Leaderboard periods and Profile. The test-only projection bridge
+is build-gated by `VITE_E2E`; normal production builds omit it.
 
 The browser QA boundary also injects axe-core across stable learner routes and every configured
 Case Lab state, applies deterministic 200% root text resizing, and exercises keyboard-only
