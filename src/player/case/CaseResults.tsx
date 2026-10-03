@@ -1,14 +1,15 @@
 import { ArrowRight, RotateCcw, Scale } from 'lucide-react'
 import { useState } from 'react'
 
+import { useContent } from '@/app/contentContext'
+import { CompletionMetrics } from '@/components/rewards/CompletionMetrics'
 import { Button, Card, Chip, Sheet } from '@/components/ui'
-import type { CaseClue, CaseDocument, CaseLabConfig } from '@/content/schema'
+import type { CaseClue, CaseDocument, CaseLabConfig, LearnerSeed } from '@/content/schema'
 import {
   formatCaseOrganSystem,
   formatCaseTier,
   formatDuration,
   formatScore,
-  formatXp,
 } from '@/engines/cases/formatters'
 import { starsForScore } from '@/engines/gamification/stars'
 import { ClueContent } from '@/player/case/ClueBoard'
@@ -19,6 +20,7 @@ interface CaseResultsProps {
   caseDoc: CaseDocument
   caseLab: CaseLabConfig
   result: CaseResultPresentation
+  activityResult?: LearnerSeed['gamification']['lastActivityResult']
   clues: readonly CaseClue[]
   clueReview: CaseLabConfig['clueReview']
   starThresholds: { one: number; two: number; three: number }
@@ -39,6 +41,7 @@ export function CaseResults({
   caseDoc,
   caseLab,
   result,
+  activityResult,
   clues,
   clueReview,
   starThresholds,
@@ -46,9 +49,13 @@ export function CaseResults({
   onContinue,
   onReplay,
 }: CaseResultsProps) {
+  const { appConfig } = useContent()
   const [reviewIndex, setReviewIndex] = useState<number | null>(null)
   const { breakdown } = result
   const stars = starsForScore(breakdown.total, starThresholds)
+  const badgeLabels = activityResult?.badgesUnlocked.map(
+    (id) => appConfig.badges.find((badge) => badge.id === id)?.title ?? 'Awarded badge',
+  )
   const completeBreakdown =
     breakdown.weights !== undefined &&
     breakdown.clueCostPoints !== undefined &&
@@ -129,16 +136,15 @@ export function CaseResults({
         <Chip>{formatCaseTier(caseLab, caseDoc.tier)}</Chip>
         <Chip>{formatCaseOrganSystem(caseLab, caseDoc.organSystem)}</Chip>
         <Chip tone="brand">{formatScore(breakdown.total)}</Chip>
-        <Chip aria-label={`${stars} of 3 stars`}>
-          <span aria-hidden="true">
-            {'★'.repeat(stars)}
-            {'☆'.repeat(3 - stars)}
-          </span>
-        </Chip>
         <Chip>{formatDuration(breakdown.durationSeconds)}</Chip>
-        {result.actualAwardedXp !== undefined && result.actualAwardedXp !== null ? (
-          <Chip>{formatXp(result.actualAwardedXp)} awarded</Chip>
-        ) : null}
+      </div>
+      <div className="mt-3">
+        <CompletionMetrics
+          awardedXp={result.actualAwardedXp}
+          badgeLabels={badgeLabels}
+          masteryDelta={activityResult?.masteryDelta}
+          stars={stars}
+        />
       </div>
       <p className="mt-4 text-small text-neutral-600">
         This score uses your first submitted response for each scored task; retries support learning
@@ -311,7 +317,7 @@ export function CaseResults({
           />
         ) : selectedEvidence?.finding ? (
           <div>
-            <p className="text-small font-semibold text-neutral-600">Configured finding</p>
+            <p className="text-small font-semibold text-neutral-600">Observed finding</p>
             <p className="mt-2 text-neutral-800">{selectedEvidence.finding.description}</p>
           </div>
         ) : null}

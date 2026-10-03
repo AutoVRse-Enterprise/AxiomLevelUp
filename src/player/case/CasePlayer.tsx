@@ -357,6 +357,11 @@ function CompletionFlow({
   const persistedAttempt = useLearnerStore((state) =>
     state.caseAttempts[caseDoc.id]?.find(({ attemptId }) => attemptId === result.attemptId),
   )
+  const latestActivityResult = useLearnerStore((state) => state.gamification.lastActivityResult)
+  const activityResult =
+    latestActivityResult?.activityKind === 'case' && latestActivityResult.activityId === caseDoc.id
+      ? latestActivityResult
+      : null
   const presentedResult = useMemo(
     () => presentLiveCaseResult(result, persistedAttempt),
     [persistedAttempt, result],
@@ -377,6 +382,7 @@ function CompletionFlow({
     <CaseResults
       caseDoc={caseDoc}
       caseLab={caseLab}
+      activityResult={activityResult}
       result={presentedResult}
       clues={caseDoc.clues}
       clueReview={caseLab.clueReview}

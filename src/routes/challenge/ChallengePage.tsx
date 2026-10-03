@@ -6,15 +6,20 @@ import { EmptyState } from '@/components/feedback/EmptyState'
 import { SectionHeader } from '@/components/learning'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { formatEstimatedMinutes, formatXp } from '@/engines/cases/formatters'
+import { resolveWeeklyChallengeDestination } from '@/engines/learning/weeklyChallengeDestination'
 import { emitEvent } from '@/events/bus'
 import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectChallengePeriod } from '@/state/selectors'
 
 export function ChallengePage() {
-  const { appConfig } = useContent()
+  const registry = useContent()
+  const { appConfig } = registry
   const challengeProgress = useLearnerStore((state) => state.challenges)
   const gamification = useLearnerStore((state) => state.gamification)
+  const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
+  const caseAttempts = useLearnerStore((state) => state.caseAttempts)
   const daily = appConfig.challenges.filter(({ type }) => type === 'daily')
   const weekly = appConfig.challenges.filter(({ type }) => type === 'weekly')
 
@@ -22,7 +27,7 @@ export function ChallengePage() {
     return (
       <EmptyState
         icon={<Target aria-hidden="true" size={30} />}
-        message="Check back when a challenge has been configured."
+        message="Check back when a challenge is available."
         title="No challenges available"
       />
     )
@@ -107,6 +112,11 @@ export function ChallengePage() {
             )
             const target = challenge.target ?? challenge.itemCount
             const value = Math.min(period.progress, target)
+            const destination = resolveWeeklyChallengeDestination(
+              challenge,
+              { lessonProgress, caseProgress, caseAttempts },
+              registry,
+            )
             return (
               <Card key={challenge.id}>
                 <div className="flex items-start justify-between gap-4">
@@ -129,12 +139,23 @@ export function ChallengePage() {
                   {formatEstimatedMinutes(challenge.estimatedMinutes)} · +
                   {formatXp(challenge.rewardXp)} on completion
                 </p>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <Link
+                    aria-label={`Continue ${challenge.title}`}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-700 px-4 font-semibold text-white hover:bg-brand-800 focus-visible:outline-2"
+                    to={destination.to}
+                  >
+                    Continue
+                    <ArrowRight aria-hidden="true" size={17} />
+                  </Link>
+                  <span className="text-small text-neutral-600">{destination.context}</span>
+                </div>
               </Card>
             )
           })}
           {!weekly.length ? (
             <Card>
-              <p className="text-neutral-600">No weekly challenge is configured.</p>
+              <p className="text-neutral-600">No weekly challenge is available.</p>
             </Card>
           ) : null}
         </div>

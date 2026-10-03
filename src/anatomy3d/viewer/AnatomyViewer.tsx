@@ -42,7 +42,7 @@ export function AnatomyViewer({
   modelUrl,
   map,
   config,
-  prompt = 'Explore the configured anatomy model.',
+  prompt = 'Explore the interactive anatomy model.',
   navigation = 'both',
   disabled = false,
   startView,

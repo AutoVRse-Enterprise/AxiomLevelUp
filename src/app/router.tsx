@@ -5,15 +5,35 @@ import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
 import { LoadingState } from '@/components/ui'
 import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
-const HomePage = lazy(() => import('@/routes/home/HomePage').then((module) => ({ default: module.HomePage })))
-const LearnPage = lazy(() => import('@/routes/learn/LearnPage').then((module) => ({ default: module.LearnPage })))
-const PathwayPage = lazy(() => import('@/routes/learn/PathwayPage').then((module) => ({ default: module.PathwayPage })))
-const CoursePage = lazy(() => import('@/routes/learn/CoursePage').then((module) => ({ default: module.CoursePage })))
-const ChallengePage = lazy(() => import('@/routes/challenge/ChallengePage').then((module) => ({ default: module.ChallengePage })))
-const LeaderboardPage = lazy(() => import('@/routes/leaderboard/LeaderboardPage').then((module) => ({ default: module.LeaderboardPage })))
-const ProfilePage = lazy(() => import('@/routes/profile/ProfilePage').then((module) => ({ default: module.ProfilePage })))
-const NotFoundPage = lazy(() => import('@/routes/NotFoundPage').then((module) => ({ default: module.NotFoundPage })))
-const DevPage = lazy(() => import('@/routes/dev/DevPage').then((module) => ({ default: module.DevPage })))
+const HomePage = lazy(() =>
+  import('@/routes/home/HomePage').then((module) => ({ default: module.HomePage })),
+)
+const LearnPage = lazy(() =>
+  import('@/routes/learn/LearnPage').then((module) => ({ default: module.LearnPage })),
+)
+const PathwayPage = lazy(() =>
+  import('@/routes/learn/PathwayPage').then((module) => ({ default: module.PathwayPage })),
+)
+const CoursePage = lazy(() =>
+  import('@/routes/learn/CoursePage').then((module) => ({ default: module.CoursePage })),
+)
+const ChallengePage = lazy(() =>
+  import('@/routes/challenge/ChallengePage').then((module) => ({ default: module.ChallengePage })),
+)
+const LeaderboardPage = lazy(() =>
+  import('@/routes/leaderboard/LeaderboardPage').then((module) => ({
+    default: module.LeaderboardPage,
+  })),
+)
+const ProfilePage = lazy(() =>
+  import('@/routes/profile/ProfilePage').then((module) => ({ default: module.ProfilePage })),
+)
+const NotFoundPage = lazy(() =>
+  import('@/routes/NotFoundPage').then((module) => ({ default: module.NotFoundPage })),
+)
+const DevPage = lazy(() =>
+  import('@/routes/dev/DevPage').then((module) => ({ default: module.DevPage })),
+)
 const PrimitiveGalleryPage = lazy(() =>
   import('@/routes/dev/PrimitiveGalleryPage').then((module) => ({
     default: module.PrimitiveGalleryPage,
@@ -47,7 +67,10 @@ function lazyPage(page: ReactNode) {
     <Suspense
       fallback={
         <main className="mx-auto w-full max-w-3xl p-5 sm:p-8">
-          <LoadingState message="Loading this part of the learning runtime." title="Opening screen" />
+          <LoadingState
+            message="Loading this part of your learning experience."
+            title="Opening screen"
+          />
         </main>
       }
     >

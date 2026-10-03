@@ -65,30 +65,53 @@ export function selectLeaderboardRank(
   state: Pick<LearnerStore, 'learner' | 'xp'>,
   entries: AppConfig['leaderboard']['entries'],
 ) {
-  const scores = entries.map((entry) => ({
-    ...entry,
-    weeklyXp: entry.id === state.learner.id ? state.xp.weekly : entry.weeklyXp,
-  }))
-  scores.sort((a, b) => b.weeklyXp - a.weeklyXp)
-  const index = scores.findIndex(({ id }) => id === state.learner.id)
-  return index === -1 ? null : index + 1
+  return selectLeaderboardView(state, entries, entries.length, 'weekly').rank
+}
+
+export type LeaderboardPeriod = 'weekly' | 'monthly' | 'all_time'
+
+function configuredPeriodXp(
+  entry: AppConfig['leaderboard']['entries'][number],
+  period: LeaderboardPeriod,
+) {
+  if (period === 'weekly') return entry.weeklyXp
+  if (period === 'monthly') return entry.monthlyXp ?? entry.weeklyXp
+  return entry.totalXp ?? entry.monthlyXp ?? entry.weeklyXp
+}
+
+function currentLearnerPeriodXp(
+  state: Pick<LearnerStore, 'xp'>,
+  entry: AppConfig['leaderboard']['entries'][number],
+  period: LeaderboardPeriod,
+) {
+  if (period === 'weekly') return state.xp.weekly
+  if (period === 'all_time') return state.xp.total
+
+  const configuredTotal = entry.totalXp ?? state.xp.total
+  const configuredMonthly = entry.monthlyXp ?? entry.weeklyXp
+  const xpEarnedSinceSnapshot = Math.max(0, state.xp.total - configuredTotal)
+  return Math.max(state.xp.weekly, configuredMonthly + xpEarnedSinceSnapshot)
 }
 
 export function selectLeaderboardView(
   state: Pick<LearnerStore, 'learner' | 'xp'>,
   entries: AppConfig['leaderboard']['entries'],
   visibleWindow: number,
+  period: LeaderboardPeriod = 'weekly',
 ) {
   const rows = entries
     .map((entry) => ({
       ...entry,
-      weeklyXp: entry.id === state.learner.id ? state.xp.weekly : entry.weeklyXp,
+      periodXp:
+        entry.id === state.learner.id
+          ? currentLearnerPeriodXp(state, entry, period)
+          : configuredPeriodXp(entry, period),
     }))
-    .sort((a, b) => b.weeklyXp - a.weeklyXp)
+    .sort((a, b) => b.periodXp - a.periodXp || a.name.localeCompare(b.name))
     .map((entry, index) => ({
       ...entry,
       rank: index + 1,
-      movement: entry.previousRank ? entry.previousRank - (index + 1) : 0,
+      movement: period === 'weekly' && entry.previousRank ? entry.previousRank - (index + 1) : 0,
       isCurrentLearner: entry.id === state.learner.id,
     }))
   const learnerIndex = rows.findIndex(({ isCurrentLearner }) => isCurrentLearner)

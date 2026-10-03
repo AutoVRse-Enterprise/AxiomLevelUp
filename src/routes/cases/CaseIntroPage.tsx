@@ -99,7 +99,7 @@ export function CaseIntroPage() {
     return (
       <EmptyState
         title="Case not found"
-        message="This case is not configured in Case Lab."
+        message="This case is unavailable or may have moved."
         action={<Link to="/learn">Return to Learn</Link>}
       />
     )

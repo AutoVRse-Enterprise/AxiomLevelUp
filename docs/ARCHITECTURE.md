@@ -77,7 +77,7 @@ plus learner-visible catalogue projections. Parse failures include source file a
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning
-progress, case progress, gamification and mastery, commits one learner-state v6 snapshot and
+progress, case progress, gamification and mastery, commits one learner-state v7 snapshot and
 publishes informational reward events. The event-history subscriber records a bounded audit trail.
 Output events are not reduced again. Persisted reward ledgers make lesson, case, perfect, daily and
 badge awards idempotent.
@@ -86,6 +86,11 @@ derived.
 
 Local-calendar helpers use the injectable clock and configured week start for streaks, weekly goals,
 weekly XP and challenge periods. Badge and weekly-challenge criteria are validated with content.
+Leaderboard rows carry optional monthly and lifetime snapshots; absent historical fields fall back
+to weekly values, while the current learner always uses live weekly and total XP. A pure
+period-aware selector derives ranking windows. Weekly challenge cards use a pure criterion resolver
+to select the next unlocked, incomplete matching lesson or case, with collection-route fallbacks
+when a criterion has no specific safe destination.
 Mastery applies configured weighted gains/losses to first-attempt fractional scores and keeps
 bounded per-concept history. Case questions update mastery but do not award per-question XP; case
 completion awards configured XP and stores bounded per-case attempt history. Badge and level
@@ -100,6 +105,9 @@ Device presentation preferences are persisted separately from learner state. `Mo
 resolves the stored System, Reduced or Full choice against the browser media query and applies the
 same result to Motion and CSS through `html[data-motion]`. Haptics, confetti and live announcements
 subscribe to typed learner events; primitives never call device or reward effects directly.
+Lesson, challenge and case completion surfaces share compact outcome metrics for stars, awarded XP,
+mastery change and badge outcome. Saved case attempts explicitly report unavailable outcome facts
+that were not persisted rather than reconstructing them.
 
 ## Activity and case execution
 

@@ -146,6 +146,15 @@ describe('application surfaces', () => {
     expect(screen.queryByText('1 questions')).not.toBeInTheDocument()
   })
 
+  it('links a weekly challenge to its next eligible qualifying activity', () => {
+    renderSurface(<ChallengePage />, '/challenge', '/challenge')
+
+    expect(
+      screen.getByRole('link', { name: 'Continue Scientific Imaging Sprint' }),
+    ).toHaveAttribute('href', '/learn/courses/data-interpretation/lessons/dose-response-curves')
+    expect(screen.getByText('Next: Dose-response Curves')).toBeVisible()
+  })
+
   it('keeps internal courses off Home, Learn and Pathway surfaces', () => {
     renderSurface(<HomePage />, '/')
     expect(screen.queryByText('Runtime Primitive Showcase')).not.toBeInTheDocument()
@@ -228,6 +237,26 @@ describe('application surfaces', () => {
     })
 
     expect(screen.getByText('#1')).toBeVisible()
+  })
+
+  it('switches leaderboard periods with tabs and keyboard navigation', async () => {
+    const user = userEvent.setup()
+    renderSurface(<LeaderboardPage />, '/leaderboard', '/leaderboard')
+
+    const weekly = screen.getByRole('tab', { name: 'Weekly' })
+    weekly.focus()
+    await user.keyboard('{ArrowRight}')
+
+    expect(screen.getByRole('tab', { name: 'Monthly' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('heading', { name: 'This month' })).toBeVisible()
+    expect(screen.getByText('#9')).toBeVisible()
+    expect(screen.getByText('3,180 XP')).toBeVisible()
+
+    await user.keyboard('{End}')
+    expect(screen.getByRole('tab', { name: 'All time' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('heading', { name: 'All-time ranking' })).toBeVisible()
+    expect(screen.getByText('#13')).toBeVisible()
+    expect(screen.getByText('4,820 XP')).toBeVisible()
   })
 
   it('renders Profile for a fresh learner without invalid arithmetic', () => {

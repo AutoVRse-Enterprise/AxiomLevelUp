@@ -42,8 +42,7 @@ function PathwayNodeTransition({
   children: ReactNode
 }) {
   const storageKey = `axiom-runtime:pathway:${pathwayId}:${nodeId}`
-  const previous =
-    typeof window === 'undefined' ? null : window.sessionStorage.getItem(storageKey)
+  const previous = typeof window === 'undefined' ? null : window.sessionStorage.getItem(storageKey)
   const changed = previous !== null && previous !== status
 
   useEffect(() => {
@@ -87,7 +86,7 @@ export function PathwayPage() {
             Browse learning
           </Link>
         }
-        message="This pathway is not configured or may have moved."
+        message="This pathway is unavailable or may have moved."
         title="Pathway not found"
       />
     )
@@ -171,39 +170,40 @@ export function PathwayPage() {
                     </p>
                   </>
                 )
-                const nodeContent = node.status === 'locked' ? (
-                  <div key={node.id}>
-                    <button
-                      aria-label={`${label}. Show why this activity is locked`}
-                      className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-5 text-left opacity-85 focus-visible:outline-2"
-                      onClick={() => setOpenLock(openLock === node.id ? null : node.id)}
-                      type="button"
+                const nodeContent =
+                  node.status === 'locked' ? (
+                    <div key={node.id}>
+                      <button
+                        aria-label={`${label}. Show why this activity is locked`}
+                        className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-5 text-left opacity-85 focus-visible:outline-2"
+                        onClick={() => setOpenLock(openLock === node.id ? null : node.id)}
+                        type="button"
+                      >
+                        {body}
+                      </button>
+                      {openLock === node.id ? (
+                        <p
+                          className="mt-2 rounded-md bg-neutral-100 p-3 text-small text-neutral-700"
+                          role="status"
+                        >
+                          Complete the preceding activity
+                          {node.unmetPrerequisites.length
+                            ? ` (${node.unmetPrerequisites.join(', ')})`
+                            : ''}{' '}
+                          to unlock this step.
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <Link
+                      aria-label={label}
+                      className="block rounded-lg border border-neutral-200 bg-white p-5 shadow-card transition hover:border-brand-300 focus-visible:outline-2"
+                      key={node.id}
+                      to={destinationFor(node)}
                     >
                       {body}
-                    </button>
-                    {openLock === node.id ? (
-                      <p
-                        className="mt-2 rounded-md bg-neutral-100 p-3 text-small text-neutral-700"
-                        role="status"
-                      >
-                        Complete the preceding activity
-                        {node.unmetPrerequisites.length
-                          ? ` (${node.unmetPrerequisites.join(', ')})`
-                          : ''}{' '}
-                        to unlock this step.
-                      </p>
-                    ) : null}
-                  </div>
-                ) : (
-                  <Link
-                    aria-label={label}
-                    className="block rounded-lg border border-neutral-200 bg-white p-5 shadow-card transition hover:border-brand-300 focus-visible:outline-2"
-                    key={node.id}
-                    to={destinationFor(node)}
-                  >
-                    {body}
-                  </Link>
-                )
+                    </Link>
+                  )
                 return (
                   <PathwayNodeTransition
                     key={node.id}

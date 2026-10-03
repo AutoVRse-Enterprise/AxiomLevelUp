@@ -483,7 +483,7 @@
       "exac-immediate-consequence": "urgent-escalation"
     },
     "rationales": {
-      "exac-explore-airway": "The authored route reaches the posterior basal segment and inspects the dominant configured occlusion.",
+      "exac-explore-airway": "The authored route reaches the posterior basal segment and inspects the dominant mucus occlusion.",
       "exac-localise": "The finding lies in the right lower lobe posterior basal segmental bronchus.",
       "exac-severity-signals": "Each selected item contributes acute severity information rather than disease identity alone.",
       "exac-co2-reasoning": "The trend is interpreted with work of breathing, flow and oxygenation rather than against a reference interval in isolation.",

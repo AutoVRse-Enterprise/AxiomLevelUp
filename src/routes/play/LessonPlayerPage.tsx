@@ -44,7 +44,7 @@ export function LessonPlayerPage() {
     return (
       <EmptyState
         title="Lesson not found"
-        message="This lesson is not configured for the selected course."
+        message="This lesson is unavailable or may have moved."
         action={<Link to="/learn">Return to Learn</Link>}
       />
     )
@@ -56,11 +56,7 @@ export function LessonPlayerPage() {
     registry.lessonById,
     registry.courseById,
   )
-  const availability = selectLessonAvailability(
-    { lessonProgress },
-    lesson,
-    registry.lessonById,
-  )
+  const availability = selectLessonAvailability({ lessonProgress }, lesson, registry.lessonById)
   const lockReasons = [
     ...courseSummary.unmetCoursePrerequisites,
     ...availability.unmetPrerequisites,
@@ -80,7 +76,7 @@ export function LessonPlayerPage() {
       <EmptyState
         icon={<Puzzle aria-hidden="true" size={30} />}
         title="Lesson unavailable"
-        message={plan.unavailableReason ?? 'This lesson is not playable yet.'}
+        message={plan.unavailableReason ?? 'This lesson is currently unavailable.'}
         action={backLink(course.id)}
       />
     )

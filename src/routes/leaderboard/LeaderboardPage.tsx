@@ -1,21 +1,65 @@
 import { Minus, TrendingDown, TrendingUp, Trophy } from 'lucide-react'
+import { useRef, useState, type KeyboardEvent } from 'react'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { LeaderboardRow, StatTile } from '@/components/learning'
 import { Card } from '@/components/ui'
 import { useLearnerStore } from '@/state/learnerStore'
-import { selectLeaderboardView } from '@/state/selectors'
+import { selectLeaderboardView, type LeaderboardPeriod } from '@/state/selectors'
+
+const periods: Array<{
+  id: LeaderboardPeriod
+  label: string
+  heading: string
+  description: string
+}> = [
+  {
+    id: 'weekly',
+    label: 'Weekly',
+    heading: 'This week',
+    description: "See how this week's learning momentum compares.",
+  },
+  {
+    id: 'monthly',
+    label: 'Monthly',
+    heading: 'This month',
+    description: "See how this month's learning momentum compares.",
+  },
+  {
+    id: 'all_time',
+    label: 'All time',
+    heading: 'All-time ranking',
+    description: 'See how your total learning progress compares.',
+  },
+]
 
 export function LeaderboardPage() {
   const { appConfig } = useContent()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
+  const [period, setPeriod] = useState<LeaderboardPeriod>(appConfig.leaderboard.period)
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const activePeriod = periods.find(({ id }) => id === period) ?? periods[0]!
   const view = selectLeaderboardView(
     { learner, xp },
     appConfig.leaderboard.entries,
     appConfig.product.leaderboard.visibleWindow,
+    period,
   )
+
+  const selectAdjacentTab = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex: number | null = null
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % periods.length
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + periods.length) % periods.length
+    if (event.key === 'Home') nextIndex = 0
+    if (event.key === 'End') nextIndex = periods.length - 1
+    if (nextIndex === null) return
+    event.preventDefault()
+    const nextPeriod = periods[nextIndex]!
+    setPeriod(nextPeriod.id)
+    tabRefs.current[nextIndex]?.focus()
+  }
 
   if (!appConfig.leaderboard.entries.length) {
     return (
@@ -32,27 +76,31 @@ export function LeaderboardPage() {
       <header className="text-center">
         <Trophy aria-hidden="true" className="mx-auto text-star" size={34} />
         <h1 className="mt-3 text-display font-bold">{appConfig.leaderboard.scope}</h1>
-        <p className="mt-2 text-neutral-600">See how this week's learning momentum compares.</p>
+        <p className="mt-2 text-neutral-600">{activePeriod.description}</p>
       </header>
 
-      <div className="flex justify-center gap-2" aria-label="Leaderboard period">
-        <button
-          aria-pressed="true"
-          className="min-h-10 rounded-full bg-brand-700 px-4 text-small font-semibold text-white"
-          type="button"
-        >
-          Weekly
-        </button>
-        {['Monthly', 'All time'].map((period) => (
+      <div className="flex justify-center gap-2" aria-label="Leaderboard period" role="tablist">
+        {periods.map((option, index) => (
           <button
-            aria-disabled="true"
-            className="min-h-10 cursor-not-allowed rounded-full border border-neutral-200 bg-neutral-100 px-4 text-small font-semibold text-neutral-600"
-            disabled
-            key={period}
-            title={`${period} rankings are coming soon`}
+            aria-controls="leaderboard-ranking"
+            aria-selected={period === option.id}
+            className={
+              period === option.id
+                ? 'min-h-10 rounded-full bg-brand-700 px-4 text-small font-semibold text-white focus-visible:outline-2'
+                : 'min-h-10 rounded-full border border-neutral-200 bg-white px-4 text-small font-semibold text-neutral-700 hover:border-brand-300 focus-visible:outline-2'
+            }
+            id={`leaderboard-tab-${option.id}`}
+            key={option.id}
+            onClick={() => setPeriod(option.id)}
+            onKeyDown={(event) => selectAdjacentTab(event, index)}
+            ref={(element) => {
+              tabRefs.current[index] = element
+            }}
+            role="tab"
+            tabIndex={period === option.id ? 0 : -1}
             type="button"
           >
-            {period}
+            {option.label}
           </button>
         ))}
       </div>
@@ -65,7 +113,9 @@ export function LeaderboardPage() {
         />
         <StatTile
           icon={
-            view.movement > 0 ? (
+            period !== 'weekly' ? (
+              <Minus aria-hidden="true" size={17} />
+            ) : view.movement > 0 ? (
               <TrendingUp aria-hidden="true" size={17} />
             ) : view.movement < 0 ? (
               <TrendingDown aria-hidden="true" size={17} />
@@ -73,13 +123,25 @@ export function LeaderboardPage() {
               <Minus aria-hidden="true" size={17} />
             )
           }
-          label="Movement"
-          value={view.movement === 0 ? 'No change' : `${view.movement > 0 ? '+' : ''}${view.movement}`}
+          label={period === 'weekly' ? 'Weekly movement' : 'Rank history'}
+          value={
+            period === 'weekly'
+              ? view.movement === 0
+                ? 'No change'
+                : `${view.movement > 0 ? '+' : ''}${view.movement}`
+              : 'Not tracked'
+          }
         />
       </Card>
 
-      <section aria-labelledby="weekly-ranking-heading">
-        <h2 className="text-heading font-bold" id="weekly-ranking-heading">This week</h2>
+      <section
+        aria-labelledby={`leaderboard-tab-${period} leaderboard-ranking-heading`}
+        id="leaderboard-ranking"
+        role="tabpanel"
+      >
+        <h2 className="text-heading font-bold" id="leaderboard-ranking-heading">
+          {activePeriod.heading}
+        </h2>
         <ol className="mt-4 divide-y divide-neutral-100 overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-card">
           {view.rows.map((row) => (
             <LeaderboardRow
@@ -88,7 +150,8 @@ export function LeaderboardPage() {
               movement={row.movement}
               name={row.name}
               rank={row.rank}
-              xp={row.weeklyXp}
+              showMovement={period === 'weekly'}
+              xp={row.periodXp}
             />
           ))}
         </ol>
@@ -96,7 +159,7 @@ export function LeaderboardPage() {
 
       {view.rank === null ? (
         <p className="text-center text-small text-neutral-600">
-          Earn weekly XP to join the cohort ranking.
+          Earn XP to join the cohort ranking.
         </p>
       ) : null}
     </div>

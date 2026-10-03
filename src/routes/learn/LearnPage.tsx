@@ -144,7 +144,7 @@ export function LearnPage() {
       {caseCards.length ? (
         <section aria-label={appConfig.caseLab?.title ?? 'Case Lab'}>
           <SectionHeader
-            description={`${caseCards.length} configured ${caseCards.length === 1 ? 'case' : 'cases'} · all tiers open`}
+            description={`${caseCards.length} ${caseCards.length === 1 ? 'case' : 'cases'} · all tiers open`}
             title={appConfig.caseLab?.title ?? 'Case Lab'}
           />
           <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">

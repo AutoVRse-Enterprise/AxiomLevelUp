@@ -143,7 +143,10 @@ describe('player routes', () => {
 
   it('reports an item-less challenge as unavailable', () => {
     renderRoute('/challenge/weekly-imaging-sprint/play')
-    expect(screen.getByRole('heading', { name: 'Challenge unavailable' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Weekly goal' })).toBeVisible()
+    expect(
+      screen.getByText('Continue this goal through its linked learning activities.'),
+    ).toBeVisible()
   })
 
   it('plays the configured daily challenge and records its result', async () => {
@@ -166,7 +169,7 @@ describe('player routes', () => {
     }
 
     expect(await screen.findByText('Activity complete')).toBeVisible()
-    expect(screen.getByText('+125')).toBeVisible()
+    expect(screen.getByText('125 XP awarded')).toBeVisible()
     expect(screen.getByLabelText('0 of 3 stars')).toBeVisible()
     expect(screen.getByText('#6')).toBeVisible()
     expect(useLearnerStore.getState().challenges['daily-imaging-interpretation']).toMatchObject({

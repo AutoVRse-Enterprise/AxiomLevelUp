@@ -228,7 +228,7 @@ export function HomePage() {
                 </Link>
               </>
             ) : (
-              <p className="text-neutral-600">No daily challenge is configured.</p>
+              <p className="text-neutral-600">No daily challenge is available.</p>
             )}
           </Card>
         </section>

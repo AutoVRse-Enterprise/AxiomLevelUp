@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T07 is complete; P12-T08 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T08 is complete; P12-T09 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -124,19 +124,29 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
 - Removed the just-completed challenge attempt from route-supplied comparison history, retained
   the component's defensive filter and added an explicit current-attempt de-duplication test.
 - Exported the app-config schema and closed P12-T07 without an ADR.
+- Added weekly, monthly and all-time cohort rankings with keyboard tabs, period sorting,
+  migration-safe historical score fallbacks and live current-learner weekly/lifetime values.
+- Added a pure weekly-challenge destination resolver that chooses the next unlocked qualifying
+  lesson or case and falls back to an accurate Learn or Challenge collection route.
+- Unified lesson, challenge and case completion outcome chips for awarded XP, stars, mastery and
+  badges without reconstructing unavailable saved-case facts.
+- Removed remaining learner-facing placeholder and implementation-oriented copy and added a
+  manifest-derived desktop browser guard for raw content IDs and primitive type names.
+- Marked W01/W02 and P12-T08 resolved, exported the app-config schema and recorded ADR-091.
 
 ## In progress
 
-- P12-T08 is ready to close the whole-app W-series demo gaps and learner-facing terminology.
+- P12-T09 is ready to add general offline Case Lab packages.
 - Clinical, anatomy/pathology and client/legal review of all four catalogue claim ledgers is
   pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Close whole-app W-series demo gaps in P12-T08.
-2. Add general offline Case Lab packages in P12-T09.
-3. Preserve the 18-test real-WebGL gate after every task.
+1. Add general offline Case Lab packages in P12-T09.
+2. Complete catalogue-wide accessibility, text-scaling, performance and resilience evidence in
+   P12-T10.
+3. Add breadth and product-tour browser coverage in P12-T11.
 
 ## Blockers/questions for the user
 
@@ -231,6 +241,17 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
     complete rerun passed;
   - IDE diagnostics and `git diff --check` pass. No commit was created, and
     `docs/reference docs/` was not touched.
+- P12-T08 verification:
+  - focused selector, schema, resolver, route and completion tests pass 7 files / 95 tests;
+  - the desktop manifest-derived learner-route terminology guard passes;
+  - schema export and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - full `npm run check` passes 65 files / 447 tests, production build and all bundle budgets;
+  - the final serial real-WebGL suite passes 19 tests with the intentionally desktop-only
+    terminology guard skipped on touch-phone; both desktop and touch golden paths pass;
+  - one preceding serial run had the documented transient touch projected-lobe selection miss;
+    the immediate complete rerun passed;
+  - IDE diagnostics pass. No commit was created, and `docs/reference docs/` was not touched.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime
   schema or asset changed.
 - The user's untracked `docs/reference docs/` remains untouched.

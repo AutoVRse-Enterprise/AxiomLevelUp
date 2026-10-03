@@ -46,13 +46,26 @@ export function StarRating({ value }: { value: number }) {
   return (
     <span aria-label={`${value} of 3 stars`} className="inline-flex gap-0.5 text-star">
       {[1, 2, 3].map((star) => (
-        <Star aria-hidden="true" fill={star <= value ? 'currentColor' : 'none'} key={star} size={16} />
+        <Star
+          aria-hidden="true"
+          fill={star <= value ? 'currentColor' : 'none'}
+          key={star}
+          size={16}
+        />
       ))}
     </span>
   )
 }
 
-export function Avatar({ name, src, className }: { name: string; src?: string; className?: string }) {
+export function Avatar({
+  name,
+  src,
+  className,
+}: {
+  name: string
+  src?: string
+  className?: string
+}) {
   const initials = name
     .split(/\s+/)
     .map((part) => part[0])
@@ -220,7 +233,10 @@ export function CourseCard({
           {status === 'locked' ? (
             <LockReason items={lockReasons} />
           ) : (
-            <Link className="font-semibold text-brand-700 underline-offset-4 hover:underline" to={`/learn/courses/${id}`}>
+            <Link
+              className="font-semibold text-brand-700 underline-offset-4 hover:underline"
+              to={`/learn/courses/${id}`}
+            >
               View course
             </Link>
           )}
@@ -272,14 +288,23 @@ export function LessonRow({
       {status === 'completed' ? (
         <div className="mt-3 flex items-center gap-3">
           <StarRating value={stars} />
-          {bestScore !== null ? <span className="text-small text-neutral-600">Best {bestScore}%</span> : null}
+          {bestScore !== null ? (
+            <span className="text-small text-neutral-600">Best {bestScore}%</span>
+          ) : null}
         </div>
       ) : null}
-      {status === 'locked' ? <div className="mt-3"><LockReason items={lockReasons} /></div> : null}
+      {status === 'locked' ? (
+        <div className="mt-3">
+          <LockReason items={lockReasons} />
+        </div>
+      ) : null}
     </>
   )
   return status === 'locked' ? (
-    <div aria-disabled="true" className="rounded-lg border border-neutral-200 bg-neutral-50 p-5 opacity-80">
+    <div
+      aria-disabled="true"
+      className="rounded-lg border border-neutral-200 bg-neutral-50 p-5 opacity-80"
+    >
       {content}
     </div>
   ) : (
@@ -319,7 +344,9 @@ export function BadgeTile({
       <span
         className={cn(
           'grid size-11 place-items-center rounded-full',
-          unlocked ? 'bg-badge/10 text-badge ring-1 ring-badge/20' : 'bg-neutral-100 text-neutral-400',
+          unlocked
+            ? 'bg-badge/10 text-badge ring-1 ring-badge/20'
+            : 'bg-neutral-100 text-neutral-400',
         )}
       >
         <Icon aria-hidden="true" height={26} width={26} />
@@ -327,7 +354,7 @@ export function BadgeTile({
       <h3 className="mt-3 font-bold">{title}</h3>
       <p className="mt-1 text-small text-neutral-600">{description}</p>
       <p className="mt-3 text-caption font-semibold text-neutral-600">
-        {unlocked ? unlockedLabel ?? 'Unlocked' : `${Math.round(progress ?? 0)}% complete`}
+        {unlocked ? (unlockedLabel ?? 'Unlocked') : `${Math.round(progress ?? 0)}% complete`}
       </p>
     </div>
   )
@@ -339,12 +366,14 @@ export function LeaderboardRow({
   xp,
   movement,
   current,
+  showMovement = true,
 }: {
   rank: number
   name: string
   xp: number
   movement: number
   current: boolean
+  showMovement?: boolean
 }) {
   return (
     <li
@@ -357,12 +386,17 @@ export function LeaderboardRow({
       <span className="font-bold tabular-nums text-neutral-600">{rank}</span>
       <Avatar name={name} />
       <div className="min-w-0">
-        <p className="truncate font-semibold">{name}{current ? ' (you)' : ''}</p>
-        <p className="flex items-center gap-1 text-caption text-neutral-600">
-          {movement > 0 ? <TrendingUp aria-hidden="true" size={13} /> : null}
-          {movement < 0 ? <TrendingDown aria-hidden="true" size={13} /> : null}
-          {movement === 0 ? 'No change' : `${Math.abs(movement)} ${movement > 0 ? 'up' : 'down'}`}
+        <p className="truncate font-semibold">
+          {name}
+          {current ? ' (you)' : ''}
         </p>
+        {showMovement ? (
+          <p className="flex items-center gap-1 text-caption text-neutral-600">
+            {movement > 0 ? <TrendingUp aria-hidden="true" size={13} /> : null}
+            {movement < 0 ? <TrendingDown aria-hidden="true" size={13} /> : null}
+            {movement === 0 ? 'No change' : `${Math.abs(movement)} ${movement > 0 ? 'up' : 'down'}`}
+          </p>
+        ) : null}
       </div>
       <span className="font-bold tabular-nums">{xp.toLocaleString()} XP</span>
     </li>

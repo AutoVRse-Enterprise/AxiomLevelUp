@@ -31,9 +31,10 @@ describe('reward presentation', () => {
         />
       </ContentContext.Provider>,
     )
-    expect(screen.getByText('Final value: +135')).toBeInTheDocument()
+    expect(screen.getByText('135 XP awarded')).toBeVisible()
     expect(screen.getByLabelText('3 of 3 stars')).toBeInTheDocument()
-    expect(screen.getByText('+4')).toBeVisible()
+    expect(screen.getByText('+4 mastery')).toBeVisible()
+    expect(screen.getByText('Badge: Perfect Lesson')).toBeVisible()
     expect(screen.getByText('#6')).toBeVisible()
     expect(screen.getByText(/4 day streak/)).toBeVisible()
   })

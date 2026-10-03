@@ -223,13 +223,32 @@ export const challengeSchema = z.union([
   }),
 ])
 
-export const leaderboardEntrySchema = z.object({
-  id: idSchema,
-  name: z.string().min(1),
-  weeklyXp: z.number().int().nonnegative(),
-  isCurrentLearner: z.boolean().default(false),
-  previousRank: z.number().int().positive().optional(),
-})
+export const leaderboardEntrySchema = z
+  .strictObject({
+    id: idSchema,
+    name: z.string().min(1),
+    weeklyXp: z.number().int().nonnegative(),
+    monthlyXp: z.number().int().nonnegative().optional(),
+    totalXp: z.number().int().nonnegative().optional(),
+    isCurrentLearner: z.boolean().default(false),
+    previousRank: z.number().int().positive().optional(),
+  })
+  .superRefine((entry, context) => {
+    if (entry.monthlyXp !== undefined && entry.monthlyXp < entry.weeklyXp) {
+      context.addIssue({
+        code: 'custom',
+        path: ['monthlyXp'],
+        message: 'Monthly XP must be at least weekly XP.',
+      })
+    }
+    if (entry.totalXp !== undefined && entry.totalXp < (entry.monthlyXp ?? entry.weeklyXp)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['totalXp'],
+        message: 'Total XP must be at least monthly XP.',
+      })
+    }
+  })
 
 export const appConfigSchema = z.object({
   schemaVersion: z.literal('0.1'),
@@ -577,9 +596,9 @@ export const appConfigSchema = z.object({
   pathways: z.array(pathwaySchema).min(1),
   badges: z.array(badgeSchema),
   challenges: z.array(challengeSchema),
-  leaderboard: z.object({
+  leaderboard: z.strictObject({
     scope: z.string().min(1),
-    period: z.literal('weekly'),
+    period: z.enum(['weekly', 'monthly', 'all_time']).default('weekly'),
     entries: z.array(leaderboardEntrySchema).min(1),
   }),
 })

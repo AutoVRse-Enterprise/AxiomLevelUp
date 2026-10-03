@@ -55,6 +55,47 @@ function renderResults(reviewedClueIds: string[]) {
 }
 
 describe('case results', () => {
+  it('shows compact truthful completion outcomes without inventing unavailable history', () => {
+    const view = renderResults([])
+    expect(screen.getByLabelText('3 of 3 stars')).toBeVisible()
+    expect(screen.getByText('XP unavailable')).toBeVisible()
+    expect(screen.getByText('Mastery unavailable')).toBeVisible()
+    expect(screen.getByText('Badge outcome unavailable')).toBeVisible()
+
+    view.rerender(
+      <ContentContext.Provider value={registry}>
+        <CaseResults
+          activityResult={{
+            activityKind: 'case',
+            activityId: caseDoc.id,
+            xpEarned: 140,
+            stars: 0,
+            masteryDelta: { imaging: 3 },
+            rankBefore: 8,
+            rankAfter: 7,
+            badgesUnlocked: ['first-case-solved'],
+            levelFrom: 2,
+            levelTo: 2,
+            streak: 4,
+            revision: false,
+          }}
+          caseDoc={caseDoc}
+          caseLab={registry.appConfig.caseLab!}
+          result={{ ...result([]), actualAwardedXp: 140 }}
+          clues={caseDoc.clues}
+          clueReview={clueReview}
+          starThresholds={{ one: 0, two: 75, three: 90 }}
+          onCompare={vi.fn()}
+          onContinue={vi.fn()}
+          onReplay={vi.fn()}
+        />
+      </ContentContext.Provider>,
+    )
+    expect(screen.getByText('140 XP awarded')).toBeVisible()
+    expect(screen.getByText('+3 mastery')).toBeVisible()
+    expect(screen.getByText('Badge: First Case Solved')).toBeVisible()
+  })
+
   it('shows key-evidence status from reviewed clues rather than opened clues', () => {
     const view = renderResults([])
     expect(screen.getByText('Basic')).toBeVisible()

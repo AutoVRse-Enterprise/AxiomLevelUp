@@ -39,10 +39,10 @@ two whole-product demo gaps.
 
 ## Whole-product finding map
 
-| ID  | Severity | Finding                                                                                     | Evidence                                     | Owner   |
-| --- | -------- | ------------------------------------------------------------------------------------------- | -------------------------------------------- | ------- |
-| W01 | P2       | Leaderboard Monthly and All time controls are disabled placeholder actions                  | `src/routes/leaderboard/LeaderboardPage.tsx` | P12-T08 |
-| W02 | P2       | Weekly challenge cards display progress but offer no path to continue the relevant activity | `src/routes/challenge/ChallengePage.tsx`     | P12-T08 |
+| ID  | Severity | Finding                                                                                     | Status   | Resolution evidence                                                                                                                                                                 |
+| --- | -------- | ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W01 | P2       | Leaderboard Monthly and All time controls are disabled placeholder actions                  | Resolved | Period-aware ranking in `src/state/selectors/viewModels.ts`, keyboard tabs in `src/routes/leaderboard/LeaderboardPage.tsx` and route/UI coverage in `src/routes/surfaces.test.tsx`. |
+| W02 | P2       | Weekly challenge cards display progress but offer no path to continue the relevant activity | Resolved | Pure eligibility resolver in `src/engines/learning/weeklyChallengeDestination.ts`, linked cards in `src/routes/challenge/ChallengePage.tsx` and focused resolver tests.             |
 
 No other placeholder, TODO, FIXME, lorem or unimplemented learner copy was found across Home,
 Learn, Pathway, Course, Lesson, Challenge, Leaderboard and Profile. Route-level loading, empty and

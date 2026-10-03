@@ -34,7 +34,9 @@ const courses = [
   courseSchema.parse(dataInterpretationData),
   courseSchema.parse(safetyAssessmentData),
 ]
-const lessonById = new Map(courses.flatMap((item) => item.lessons.map((lesson) => [lesson.id, lesson])))
+const lessonById = new Map(
+  courses.flatMap((item) => item.lessons.map((lesson) => [lesson.id, lesson])),
+)
 const courseById = new Map(courses.map((item) => [item.id, item]))
 
 describe('derived learner selectors', () => {
@@ -45,6 +47,39 @@ describe('derived learner selectors', () => {
 
   it('derives the configured learner rank', () => {
     expect(selectLeaderboardRank(learner, appConfig.leaderboard.entries)).toBe(8)
+  })
+
+  it('ranks each leaderboard period and derives the current learner totals from live state', () => {
+    const monthly = selectLeaderboardView(learner, appConfig.leaderboard.entries, 15, 'monthly')
+    const allTime = selectLeaderboardView(learner, appConfig.leaderboard.entries, 15, 'all_time')
+    const updated = {
+      ...learner,
+      xp: { total: learner.xp.total + 600, weekly: learner.xp.weekly + 600 },
+    }
+
+    expect(monthly.rank).toBe(9)
+    expect(monthly.rows.find(({ isCurrentLearner }) => isCurrentLearner)?.periodXp).toBe(3180)
+    expect(allTime.rank).toBe(13)
+    expect(allTime.rows.find(({ isCurrentLearner }) => isCurrentLearner)?.periodXp).toBe(4820)
+    expect(
+      selectLeaderboardView(updated, appConfig.leaderboard.entries, 15, 'monthly').rows.find(
+        ({ isCurrentLearner }) => isCurrentLearner,
+      )?.periodXp,
+    ).toBe(3780)
+    expect(
+      selectLeaderboardView(updated, appConfig.leaderboard.entries, 15, 'all_time').rows.find(
+        ({ isCurrentLearner }) => isCurrentLearner,
+      )?.periodXp,
+    ).toBe(5420)
+
+    const legacyEntries = appConfig.leaderboard.entries.map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      weeklyXp: entry.weeklyXp,
+      isCurrentLearner: entry.isCurrentLearner,
+      ...(entry.previousRank === undefined ? {} : { previousRank: entry.previousRank }),
+    }))
+    expect(selectLeaderboardView(learner, legacyEntries, 15, 'monthly').rank).toBe(8)
   })
 
   it('derives course completion from lesson progress', () => {

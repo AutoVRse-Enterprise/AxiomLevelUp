@@ -3084,8 +3084,13 @@
           "minLength": 1
         },
         "period": {
+          "default": "weekly",
           "type": "string",
-          "const": "weekly"
+          "enum": [
+            "weekly",
+            "monthly",
+            "all_time"
+          ]
         },
         "entries": {
           "minItems": 1,
@@ -3103,6 +3108,16 @@
                 "minLength": 1
               },
               "weeklyXp": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "monthlyXp": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "totalXp": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 9007199254740991

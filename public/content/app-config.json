@@ -358,21 +358,21 @@
     "scope": "R&D Learning Cohort",
     "period": "weekly",
     "entries": [
-      { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "isCurrentLearner": false, "previousRank": 1 },
-      { "id": "claire-m", "name": "Claire M.", "weeklyXp": 1360, "isCurrentLearner": false, "previousRank": 3 },
-      { "id": "vikram-s", "name": "Vikram S.", "weeklyXp": 1310, "isCurrentLearner": false, "previousRank": 2 },
-      { "id": "lucas-b", "name": "Lucas B.", "weeklyXp": 1195, "isCurrentLearner": false, "previousRank": 6 },
-      { "id": "fatima-k", "name": "Fatima K.", "weeklyXp": 1110, "isCurrentLearner": false, "previousRank": 4 },
-      { "id": "jonas-l", "name": "Jonas L.", "weeklyXp": 1035, "isCurrentLearner": false, "previousRank": 5 },
-      { "id": "elena-p", "name": "Elena P.", "weeklyXp": 980, "isCurrentLearner": false, "previousRank": 7 },
-      { "id": "maya-chen", "name": "Maya Chen", "weeklyXp": 940, "isCurrentLearner": true, "previousRank": 11 },
-      { "id": "marcus-t", "name": "Marcus T.", "weeklyXp": 910, "isCurrentLearner": false, "previousRank": 8 },
-      { "id": "sofia-g", "name": "Sofia G.", "weeklyXp": 875, "isCurrentLearner": false, "previousRank": 10 },
-      { "id": "nora-a", "name": "Nora A.", "weeklyXp": 830, "isCurrentLearner": false, "previousRank": 9 },
-      { "id": "daniel-w", "name": "Daniel W.", "weeklyXp": 765, "isCurrentLearner": false, "previousRank": 12 },
-      { "id": "yuki-n", "name": "Yuki N.", "weeklyXp": 720, "isCurrentLearner": false, "previousRank": 13 },
-      { "id": "amadou-c", "name": "Amadou C.", "weeklyXp": 680, "isCurrentLearner": false, "previousRank": 15 },
-      { "id": "lena-v", "name": "Lena V.", "weeklyXp": 645, "isCurrentLearner": false, "previousRank": 14 }
+      { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "monthlyXp": 5220, "totalXp": 12480, "isCurrentLearner": false, "previousRank": 1 },
+      { "id": "claire-m", "name": "Claire M.", "weeklyXp": 1360, "monthlyXp": 4680, "totalXp": 10360, "isCurrentLearner": false, "previousRank": 3 },
+      { "id": "vikram-s", "name": "Vikram S.", "weeklyXp": 1310, "monthlyXp": 4510, "totalXp": 11310, "isCurrentLearner": false, "previousRank": 2 },
+      { "id": "lucas-b", "name": "Lucas B.", "weeklyXp": 1195, "monthlyXp": 4100, "totalXp": 9195, "isCurrentLearner": false, "previousRank": 6 },
+      { "id": "fatima-k", "name": "Fatima K.", "weeklyXp": 1110, "monthlyXp": 3920, "totalXp": 10110, "isCurrentLearner": false, "previousRank": 4 },
+      { "id": "jonas-l", "name": "Jonas L.", "weeklyXp": 1035, "monthlyXp": 3500, "totalXp": 8035, "isCurrentLearner": false, "previousRank": 5 },
+      { "id": "elena-p", "name": "Elena P.", "weeklyXp": 980, "monthlyXp": 3360, "totalXp": 7980, "isCurrentLearner": false, "previousRank": 7 },
+      { "id": "maya-chen", "name": "Maya Chen", "weeklyXp": 940, "monthlyXp": 3180, "totalXp": 4820, "isCurrentLearner": true, "previousRank": 11 },
+      { "id": "marcus-t", "name": "Marcus T.", "weeklyXp": 910, "monthlyXp": 3290, "totalXp": 6910, "isCurrentLearner": false, "previousRank": 8 },
+      { "id": "sofia-g", "name": "Sofia G.", "weeklyXp": 875, "monthlyXp": 2980, "totalXp": 5875, "isCurrentLearner": false, "previousRank": 10 },
+      { "id": "nora-a", "name": "Nora A.", "weeklyXp": 830, "monthlyXp": 3010, "totalXp": 7830, "isCurrentLearner": false, "previousRank": 9 },
+      { "id": "daniel-w", "name": "Daniel W.", "weeklyXp": 765, "monthlyXp": 2765, "totalXp": 6765, "isCurrentLearner": false, "previousRank": 12 },
+      { "id": "yuki-n", "name": "Yuki N.", "weeklyXp": 720, "monthlyXp": 2540, "totalXp": 4720, "isCurrentLearner": false, "previousRank": 13 },
+      { "id": "amadou-c", "name": "Amadou C.", "weeklyXp": 680, "monthlyXp": 2480, "totalXp": 5680, "isCurrentLearner": false, "previousRank": 15 },
+      { "id": "lena-v", "name": "Lena V.", "weeklyXp": 645, "monthlyXp": 2310, "totalXp": 4310, "isCurrentLearner": false, "previousRank": 14 }
     ]
   }
 }

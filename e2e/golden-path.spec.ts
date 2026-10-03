@@ -121,7 +121,7 @@ async function completeFoundationExploration(page: Page) {
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
   await page.getByText('Inspect findings').click()
-  await page.getByRole('button', { name: 'Configured upper-lobe region' }).click()
+  await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
 }
 

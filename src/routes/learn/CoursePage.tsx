@@ -38,7 +38,7 @@ export function CoursePage() {
             Browse courses
           </Link>
         }
-        message="This course is not configured or may have moved."
+        message="This course is unavailable or may have moved."
         title="Course not found"
       />
     )
@@ -66,7 +66,9 @@ export function CoursePage() {
     <div className="space-y-8">
       <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card">
         <div className="grid lg:grid-cols-[minmax(18rem,0.8fr)_1.2fr]">
-          {imageUrl ? <img alt="" className="h-full min-h-64 w-full object-cover" src={imageUrl} /> : null}
+          {imageUrl ? (
+            <img alt="" className="h-full min-h-64 w-full object-cover" src={imageUrl} />
+          ) : null}
           <div className="p-6 sm:p-8">
             <div className="flex flex-wrap gap-2">
               <Chip tone="brand">{course.category}</Chip>
@@ -88,7 +90,9 @@ export function CoursePage() {
                 <span>{course.authors.join(', ')}</span>
               </div>
             </dl>
-            <p className="mt-4 text-caption text-neutral-600">Course version {course.courseVersion}</p>
+            <p className="mt-4 text-caption text-neutral-600">
+              Course version {course.courseVersion}
+            </p>
             <ProgressBar className="mt-5" label="Course progress" value={summary.completion} />
             {primaryLesson && summary.status !== 'locked' ? (
               <Link

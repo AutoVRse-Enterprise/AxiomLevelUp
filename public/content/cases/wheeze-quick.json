@@ -307,7 +307,7 @@
     },
     "path": [
       {
-        "label": "Inspect the configured airway",
+        "label": "Inspect the illustrated airway",
         "detail": "Confirm the marked lobe and diffuse wall finding before reasoning."
       },
       {
@@ -333,7 +333,7 @@
       {
         "ref": { "kind": "finding", "id": "quick-diffuse-wall-change" },
         "weight": "supporting",
-        "note": "The configured finding supports airway orientation but is not diagnostic."
+        "note": "The illustrated finding supports airway orientation but is not diagnostic."
       },
       {
         "ref": { "kind": "clue", "id": "quick-wheeze" },
@@ -341,7 +341,7 @@
         "note": "The expiratory sound is compatible with airway narrowing but is non-specific."
       }
     ],
-    "diagnosisRationale": "The short authored pattern combines recurrent trigger-linked episodes with improved peak flow after reliever, making asthma the best-supported hypothesis. The sound and configured wall finding support airway involvement without proving the diagnosis.",
+    "diagnosisRationale": "The short authored pattern combines recurrent trigger-linked episodes with improved peak flow after reliever, making asthma the best-supported hypothesis. The sound and illustrated wall finding support airway involvement without proving the diagnosis.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0 }
   },
   "debrief": {
@@ -350,7 +350,7 @@
       {
         "ref": { "kind": "finding", "id": "quick-diffuse-wall-change" },
         "stepIds": ["quick-explore", "quick-structure"],
-        "why": "The required inspection connects the configured spatial finding to the airway-structure question."
+        "why": "The required inspection connects the illustrated spatial finding to the airway-structure question."
       },
       {
         "ref": { "kind": "clue", "id": "quick-history" },

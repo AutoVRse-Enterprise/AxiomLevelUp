@@ -146,6 +146,30 @@ describe('content schemas', () => {
     expect(courseSchema.parse(course).visibility).toBe('learner')
   })
 
+  it('accepts legacy leaderboard rows and validates new period scores strictly', () => {
+    const bundle = makeValidContentBundle()
+    const config = structuredClone(bundle.appConfig) as {
+      leaderboard: {
+        entries: Array<Record<string, unknown>>
+      }
+    }
+    delete config.leaderboard.entries[0]!.monthlyXp
+    delete config.leaderboard.entries[0]!.totalXp
+
+    const parsed = appConfigSchema.parse(config)
+    expect(parsed.leaderboard.entries[0]?.weeklyXp).toBe(1480)
+    expect(parsed.leaderboard.entries[0]?.monthlyXp).toBeUndefined()
+    expect(parsed.leaderboard.entries[0]?.totalXp).toBeUndefined()
+
+    const invalid = structuredClone(config)
+    invalid.leaderboard.entries[0]!.monthlyXp = 1200
+    expect(appConfigSchema.safeParse(invalid).success).toBe(false)
+
+    const unknownKey = structuredClone(config)
+    unknownKey.leaderboard.entries[0]!.internalScore = 10
+    expect(appConfigSchema.safeParse(unknownKey).success).toBe(false)
+  })
+
   it('loads the Autovrse LevelUp product name from configuration', () => {
     const bundle = makeValidContentBundle()
 

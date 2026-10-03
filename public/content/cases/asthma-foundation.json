@@ -40,7 +40,7 @@
     },
     {
       "id": "foundation-upper-region",
-      "label": "Configured upper-lobe region",
+      "label": "Illustrative upper-lobe region",
       "description": "A translucent region identifies the illustrative area used for spatial orientation.",
       "kind": "region",
       "anchor": {
@@ -208,7 +208,7 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
-      "intro": "Inspect the marked lobe and the configured airway findings before localising the relevant structure.",
+      "intro": "Inspect the marked lobe and the illustrated airway findings before localising the relevant structure.",
       "clueIds": ["foundation-anatomy"],
       "steps": [
         {
@@ -218,7 +218,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Inspect the marked right upper lobe, the configured region and the diffuse airway-wall change.",
+            "prompt": "Inspect the marked right upper lobe, the illustrated region and the diffuse airway-wall change.",
             "startView": { "mode": "marker", "structureId": "right-upper-lobe" },
             "navigation": "both",
             "findingIds": ["foundation-diffuse-wall-change", "foundation-upper-region"],
@@ -424,7 +424,7 @@
       "foundation-best-diagnosis": "asthma"
     },
     "rationales": {
-      "foundation-explore": "Inspecting the configured wall change and marked lobe establishes the spatial context without scoring it.",
+      "foundation-explore": "Inspecting the illustrated wall change and marked lobe establishes the spatial context without scoring it.",
       "foundation-localise": "The lobe and procedural segment lead to a bronchiole, the relevant conducting-airway choice.",
       "foundation-key-observations": "Variability and measured reversibility are stronger than a single sound or biomarker.",
       "foundation-sort-evidence": "Functional change and inflammatory context should be identified separately before synthesis.",
@@ -441,7 +441,7 @@
     "path": [
       {
         "label": "Inspect before localising",
-        "detail": "Use the marked lobe and configured wall finding to establish a spatial frame."
+        "detail": "Use the marked lobe and illustrated wall finding to establish a spatial frame."
       },
       {
         "label": "Prioritise pattern and function",
@@ -478,7 +478,7 @@
         "note": "The markers add inflammatory context without determining the diagnosis."
       }
     ],
-    "diagnosisRationale": "The authored combination of recurrent trigger-linked symptoms and improved FEV1 after bronchodilator is most coherent with asthma. The sound, biomarkers and configured wall change support an airway process but do not establish the diagnosis independently.",
+    "diagnosisRationale": "The authored combination of recurrent trigger-linked symptoms and improved FEV1 after bronchodilator is most coherent with asthma. The sound, biomarkers and illustrated wall change support an airway process but do not establish the diagnosis independently.",
     "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0 }
   },
   "debrief": {
@@ -497,7 +497,7 @@
       {
         "ref": { "kind": "finding", "id": "foundation-diffuse-wall-change" },
         "stepIds": ["foundation-explore", "foundation-localise"],
-        "why": "The configured finding connects exterior orientation to the conducting-airway localisation."
+        "why": "The illustrated finding connects exterior orientation to the conducting-airway localisation."
       },
       {
         "ref": { "kind": "clue", "id": "foundation-wheeze" },

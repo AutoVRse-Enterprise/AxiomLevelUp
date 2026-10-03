@@ -37,7 +37,7 @@ export function ChallengePlayerPage() {
     return (
       <EmptyState
         title="Challenge not found"
-        message="This challenge is not configured."
+        message="This challenge is unavailable or may have moved."
         action={<Link to="/challenge">Return to challenges</Link>}
       />
     )
@@ -49,7 +49,7 @@ export function ChallengePlayerPage() {
       return (
         <EmptyState
           title="Challenge unavailable"
-          message="The case for this challenge is not configured."
+          message="The case for this challenge is currently unavailable."
           action={<Link to="/challenge">Return to challenges</Link>}
         />
       )
@@ -78,7 +78,18 @@ export function ChallengePlayerPage() {
     return (
       <EmptyState
         title="Challenge unavailable"
-        message="This challenge is not playable yet."
+        message="This challenge is completed through its linked learning goals."
+        action={<Link to="/challenge">Return to challenges</Link>}
+      />
+    )
+  }
+
+  if (challenge.type === 'weekly' && challenge.items.length === 0) {
+    return (
+      <EmptyState
+        icon={<Puzzle aria-hidden="true" size={30} />}
+        title="Weekly goal"
+        message="Continue this goal through its linked learning activities."
         action={<Link to="/challenge">Return to challenges</Link>}
       />
     )
@@ -89,7 +100,7 @@ export function ChallengePlayerPage() {
       <EmptyState
         icon={<Puzzle aria-hidden="true" size={30} />}
         title="Challenge unavailable"
-        message={plan.unavailableReason ?? 'This challenge is not playable yet.'}
+        message={plan.unavailableReason ?? 'This challenge is currently unavailable.'}
         action={<Link to="/challenge">Return to challenges</Link>}
       />
     )

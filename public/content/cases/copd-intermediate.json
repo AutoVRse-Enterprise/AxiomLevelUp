@@ -28,7 +28,7 @@
     {
       "id": "intermediate-upper-wall-change",
       "label": "Upper-airway wall change",
-      "description": "Illustrative wall thickening is configured along an upper-lobe airway branch.",
+      "description": "Illustrative wall thickening follows an upper-lobe airway branch.",
       "kind": "wall_thickening",
       "anchor": {
         "type": "waypoint",
@@ -41,7 +41,7 @@
     },
     {
       "id": "intermediate-upper-region",
-      "label": "Configured upper-zone region",
+      "label": "Illustrative upper-zone region",
       "description": "A translucent upper-zone region marks the illustrative structural focus.",
       "kind": "region",
       "anchor": {
@@ -235,7 +235,7 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
-      "intro": "Use the opening structural clue, then inspect and localise the configured upper-zone change.",
+      "intro": "Use the opening structural clue, then inspect and localise the illustrated upper-zone change.",
       "clueIds": ["intermediate-emphysema", "intermediate-anatomy"],
       "steps": [
         {
@@ -245,7 +245,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Inspect the configured upper-zone region and the nearby illustrative airway-wall change.",
+            "prompt": "Inspect the illustrated upper-zone region and the nearby airway-wall change.",
             "startView": { "mode": "overview" },
             "navigation": "both",
             "findingIds": ["intermediate-upper-wall-change", "intermediate-upper-region"],
@@ -292,7 +292,7 @@
                 "weight": 1
               }
             ],
-            "explanation": "The configured upper-zone focus is paired with an alveolar structural reference."
+            "explanation": "The illustrated upper-zone focus is paired with an alveolar structural reference."
           },
           "assets": [],
           "completion": { "mode": "answer" },
@@ -471,7 +471,7 @@
       "intermediate-best-diagnosis": "copd"
     },
     "rationales": {
-      "intermediate-explore": "The opening structural clue is carried into an unscored inspection of the configured upper-zone findings.",
+      "intermediate-explore": "The opening structural clue is carried into an unscored inspection of the illustrated upper-zone findings.",
       "intermediate-localise": "The model lobe and procedural apical segment establish location before the alveolar-unit choice.",
       "intermediate-key-observations": "Exposure and persistent obstruction are stronger than non-specific wheeze.",
       "intermediate-sort-evidence": "Structural and functional evidence should be distinguished before their convergence is assessed.",
@@ -488,7 +488,7 @@
     "path": [
       {
         "label": "Start with structural evidence",
-        "detail": "Inspect the opening image, then connect it to the configured upper-zone region."
+        "detail": "Inspect the opening image, then connect it to the illustrated upper-zone region."
       },
       {
         "label": "Separate structure from function",
@@ -522,7 +522,7 @@
       {
         "ref": { "kind": "finding", "id": "intermediate-upper-region" },
         "weight": "context",
-        "note": "The configured region provides spatial context and is not patient-derived imaging."
+        "note": "The illustrated region provides spatial context and is not patient-derived imaging."
       },
       {
         "ref": { "kind": "clue", "id": "intermediate-cardiac-context" },

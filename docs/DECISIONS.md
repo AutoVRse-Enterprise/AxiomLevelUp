@@ -1599,3 +1599,27 @@ benchmark displays cannot claim unsupported scores. Authors must provide complet
 for untimed-tier benchmark tasks because those records make scoring inputs explicit and future
 changes auditable. The configured findings and clinical teaching remain illustrative drafts;
 technical validation does not confer clinical, anatomy or legal approval.
+
+## ADR-091: Period rankings and challenge continuation are derived
+
+**Status:** Accepted
+
+**Context:** The leaderboard exposed disabled monthly and all-time controls, and weekly challenge
+cards reported progress without a continuation path. Historical cohort data also needs to remain
+compatible with older configuration that supplied only weekly XP.
+
+**Decision:** Add optional validated monthly and lifetime XP snapshots to each strict leaderboard
+row. Missing values fall back to the nearest available period, while the current learner uses live
+weekly XP, live total XP and a monthly value derived from its configured snapshot plus subsequent
+XP. Rank and visible-window selection are recalculated for the selected period; movement is shown
+only for weekly data because that is the only period with authored previous-rank history.
+
+Resolve each weekly challenge action through a pure criterion-to-activity function. It selects the
+next unlocked, incomplete matching lesson or case and never routes to a locked activity. Criteria
+without a specific eligible target use an honest Learn or Challenge collection destination.
+Completion screens share compact stars, awarded-XP, mastery and badge outcomes; unavailable saved
+case facts are labelled unavailable rather than inferred.
+
+**Consequences:** All leaderboard tabs and weekly cards are actionable without hard-coded content
+IDs. Older leaderboard configuration remains readable, new period data is strictly bounded and
+ordered, and completion presentation does not manufacture rewards that were not persisted.

@@ -2692,3 +2692,32 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   `docs/reference docs/` was not touched.
 - **Follow-ups:** Start P12-T08 whole-app W-series demo closure. Clinical/client sign-off and Phase
   9 physical-device gates remain external blockers.
+
+### [2026-10-03 23:49] P12-T08 - Close whole-app demo gaps
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added functional keyboard-accessible weekly, monthly and all-time leaderboard views
+  with strict optional historical snapshots, migration-safe fallbacks and live current-learner
+  values. Added a pure weekly-criterion continuation resolver that skips completed and locked
+  activities. Unified truthful XP, star, mastery and badge completion metrics across lesson,
+  challenge and case results. Removed learner-facing placeholder and implementation copy, added a
+  manifest-derived desktop route guard for primitive names/content IDs, resolved W01/W02 and
+  recorded ADR-091.
+- **Files changed:** App configuration and generated schema; leaderboard selectors/UI/tests;
+  weekly challenge resolver/UI/tests; shared completion metrics and result tests; learner-facing
+  route/content copy; Playwright terminology coverage; architecture/content contracts, Phase 12
+  baseline/checklist, decisions, handoff and activity log.
+- **Commands run:** Targeted Prettier; focused Vitest (7 files / 95 tests); `npm run typecheck`;
+  `npm run lint`; `npm run validate:content`; `npm run schema:export`; focused desktop Playwright
+  terminology audit; full `npm run check`; serial `npx playwright test --workers=1`; IDE
+  diagnostics; `git diff --check`.
+- **Result/verification:** P12-T08 is complete. The full quality gate passes 65 Vitest files / 447
+  tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all bundle budgets. The final browser suite passes 19 tests across desktop
+  and touch-phone Chromium, with the intentionally desktop-only route audit skipped once on touch.
+  An initial browser run exposed stale wording in a golden-path locator and an ambiguous loading
+  selector; both tests were corrected. A later serial run had the documented transient touch
+  projected-lobe miss, and the immediate complete rerun passed. No commit was created, and
+  `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T09 general offline Case Lab packages. Clinical/client sign-off and
+  Phase 9 physical-device gates remain external blockers.
