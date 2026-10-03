@@ -3,9 +3,15 @@ import path from 'node:path'
 import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
 
 import type { AnatomyTestSnapshot } from '../src/anatomy3d/viewer/controller'
+import { capturePhase12Evidence } from './helpers/evidence'
 
 const goldenCasePath = '/learn/cases/exacerbation-advanced'
 const evidenceDirectory = path.resolve('docs/qa/evidence/phase-11')
+const rehearsalPauseMs = Number(process.env.P12_REHEARSAL_PACE_MS ?? 0)
+
+async function presenterPause(page: Page) {
+  if (rehearsalPauseMs > 0) await page.waitForTimeout(rehearsalPauseMs)
+}
 
 async function applyDeterministicSeed(page: Page) {
   await page.goto('/dev')
@@ -266,8 +272,10 @@ test('P11-T06: projects and activates the patient-specific finding', async ({ pa
 
 test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo) => {
   test.slow()
+  test.setTimeout(rehearsalPauseMs > 0 ? 900_000 : 90_000)
   const startedAt = Date.now()
   await startCase(page)
+  await presenterPause(page)
 
   await page.getByRole('button', { name: 'Carina' }).click()
   await page.getByRole('button', { name: 'Right main airway' }).click()
@@ -280,6 +288,8 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
     page.getByRole('status').filter({ hasText: 'Dominant posterior basal mucus plug' }),
   ).toBeVisible()
   await captureEvidence(page, testInfo, 'endoscopic-finding')
+  await capturePhase12Evidence(page, testInfo, 'case-advanced-state')
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await page.getByText('Choose from list').click()
@@ -290,6 +300,7 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   await page.getByRole('radio', { name: 'Segmental bronchus' }).click()
   await page.getByRole('button', { name: 'Check locations' }).click()
   await captureEvidence(page, testInfo, 'localisation')
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await page.getByRole('button', { name: 'Begin stage' }).click()
@@ -302,6 +313,7 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
     await page.getByRole('checkbox', { name: label }).click()
   }
   await page.getByRole('button', { name: 'Check answer' }).click()
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await page.getByRole('button', { name: 'Begin stage' }).click()
@@ -311,6 +323,7 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
     })
     .click()
   await page.getByRole('button', { name: 'Check answer' }).click()
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await page.getByRole('button', { name: 'Begin stage' }).click()
@@ -320,6 +333,7 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
     })
     .click()
   await page.getByRole('button', { name: 'Check answer' }).click()
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
   await page
     .getByRole('radio', {
@@ -327,19 +341,23 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
     })
     .click()
   await page.getByRole('button', { name: 'Check answer' }).click()
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
   await expect(page.getByText('Case complete')).toBeVisible()
   await dismissCelebrations(page)
   await expect(page.getByRole('button', { name: 'Compare' })).toBeVisible()
   await captureEvidence(page, testInfo, 'results')
+  await capturePhase12Evidence(page, testInfo, 'case-advanced-results')
+  await presenterPause(page)
   await page.getByRole('button', { name: 'Compare' }).click()
   await expect(
     page.getByRole('heading', { name: 'You versus Authored respiratory-educator benchmark' }),
   ).toBeVisible()
   await expect(page.getByRole('list', { name: 'Recent case attempts' })).toBeVisible()
   await captureEvidence(page, testInfo, 'compare')
+  await capturePhase12Evidence(page, testInfo, 'case-advanced-compare')
   console.log(
-    `[phase-11-qa] ${testInfo.project.name} automated golden path: ${Date.now() - startedAt} ms`,
+    `[phase-12-case] ${testInfo.project.name} ${rehearsalPauseMs > 0 ? 'scripted rehearsal' : 'automated'} golden path: ${Date.now() - startedAt} ms`,
   )
 })

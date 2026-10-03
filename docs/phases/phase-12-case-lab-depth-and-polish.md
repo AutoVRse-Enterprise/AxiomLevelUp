@@ -1,6 +1,6 @@
 # Phase 12: Case Lab depth and polish
 
-**Status:** Active — P12-T09 complete
+**Status:** Active — P12-T11 complete
 
 ## Goal
 
@@ -110,7 +110,7 @@ physical-device approval.
       versioned model.
 - [x] P12-T10 — Complete catalogue-wide accessibility, text-scaling, performance and resilience
       evidence.
-- [ ] P12-T11 — Add breadth and product-tour browser coverage, durable screenshots and one unified
+- [x] P12-T11 — Add breadth and product-tour browser coverage, durable screenshots and one unified
       presenter runbook.
 - [ ] P12-T12 — Publish the browser QA and audience-specific readiness verdict; update architecture,
       schemas, decisions, roadmap and handoff.

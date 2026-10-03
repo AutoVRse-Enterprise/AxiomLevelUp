@@ -13,7 +13,7 @@ interface Choice {
   score?: number
 }
 
-interface CaseStep {
+export interface CaseStep {
   id: string
   type: string
   content: {
@@ -171,7 +171,7 @@ async function completeScenario(page: Page, step: CaseStep, checkState: CheckSta
   throw new Error(`Scenario ${step.id} did not reach an outcome.`)
 }
 
-async function completeStep(
+export async function completeCaseStep(
   page: Page,
   caseDoc: CaseDocumentFixture,
   step: CaseStep,
@@ -228,6 +228,18 @@ export async function resetDemo(page: Page) {
   await expect(page.getByText('Advanced seed applied.')).toBeVisible()
 }
 
+export async function dismissCelebrations(page: Page) {
+  for (let index = 0; index < 5; index += 1) {
+    const dialog = page.getByRole('dialog')
+    const appeared = await dialog
+      .waitFor({ state: 'visible', timeout: index === 0 ? 2_000 : 500 })
+      .then(() => true)
+      .catch(() => false)
+    if (!appeared) return
+    await dialog.getByRole('button', { name: 'Continue' }).click()
+  }
+}
+
 export async function runCaseThroughEveryState(
   page: Page,
   caseDoc: CaseDocumentFixture,
@@ -249,7 +261,7 @@ export async function runCaseThroughEveryState(
     }
     for (const step of stage.steps) {
       await checkState(`${caseDoc.id}:step-${step.id}`)
-      await completeStep(page, caseDoc, step, checkState)
+      await completeCaseStep(page, caseDoc, step, checkState)
       await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeVisible()
       await checkState(`${caseDoc.id}:step-${step.id}-complete`)
       await page.getByRole('button', { name: 'Continue', exact: true }).click()
@@ -257,12 +269,7 @@ export async function runCaseThroughEveryState(
   }
 
   await expect(page.getByText('Case complete')).toBeVisible()
-  for (let index = 0; index < 5; index += 1) {
-    const celebration = page.getByRole('dialog')
-    const continueButton = celebration.getByRole('button', { name: 'Continue' })
-    if (!(await continueButton.isVisible())) break
-    await continueButton.click()
-  }
+  await dismissCelebrations(page)
   await checkState(`${caseDoc.id}:results`)
   await page.getByRole('button', { name: 'Compare' }).click()
   await expect(page.getByText('Attempt comparison')).toBeVisible()

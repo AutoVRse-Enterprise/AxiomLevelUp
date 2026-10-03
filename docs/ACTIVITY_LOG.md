@@ -2805,3 +2805,33 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   production app, and passes all bundle budgets.
 - **Follow-ups:** Continue P12-T11. Physical-device and clinical/client approval gates remain
   external; no Lighthouse profile or threshold was changed.
+
+### [2026-10-04 03:50] P12-T11 - Rehearse complete product demo
+
+- **Agent/session:** Cursor implementation continuation
+- **Action:** Added explicit production-preview breadth completion for the foundation, intermediate
+  and quick cases while retaining the advanced golden path, with tier-specific assertions and
+  separate Phase 12 state/results/comparison captures on desktop and touch-phone projects. Added
+  split PRD section 80 product-tour coverage for Home, pathway, lesson knowledge/visual/DICOM,
+  Imaging Lab slice/preset/region/calibrated measurement, completion rewards and badge, Daily
+  Challenge, all Leaderboard periods and Profile. Added optional 30-second presenter pauses to the
+  tour and golden path, rehearsed both viewports, wrote the unified superseding runbook and browser
+  QA draft, and restored tracked Phase 11 images after verification.
+- **Files changed:** `e2e/helpers/evidence.ts`, `e2e/helpers/case-driver.ts`,
+  `e2e/case-breadth.spec.ts`, `e2e/product-tour.spec.ts`, `e2e/golden-path.spec.ts`;
+  `docs/qa/evidence/phase-12/{desktop,375px}/` (42 PNGs);
+  `docs/qa/phase-12-demo-runbook.md`, `docs/qa/phase-12-browser-qa-draft.md`, the Phase 12
+  checklist, handoff and activity log.
+- **Commands run:** Focused desktop and touch-phone Playwright debugging; focused cross-project
+  breadth/tour run; 30-second-paced product and Case Lab rehearsals; targeted Prettier; full
+  `npm run check`; complete `npx playwright test --workers=1`; IDE diagnostics and
+  `git diff --check`.
+- **Result/verification:** P12-T11 is complete. Focused breadth/tour coverage passed 10/10 in
+  121.010 seconds. Scripted product rehearsal passed 4/4 in 541.245 seconds and measured 4:21.103
+  desktop / 4:19.406 phone; scripted Case Lab passed 2/2 in 549.369 seconds and measured 4:33.565
+  desktop / 4:18.624 phone. `npm run check` passed in 84.296 seconds with 66 files / 456 Vitest
+  tests, zero content warnings, production build and all budgets. The complete serial browser suite
+  passed 50 tests with two intentional project skips and zero failures in 424.094 seconds. No
+  commit was created, `docs/reference docs/` was not touched and Phase 11 evidence was restored.
+- **Follow-ups:** Finalize the browser QA and audience-specific readiness verdict in P12-T12.
+  Clinical/client approvals and Phase 9 physical-device gates remain external blockers.
