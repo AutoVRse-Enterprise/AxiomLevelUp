@@ -14,6 +14,7 @@ function config(): AppConfig {
       featuredCaseId: 'case-contract-fixture',
       caseIds: ['case-contract-fixture'],
       dailyQuickCaseId: 'case-contract-fixture',
+      organSystems: { generic: 'Generic' },
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
       clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
       tiers: {

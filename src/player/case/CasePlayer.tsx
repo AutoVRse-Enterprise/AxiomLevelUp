@@ -376,6 +376,7 @@ function CompletionFlow({
   return view === 'results' ? (
     <CaseResults
       caseDoc={caseDoc}
+      caseLab={caseLab}
       result={presentedResult}
       clues={caseDoc.clues}
       clueReview={caseLab.clueReview}
@@ -390,6 +391,7 @@ function CompletionFlow({
   ) : (
     <CaseCompare
       caseDoc={caseDoc}
+      caseLab={caseLab}
       result={presentedResult}
       history={attemptHistory}
       historyLimit={caseLab.historyLimit}

@@ -2,13 +2,20 @@ import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { useEffect } from 'react'
 
 import { Button, Card, Chip } from '@/components/ui'
-import type { CaseDocument } from '@/content/schema'
+import type { CaseDocument, CaseLabConfig } from '@/content/schema'
+import {
+  formatCaseOrganSystem,
+  formatCaseTier,
+  formatDuration,
+  formatScore,
+} from '@/engines/cases/formatters'
 import { caseResponsesEqual } from '@/engines/cases/responses'
 import type { CaseAttemptHistoryItem, CaseResultPresentation } from '@/player/case/types'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 
 interface CaseCompareProps {
   caseDoc: CaseDocument
+  caseLab: CaseLabConfig
   result: CaseResultPresentation
   history: readonly CaseAttemptHistoryItem[]
   historyLimit: number
@@ -22,13 +29,9 @@ function percentage(value: number) {
   return `${Math.round(value * 100)}%`
 }
 
-function formatDuration(seconds: number) {
-  const roundedSeconds = Math.max(0, Math.round(seconds))
-  return `${Math.floor(roundedSeconds / 60)}:${String(roundedSeconds % 60).padStart(2, '0')}`
-}
-
 export function CaseCompare({
   caseDoc,
+  caseLab,
   result,
   history,
   historyLimit,
@@ -125,6 +128,10 @@ export function CaseCompare({
       </Button>
       <p className="mt-5 text-small font-semibold text-brand-700">Attempt comparison</p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Chip>{formatCaseTier(caseLab, caseDoc.tier)}</Chip>
+        <Chip>{formatCaseOrganSystem(caseLab, caseDoc.organSystem)}</Chip>
+      </div>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
         <Card>
@@ -176,7 +183,7 @@ export function CaseCompare({
 
         <Card>
           <h2 className="text-heading font-bold text-neutral-950">Your history</h2>
-          <p className="mt-2 text-small text-neutral-600">Best score: {best}/100</p>
+          <p className="mt-2 text-small text-neutral-600">Best score: {formatScore(best)}</p>
           {recent.length ? (
             <ol className="mt-5 space-y-3" aria-label="Recent case attempts">
               {recent.map((attempt, index) => (
@@ -188,7 +195,9 @@ export function CaseCompare({
                       style={{ width: `${attempt.total}%` }}
                     />
                   </div>
-                  <span className="w-14 text-right font-semibold">{attempt.total}/100</span>
+                  <span className="w-14 text-right font-semibold">
+                    {formatScore(attempt.total)}
+                  </span>
                 </li>
               ))}
               <li className="flex items-center gap-3">
@@ -199,7 +208,9 @@ export function CaseCompare({
                     style={{ width: `${result.breakdown.total}%` }}
                   />
                 </div>
-                <span className="w-14 text-right font-semibold">{result.breakdown.total}/100</span>
+                <span className="w-14 text-right font-semibold">
+                  {formatScore(result.breakdown.total)}
+                </span>
               </li>
             </ol>
           ) : (

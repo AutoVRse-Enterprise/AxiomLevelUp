@@ -129,7 +129,8 @@ describe('application surfaces', () => {
     renderSurface(<LearnPage />, '/learn', '/learn', caseRegistry)
     expect(screen.getByRole('link', { name: `Open case: ${fixtureCase.title}` })).toBeVisible()
     expect(screen.getByText('Basic')).toBeVisible()
-    expect(screen.getByText('generic')).toBeVisible()
+    expect(screen.getByText('Generic')).toBeVisible()
+    expect(screen.getByText('Daily')).toBeVisible()
     expect(screen.getByText('4 min')).toBeVisible()
   })
 

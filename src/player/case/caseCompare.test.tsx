@@ -6,8 +6,10 @@ import fixtureCaseJson from '../../../public/content/fixtures/case.json'
 import { caseDocumentSchema } from '@/content/schema'
 import { CaseCompare } from '@/player/case/CaseCompare'
 import type { CaseResultPresentation } from '@/player/case/types'
+import { makeCaseRegistry } from '@/test/caseFixtures'
 
 const caseDoc = caseDocumentSchema.parse(fixtureCaseJson)
+const caseLab = makeCaseRegistry().appConfig.caseLab!
 const result: CaseResultPresentation = {
   caseId: caseDoc.id,
   attemptId: 'attempt-1',
@@ -44,6 +46,7 @@ describe('case comparison', () => {
     render(
       <CaseCompare
         caseDoc={caseDoc}
+        caseLab={caseLab}
         result={result}
         history={[]}
         historyLimit={10}

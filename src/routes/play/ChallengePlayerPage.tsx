@@ -1,5 +1,5 @@
 import { Puzzle, WifiOff } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
@@ -20,6 +20,7 @@ export function ChallengePlayerPage() {
   const challengeProgress = useLearnerStore((state) => state.challenges)
   const caseProgress = useLearnerStore((state) => state.caseProgress)
   const caseAttempts = useLearnerStore((state) => state.caseAttempts)
+  const [completedCaseAttemptId, setCompletedCaseAttemptId] = useState<string | null>(null)
   const challenge = appConfig.challenges.find(({ id }) => id === challengeId)
   const plan = useMemo(
     () =>
@@ -58,7 +59,9 @@ export function ChallengePlayerPage() {
     return (
       <CasePlayer
         anatomyMap={registry.anatomyMapById.get(caseDoc.anatomyMapId)}
-        attemptHistory={caseAttempts[caseDoc.id] ?? []}
+        attemptHistory={(caseAttempts[caseDoc.id] ?? []).filter(
+          ({ attemptId }) => attemptId !== completedCaseAttemptId,
+        )}
         caseDoc={caseDoc}
         challengeId={challenge.id}
         config={appConfig}
@@ -66,6 +69,7 @@ export function ChallengePlayerPage() {
         exitPath="/challenge"
         previousAttempts={progress?.completions ?? 0}
         previousBestScore={progress?.bestTotal ?? null}
+        onComplete={({ attemptId }) => setCompletedCaseAttemptId(attemptId)}
       />
     )
   }

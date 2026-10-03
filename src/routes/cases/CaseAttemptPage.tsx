@@ -38,6 +38,7 @@ export function CaseAttemptPage() {
   return searchParams.get('view') === 'compare' ? (
     <CaseCompare
       caseDoc={caseDoc}
+      caseLab={caseLab}
       history={comparison.history}
       historyLimit={caseLab.historyLimit}
       evidenceAnchor={searchParams.get('evidence')}
@@ -49,6 +50,7 @@ export function CaseAttemptPage() {
   ) : (
     <CaseResults
       caseDoc={caseDoc}
+      caseLab={caseLab}
       clues={caseDoc.clues}
       clueReview={caseLab.clueReview}
       result={result}

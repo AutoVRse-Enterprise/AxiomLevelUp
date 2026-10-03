@@ -8,6 +8,7 @@ import type {
   LearnerSeed,
   Lesson,
 } from '@/content/schema'
+import { formatCaseOrganSystem, formatCaseTier } from '@/engines/cases/formatters'
 import { periodKey } from '@/engines/gamification/calendar'
 import { evaluateCriterion } from '@/engines/gamification/criteria'
 import type { LearnerStore } from '@/state/learnerStore'
@@ -206,10 +207,11 @@ export interface CaseLabCardView {
   tierLabel: string
   timing: CaseLabConfig['tiers'][CaseDocument['tier']]['timing']
   hints: CaseLabConfig['tiers'][CaseDocument['tier']]['hints']
-  organSystem: string
+  organSystemLabel: string
   estimatedMinutes: number
   bestScore: number | null
   attempts: number
+  daily: boolean
 }
 
 export interface CaseResultsView {
@@ -229,7 +231,11 @@ export function selectCaseLabCards(
   const caseLab = registry.appConfig.caseLab
   if (!caseLab) return []
 
-  return caseLab.caseIds.flatMap((caseId) => {
+  const catalogueCaseIds = caseLab.caseIds.includes(caseLab.dailyQuickCaseId)
+    ? caseLab.caseIds
+    : [...caseLab.caseIds, caseLab.dailyQuickCaseId]
+
+  return catalogueCaseIds.flatMap((caseId) => {
     const caseDoc = registry.caseById.get(caseId)
     if (!caseDoc) return []
     const progress = state.caseProgress[caseId]
@@ -242,13 +248,14 @@ export function selectCaseLabCards(
         title: caseDoc.title,
         summary: caseDoc.summary,
         tier: caseDoc.tier,
-        tierLabel: tier.label,
+        tierLabel: formatCaseTier(caseLab, caseDoc.tier),
         timing: tier.timing,
         hints: tier.hints,
-        organSystem: caseDoc.organSystem,
+        organSystemLabel: formatCaseOrganSystem(caseLab, caseDoc.organSystem),
         estimatedMinutes: caseDoc.estimatedMinutes,
         bestScore: progress?.bestTotal ?? null,
         attempts,
+        daily: caseId === caseLab.dailyQuickCaseId,
       },
     ]
   })
@@ -260,9 +267,7 @@ export function selectFeaturedCase(
 ): CaseLabCardView | null {
   const featuredCaseId = registry.appConfig.caseLab?.featuredCaseId
   if (!featuredCaseId) return null
-  return (
-    selectCaseLabCards(state, registry).find(({ caseId }) => caseId === featuredCaseId) ?? null
-  )
+  return selectCaseLabCards(state, registry).find(({ caseId }) => caseId === featuredCaseId) ?? null
 }
 
 export function selectCaseResults(

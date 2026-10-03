@@ -97,6 +97,7 @@ function withCaseFixture(caseDocument: unknown = caseFixture) {
     featuredCaseId: 'case-contract-fixture',
     caseIds: ['case-contract-fixture'],
     dailyQuickCaseId: 'case-contract-fixture',
+    organSystems: { generic: 'Generic' },
     clueCategories: [{ id: 'evidence', label: 'Evidence' }],
     clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
     tiers: {
@@ -945,6 +946,25 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'entry.waypointId',
             message: expect.stringContaining('Unknown anatomy waypoint reference'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires every case organ system to have a configured display label', () => {
+    const bundle = withCaseFixture()
+    const appConfig = bundle.appConfig as {
+      caseLab: { organSystems: Record<string, string> }
+    }
+    delete appConfig.caseLab.organSystems.generic
+
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'organSystem',
+            message: expect.stringContaining('must resolve through caseLab.organSystems'),
           }),
         ]),
       }),

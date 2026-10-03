@@ -14,6 +14,7 @@ import { CaseLabCard } from '@/components/learning/CaseLabCard'
 import { getBadgeIcon } from '@/components/learning/badgeIconRegistry'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
+import { formatEstimatedMinutes, formatXp } from '@/engines/cases/formatters'
 import { now, today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
 import {
@@ -217,8 +218,9 @@ export function HomePage() {
                 </h2>
                 <p className="mt-2 text-neutral-600">{dailyChallenge.description}</p>
                 <p className="mt-4 text-small font-medium text-neutral-600">
-                  {dailyChallenge.items ? `${dailyChallenge.itemCount} questions` : 'Case'}{' '}
-                  · ~{dailyChallenge.estimatedMinutes} min · +{dailyChallenge.rewardXp} XP
+                  {dailyChallenge.items ? `${dailyChallenge.itemCount} questions` : 'Case'} ·{' '}
+                  {formatEstimatedMinutes(dailyChallenge.estimatedMinutes, true)} · +
+                  {formatXp(dailyChallenge.rewardXp)}
                 </p>
                 <Link className={`${ctaClass} mt-5`} to={`/challenge/${dailyChallenge.id}/play`}>
                   {dailyProgress?.completed ? 'Review challenge' : 'Start challenge'}{' '}

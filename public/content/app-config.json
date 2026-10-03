@@ -185,6 +185,9 @@
     "featuredCaseId": "exacerbation-advanced",
     "caseIds": ["asthma-foundation", "copd-intermediate", "exacerbation-advanced"],
     "dailyQuickCaseId": "wheeze-quick",
+    "organSystems": {
+      "respiratory": "Respiratory"
+    },
     "clueCategories": [
       { "id": "history", "label": "History" },
       { "id": "anatomy", "label": "Anatomy" },

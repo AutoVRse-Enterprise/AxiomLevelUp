@@ -41,6 +41,7 @@ function renderResults(reviewedClueIds: string[]) {
     <ContentContext.Provider value={registry}>
       <CaseResults
         caseDoc={caseDoc}
+        caseLab={registry.appConfig.caseLab!}
         result={result(reviewedClueIds)}
         clues={caseDoc.clues}
         clueReview={clueReview}
@@ -56,6 +57,8 @@ function renderResults(reviewedClueIds: string[]) {
 describe('case results', () => {
   it('shows key-evidence status from reviewed clues rather than opened clues', () => {
     const view = renderResults([])
+    expect(screen.getByText('Basic')).toBeVisible()
+    expect(screen.getByText('Generic')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Key evidence' })).toBeVisible()
     expect(screen.getByText('Context')).toBeVisible()
     expect(screen.getByText('Not reviewed')).toBeVisible()
@@ -64,6 +67,7 @@ describe('case results', () => {
       <ContentContext.Provider value={registry}>
         <CaseResults
           caseDoc={caseDoc}
+          caseLab={registry.appConfig.caseLab!}
           result={result(['clue-context'])}
           clues={caseDoc.clues}
           clueReview={clueReview}
@@ -110,6 +114,7 @@ describe('case results', () => {
       <ContentContext.Provider value={registry}>
         <CaseResults
           caseDoc={caseWithFindingEvidence}
+          caseLab={registry.appConfig.caseLab!}
           result={result([])}
           clues={caseWithFindingEvidence.clues}
           clueReview={clueReview}
@@ -134,6 +139,7 @@ describe('case results', () => {
       <ContentContext.Provider value={registry}>
         <CaseResults
           caseDoc={caseDoc}
+          caseLab={registry.appConfig.caseLab!}
           result={result([])}
           clues={caseDoc.clues}
           clueReview={clueReview}

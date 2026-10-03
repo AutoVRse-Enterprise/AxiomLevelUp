@@ -5,6 +5,7 @@ import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { SectionHeader } from '@/components/learning'
 import { Card, Chip, ProgressBar } from '@/components/ui'
+import { formatEstimatedMinutes, formatXp } from '@/engines/cases/formatters'
 import { emitEvent } from '@/events/bus'
 import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -38,10 +39,7 @@ export function ChallengePage() {
       </header>
 
       <section aria-label="Daily challenges">
-        <SectionHeader
-          description="A short focused activity for today."
-          title="Daily challenge"
-        />
+        <SectionHeader description="A short focused activity for today." title="Daily challenge" />
         <div className="mt-4 grid gap-5 lg:grid-cols-2">
           {daily.map((challenge) => {
             const progress = challengeProgress[challenge.id]
@@ -71,10 +69,11 @@ export function ChallengePage() {
                     {challenge.items ? `${challenge.itemCount} questions` : 'Case'}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Clock aria-hidden="true" size={16} /> ~{challenge.estimatedMinutes} min
+                    <Clock aria-hidden="true" size={16} />{' '}
+                    {formatEstimatedMinutes(challenge.estimatedMinutes, true)}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Trophy aria-hidden="true" size={16} /> +{challenge.rewardXp} XP
+                    <Trophy aria-hidden="true" size={16} /> +{formatXp(challenge.rewardXp)}
                   </span>
                 </div>
                 <Link
@@ -127,7 +126,8 @@ export function ChallengePage() {
                   value={value}
                 />
                 <p className="mt-4 text-small font-medium text-neutral-600">
-                  {challenge.estimatedMinutes} min · +{challenge.rewardXp} XP on completion
+                  {formatEstimatedMinutes(challenge.estimatedMinutes)} · +
+                  {formatXp(challenge.rewardXp)} on completion
                 </p>
               </Card>
             )

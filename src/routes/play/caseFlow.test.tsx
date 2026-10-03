@@ -23,6 +23,7 @@ import { CaseAttemptPage } from '@/routes/cases/CaseAttemptPage'
 import { CasePlayerPage } from '@/routes/cases/CasePlayerPage'
 import { ChallengePlayerPage } from '@/routes/play/ChallengePlayerPage'
 import { useLearnerStore } from '@/state/learnerStore'
+import { selectCaseLabCards } from '@/state/selectors'
 import { contentResponses } from '@/test/contentFixtures'
 
 vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
@@ -376,10 +377,12 @@ function fourthCatalogueResponses() {
     caseLab: {
       caseIds: string[]
       clueCategories: Array<{ id: string; label: string }>
+      organSystems: Record<string, string>
     }
   }
   config.caseLab.caseIds.push('case-contract-fixture')
   config.caseLab.clueCategories.push({ id: 'evidence', label: 'Evidence' })
+  config.caseLab.organSystems.generic = 'Generic'
 
   const assets = responses.get('/content/assets.json') as {
     assets: Array<Record<string, unknown>>
@@ -463,6 +466,9 @@ describe('configured Case Lab flows', () => {
     expect(registry.appConfig.caseLab?.caseIds).toEqual(MAIN_CASE_IDS)
     expect(registry.appConfig.caseLab?.dailyQuickCaseId).toBe(QUICK_CASE_ID)
     expect(registry.appConfig.caseLab?.caseIds).not.toContain(QUICK_CASE_ID)
+    const cards = selectCaseLabCards(useLearnerStore.getState(), registry)
+    expect(cards.map(({ caseId }) => caseId)).toEqual([...MAIN_CASE_IDS, QUICK_CASE_ID])
+    expect(cards.find(({ caseId }) => caseId === QUICK_CASE_ID)?.daily).toBe(true)
   })
 
   it.each(MAIN_CASE_IDS)(

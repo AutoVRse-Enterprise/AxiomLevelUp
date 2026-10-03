@@ -177,7 +177,7 @@ describe('player routes', () => {
     expect(useLearnerStore.getState().mastery['image-windowing']?.score).toBe(81)
   })
 
-  it('plays a configured daily case through the challenge route', async () => {
+  it('shows the current daily case attempt exactly once when persisted history already contains it', async () => {
     const user = userEvent.setup()
     const quickCaseRegistry = makeQuickCaseRegistry()
     const events: LearnerEvent[] = []
@@ -248,5 +248,6 @@ describe('player routes', () => {
     const history = screen.getByRole('list', { name: 'Recent case attempts' })
     expect(within(history).getAllByRole('listitem')).toHaveLength(2)
     expect(within(history).getAllByText('Current')).toHaveLength(1)
+    expect(within(history).getAllByText('100/100')).toHaveLength(1)
   })
 })

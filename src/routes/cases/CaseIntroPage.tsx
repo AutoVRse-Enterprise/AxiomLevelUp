@@ -15,6 +15,7 @@ import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Card, Chip } from '@/components/ui'
 import { useAssetUrl } from '@/content/useAssetUrl'
+import { formatEstimatedMinutes, formatScore } from '@/engines/cases/formatters'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { prefetchVersionedModel, versionedModelUrl } from '@/pwa/modelCache'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -123,8 +124,9 @@ export function CaseIntroPage() {
       <header>
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone="brand">{caseView.tierLabel}</Chip>
-          <Chip>{caseDoc.organSystem}</Chip>
-          <Chip>{caseDoc.estimatedMinutes} min</Chip>
+          {caseView.daily ? <Chip tone="success">Daily</Chip> : null}
+          <Chip>{caseView.organSystemLabel}</Chip>
+          <Chip>{formatEstimatedMinutes(caseDoc.estimatedMinutes)}</Chip>
         </div>
         <h1 className="mt-4 text-display font-bold">{caseDoc.title}</h1>
         <p className="mt-3 max-w-3xl text-neutral-600">{caseDoc.summary}</p>
@@ -204,7 +206,7 @@ export function CaseIntroPage() {
               <div>
                 <dt className="text-small text-neutral-600">Best score</dt>
                 <dd className="text-title font-bold">
-                  {caseView.bestScore === null ? '—' : `${caseView.bestScore}/100`}
+                  {caseView.bestScore === null ? '—' : formatScore(caseView.bestScore)}
                 </dd>
               </div>
               <div>
@@ -235,7 +237,7 @@ export function CaseIntroPage() {
               >
                 <Card className="h-full" interactive>
                   <History aria-hidden="true" className="text-brand-700" size={20} />
-                  <p className="mt-3 font-bold">{attempt.total}/100</p>
+                  <p className="mt-3 font-bold">{formatScore(attempt.total)}</p>
                   <p className="mt-1 text-small text-neutral-600">
                     {new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(
                       new Date(attempt.completedAt),

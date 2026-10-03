@@ -80,9 +80,16 @@ nearest mesh parent as context.
 
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
-clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
-and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
+organ-system display-label map, clue-category labels, all three tier presets, normalized component
+and speed-blend weights, timing defaults, the first-attempt minimum score for time-only step-speed
+eligibility, clue penalties, XP and attempt-history limit. Every configured case ID and clue
+category used by a case must resolve, and every case `organSystem` must have a learner-facing label
+in `caseLab.organSystems`.
+
+`caseLab.caseIds` remains the explicit featured-catalogue ordering. The configured
+`dailyQuickCaseId` is appended to the learner catalogue when it is not already present, so the
+daily case has the same intro and attempt-history routes without duplicating or reordering the
+featured IDs.
 
 ## Primitive registry
 

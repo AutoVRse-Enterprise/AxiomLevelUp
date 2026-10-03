@@ -57,14 +57,37 @@ describe('Case Lab selectors', () => {
         caseId: fixtureCase.id,
         tierLabel: 'Basic',
         timing: 'none',
-        organSystem: 'generic',
+        organSystemLabel: 'Generic',
         bestScore: 91,
         attempts: 2,
+        daily: true,
       }),
     ])
     expect(selectFeaturedCase({ caseProgress: {}, caseAttempts: {} }, registry)?.caseId).toBe(
       fixtureCase.id,
     )
+  })
+
+  it('appends the configured daily quick case without changing featured ordering', () => {
+    const registry = makeCaseRegistry()
+    const quickCase = { ...fixtureCase, id: 'quick-case', title: 'Quick case' }
+    const registryWithQuickCase = {
+      ...registry,
+      appConfig: {
+        ...registry.appConfig,
+        caseLab: {
+          ...registry.appConfig.caseLab!,
+          dailyQuickCaseId: quickCase.id,
+        },
+      },
+      cases: [...registry.cases, quickCase],
+      caseById: new Map([...registry.caseById, [quickCase.id, quickCase] as const]),
+    }
+
+    const cards = selectCaseLabCards({ caseProgress: {}, caseAttempts: {} }, registryWithQuickCase)
+
+    expect(cards.map(({ caseId }) => caseId)).toEqual([fixtureCase.id, quickCase.id])
+    expect(cards.map(({ daily }) => daily)).toEqual([false, true])
   })
 
   it('returns empty views when Case Lab content is not configured', () => {

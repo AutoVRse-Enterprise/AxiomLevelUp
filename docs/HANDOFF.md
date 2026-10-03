@@ -2,7 +2,7 @@
 
 ## Current phase/task
 
-Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T06 is complete; P12-T07 is
+Phase 12 (Case Lab depth and whole-app demo close-out) is active. P12-T07 is complete; P12-T08 is
 next.
 
 Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
@@ -117,18 +117,25 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
   state.
 - Added the four-case unreviewed claim ledger, exported schemas, recorded ADR-090 and closed
   P12-T06.
+- Added configured Case Lab organ-system display labels and strict semantic resolution, then
+  centralized tier, organ-system, estimated-time, duration, score and XP formatting.
+- Appended the configured daily quick case to the Case Lab catalogue with a Daily badge while
+  preserving the explicit featured order, intro/history routes and daily-challenge pipeline.
+- Removed the just-completed challenge attempt from route-supplied comparison history, retained
+  the component's defensive filter and added an explicit current-attempt de-duplication test.
+- Exported the app-config schema and closed P12-T07 without an ADR.
 
 ## In progress
 
-- P12-T07 is ready to standardize configured metadata and verify quick-case history behavior.
+- P12-T08 is ready to close the whole-app W-series demo gaps and learner-facing terminology.
 - Clinical, anatomy/pathology and client/legal review of all four catalogue claim ledgers is
   pending.
 - P9-M01 through P9-M03 remain pending; no physical-device run has started.
 
 ## Next three steps
 
-1. Standardize configured metadata and quick-case history in P12-T07.
-2. Close whole-app W-series demo gaps in P12-T08.
+1. Close whole-app W-series demo gaps in P12-T08.
+2. Add general offline Case Lab packages in P12-T09.
 3. Preserve the 18-test real-WebGL gate after every task.
 
 ## Blockers/questions for the user
@@ -212,6 +219,16 @@ Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
     and zero warnings;
   - full `npm run check` passes 63 files / 434 tests, production build and all bundle budgets;
   - the final serial real-WebGL suite passes 18/18 across desktop and 375 px touch emulation;
+  - IDE diagnostics and `git diff --check` pass. No commit was created, and
+    `docs/reference docs/` was not touched.
+- P12-T07 verification:
+  - focused metadata, selector, route and case-flow tests pass 9 files / 100 tests;
+  - schema export and content validation pass with 5 courses, 13 lessons, 4 cases, 1 anatomy map
+    and zero warnings;
+  - full `npm run check` passes 64 files / 438 tests, production build and all bundle budgets;
+  - the serial real-WebGL demo suite passes 18/18 across desktop and 375 px touch emulation;
+    one intermediate run had a transient touch projected-lobe selection miss, and the immediate
+    complete rerun passed;
   - IDE diagnostics and `git diff --check` pass. No commit was created, and
     `docs/reference docs/` was not touched.
 - `npm run schema:export` and `npm run assets:hash` were not run for P11-T13 because no runtime

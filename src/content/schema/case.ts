@@ -201,6 +201,7 @@ export const caseLabConfigSchema = z
     featuredCaseId: idSchema,
     caseIds: z.array(idSchema).min(1),
     dailyQuickCaseId: idSchema,
+    organSystems: z.record(idSchema, nonEmptyStringSchema),
     clueCategories: z
       .array(
         z.strictObject({

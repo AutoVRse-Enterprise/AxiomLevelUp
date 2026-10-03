@@ -26,6 +26,7 @@ function registryWithCase(historyLimit = 2, badges: AppConfig['badges'] = []) {
       featuredCaseId: caseDocument.id,
       caseIds: [caseDocument.id],
       dailyQuickCaseId: caseDocument.id,
+      organSystems: { generic: 'Generic' },
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
       clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
       tiers: {

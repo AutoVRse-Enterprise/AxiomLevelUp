@@ -2628,8 +2628,8 @@ schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
   schema, Phase 12 checklist, decisions, handoff, activity log and refreshed automated Phase 11
   browser evidence.
 - **Commands run:** Targeted Prettier; focused Vitest (8 files / 100 tests); `npm run
-  schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`; full `npm run
-  check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright browser cache; IDE
+schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`; full `npm run
+check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright browser cache; IDE
   diagnostics; `git diff --check`.
 - **Result/verification:** P12-T05 is complete. The full quality gate passes 63 Vitest files / 428
   tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
@@ -2666,3 +2666,29 @@ schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
 - **Follow-ups:** Start P12-T07 metadata and quick-case history standardization. All four case claim
   ledgers remain clinically/anatomically/client unreviewed, and Phase 9 physical-device gates remain
   external blockers.
+
+### [2026-10-03 23:13] P12-T07 - Standardize Case Lab metadata
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added configured organ-system labels with semantic resolution for every case and
+  centralized Case Lab tier, organ-system, estimated-time, duration, score and XP formatters.
+  Appended the configured daily quick case to the catalogue without changing `caseIds`, added its
+  Daily badge and preserved its intro/history route and daily-challenge behavior. Filtered the
+  completed challenge attempt before supplying comparison history while retaining the comparison
+  component's defensive filter, and added explicit duplicate-current-attempt route coverage.
+- **Files changed:** App config, Case Lab schema/semantic loader and generated app-config schema;
+  shared case formatters; Case Lab selectors/cards, intro/results/comparison and challenge
+  surfaces; focused content, selector, route, formatter and flow tests; Phase 12 checklist, content
+  schema and handoff.
+- **Commands run:** Targeted Prettier; focused Vitest (8 files / 93 tests and 1 file / 7 tests);
+  `npm run schema:export`; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
+  `npm run check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright browser
+  path; IDE diagnostics; `git diff --check`.
+- **Result/verification:** P12-T07 is complete. The full quality gate passes 64 Vitest files / 438
+  tests, validates 5 courses / 13 lessons / 4 cases / 1 anatomy map with zero warnings, builds
+  production and passes all bundle budgets. The serial real-WebGL suite passes 18/18 on desktop
+  and 375 px touch emulation; one intermediate run had a transient touch projected-lobe selection
+  miss, and the immediate complete rerun passed. No commit was created, and the user's untracked
+  `docs/reference docs/` was not touched.
+- **Follow-ups:** Start P12-T08 whole-app W-series demo closure. Clinical/client sign-off and Phase
+  9 physical-device gates remain external blockers.

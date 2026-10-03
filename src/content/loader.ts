@@ -968,6 +968,17 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     caseDocument.conceptIds.forEach((id, conceptIndex) =>
       requireRef(conceptIds, id, file, `conceptIds.${conceptIndex}`, 'concept'),
     )
+    if (
+      appConfig.caseLab &&
+      !Object.hasOwn(appConfig.caseLab.organSystems, caseDocument.organSystem)
+    ) {
+      issues.push({
+        file,
+        path: 'organSystem',
+        message: `Case organ system "${caseDocument.organSystem}" must resolve through caseLab.organSystems.`,
+        severity: 'error',
+      })
+    }
     if (caseDocument.patient.imageAssetId) {
       requireAsset(caseDocument.patient.imageAssetId, file, 'patient.imageAssetId', 'image')
     }

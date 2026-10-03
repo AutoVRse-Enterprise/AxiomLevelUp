@@ -3,6 +3,13 @@ import { useState } from 'react'
 
 import { Button, Card, Chip, Sheet } from '@/components/ui'
 import type { CaseClue, CaseDocument, CaseLabConfig } from '@/content/schema'
+import {
+  formatCaseOrganSystem,
+  formatCaseTier,
+  formatDuration,
+  formatScore,
+  formatXp,
+} from '@/engines/cases/formatters'
 import { starsForScore } from '@/engines/gamification/stars'
 import { ClueContent } from '@/player/case/ClueBoard'
 import type { CaseResultPresentation } from '@/player/case/types'
@@ -10,6 +17,7 @@ import { resolvePrimitiveDefinition } from '@/primitives/definitions'
 
 interface CaseResultsProps {
   caseDoc: CaseDocument
+  caseLab: CaseLabConfig
   result: CaseResultPresentation
   clues: readonly CaseClue[]
   clueReview: CaseLabConfig['clueReview']
@@ -27,13 +35,9 @@ function points(value: number) {
   return Number(value.toFixed(1)).toString()
 }
 
-function formatDuration(seconds: number) {
-  const roundedSeconds = Math.max(0, Math.round(seconds))
-  return `${Math.floor(roundedSeconds / 60)}:${String(roundedSeconds % 60).padStart(2, '0')}`
-}
-
 export function CaseResults({
   caseDoc,
+  caseLab,
   result,
   clues,
   clueReview,
@@ -122,7 +126,9 @@ export function CaseResults({
       <p className="text-small font-semibold text-success-700">Case complete</p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
       <div className="mt-4 flex flex-wrap gap-2">
-        <Chip tone="brand">{breakdown.total}/100</Chip>
+        <Chip>{formatCaseTier(caseLab, caseDoc.tier)}</Chip>
+        <Chip>{formatCaseOrganSystem(caseLab, caseDoc.organSystem)}</Chip>
+        <Chip tone="brand">{formatScore(breakdown.total)}</Chip>
         <Chip aria-label={`${stars} of 3 stars`}>
           <span aria-hidden="true">
             {'★'.repeat(stars)}
@@ -131,7 +137,7 @@ export function CaseResults({
         </Chip>
         <Chip>{formatDuration(breakdown.durationSeconds)}</Chip>
         {result.actualAwardedXp !== undefined && result.actualAwardedXp !== null ? (
-          <Chip>{result.actualAwardedXp} XP awarded</Chip>
+          <Chip>{formatXp(result.actualAwardedXp)} awarded</Chip>
         ) : null}
       </div>
       <p className="mt-4 text-small text-neutral-600">

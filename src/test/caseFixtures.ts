@@ -16,6 +16,7 @@ export function makeCaseRegistry(): ContentRegistry {
       featuredCaseId: fixtureCase.id,
       caseIds: [fixtureCase.id],
       dailyQuickCaseId: fixtureCase.id,
+      organSystems: { generic: 'Generic' },
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
       clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
       tiers: {
