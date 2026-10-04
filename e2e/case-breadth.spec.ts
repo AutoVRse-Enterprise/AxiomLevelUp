@@ -102,7 +102,7 @@ async function completeFoundationLocalisation(page: Page, testInfo: TestInfo) {
   await capturePhase12Evidence(page, testInfo, 'case-foundation-state')
   await page.getByRole('button', { name: 'Next level' }).click()
   await page.getByRole('radio', { name: 'Bronchiole', exact: true }).check()
-  await page.getByRole('button', { name: 'Check locations' }).click()
+  await page.getByRole('button', { name: 'Commit your localisation' }).click()
 }
 
 async function completeBreadthCase(page: Page, testInfo: TestInfo, caseDoc: CaseDocumentFixture) {

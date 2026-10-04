@@ -234,7 +234,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Inspect the marked right upper lobe, the illustrated region and the diffuse airway-wall change.",
+            "prompt": "Determine whether the visible airway pattern is focal or diffuse and identify its lobe context.",
             "startView": { "mode": "marker", "structureId": "right-upper-lobe" },
             "navigation": "both",
             "findingIds": ["foundation-diffuse-wall-change", "foundation-upper-region"],
@@ -253,7 +253,7 @@
           "conceptIds": ["respiratory-anatomy"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Localise the highlighted pathway from lobe to segment and airway structure.",
+            "prompt": "Commit to the lobe, segment and airway structure that best localise the finding.",
             "startView": { "mode": "overview" },
             "navigation": "orbit",
             "levels": [

@@ -152,7 +152,7 @@ describe('case player integration', () => {
     setMobileViewport(false)
     clearEventSubscribersForTests()
     useActivitySessionStore.getState().clear()
-    useLearnerStore.setState({ caseLab: { walkthroughSeen: true } })
+    useLearnerStore.setState({ caseLab: { walkthroughSeen: true, anatomyHintSeen: true } })
     await useActivitySessionStore.persist.clearStorage()
   })
 
@@ -359,7 +359,7 @@ describe('case player integration', () => {
   it('walks a first-time learner through the case and keeps evidence navigation in flow', async () => {
     vi.useFakeTimers()
     setMobileViewport(true)
-    useLearnerStore.setState({ caseLab: { walkthroughSeen: false } })
+    useLearnerStore.setState({ caseLab: { walkthroughSeen: false, anatomyHintSeen: false } })
     const caseDoc = caseDocumentSchema.parse({
       ...structuredClone(fixtureCaseJson),
       stages: fixtureCaseJson.stages.map((stage, index) =>

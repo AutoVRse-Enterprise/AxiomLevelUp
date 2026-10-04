@@ -94,5 +94,5 @@
     "correctAnswers": 0
   },
   "onboarding": { "viewed": false },
-  "caseLab": { "walkthroughSeen": false }
+  "caseLab": { "walkthroughSeen": false, "anatomyHintSeen": false }
 }

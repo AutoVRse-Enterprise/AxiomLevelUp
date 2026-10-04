@@ -249,7 +249,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Starting in the mid trachea, follow the airway to the right lower lobe and inspect the dominant posterior basal obstruction.",
+            "prompt": "Determine where the dominant obstruction sits and distinguish it from diffuse airway-wall change.",
             "startView": { "mode": "endoscopic", "waypointId": "trachea-mid" },
             "navigation": "flythrough",
             "findingIds": ["exac-diffuse-wall-change", "exac-posterior-basal-plug"],
@@ -268,7 +268,7 @@
           "conceptIds": ["respiratory-anatomy"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Localise the dominant obstruction from lobe to segment and structure.",
+            "prompt": "Commit to the lobe, segment and airway structure that best localise the dominant obstruction.",
             "startView": { "mode": "overview" },
             "navigation": "orbit",
             "levels": [

@@ -246,7 +246,8 @@ async function answerAnatomyLocate(
 
     await user.click(
       screen.getByRole('button', {
-        name: index === primitive.content.levels.length - 1 ? 'Check locations' : 'Next level',
+        name:
+          index === primitive.content.levels.length - 1 ? 'Commit your localisation' : 'Next level',
       }),
     )
   }
@@ -372,7 +373,9 @@ async function answerStep(
           if (confirm) await user.click(confirm)
         }
         await waitFor(() =>
-          expect(within(task).getByRole('checkbox', { name: new RegExp(label, 'i') })).toBeEnabled(),
+          expect(
+            within(task).getByRole('checkbox', { name: new RegExp(label, 'i') }),
+          ).toBeEnabled(),
         )
         await user.click(within(task).getByRole('checkbox', { name: new RegExp(label, 'i') }))
       }
@@ -574,9 +577,7 @@ describe('configured Case Lab flows', () => {
       expect(screen.getAllByText('Matched expert')).toHaveLength(
         caseDoc.stages
           .flatMap(({ steps }) => steps)
-          .filter(
-            ({ type }) => type !== 'anatomy_explore' && type !== 'case_differential',
-          ).length,
+          .filter(({ type }) => type !== 'anatomy_explore' && type !== 'case_differential').length,
       )
     },
     20_000,

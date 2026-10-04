@@ -481,5 +481,5 @@
     "correctAnswers": 156
   },
   "onboarding": { "viewed": true },
-  "caseLab": { "walkthroughSeen": true }
+  "caseLab": { "walkthroughSeen": true, "anatomyHintSeen": true }
 }

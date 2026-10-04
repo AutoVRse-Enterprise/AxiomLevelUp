@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
 import { anatomyMapSchema, appConfigSchema } from '@/content/schema'
+import { useLearnerStore } from '@/state/learnerStore'
 
 const mocked = vi.hoisted(() => ({
   controller: {
@@ -61,6 +62,7 @@ const config = appConfigSchema.parse(appConfigDocument).product.anatomy3d
 describe('AnatomyViewer', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    useLearnerStore.setState({ caseLab: { walkthroughSeen: true, anatomyHintSeen: false } })
     window.history.replaceState({}, '', '/')
     mocked.controller.pick.mockReturnValue('target-structure')
     mocked.controller.pickFinding.mockReturnValue(null)
@@ -121,6 +123,7 @@ describe('AnatomyViewer', () => {
       },
       severity: 0.7,
       clueIds: [],
+      significance: 'This finding narrows the spatial differential.',
     }
     const onFindingInspected = vi.fn()
     mocked.controller.pickFinding.mockReturnValue(finding.id)
@@ -143,6 +146,8 @@ describe('AnatomyViewer', () => {
     expect(mocked.controller.pickFinding).toHaveBeenCalledWith(11, 11)
     expect(onFindingInspected).toHaveBeenCalledWith(finding.id)
     expect(screen.getByRole('status')).toHaveTextContent('Configured narrowing')
+    expect(screen.getByText('Why it matters')).toBeVisible()
+    expect(screen.getByText('This finding narrows the spatial differential.')).toBeVisible()
     expect(mocked.controller.pick).not.toHaveBeenCalled()
   })
 
@@ -213,6 +218,30 @@ describe('AnatomyViewer', () => {
       animate: false,
     })
     expect(onWaypointReached).toHaveBeenCalledWith('terminal-waypoint')
+    expect(screen.getByRole('status')).toHaveTextContent('You are now in Terminal waypoint.')
+  })
+
+  it('shows a persistent dismissible interaction hint once per learner', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" />)
+
+    expect(screen.getByText('Drag to rotate. Tap a branch or use the buttons.')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Dismiss anatomy interaction hint' }))
+    expect(useLearnerStore.getState().caseLab.anatomyHintSeen).toBe(true)
+
+    rerender(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" />)
+    expect(
+      screen.queryByText('Drag to rotate. Tap a branch or use the buttons.'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('pairs the desktop viewport with a control column and caps the mobile viewport', () => {
+    render(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" />)
+
+    const viewport = screen.getByLabelText('Interactive 3D anatomy viewport')
+    expect(viewport).toHaveClass('h-[min(45svh,28rem)]')
+    expect(viewport.parentElement).toHaveClass('md:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]')
+    expect(viewport.nextElementSibling).toHaveClass('md:border-l')
   })
 
   it('frames the structures selectable at the active external level', () => {

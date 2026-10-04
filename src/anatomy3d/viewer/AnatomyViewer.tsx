@@ -1,4 +1,4 @@
-import { Expand, RotateCcw } from 'lucide-react'
+import { Expand, RotateCcw, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { AnatomyMap } from '@/content/schema/anatomyMap'
@@ -15,6 +15,7 @@ import type {
 } from '@/anatomy3d/viewer/controller'
 import { useAnatomyViewer } from '@/anatomy3d/viewer/useAnatomyViewer'
 import { cn } from '@/lib/cn'
+import { useLearnerStore } from '@/state/learnerStore'
 
 export interface AnatomyViewerProps {
   modelUrl: string
@@ -68,6 +69,7 @@ export function AnatomyViewer({
   const [endoscopic, setEndoscopic] = useState(startView?.mode === 'endoscopic')
   const [listOpen, setListOpen] = useState(false)
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>(null)
+  const [arrivalMessage, setArrivalMessage] = useState<string | null>(null)
   const [authoringView, setAuthoringView] = useState<AnatomyViewState | null>(null)
   const [debugPerformance, setDebugPerformance] = useState<{
     renderer: AnatomyRendererDiagnostics
@@ -78,6 +80,8 @@ export function AnatomyViewer({
   const endoscopicRef = useRef(endoscopic)
   const structureButtons = useRef(new Map<string, HTMLButtonElement>())
   const motion = useResolvedMotion()
+  const anatomyHintSeen = useLearnerStore((learner) => learner.caseLab.anatomyHintSeen)
+  const markAnatomyHintSeen = useLearnerStore((learner) => learner.markAnatomyHintSeen)
   const anatomyDebugEnabled =
     import.meta.env.DEV && new URLSearchParams(window.location.search).get('anatomyDebug') === '1'
   const { ref: rootRef, immersive, toggle } = useImmersiveArtifact<HTMLDivElement>()
@@ -193,17 +197,18 @@ export function AnatomyViewer({
 
   const travelTo = (waypointId: string) => {
     if (disabled) return
+    const waypointLabel = map.waypoints.find(({ id }) => id === waypointId)?.label ?? waypointId
     controller?.travelTo(waypointId, { animate: motion === 'full' })
     setCurrentWaypointId(waypointId)
-    setAnnouncement(
-      `${map.waypoints.find(({ id }) => id === waypointId)?.label ?? waypointId} reached`,
-    )
+    setArrivalMessage(`You are now in ${waypointLabel}.`)
+    setAnnouncement(`You are now in ${waypointLabel}.`)
     onWaypointReached?.(waypointId)
   }
 
   const branches = navigation === 'orbit' ? [] : (controller?.availableBranches() ?? [])
   const failed = state.status === 'error'
   const currentWaypoint = map.waypoints.find(({ id }) => id === currentWaypointId)
+  const selectedFinding = findings.find(({ id }) => id === selectedFindingId)
   const parentWaypointId = controller?.parentWaypoint()
   const parentWaypoint = map.waypoints.find(({ id }) => id === parentWaypointId)
   const breadcrumb = (controller?.waypointPath() ?? (currentWaypointId ? [currentWaypointId] : []))
@@ -237,11 +242,16 @@ export function AnatomyViewer({
         </Button>
       </header>
 
-      <div className={cn('min-h-0', immersive && 'flex flex-1 flex-col')}>
+      <div
+        className={cn(
+          'min-h-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]',
+          immersive && 'flex flex-1 flex-col md:grid',
+        )}
+      >
         <div
           aria-label="Interactive 3D anatomy viewport"
           className={cn(
-            'relative h-[60dvh] min-h-80 w-full touch-none overflow-hidden bg-black outline-none focus-visible:ring-2 focus-visible:ring-brand-400 md:h-[min(65dvh,42rem)]',
+            'relative h-[min(45svh,28rem)] min-h-64 w-full touch-none overflow-hidden bg-black outline-none focus-visible:ring-2 focus-visible:ring-brand-400 md:h-[min(65dvh,42rem)] md:min-h-80',
             immersive && 'min-h-0 flex-1 md:h-full',
             disabled && 'pointer-events-none',
           )}
@@ -289,6 +299,21 @@ export function AnatomyViewer({
           }}
         >
           <div className="absolute inset-0" ref={setElement} />
+          {!anatomyHintSeen && !disabled ? (
+            <div className="absolute right-3 bottom-3 left-3 z-20 flex items-start justify-between gap-3 rounded-lg border border-brand-300 bg-clinical-900/95 p-3 shadow-overlay">
+              <p className="text-small text-white">
+                Drag to rotate. Tap a branch or use the buttons.
+              </p>
+              <button
+                aria-label="Dismiss anatomy interaction hint"
+                className="shrink-0 rounded p-1 text-neutral-200 hover:bg-clinical-700 focus-visible:outline-2 focus-visible:outline-brand-300"
+                type="button"
+                onClick={markAnatomyHintSeen}
+              >
+                <X aria-hidden="true" size={18} />
+              </button>
+            </div>
+          ) : null}
           {endoscopic ? (
             <>
               <span className="pointer-events-none absolute left-3 top-1/2 rounded bg-black/60 px-2 py-1 text-caption font-bold uppercase tracking-wide">
@@ -315,239 +340,254 @@ export function AnatomyViewer({
             </div>
           ) : null}
         </div>
-      </div>
-
-      <footer className="space-y-3 border-t border-clinical-700 p-3 sm:p-4">
-        {state.warning ? (
-          <p className="text-small text-warning-200" role="status">
-            {state.warning}
-          </p>
-        ) : null}
-        {anatomyDebugEnabled ? (
-          <details
-            className="rounded-lg border border-dashed border-brand-400/70 bg-clinical-900 p-3 font-mono text-caption"
-            data-anatomy-debug=""
-            open
-          >
-            <summary className="cursor-pointer font-sans font-semibold">
-              Anatomy authoring readout
-            </summary>
-            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              <dt>Waypoint</dt>
-              <dd>{authoringView?.waypointId ?? currentWaypointId ?? 'none'}</dd>
-              <dt>Mode</dt>
-              <dd>{(authoringView?.endoscopic ?? endoscopic) ? 'endoscopic' : 'outside'}</dd>
-              <dt>Camera</dt>
-              <dd>{authoringView ? formatAuthoringVector(authoringView.position) : 'pending'}</dd>
-              <dt>Target</dt>
-              <dd>{authoringView ? formatAuthoringVector(authoringView.target) : 'pending'}</dd>
-              <dt>Median frame</dt>
-              <dd>
-                {debugPerformance?.performance.medianFrameMs === null ||
-                debugPerformance?.performance.medianFrameMs === undefined
-                  ? 'collecting'
-                  : `${debugPerformance.performance.medianFrameMs.toFixed(1)} ms`}
-              </dd>
-              <dt>Median FPS</dt>
-              <dd>
-                {debugPerformance?.performance.medianFps === null ||
-                debugPerformance?.performance.medianFps === undefined
-                  ? 'collecting'
-                  : debugPerformance.performance.medianFps.toFixed(1)}
-              </dd>
-              <dt>Renderer</dt>
-              <dd className="break-all">
-                {debugPerformance?.renderer.unmaskedRenderer ??
-                  debugPerformance?.renderer.renderer ??
-                  'pending'}
-              </dd>
-            </dl>
-          </details>
-        ) : null}
-        {currentWaypoint ? (
-          <div className="rounded-lg border border-clinical-700 bg-clinical-900 p-3">
-            <nav aria-label="Anatomy location">
-              <ol className="flex flex-wrap items-center gap-1 text-caption text-neutral-300">
-                {breadcrumb.map((waypoint, index) => (
-                  <li key={waypoint.id}>
-                    {index > 0 ? <span aria-hidden="true"> / </span> : null}
-                    <span>{waypoint.label}</span>
-                  </li>
-                ))}
-              </ol>
-            </nav>
-            <p className="mt-1 text-small">
-              <span className="text-neutral-300">Current landmark: </span>
-              <strong>{currentWaypoint.label}</strong>
+        <footer className="space-y-3 border-t border-clinical-700 p-3 sm:p-4 md:max-h-[min(65dvh,42rem)] md:overflow-y-auto md:border-t-0 md:border-l">
+          {state.warning ? (
+            <p className="text-small text-warning-200" role="status">
+              {state.warning}
             </p>
+          ) : null}
+          {arrivalMessage ? (
+            <p
+              className="rounded-lg border border-brand-400/60 bg-brand-950/50 p-3 text-small font-semibold"
+              role="status"
+            >
+              {arrivalMessage}
+            </p>
+          ) : null}
+          {anatomyDebugEnabled ? (
+            <details
+              className="rounded-lg border border-dashed border-brand-400/70 bg-clinical-900 p-3 font-mono text-caption"
+              data-anatomy-debug=""
+              open
+            >
+              <summary className="cursor-pointer font-sans font-semibold">
+                Anatomy authoring readout
+              </summary>
+              <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                <dt>Waypoint</dt>
+                <dd>{authoringView?.waypointId ?? currentWaypointId ?? 'none'}</dd>
+                <dt>Mode</dt>
+                <dd>{(authoringView?.endoscopic ?? endoscopic) ? 'endoscopic' : 'outside'}</dd>
+                <dt>Camera</dt>
+                <dd>{authoringView ? formatAuthoringVector(authoringView.position) : 'pending'}</dd>
+                <dt>Target</dt>
+                <dd>{authoringView ? formatAuthoringVector(authoringView.target) : 'pending'}</dd>
+                <dt>Median frame</dt>
+                <dd>
+                  {debugPerformance?.performance.medianFrameMs === null ||
+                  debugPerformance?.performance.medianFrameMs === undefined
+                    ? 'collecting'
+                    : `${debugPerformance.performance.medianFrameMs.toFixed(1)} ms`}
+                </dd>
+                <dt>Median FPS</dt>
+                <dd>
+                  {debugPerformance?.performance.medianFps === null ||
+                  debugPerformance?.performance.medianFps === undefined
+                    ? 'collecting'
+                    : debugPerformance.performance.medianFps.toFixed(1)}
+                </dd>
+                <dt>Renderer</dt>
+                <dd className="break-all">
+                  {debugPerformance?.renderer.unmaskedRenderer ??
+                    debugPerformance?.renderer.renderer ??
+                    'pending'}
+                </dd>
+              </dl>
+            </details>
+          ) : null}
+          {currentWaypoint ? (
+            <div className="rounded-lg border border-clinical-700 bg-clinical-900 p-3">
+              <nav aria-label="Anatomy location">
+                <ol className="flex flex-wrap items-center gap-1 text-caption text-neutral-300">
+                  {breadcrumb.map((waypoint, index) => (
+                    <li key={waypoint.id}>
+                      {index > 0 ? <span aria-hidden="true"> / </span> : null}
+                      <span>{waypoint.label}</span>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+              <p className="mt-1 text-small">
+                <span className="text-neutral-300">Current landmark: </span>
+                <strong>{currentWaypoint.label}</strong>
+              </p>
+            </div>
+          ) : null}
+          {selectedFinding ? (
+            <div
+              className="rounded-lg border border-warning-400/60 bg-warning-950/40 p-3"
+              role="status"
+            >
+              <p className="text-caption font-bold uppercase tracking-wide text-warning-200">
+                Finding inspected
+              </p>
+              <p className="mt-1 font-semibold">{selectedFinding.label}</p>
+              <p className="mt-2 text-caption font-bold uppercase tracking-wide text-neutral-300">
+                What you see
+              </p>
+              <p className="mt-1 text-small text-neutral-200">{selectedFinding.description}</p>
+              {selectedFinding.significance ? (
+                <>
+                  <p className="mt-3 text-caption font-bold uppercase tracking-wide text-neutral-300">
+                    Why it matters
+                  </p>
+                  <p className="mt-1 text-small text-neutral-100">{selectedFinding.significance}</p>
+                </>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              disabled={disabled}
+              leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                controller?.resetView()
+                setCurrentWaypointId(null)
+                setArrivalMessage(null)
+                setEndoscopic(false)
+                endoscopicRef.current = false
+              }}
+            >
+              Reset
+            </Button>
+            {currentWaypointId && navigation === 'both' ? (
+              <div aria-label="View mode" className="flex gap-1" role="group">
+                <Button
+                  aria-pressed={!endoscopic}
+                  disabled={disabled}
+                  size="sm"
+                  variant={!endoscopic ? 'primary' : 'secondary'}
+                  onClick={() => {
+                    controller?.exitEndoscopic({ animate: motion === 'full' })
+                    setEndoscopic(false)
+                    endoscopicRef.current = false
+                  }}
+                >
+                  Outside
+                </Button>
+                <Button
+                  aria-pressed={endoscopic}
+                  disabled={disabled}
+                  size="sm"
+                  variant={endoscopic ? 'primary' : 'secondary'}
+                  onClick={() => {
+                    controller?.enterEndoscopic(currentWaypointId)
+                    setEndoscopic(true)
+                    endoscopicRef.current = true
+                  }}
+                >
+                  Airway
+                </Button>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-        {selectedFindingId ? (
-          <div
-            className="rounded-lg border border-warning-400/60 bg-warning-950/40 p-3"
-            role="status"
-          >
-            <p className="text-caption font-bold uppercase tracking-wide text-warning-200">
-              Finding inspected
-            </p>
-            <p className="mt-1 font-semibold">
-              {findings.find(({ id }) => id === selectedFindingId)?.label}
-            </p>
-            <p className="mt-1 text-small text-neutral-200">
-              {findings.find(({ id }) => id === selectedFindingId)?.description}
-            </p>
-          </div>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            disabled={disabled}
-            leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
-            size="sm"
-            variant="secondary"
-            onClick={() => {
-              controller?.resetView()
-              setCurrentWaypointId(null)
-              setEndoscopic(false)
-              endoscopicRef.current = false
-            }}
-          >
-            Reset
-          </Button>
-          {currentWaypointId && navigation === 'both' ? (
-            <div aria-label="View mode" className="flex gap-1" role="group">
+          {parentWaypoint ? (
+            <div>
+              <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
+                Back to parent
+              </p>
               <Button
-                aria-pressed={!endoscopic}
                 disabled={disabled}
                 size="sm"
-                variant={!endoscopic ? 'primary' : 'secondary'}
-                onClick={() => {
-                  controller?.exitEndoscopic({ animate: motion === 'full' })
-                  setEndoscopic(false)
-                  endoscopicRef.current = false
-                }}
+                variant="secondary"
+                onClick={() => travelTo(parentWaypoint.id)}
               >
-                Outside
-              </Button>
-              <Button
-                aria-pressed={endoscopic}
-                disabled={disabled}
-                size="sm"
-                variant={endoscopic ? 'primary' : 'secondary'}
-                onClick={() => {
-                  controller?.enterEndoscopic(currentWaypointId)
-                  setEndoscopic(true)
-                  endoscopicRef.current = true
-                }}
-              >
-                Airway
+                Back to {parentWaypoint.label}
               </Button>
             </div>
           ) : null}
-        </div>
-        {parentWaypoint ? (
-          <div>
-            <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
-              Back to parent
-            </p>
-            <Button
-              disabled={disabled}
-              size="sm"
-              variant="secondary"
-              onClick={() => travelTo(parentWaypoint.id)}
-            >
-              Back to {parentWaypoint.label}
-            </Button>
-          </div>
-        ) : null}
-        {branches.length ? (
-          <div>
-            <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
-              Branches from {currentWaypoint?.label ?? 'current location'}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {branches.map((branchId) => (
-                <Button
-                  disabled={disabled}
-                  key={branchId}
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => travelTo(branchId)}
-                >
-                  {map.waypoints.find(({ id }) => id === branchId)?.label ?? branchId}
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        {findings.length ? (
-          <details className="rounded-lg border border-clinical-700 bg-clinical-900">
-            <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-              Inspect findings
-            </summary>
-            <ul className="grid gap-2 border-t border-clinical-700 p-3 sm:grid-cols-2">
-              {findings.map((finding) => (
-                <li key={finding.id}>
-                  <button
-                    aria-pressed={selectedFindingId === finding.id}
-                    className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-warning-400 aria-pressed:bg-clinical-800"
+          {branches.length ? (
+            <div>
+              <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
+                Branches from {currentWaypoint?.label ?? 'current location'}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {branches.map((branchId) => (
+                  <Button
                     disabled={disabled}
-                    type="button"
-                    onClick={() => inspectFinding(finding.id)}
+                    key={branchId}
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => travelTo(branchId)}
                   >
-                    {finding.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    {map.waypoints.find(({ id }) => id === branchId)?.label ?? branchId}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {findings.length ? (
+            <details className="rounded-lg border border-clinical-700 bg-clinical-900">
+              <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+                Inspect findings
+              </summary>
+              <ul className="grid gap-2 border-t border-clinical-700 p-3 sm:grid-cols-2">
+                {findings.map((finding) => (
+                  <li key={finding.id}>
+                    <button
+                      aria-pressed={selectedFindingId === finding.id}
+                      className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-warning-400 aria-pressed:bg-clinical-800"
+                      disabled={disabled}
+                      type="button"
+                      onClick={() => inspectFinding(finding.id)}
+                    >
+                      {finding.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+          <details
+            className="rounded-lg border border-clinical-700 bg-clinical-900"
+            open={failed || listOpen}
+            onToggle={(event) => setListOpen(event.currentTarget.open)}
+          >
+            <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+              Choose from list
+            </summary>
+            <div className="max-h-[36dvh] space-y-4 overflow-y-auto border-t border-clinical-700 p-3">
+              <p className="text-small text-neutral-300">
+                This list provides the same selection without using the 3D canvas.
+              </p>
+              {map.levels
+                .filter((level) => !selectableLevelIds || selectableLevelIds.includes(level.id))
+                .map((level) => {
+                  const structures = map.structures.filter(({ levelId }) => levelId === level.id)
+                  if (structures.length === 0) return null
+                  return (
+                    <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
+                      <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
+                        {level.label}
+                      </h3>
+                      <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+                        {structures.map((structure) => (
+                          <li key={structure.id}>
+                            <button
+                              aria-pressed={selection.includes(structure.id)}
+                              className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
+                              disabled={disabled}
+                              ref={(button) => {
+                                if (button) structureButtons.current.set(structure.id, button)
+                                else structureButtons.current.delete(structure.id)
+                              }}
+                              type="button"
+                              onClick={() => selectStructure(structure.id)}
+                            >
+                              {structure.label}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  )
+                })}
+            </div>
           </details>
-        ) : null}
-        <details
-          className="rounded-lg border border-clinical-700 bg-clinical-900"
-          open={failed || listOpen}
-          onToggle={(event) => setListOpen(event.currentTarget.open)}
-        >
-          <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-            Choose from list
-          </summary>
-          <div className="max-h-[36dvh] space-y-4 overflow-y-auto border-t border-clinical-700 p-3">
-            <p className="text-small text-neutral-300">
-              This list provides the same selection without using the 3D canvas.
-            </p>
-            {map.levels
-              .filter((level) => !selectableLevelIds || selectableLevelIds.includes(level.id))
-              .map((level) => {
-                const structures = map.structures.filter(({ levelId }) => levelId === level.id)
-                if (structures.length === 0) return null
-                return (
-                  <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
-                    <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
-                      {level.label}
-                    </h3>
-                    <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-                      {structures.map((structure) => (
-                        <li key={structure.id}>
-                          <button
-                            aria-pressed={selection.includes(structure.id)}
-                            className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
-                            disabled={disabled}
-                            ref={(button) => {
-                              if (button) structureButtons.current.set(structure.id, button)
-                              else structureButtons.current.delete(structure.id)
-                            }}
-                            type="button"
-                            onClick={() => selectStructure(structure.id)}
-                          >
-                            {structure.label}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )
-              })}
-          </div>
-        </details>
-      </footer>
+        </footer>
+      </div>
 
       <p aria-live="polite" className="sr-only">
         {announcement}

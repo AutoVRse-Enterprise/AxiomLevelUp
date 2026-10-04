@@ -323,7 +323,7 @@ export function AnatomyLocatePrimitive({
           </Button>
           {lastLevel ? (
             <Button disabled={disabled || !selected} type="submit">
-              Check locations
+              Commit your localisation
             </Button>
           ) : (
             <Button

@@ -80,14 +80,13 @@ nearest mesh parent as context.
 
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
-the four learner-facing `howItWorks` briefing steps, clue-category labels, all three tier presets,
-normalized component and speed-blend weights, timing defaults, the first-attempt minimum score for
-time-only step-speed eligibility, clue penalties, XP and attempt-history limit. Every configured
-case ID and clue category used by a case must resolve.
+clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
+defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
+and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
 
 ## Primitive registry
 
-The canonical registry contains 27 strict primitive types: 23 standard types and 4 DICOM types.
+The canonical registry contains 29 strict primitive types: 25 standard types and 4 DICOM types.
 
 ### Content (12)
 
@@ -104,7 +103,7 @@ The canonical registry contains 27 strict primitive types: 23 standard types and
 - `formula`
 - `pdf_reference`
 
-### Assessment (9)
+### Assessment (10)
 
 - `multiple_choice`
 - `multiple_select`
@@ -115,6 +114,7 @@ The canonical registry contains 27 strict primitive types: 23 standard types and
 - `fill_blank`
 - `numeric`
 - `anatomy_locate`
+- `case_evidence_select`
 
 ### Domain
 
@@ -125,10 +125,12 @@ The canonical registry contains 27 strict primitive types: 23 standard types and
 - `dicom_measure` (strict DICOM primitive)
 - `anatomy_explore` (strict anatomy primitive)
 
-## Strict primitive schemas (27)
+## Strict primitive schemas (29)
 
 - `anatomy_explore`
 - `anatomy_locate`
+- `case_differential`
+- `case_evidence_select`
 - `rich_text`
 - `image`
 - `zoomable_image`
@@ -224,13 +226,15 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 7 stores reward idempotency, challenge periods, counters, the active reward
-  run, latest activity/question results, celebrations and an abstract digital reward ledger.
-- Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
+- Learner state version 8 stores reward idempotency, challenge periods, counters, the active reward
+  run, latest activity/question results, celebrations, an abstract digital reward ledger and
+  learner-scoped Case Lab walkthrough/anatomy-hint preferences.
+- Case attempt result-v8 records use the `time_eligible` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
   semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
-  local evidence/differential placeholders and XP from the central gamification activity result.
-  Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
+  local evidence, final differential, checkpoint history and XP from the central gamification
+  activity result.
+  Migrated result-v5 through result-v7 records remain explicitly legacy and do not fabricate
   unavailable details.
 - Device-scoped offline course and case package records are persisted separately from learner state.
 - XP, star, mastery, streak and period rules are reduced from typed learner events.
@@ -282,7 +286,8 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: `0.1`
 - Course documents also include an independent `courseVersion`.
-- Persisted learner state is version 7 and migrates older snapshots. Legacy case result-v5 and
-  result-v6 records remain readable without synthesizing result-v7 detail.
-- In-flight activity sessions are persisted independently at version 5; older supported sessions
-  migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.
+- Persisted learner state is version 8 and migrates older snapshots. Legacy case result-v5 through
+  result-v7 records remain readable without synthesizing result-v8 detail.
+- In-flight activity sessions are persisted independently at version 6; older supported sessions
+  migrate with empty Case Lab evidence, differential and checkpoint placeholders where those facts
+  were not recorded.

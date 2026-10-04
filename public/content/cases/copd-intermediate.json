@@ -262,7 +262,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Inspect the illustrated upper-zone region and the nearby airway-wall change.",
+            "prompt": "Determine where the structural change is concentrated and whether the nearby airway-wall change supports the same pattern.",
             "startView": { "mode": "overview" },
             "navigation": "both",
             "findingIds": ["intermediate-upper-wall-change", "intermediate-upper-region"],
@@ -281,7 +281,7 @@
           "conceptIds": ["respiratory-anatomy"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Localise the structural focus from lobe to procedural segment and distal structure.",
+            "prompt": "Commit to the lobe, procedural segment and distal structure that best localise the focus.",
             "startView": { "mode": "overview" },
             "navigation": "orbit",
             "levels": [

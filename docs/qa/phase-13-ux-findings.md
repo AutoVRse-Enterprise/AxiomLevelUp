@@ -50,7 +50,7 @@ Two audit corrections were applied at baseline:
 | M01 | Repeated stage gates interrupt the narrative | P13-T03 | Closed: inline StageBanner replaces modal gates |
 | M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
 | M04 | Results and comparisons are dense | P13-T10 | Open |
-| M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Open |
+| M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Partial: adjacent controls, guidance, arrival and significance feedback landed |
 | M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Closed: full cases require authored clue and inspected-finding citation |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
 | M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |

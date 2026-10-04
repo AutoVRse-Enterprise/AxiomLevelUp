@@ -136,7 +136,10 @@ async function completeLocate(page: Page, step: CaseStep, checkState: CheckState
     }
     await page
       .getByRole('button', {
-        name: index === (step.content.levels?.length ?? 0) - 1 ? 'Check locations' : 'Next level',
+        name:
+          index === (step.content.levels?.length ?? 0) - 1
+            ? 'Commit your localisation'
+            : 'Next level',
       })
       .click()
   }

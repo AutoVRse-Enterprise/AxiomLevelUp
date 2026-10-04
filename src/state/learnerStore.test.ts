@@ -120,6 +120,7 @@ describe('learner store persistence', () => {
     })
     expect(migrated.stats.casesCompleted).toBe(0)
     expect(migrated.caseLab.walkthroughSeen).toBe(false)
+    expect(migrated.caseLab.anatomyHintSeen).toBe(false)
   })
 
   it('migrates v7 learners with the Case Lab walkthrough unseen', () => {
@@ -127,7 +128,10 @@ describe('learner store persistence', () => {
     legacy.stateVersion = 7
     delete legacy.caseLab
 
-    expect(migrateLearnerState(legacy).caseLab).toEqual({ walkthroughSeen: false })
+    expect(migrateLearnerState(legacy).caseLab).toEqual({
+      walkthroughSeen: false,
+      anatomyHintSeen: false,
+    })
   })
 
   it('marks v5 attempts as legacy without inventing unavailable result details', () => {
@@ -194,5 +198,13 @@ describe('learner store persistence', () => {
     useLearnerStore.getState().markCaseLabWalkthroughSeen()
 
     expect(learnerDataSnapshot(useLearnerStore.getState()).caseLab.walkthroughSeen).toBe(true)
+  })
+
+  it('stores the anatomy interaction hint preference in learner data', () => {
+    expect(useLearnerStore.getState().caseLab.anatomyHintSeen).toBe(false)
+
+    useLearnerStore.getState().markAnatomyHintSeen()
+
+    expect(learnerDataSnapshot(useLearnerStore.getState()).caseLab.anatomyHintSeen).toBe(true)
   })
 })

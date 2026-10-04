@@ -81,7 +81,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Require decisive evidence before a full diagnosis score; remove `Not rated` outcomes.
   - Record ADR-098.
 
-- [ ] **P13-T07 — Anatomy interaction contract**
+- [x] **P13-T07 — Anatomy interaction contract** — completed 2026-10-04
   - Keep controls adjacent to the 3D viewport on desktop and cap the mobile viewport.
   - Add interaction guidance, arrival feedback and finding significance.
   - Rewrite prompts as learning objectives and frame localisation as the commitment.

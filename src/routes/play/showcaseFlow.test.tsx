@@ -339,7 +339,7 @@ describe('showcase lesson integration', () => {
     await user.click(await screen.findByRole('radio', { name: 'Lateral region' }))
     await user.click(screen.getByRole('button', { name: 'Next level' }))
     await user.click(await screen.findByRole('radio', { name: 'Distal airway' }))
-    await user.click(screen.getByRole('button', { name: 'Check locations' }))
+    await user.click(screen.getByRole('button', { name: 'Commit your localisation' }))
     await continueCompletedStep(user)
 
     await user.click(await screen.findByRole('button', { name: 'Skip activity' }))

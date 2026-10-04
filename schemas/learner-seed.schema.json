@@ -849,6 +849,346 @@
                 "timeoutCreditApplied"
               ],
               "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "attemptId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": [
+                    "foundation",
+                    "intermediate",
+                    "advanced"
+                  ]
+                },
+                "total": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "anatomy": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "diagnosis": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "speed": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "durationSeconds": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "openedClueIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "stepResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "primitiveId": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      },
+                      "firstAttemptScore": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "elapsedMs": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "timedOut": {
+                        "type": "boolean"
+                      },
+                      "response": {}
+                    },
+                    "required": [
+                      "primitiveId",
+                      "firstAttemptScore",
+                      "timedOut",
+                      "response"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "completedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                },
+                "perStepSpeed": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "caseSpeed": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "clueCostPoints": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "speedScored": {
+                  "type": "boolean"
+                },
+                "timingMode": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "stopwatch",
+                    "countdown"
+                  ]
+                },
+                "weights": {
+                  "type": "object",
+                  "properties": {
+                    "anatomy": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "diagnosis": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "speed": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    }
+                  },
+                  "required": [
+                    "anatomy",
+                    "diagnosis",
+                    "speed"
+                  ],
+                  "additionalProperties": false
+                },
+                "actualAwardedXp": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actualAwardedXpSource": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "gamification_activity_result"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "speedModel": {
+                  "type": "string",
+                  "const": "time_eligible"
+                },
+                "speedEligibility": {
+                  "type": "object",
+                  "properties": {
+                    "minStepScore": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "eligibleSteps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "totalScoredSteps": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "minStepScore",
+                    "eligibleSteps",
+                    "totalScoredSteps"
+                  ],
+                  "additionalProperties": false
+                },
+                "reviewedClueIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "evidence": {
+                  "type": "object",
+                  "properties": {
+                    "pinned": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "clue",
+                              "finding"
+                            ]
+                          },
+                          "id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "inspectedFindingIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "currentLocation": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "waypoint",
+                            "structure"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "pinned"
+                  ],
+                  "additionalProperties": false
+                },
+                "differential": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "enum": [
+                      "unlikely",
+                      "possible",
+                      "likely"
+                    ]
+                  }
+                },
+                "timeoutCreditApplied": {
+                  "type": "boolean"
+                },
+                "resultVersion": {
+                  "type": "number",
+                  "const": 8
+                },
+                "differentialCheckpoints": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "enum": [
+                        "unlikely",
+                        "possible",
+                        "likely"
+                      ]
+                    }
+                  }
+                }
+              },
+              "required": [
+                "attemptId",
+                "tier",
+                "total",
+                "anatomy",
+                "diagnosis",
+                "speed",
+                "durationSeconds",
+                "openedClueIds",
+                "stepResults",
+                "completedAt",
+                "perStepSpeed",
+                "caseSpeed",
+                "clueCostPoints",
+                "speedScored",
+                "timingMode",
+                "weights",
+                "actualAwardedXp",
+                "actualAwardedXpSource",
+                "speedModel",
+                "speedEligibility",
+                "reviewedClueIds",
+                "evidence",
+                "differential",
+                "timeoutCreditApplied",
+                "resultVersion",
+                "differentialCheckpoints"
+              ],
+              "additionalProperties": false
             }
           ]
         }
@@ -1581,10 +1921,15 @@
       "properties": {
         "walkthroughSeen": {
           "type": "boolean"
+        },
+        "anatomyHintSeen": {
+          "default": false,
+          "type": "boolean"
         }
       },
       "required": [
-        "walkthroughSeen"
+        "walkthroughSeen",
+        "anatomyHintSeen"
       ],
       "additionalProperties": false
     }

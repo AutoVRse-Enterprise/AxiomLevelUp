@@ -295,7 +295,7 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   await page.getByRole('radio', { name: 'Posterior basal segment' }).click()
   await page.getByRole('button', { name: 'Next level' }).click()
   await page.getByRole('radio', { name: 'Segmental bronchus' }).click()
-  await page.getByRole('button', { name: 'Check locations' }).click()
+  await page.getByRole('button', { name: 'Commit your localisation' }).click()
   await captureEvidence(page, testInfo, 'localisation')
   await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()

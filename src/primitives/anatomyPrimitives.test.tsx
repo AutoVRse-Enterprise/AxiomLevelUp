@@ -589,7 +589,7 @@ describe('anatomy localisation component', () => {
 
     screen.getByRole('radio', { name: 'Distal airway' }).focus()
     await user.keyboard(' ')
-    screen.getByRole('button', { name: 'Check locations' }).focus()
+    screen.getByRole('button', { name: 'Commit your localisation' }).focus()
     await user.keyboard('{Enter}')
 
     expect(onSubmit).toHaveBeenCalledWith({

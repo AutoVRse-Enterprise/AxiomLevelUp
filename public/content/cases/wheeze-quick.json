@@ -168,7 +168,7 @@
           "conceptIds": ["respiratory-anatomy", "airway-pathophysiology"],
           "content": {
             "anatomyMapId": "lung-map",
-            "prompt": "Inspect the marked left upper lobe and the diffuse airway-wall finding.",
+            "prompt": "Determine the lobe context and whether the visible airway-wall change is focal or diffuse.",
             "startView": { "mode": "marker", "structureId": "left-upper-lobe" },
             "navigation": "both",
             "findingIds": ["quick-diffuse-wall-change"],

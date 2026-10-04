@@ -19,6 +19,7 @@ interface LearnerStore extends LearnerData {
   applyEventState: (data: LearnerData) => void
   resetCaseAttempts: () => void
   markCaseLabWalkthroughSeen: () => void
+  markAnatomyHintSeen: () => void
   setStorageError: (message: string | null) => void
 }
 
@@ -75,7 +76,7 @@ const emptyData: LearnerData = {
     correctAnswers: 0,
   },
   onboarding: { viewed: false },
-  caseLab: { walkthroughSeen: false },
+  caseLab: { walkthroughSeen: false, anatomyHintSeen: false },
 }
 
 function dataFromSeed(seed: LearnerSeed): LearnerData {
@@ -152,6 +153,7 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
     },
     caseLab: {
       walkthroughSeen: state.caseLab?.walkthroughSeen ?? false,
+      anatomyHintSeen: state.caseLab?.anatomyHintSeen ?? false,
     },
   }
 }
@@ -177,6 +179,8 @@ export const useLearnerStore = create<LearnerStore>()(
       },
       markCaseLabWalkthroughSeen: () =>
         set((state) => ({ caseLab: { ...state.caseLab, walkthroughSeen: true } })),
+      markAnatomyHintSeen: () =>
+        set((state) => ({ caseLab: { ...state.caseLab, anatomyHintSeen: true } })),
       setStorageError: (storageError) => set({ storageError }),
     }),
     {

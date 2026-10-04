@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T06 are complete; P13-T07 anatomy
-interaction contract is next. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 through P13-T07 are complete; P13-T08
+unknown-point reconstruction is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through
 P9-M03.
 
@@ -59,6 +59,9 @@ P9-M03.
 - Full cases now require differential ratings after Observe and Interpret and a scored
   reviewed-evidence citation before conclusion. Session v6 and result v8 persist checkpoint
   history with legacy defaults.
+- Anatomy tasks now pair the viewport with adjacent desktop controls, cap the mobile viewport,
+  teach interaction once per learner, announce waypoint arrival, explain finding significance and
+  frame localisation as a scored commitment.
 
 ## Verification
 
@@ -94,16 +97,18 @@ P9-M03.
 - P13-T03 ESLint: passed with zero warnings.
 - P13-T06 full unit suite: **73 files / 486 tests passed**.
 - P13-T06 TypeScript, ESLint and content validation pass with zero warnings.
+- P13-T07 focused anatomy/state/case-flow suite: **5 files / 52 tests passed**; TypeScript, ESLint
+  and content validation pass.
 
 ## In progress
 
-- P13-T07 anatomy interaction contract is next.
+- P13-T08 unknown-point reconstruction is next.
 
 ## Next three steps
 
-1. Improve anatomy task framing and finding feedback in P13-T07.
-2. Implement unknown-waypoint case entry in P13-T08.
-3. Add patient timeline, timing semantics and first-attempt notice in P13-T09.
+1. Implement unknown-waypoint case entry in P13-T08.
+2. Add patient timeline, timing semantics and first-attempt notice in P13-T09.
+3. Redesign results and comparison in P13-T10.
 
 ## Blockers/questions for the user
 

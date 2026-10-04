@@ -875,6 +875,7 @@ export const learnerSeedSchema = z.object({
   }),
   caseLab: z.object({
     walkthroughSeen: z.boolean(),
+    anatomyHintSeen: z.boolean().default(false),
   }),
 })
 

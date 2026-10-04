@@ -3014,3 +3014,19 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   with zero warnings. TypeScript passes and the affected content/case-flow suites pass. The
   foundation benchmark now inspects every finding it cites.
 - **Follow-ups:** Improve the anatomy interaction contract in P13-T07.
+
+### [2026-10-04 22:44] P13-T07 - Clarify anatomy interaction and commitment
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Reworked the anatomy viewer into a desktop viewport/control split and capped mobile
+  viewport; added a learner-persisted dismissible interaction hint, visible waypoint-arrival
+  feedback and finding cards that separate observation from significance; rewrote case exploration
+  prompts as objectives; and renamed the scored action to “Commit your localisation.”
+- **Files changed:** Anatomy viewer and tests; localisation primitive and route/E2E drivers;
+  learner schema, store, seeds and exported schema; four case documents and content docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; `npm run validate:content`;
+  focused Vitest (5 files / 52 tests); `npm run lint`.
+- **Result/verification:** TypeScript, lint, content validation and all focused anatomy, state and
+  case-flow tests pass. Desktop controls are adjacent to the viewport and the mobile viewport is
+  capped at 45svh.
+- **Follow-ups:** Spike and implement seeded unknown-waypoint reconstruction in P13-T08.
