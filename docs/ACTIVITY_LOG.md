@@ -2877,3 +2877,23 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Result/verification:** All implementation and closeout changes are committed. The only
   remaining untracked path is the user's untouched `docs/reference docs/`.
 - **Follow-ups:** External approvals, Phase 9 physical-device evidence and deployment preflight.
+
+### [2026-10-04 12:23] P12-AUD - Reframe audit around trainee Case Lab UX
+
+- **Agent/session:** Cursor product-audit session
+- **Action:** Re-ran the advanced Case Lab from briefing through expert comparison and inspected
+  the foundation flow on desktop and at 375 × 812 from a trainee-doctor perspective. Removed
+  clinical-accuracy, medical-review, regulatory and visual-polish-only findings from the durable
+  audit; added a phase-by-phase trainee journey and 21 UX-flow findings focused on purpose,
+  interaction contracts, evidence use, differential reasoning, timing and debrief logic.
+- **Files changed:** Cursor Canvas
+  `client-demo-readiness-audit.canvas.tsx`; `docs/ACTIVITY_LOG.md`; `docs/HANDOFF.md`.
+- **Commands run:** Production preview on `127.0.0.1:4192`; browser walkthroughs of Home, Learn,
+  Challenge, foundation and advanced Case Lab; desktop and phone emulation; Canvas TypeScript
+  diagnostics; IDE lint diagnostics; stale clinical-scope search.
+- **Result/verification:** The advanced case completed at 86/100 with 100% Anatomy, 100% Diagnosis
+  and only 1/5 clues reviewed, then reported all differential hypotheses as `Not rated`. The
+  revised Canvas has no TypeScript or lint errors and no retained clinical/legal audit category.
+- **Follow-ups:** Redesign the case around one explicit mission, keep task/evidence/action in one
+  workspace, make evidence and differential behavior causally relevant, and repeat a
+  bridge-disabled human walkthrough before a self-guided trainee demonstration.

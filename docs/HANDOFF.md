@@ -3,7 +3,10 @@
 ## Current phase/task
 
 Phase 12 is complete through P12-T12. All assigned implementation and technical QA gates are
-closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through P9-M03.
+closed. A post-closeout product audit has now been reframed for a conceptual IT demo: clinical
+accuracy and medical/regulatory review are out of scope, while the trainee-doctor Case Lab
+experience is the primary concern. Phase 9 remains active for physical Android and iOS gates
+P9-M01 through P9-M03.
 
 ## Done
 
@@ -24,6 +27,13 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
   period rankings/challenge continuation, ADR-092 is kind-aware offline packages, ADR-093 is
   state-driven browser accessibility/performance/recovery evidence and its anatomy probe, and
   ADR-094 is worker-based runtime content validation. No accepted ADR was renumbered.
+- Replayed the advanced case end to end and inspected the foundation case on desktop and at
+  375 × 812 as a trainee doctor.
+- Revised the durable client-demo Canvas to remove clinical-accuracy, medical-review, regulatory
+  and visual-polish-only findings; added a nine-phase journey analysis and 21 UX-flow findings.
+- Confirmed the central UX contradiction: the advanced case can earn 100% Anatomy and 100%
+  Diagnosis after reviewing only 1/5 clues, while expert comparison reports every differential
+  hypothesis as `Not rated`.
 
 ## Verification
 
@@ -52,30 +62,36 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
   29.8 seconds.
 - `npm run schema:export` and `npm run assets:hash` were not required because closeout changed no
   schema or asset metadata.
+- Fresh product-audit preview ran at `http://127.0.0.1:4192`.
+- Canvas TypeScript diagnostics and IDE lint diagnostics pass with no errors.
+- No full application check was rerun because the audit changed no runtime source or content.
 
 ## In progress
 
 - No Phase 12 implementation remains.
-- Phase 12 implementation and closeout are committed through `98d0d51`; only external approvals,
-  physical-device gates and deployment of an exact approved candidate remain.
+- The UX audit is complete; no product redesign was implemented in this review task.
+- Phase 12 implementation and closeout remain committed through `98d0d51`; the audit documentation
+  changes are uncommitted.
 
 ## Next three steps
 
-1. Obtain and record respiratory/clinical, anatomy/pathology and client/legal dispositions for
-   every item in the four case claim ledgers.
-2. Execute P9-M01 through P9-M03 on physical Android/iOS devices, or record authorized waivers.
-3. Commit/identify one exact approved candidate, deploy that exact build over HTTPS and complete
-   the runbook's build-ID, service-worker, DICOM host/CORS/PHI and offline preflight.
+1. Reframe Case Lab around one explicit mission and a continuous
+   brief → gather evidence → update differential → localise → commit → debrief loop.
+2. Make clues and differential updates causally relevant to scored decisions, expose clue cost at
+   the decision point and keep task/evidence/action visible together on desktop and mobile.
+3. After UX changes, run an unaided bridge-disabled trainee walkthrough; then complete or waive
+   P9-M01 through P9-M03 for production follow-up.
 
 ## Blockers/questions for the user
 
-- Unsupervised/external use is blocked on all unapproved claims in
-  `docs/qa/phase-12-catalogue-content-review.md` and its detailed golden-case ledger.
+- Self-guided trainee use is blocked by an unclear case mission, an untaught interaction model and
+  evidence/differential systems that are optional to the scored path.
+- The Home surface promotes the advanced case before introducing Case Lab, and the relationship
+  among Pathway, Course, Case Lab and Challenge is not explained.
 - Physical-device approval requires Android/iOS hardware or an approved device service, a
   production HTTPS URL and a CORS-capable DICOM host.
-- The supervised-client verdict is only a controlled technical preview; it is not clinical
-  validation, validated anatomy, client/legal sign-off, production hosting approval or physical
-  mobile approval.
+- A presenter-led IT capability demo is conditionally viable after the immediate functional issues
+  are fixed; the current trainee journey is not self-explanatory.
 
 ## Environment notes
 
@@ -87,7 +103,8 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
 - Browser cache override:
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`
 - Browser targets: desktop Chromium 1440 × 900 and touch-phone Chromium 375 × 812.
-- Preview: `http://127.0.0.1:4181`, strict port, `VITE_E2E=true`.
+- Original Phase 12 preview: `http://127.0.0.1:4181`, strict port, `VITE_E2E=true`.
+- Fresh product-audit preview: `http://127.0.0.1:4192`.
 - Full gate command: `npm run check`
 - Serial browser command:
   `$env:PLAYWRIGHT_BROWSERS_PATH='C:\Users\c0n\AppData\Local\ms-playwright'; npx playwright test --workers=1`
@@ -105,6 +122,11 @@ closed. Phase 9 remains active for physical Android and iOS gates P9-M01 through
 - Achievement dialogs can cover result actions and must be dismissed before continuing.
 - Full-path anatomy uses real branch controls and a projected canvas finding. List alternatives are
   valid accessibility paths but do not prove canvas picking.
+- On desktop, the main anatomy controls sit below the tall 3D viewport. On phone, Clues and Notes
+  also sit after the viewport; the clue bottom sheet initially shows its headers before the clue
+  card and removes the task from view.
+- Case notes are described as optional and non-scoring, but the comparison uses their confidence
+  ratings; skipping them can produce `You: Not rated` after a correct diagnosis.
 - Browser tests refresh screenshot evidence. Restore unintended evidence churn after verification;
   the committed Phase 11 and Phase 12 evidence sets are the retained closeout artifacts.
 - Playwright uses SwiftShader. It proves the WebGL contract, not hardware GPU performance.
