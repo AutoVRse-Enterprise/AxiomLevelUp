@@ -307,6 +307,7 @@
     {
       "id": "right-lower-airway",
       "label": "Right lower lobar airway",
+      "neutralLabel": "Proximal junction",
       "position": [-44, -118, 1222],
       "lookAt": [-62, -140, 1195],
       "next": [
@@ -321,6 +322,7 @@
     {
       "id": "right-lower-superior-segment",
       "label": "Superior segmental airway",
+      "neutralLabel": "Upper branch",
       "position": [-66, -136, 1228],
       "lookAt": [-82, -151, 1238],
       "next": [],
@@ -329,6 +331,7 @@
     {
       "id": "right-lower-medial-basal-segment-airway",
       "label": "Medial basal segmental airway",
+      "neutralLabel": "Medial branch",
       "position": [-60, -143, 1196],
       "lookAt": [-34, -153, 1178],
       "next": [],
@@ -337,6 +340,7 @@
     {
       "id": "right-lower-anterior-basal-segment-airway",
       "label": "Anterior basal segmental airway",
+      "neutralLabel": "Anterior branch",
       "position": [-63, -148, 1188],
       "lookAt": [-49, -161, 1135],
       "next": [],
@@ -345,6 +349,7 @@
     {
       "id": "right-lower-lateral-basal-segment",
       "label": "Lateral basal segmental airway",
+      "neutralLabel": "Lateral branch",
       "position": [-67, -145, 1194],
       "lookAt": [-84, -163, 1183],
       "next": [],
@@ -353,6 +358,12 @@
     {
       "id": "right-lower-posterior-basal-segment",
       "label": "Posterior basal segmental airway",
+      "neutralLabel": "Posterior branch",
+      "answerIds": {
+        "lobe": "right-lower-lobe",
+        "segment": "posterior-basal-segment",
+        "structure": "segmental-bronchus"
+      },
       "position": [-61, -151, 1182],
       "lookAt": [-77, -171, 1161],
       "next": ["right-lower-posterior-basal-distal"],
@@ -362,6 +373,12 @@
     {
       "id": "right-lower-posterior-basal-distal",
       "label": "Distal posterior basal airway",
+      "neutralLabel": "Distal branch",
+      "answerIds": {
+        "lobe": "right-lower-lobe",
+        "segment": "posterior-basal-segment",
+        "structure": "segmental-bronchus"
+      },
       "position": [-78, -173, 1159],
       "lookAt": [-91, -188, 1143],
       "next": [],

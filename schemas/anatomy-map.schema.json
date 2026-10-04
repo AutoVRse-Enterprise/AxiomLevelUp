@@ -228,6 +228,23 @@
             "type": "string",
             "minLength": 1
           },
+          "neutralLabel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "answerIds": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            }
+          },
           "position": {
             "type": "array",
             "items": [

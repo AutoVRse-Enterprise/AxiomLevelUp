@@ -38,6 +38,8 @@ const anatomyStructureSchema = z.union([meshAnatomyStructureSchema, volumeAnatom
 const anatomyWaypointSchema = z.strictObject({
   id: idSchema,
   label: z.string().trim().min(1),
+  neutralLabel: z.string().trim().min(1).optional(),
+  answerIds: z.record(idSchema, idSchema).optional(),
   position: vector3Schema,
   lookAt: vector3Schema,
   next: z.array(idSchema),

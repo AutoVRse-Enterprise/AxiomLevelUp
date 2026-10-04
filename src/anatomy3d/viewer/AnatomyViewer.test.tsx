@@ -348,6 +348,34 @@ describe('AnatomyViewer', () => {
     })
   })
 
+  it('uses neutral navigation labels and hides the breadcrumb before commitment', async () => {
+    const user = userEvent.setup()
+    mocked.controller.parentWaypoint.mockReturnValue('entry-waypoint')
+    mocked.controller.waypointPath.mockReturnValue(['entry-waypoint', 'terminal-waypoint'])
+    const neutralMap = {
+      ...map,
+      waypoints: map.waypoints.map((waypoint) => ({
+        ...waypoint,
+        neutralLabel: waypoint.id === 'entry-waypoint' ? 'Previous branch' : 'Upper branch',
+      })),
+    }
+
+    render(
+      <AnatomyViewer
+        config={config}
+        hideLocationLabels
+        map={neutralMap}
+        modelUrl="/model.glb"
+        neutralNavigationLabels
+        startView={{ mode: 'endoscopic', waypointId: 'terminal-waypoint' }}
+      />,
+    )
+
+    expect(screen.queryByText('Current landmark:')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Back to Previous branch' }))
+    expect(screen.getByRole('status')).toHaveTextContent('You are now in Previous branch.')
+  })
+
   it('toggles between airway and outside views at the current waypoint', async () => {
     const user = userEvent.setup()
     render(

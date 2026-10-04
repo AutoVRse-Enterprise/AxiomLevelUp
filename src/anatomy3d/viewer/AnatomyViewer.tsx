@@ -29,6 +29,8 @@ export interface AnatomyViewerProps {
   selectableLevelIds?: readonly string[]
   markerStructureId?: string | null
   findings?: readonly CaseFinding[]
+  neutralNavigationLabels?: boolean
+  hideLocationLabels?: boolean
   onStructureSelected?: (structureId: string) => void
   onFindingInspected?: (findingId: string) => void
   onWaypointReached?: (waypointId: string) => void
@@ -53,6 +55,8 @@ export function AnatomyViewer({
   selectableLevelIds,
   markerStructureId,
   findings = [],
+  neutralNavigationLabels = false,
+  hideLocationLabels = false,
   onStructureSelected,
   onFindingInspected,
   onWaypointReached,
@@ -195,13 +199,17 @@ export function AnatomyViewer({
     [disabled, findings, onFindingInspected],
   )
 
+  const waypointLabel = (waypoint: AnatomyMap['waypoints'][number]) =>
+    neutralNavigationLabels ? (waypoint.neutralLabel ?? 'Branch') : waypoint.label
+
   const travelTo = (waypointId: string) => {
     if (disabled) return
-    const waypointLabel = map.waypoints.find(({ id }) => id === waypointId)?.label ?? waypointId
+    const waypoint = map.waypoints.find(({ id }) => id === waypointId)
+    const destinationLabel = waypoint ? waypointLabel(waypoint) : waypointId
     controller?.travelTo(waypointId, { animate: motion === 'full' })
     setCurrentWaypointId(waypointId)
-    setArrivalMessage(`You are now in ${waypointLabel}.`)
-    setAnnouncement(`You are now in ${waypointLabel}.`)
+    setArrivalMessage(`You are now in ${destinationLabel}.`)
+    setAnnouncement(`You are now in ${destinationLabel}.`)
     onWaypointReached?.(waypointId)
   }
 
@@ -395,21 +403,21 @@ export function AnatomyViewer({
               </dl>
             </details>
           ) : null}
-          {currentWaypoint ? (
+          {currentWaypoint && !hideLocationLabels ? (
             <div className="rounded-lg border border-clinical-700 bg-clinical-900 p-3">
               <nav aria-label="Anatomy location">
                 <ol className="flex flex-wrap items-center gap-1 text-caption text-neutral-300">
                   {breadcrumb.map((waypoint, index) => (
                     <li key={waypoint.id}>
                       {index > 0 ? <span aria-hidden="true"> / </span> : null}
-                      <span>{waypoint.label}</span>
+                      <span>{waypointLabel(waypoint)}</span>
                     </li>
                   ))}
                 </ol>
               </nav>
               <p className="mt-1 text-small">
                 <span className="text-neutral-300">Current landmark: </span>
-                <strong>{currentWaypoint.label}</strong>
+                <strong>{waypointLabel(currentWaypoint)}</strong>
               </p>
             </div>
           ) : null}
@@ -494,14 +502,17 @@ export function AnatomyViewer({
                 variant="secondary"
                 onClick={() => travelTo(parentWaypoint.id)}
               >
-                Back to {parentWaypoint.label}
+                Back to {waypointLabel(parentWaypoint)}
               </Button>
             </div>
           ) : null}
           {branches.length ? (
             <div>
               <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
-                Branches from {currentWaypoint?.label ?? 'current location'}
+                Branches from{' '}
+                {currentWaypoint && !hideLocationLabels
+                  ? waypointLabel(currentWaypoint)
+                  : 'current location'}
               </p>
               <div className="flex flex-wrap gap-2">
                 {branches.map((branchId) => (
@@ -512,7 +523,10 @@ export function AnatomyViewer({
                     variant="secondary"
                     onClick={() => travelTo(branchId)}
                   >
-                    {map.waypoints.find(({ id }) => id === branchId)?.label ?? branchId}
+                    {(() => {
+                      const branch = map.waypoints.find(({ id }) => id === branchId)
+                      return branch ? waypointLabel(branch) : branchId
+                    })()}
                   </Button>
                 ))}
               </div>

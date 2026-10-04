@@ -182,6 +182,34 @@
             "waypointId"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "unknown_waypoint"
+            },
+            "candidateWaypointIds": {
+              "minItems": 2,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              }
+            },
+            "neutralLabels": {
+              "type": "boolean",
+              "const": true
+            }
+          },
+          "required": [
+            "mode",
+            "candidateWaypointIds",
+            "neutralLabels"
+          ],
+          "additionalProperties": false
         }
       ]
     },

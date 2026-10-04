@@ -49,13 +49,18 @@ export interface CaseDocumentFixture {
   id: string
   title: string
   findings?: Array<{ id: string; label: string }>
-  entry: { mode: string }
+  entry: {
+    mode: string
+    waypointId?: string
+    candidateWaypointIds?: string[]
+    neutralLabels?: boolean
+  }
   stages: Array<{ id: string; title: string; steps: CaseStep[] }>
 }
 
 interface AnatomyMapFixture {
   structures: Array<{ id: string; label: string }>
-  waypoints: Array<{ id: string; label: string; next?: string[] }>
+  waypoints: Array<{ id: string; label: string; neutralLabel?: string; next?: string[] }>
 }
 
 export const caseIds = [
@@ -108,7 +113,12 @@ async function completeExplore(page: Page, caseDoc: CaseDocumentFixture, step: C
     await chooseStructure(page, structureId)
   }
   for (const waypointId of step.content.requiredWaypointIds ?? []) {
-    for (const nextId of waypointPath('trachea-mid', waypointId)) {
+    if (caseDoc.entry.mode === 'unknown_waypoint') {
+      const backToTarget = page.getByRole('button', { name: 'Back to Posterior branch', exact: true })
+      if (await backToTarget.isVisible().catch(() => false)) await backToTarget.click()
+      continue
+    }
+    for (const nextId of waypointPath(caseDoc.entry.waypointId ?? 'trachea-mid', waypointId)) {
       await page
         .getByRole('button', { name: waypointLabels.get(nextId) ?? nextId, exact: true })
         .click()

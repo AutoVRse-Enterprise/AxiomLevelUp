@@ -18,7 +18,7 @@ Two audit corrections were applied at baseline:
 
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
-| B02 | Unknown-point mechanic missing | P13-T08 | Open |
+| B02 | Unknown-point mechanic missing | P13-T08 | Closed: seeded unknown entry, neutral navigation and entry-derived scoring |
 | B04 | Physical Android/iOS gates open | P13-T16 | Open; pass or record desktop-only waiver |
 | B05 | Production delivery preflight incomplete | P13-T16 | Open |
 | B06 | Two SVG lesson images fail to decode | P13-T01 | Closed: UTF-8 assets plus XML validator |
@@ -29,8 +29,8 @@ Two audit corrections were applied at baseline:
 | --- | --- | --- | --- |
 | H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Open; simulated preview only |
 | H02 | Segmented rankings absent | P13-T13 | Open; simulated preview only |
-| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: inspected findings can now be required cited evidence |
-| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Partial: numeric leakage is rejected and reasoning prompts no longer restate evidence |
+| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: unknown-point localisation and cited findings are scored; bridge-free browser proof remains |
+| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Partial: mission, updates and evidence citation now connect artifacts |
 | H06 | Benchmark purpose is unclear | P13-T10 | Open |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
@@ -50,7 +50,7 @@ Two audit corrections were applied at baseline:
 | M01 | Repeated stage gates interrupt the narrative | P13-T03 | Closed: inline StageBanner replaces modal gates |
 | M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
 | M04 | Results and comparisons are dense | P13-T10 | Open |
-| M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Partial: adjacent controls, guidance, arrival and significance feedback landed |
+| M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Closed in implementation: adjacent controls, neutral navigation, arrival and significance feedback landed; usability retest remains in P13-T15 |
 | M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Closed: full cases require authored clue and inspected-finding citation |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
 | M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |

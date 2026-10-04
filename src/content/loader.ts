@@ -1410,6 +1410,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
           step.content.startView.structureId === caseDocument.entry.markerStructureId
         )
       }
+      if (caseDocument.entry.mode === 'unknown_waypoint') {
+        return step.type === 'anatomy_explore' && step.content.navigation !== 'orbit'
+      }
       return (
         step.content.startView.mode === 'endoscopic' &&
         step.content.startView.waypointId === caseDocument.entry.waypointId
@@ -1573,6 +1576,90 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         'entry.waypointId',
         'anatomy waypoint',
       )
+    }
+    if (caseDocument.entry.mode === 'unknown_waypoint' && anatomyMap?.waypoints) {
+      const waypointIds = new Set(anatomyMap.waypoints.map(({ id }) => id))
+      if (
+        new Set(caseDocument.entry.candidateWaypointIds).size !==
+        caseDocument.entry.candidateWaypointIds.length
+      ) {
+        issues.push({
+          file,
+          path: 'entry.candidateWaypointIds',
+          message: 'Unknown-waypoint candidates must be unique.',
+          severity: 'error',
+        })
+      }
+      const entryLocateSteps = caseDocument.stages
+        .flatMap(({ steps }) => steps)
+        .flatMap((step) => {
+          const parsed = parsePrimitive(step).primitive
+          return parsed?.type === 'anatomy_locate' &&
+            (parsed.content as { answerFrom?: string }).answerFrom === 'entry'
+            ? [parsed as AnatomyLocatePrimitive]
+            : []
+        })
+      if (entryLocateSteps.length === 0) {
+        issues.push({
+          file,
+          path: 'entry',
+          message: 'Unknown-waypoint entry requires an anatomy_locate step with answerFrom entry.',
+          severity: 'error',
+        })
+      }
+      caseDocument.entry.candidateWaypointIds.forEach((candidateId, candidateIndex) => {
+        requireRef(
+          waypointIds,
+          candidateId,
+          file,
+          `entry.candidateWaypointIds.${candidateIndex}`,
+          'anatomy waypoint',
+        )
+        const waypoint = anatomyMap.waypoints.find(({ id }) => id === candidateId)
+        if (!waypoint) return
+        if (!waypoint.neutralLabel) {
+          issues.push({
+            file,
+            path: `entry.candidateWaypointIds.${candidateIndex}`,
+            message: `Unknown-waypoint candidate "${candidateId}" requires a neutralLabel.`,
+            severity: 'error',
+          })
+        }
+        entryLocateSteps.forEach((step) => {
+          const benchmark = caseDocument.expertBenchmark.responses[step.id]
+          const benchmarkResponse =
+            benchmark && typeof benchmark === 'object' && !Array.isArray(benchmark)
+              ? (benchmark as Record<string, unknown>)
+              : {}
+          step.content.levels.forEach((level) => {
+            const answerId = waypoint.answerIds?.[level.levelId]
+            const validAnswer =
+              answerId !== undefined &&
+              (level.input === 'model'
+                ? anatomyMap.structures.some(
+                    ({ id, levelId }) => id === answerId && levelId === level.levelId,
+                  )
+                : level.input === 'image'
+                  ? level.regions.some(({ id }) => id === answerId)
+                  : level.options.some(({ id }) => id === answerId))
+            if (!validAnswer) {
+              issues.push({
+                file,
+                path: `entry.candidateWaypointIds.${candidateIndex}`,
+                message: `Candidate "${candidateId}" has no valid ${level.levelId} answer.`,
+                severity: 'error',
+              })
+            } else if (benchmarkResponse[level.levelId] !== answerId) {
+              issues.push({
+                file,
+                path: `expertBenchmark.responses.${step.id}.${level.levelId}`,
+                message: `Benchmark must match candidate "${candidateId}" for answerFrom entry.`,
+                severity: 'error',
+              })
+            }
+          })
+        })
+      })
     }
   })
 

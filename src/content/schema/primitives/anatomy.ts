@@ -167,6 +167,7 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
         startView: anatomyStartViewSchema.default({ mode: 'overview' }),
         navigation: anatomyNavigationSchema.default('orbit'),
         findingIds: z.array(idSchema).min(1).optional(),
+        answerFrom: z.literal('entry').optional(),
         levels: z.array(anatomyLocateLevelSchema).min(1),
         explanation: z.string().trim().min(1).optional(),
       })

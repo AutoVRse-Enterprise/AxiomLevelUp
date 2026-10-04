@@ -2,8 +2,15 @@ import { describe, expect, it } from 'vitest'
 
 import fixtureCaseJson from '../../../public/content/fixtures/case.json'
 import appConfigJson from '../../../public/content/app-config.json'
+import lungMapJson from '../../../public/content/anatomy/lung-map.json'
+import advancedCaseJson from '../../../public/content/cases/exacerbation-advanced.json'
 
-import { appConfigSchema, caseDocumentSchema, type AppConfig } from '@/content/schema'
+import {
+  anatomyMapSchema,
+  appConfigSchema,
+  caseDocumentSchema,
+  type AppConfig,
+} from '@/content/schema'
 import { buildCasePlan, stageForStep } from '@/engines/cases/plan'
 
 function config(): AppConfig {
@@ -143,5 +150,32 @@ describe('case activity planning', () => {
     const plan = buildCasePlan(caseDoc, config())
     expect(plan.clueMap.get('clue-context')?.essential).toBe(true)
     expect(caseDoc.clues[0]?.essential).toBe(false)
+  })
+
+  it('resolves a seeded unknown entry and its localisation answers', () => {
+    const caseDoc = caseDocumentSchema.parse(advancedCaseJson)
+    const anatomyMap = anatomyMapSchema.parse(lungMapJson)
+    const plan = buildCasePlan(caseDoc, appConfigSchema.parse(appConfigJson), {
+      anatomyMap,
+      seed: 1,
+    })
+    const explore = plan.steps.find(
+      ({ primitive }) => primitive.id === 'exac-explore-airway',
+    )?.primitive
+    const locate = plan.steps.find(({ primitive }) => primitive.id === 'exac-localise')?.primitive
+
+    expect(explore?.content.startView).toEqual({
+      mode: 'endoscopic',
+      waypointId: 'right-lower-posterior-basal-distal',
+    })
+    expect(locate?.content.levels).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ levelId: 'lobe', targetStructureId: 'right-lower-lobe' }),
+        expect.objectContaining({
+          levelId: 'segment',
+          correctOptionId: 'posterior-basal-segment',
+        }),
+      ]),
+    )
   })
 })

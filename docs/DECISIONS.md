@@ -1807,3 +1807,31 @@ their availability and meaning depend on Case Lab context.
 committing. Expert comparison receives meaningful checkpoint data, and full diagnosis credit now
 depends on evidence use. Authors must provide complete checkpoint responses, rationales and timing
 metadata, and benchmark findings must have been inspected by the authored path.
+
+## ADR-099: Unknown-point anatomy attempts resolve from a persisted seed
+
+**Status:** Accepted
+
+**Context:** The advanced Case Lab previously started at a named, known airway and then asked the
+learner to select that same location. This demonstrated navigation but not reconstruction. A useful
+unknown-point task must avoid revealing anatomical names before commitment, survive resume without
+moving the learner, and remain deterministically testable without exposing test controls in normal
+builds.
+
+**Decision:** Add a Case 0.2 `unknown_waypoint` entry mode with at least two candidate waypoint IDs
+and required neutral navigation labels. Draw the candidate from an integer attempt seed, persist
+that seed in activity session v6 and rebuild the case plan from it on resume. Waypoints author
+`answerIds` by localisation level; an `anatomy_locate` primitive with `answerFrom: "entry"` resolves
+its expected answers from the selected waypoint. While the entry remains unknown, branch controls
+use authored `neutralLabel` text and the viewer and Case notes conceal named location breadcrumbs.
+The location is revealed after the learner commits the localisation.
+
+Semantic validation checks candidate uniqueness, map membership, neutral labels, answer coverage
+for every localisation level and benchmark compatibility for every candidate. The advanced case
+uses the mechanic. A `caseSeed` URL override is accepted only in `VITE_E2E=true` builds.
+
+**Consequences:** Each advanced attempt begins with a genuine spatial inference whose answer can
+vary while remaining stable across refresh and resume. Authors must provide neutral navigation and
+complete answer mappings for each candidate. Automated tests can select a known candidate without
+making deterministic seed controls part of production behavior. Neutral labels intentionally trade
+anatomical specificity for pre-commit concealment and require moderated usability validation.

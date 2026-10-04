@@ -3030,3 +3030,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   case-flow tests pass. Desktop controls are adjacent to the viewport and the mobile viewport is
   capped at 45svh.
 - **Follow-ups:** Spike and implement seeded unknown-waypoint reconstruction in P13-T08.
+
+### [2026-10-04 23:02] P13-T08 - Reconstruct an unknown anatomy entry
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added seeded unknown-waypoint case entry, persisted the attempt seed in session v6,
+  resolved localisation answers from waypoint-authored mappings, concealed anatomical location
+  labels until commitment and supplied neutral branch navigation. Migrated the advanced case,
+  added semantic validation and recorded ADR-099.
+- **Files changed:** Case, anatomy-map and localisation schemas; case planning/player/session
+  engines; anatomy viewer and primitive adapters; lung map and advanced case content; generated
+  schemas, tests, E2E driver and Phase 13 governance docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; `npm run validate:content`;
+  focused Vitest (3 files / 28 tests); `git diff --check`.
+- **Result/verification:** TypeScript and patch checks pass. Content validates 5 courses, 13
+  lessons, 4 cases and one anatomy map with zero warnings. Focused plan, viewer and complete
+  case-flow tests pass, including deterministic selection and seed persistence.
+- **Follow-ups:** Add the patient timeline, tier-specific timing semantics and first-attempt
+  commitment notice in P13-T09.

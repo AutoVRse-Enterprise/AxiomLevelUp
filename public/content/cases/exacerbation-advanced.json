@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.2",
-  "caseVersion": "3.0",
+  "caseVersion": "3.1",
   "id": "exacerbation-advanced",
   "title": "Respiratory Case Review",
   "summary": "Review spatial, clinical and physiological evidence in a synthetic respiratory presentation. Training simulation—not clinical guidance.",
@@ -31,8 +31,12 @@
   },
   "anatomyMapId": "lung-map",
   "entry": {
-    "mode": "endoscopic",
-    "waypointId": "trachea-mid"
+    "mode": "unknown_waypoint",
+    "candidateWaypointIds": [
+      "right-lower-posterior-basal-segment",
+      "right-lower-posterior-basal-distal"
+    ],
+    "neutralLabels": true
   },
   "findings": [
     {
@@ -52,8 +56,8 @@
     },
     {
       "id": "exac-posterior-basal-plug",
-      "label": "Dominant posterior basal mucus plug",
-      "description": "A dominant mucus plug substantially occludes the posterior basal segmental lumen.",
+      "label": "Dominant mucus obstruction",
+      "description": "A dominant mucus plug substantially occludes this segmental lumen.",
       "significance": "This is the dominant spatial finding to localise; it supports obstruction but is not the sole basis for the conclusion.",
       "kind": "lumen_occlusion",
       "anchor": {
@@ -271,6 +275,7 @@
             "prompt": "Commit to the lobe, segment and airway structure that best localise the dominant obstruction.",
             "startView": { "mode": "overview" },
             "navigation": "orbit",
+            "answerFrom": "entry",
             "levels": [
               {
                 "levelId": "lobe",

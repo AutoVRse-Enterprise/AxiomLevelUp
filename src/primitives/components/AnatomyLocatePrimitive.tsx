@@ -10,6 +10,7 @@ import type {
 import { useAsset } from '@/content/useAssetUrl'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
 import { StepActionSlot } from '@/player/StepActionSlot'
+import { useCaseReasoningContext } from '@/player/case/caseReasoningContext'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
@@ -164,6 +165,7 @@ export function AnatomyLocatePrimitive({
   onSubmit,
 }: PrimitiveComponentProps<AnatomyLocatePrimitiveContent>) {
   const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
+  const caseContext = useCaseReasoningContext()
   const findings = useStepFindings(primitive.id)
   const initial = readSelections(mode === 'review' ? review?.response : draft)
   const [selections, setSelections] = useState<Selections>(initial)
@@ -174,6 +176,9 @@ export function AnatomyLocatePrimitive({
   const levelLabels = new Map(map.levels.map(({ id, label }) => [id, label]))
   const structureLabels = new Map(map.structures.map(({ id, label }) => [id, label]))
   const readOnly = disabled || mode === 'review'
+  const unknownEntry =
+    primitive.content.answerFrom === 'entry' &&
+    caseContext?.caseDoc.entry.mode === 'unknown_waypoint'
 
   const select = (level: AnatomyLocateLevel, selectionId: string) => {
     if (readOnly) return
@@ -213,6 +218,8 @@ export function AnatomyLocatePrimitive({
                 : undefined
             }
             navigation={primitive.content.navigation}
+            neutralNavigationLabels={unknownEntry && mode === 'interactive'}
+            hideLocationLabels={unknownEntry && mode === 'interactive'}
             prompt={levelLabel}
             selectableLevelIds={[level.levelId]}
             selectedStructureIds={

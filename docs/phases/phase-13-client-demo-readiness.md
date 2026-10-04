@@ -86,7 +86,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Add interaction guidance, arrival feedback and finding significance.
   - Rewrite prompts as learning objectives and frame localisation as the commitment.
 
-- [ ] **P13-T08 — Unknown-point reconstruction**
+- [x] **P13-T08 — Unknown-point reconstruction** — completed 2026-10-04
   - Spike neutral-label navigation.
   - Add seeded `unknown_waypoint` entry and `answerFrom: entry` localisation.
   - Store the attempt seed in session v6 and validate every candidate.

@@ -112,6 +112,11 @@ export const caseEntrySchema = z.discriminatedUnion('mode', [
     mode: z.literal('endoscopic'),
     waypointId: idSchema,
   }),
+  z.strictObject({
+    mode: z.literal('unknown_waypoint'),
+    candidateWaypointIds: z.array(idSchema).min(2),
+    neutralLabels: z.literal(true),
+  }),
 ])
 
 export const caseTimingSchema = z

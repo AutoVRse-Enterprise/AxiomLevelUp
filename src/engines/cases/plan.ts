@@ -1,4 +1,5 @@
 import type {
+  AnatomyMap,
   AppConfig,
   CaseClue,
   CaseDocument,
@@ -7,6 +8,8 @@ import type {
   CaseStage,
   Primitive,
 } from '@/content/schema'
+import type { AnatomyLocatePrimitive } from '@/content/schema/primitives'
+import { resolveEntryLocalisation, selectUnknownWaypoint } from '@/engines/cases/entry'
 import { buildActivityPlan, type ActivityPlan, type ActivityStep } from '@/engines/learning/plan'
 
 export interface CaseStageBoundary {
@@ -31,7 +34,12 @@ export interface CasePlan extends ActivityPlan {
   tierPreset: CaseLabConfig['tiers'][CaseDocument['tier']]
 }
 
-function withEntryView(primitive: Primitive, caseDoc: CaseDocument): Primitive {
+function withEntryContract(
+  primitive: Primitive,
+  caseDoc: CaseDocument,
+  anatomyMap?: AnatomyMap,
+  entrySeed?: number,
+): Primitive {
   if (primitive.type !== 'anatomy_explore' && primitive.type !== 'anatomy_locate') return primitive
 
   const startView =
@@ -39,9 +47,29 @@ function withEntryView(primitive: Primitive, caseDoc: CaseDocument): Primitive {
       ? { mode: 'marker' as const, structureId: caseDoc.entry.markerStructureId }
       : caseDoc.entry.mode === 'endoscopic'
         ? { mode: 'endoscopic' as const, waypointId: caseDoc.entry.waypointId }
-        : undefined
+        : caseDoc.entry.mode === 'unknown_waypoint' && entrySeed !== undefined
+          ? {
+              mode: 'endoscopic' as const,
+              waypointId: selectUnknownWaypoint(caseDoc.entry, entrySeed)!,
+            }
+          : undefined
 
-  return startView ? { ...primitive, content: { ...primitive.content, startView } } : primitive
+  const withStartView = startView
+    ? { ...primitive, content: { ...primitive.content, startView } }
+    : primitive
+  if (
+    withStartView.type === 'anatomy_locate' &&
+    anatomyMap &&
+    caseDoc.entry.mode === 'unknown_waypoint' &&
+    entrySeed !== undefined
+  ) {
+    return resolveEntryLocalisation(
+      withStartView as AnatomyLocatePrimitive,
+      anatomyMap,
+      selectUnknownWaypoint(caseDoc.entry, entrySeed)!,
+    )
+  }
+  return withStartView
 }
 
 export function stageForStep(
@@ -55,7 +83,11 @@ export function stageForStep(
   )
 }
 
-export function buildCasePlan(caseDoc: CaseDocument, config: AppConfig): CasePlan {
+export function buildCasePlan(
+  caseDoc: CaseDocument,
+  config: AppConfig,
+  entry?: { anatomyMap: AnatomyMap; seed: number },
+): CasePlan {
   const caseLab = config.caseLab
   if (!caseLab) throw new Error('Case Lab configuration is required to build a case plan.')
 
@@ -79,7 +111,11 @@ export function buildCasePlan(caseDoc: CaseDocument, config: AppConfig): CasePla
   const firstOrientStepId = caseDoc.stages.find(({ kind }) => kind === 'orient')?.steps[0]?.id
   const primitives = caseDoc.stages.flatMap((stage) =>
     stage.steps.map((primitive) =>
-      primitive.id === firstOrientStepId ? withEntryView(primitive, caseDoc) : primitive,
+      primitive.id === firstOrientStepId ||
+      (primitive.type === 'anatomy_locate' &&
+        (primitive.content as { answerFrom?: string }).answerFrom === 'entry')
+        ? withEntryContract(primitive, caseDoc, entry?.anatomyMap, entry?.seed)
+        : primitive,
     ),
   )
   const activity = {

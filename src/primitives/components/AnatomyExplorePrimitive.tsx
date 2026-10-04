@@ -4,6 +4,7 @@ import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
 import { useStepFindings } from '@/anatomy3d/viewer/findingContext'
 import type { AnatomyViewState } from '@/anatomy3d/viewer/controller'
 import type { AnatomyExplorePrimitive as AnatomyExplorePrimitiveContent } from '@/content/schema/primitives'
+import { useCaseReasoningContext } from '@/player/case/caseReasoningContext'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
 import type { AnatomyExploreObservation } from '@/primitives/definitions/anatomy'
 import type { PrimitiveComponentProps, PrimitiveInteraction } from '@/primitives/types'
@@ -36,7 +37,9 @@ export function AnatomyExplorePrimitive({
   onInteract,
 }: PrimitiveComponentProps<AnatomyExplorePrimitiveContent>) {
   const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
+  const caseContext = useCaseReasoningContext()
   const findings = useStepFindings(primitive.id)
+  const unknownEntry = caseContext?.caseDoc.entry.mode === 'unknown_waypoint'
   const [observation, setObservation] = useState(() => initialObservation(draft))
   const observationRef = useRef(observation)
   const sequence = useRef(observation.interactionCount)
@@ -103,6 +106,8 @@ export function AnatomyExplorePrimitive({
       }
       modelUrl={modelUrl}
       navigation={primitive.content.navigation}
+      neutralNavigationLabels={unknownEntry}
+      hideLocationLabels={unknownEntry}
       prompt={primitive.content.prompt}
       selectedStructureIds={observation.selectedStructureIds}
       startView={primitive.content.startView}
@@ -120,7 +125,24 @@ export function AnatomyExplorePrimitive({
           meshCount: result.meshNames.length,
           triangleCount: result.triangleCount,
         })
-        update({ loaded: true })
+        const entryWaypointId =
+          unknownEntry && primitive.content.startView.mode === 'endoscopic'
+            ? primitive.content.startView.waypointId
+            : null
+        if (entryWaypointId) {
+          recordInteraction(
+            {
+              loaded: true,
+              reachedWaypointIds: [
+                ...new Set([...observationRef.current.reachedWaypointIds, entryWaypointId]),
+              ],
+            },
+            (key) => ({ name: 'anatomy_waypoint_reached', waypointId: entryWaypointId, key }),
+            `waypoint:${entryWaypointId}`,
+          )
+        } else {
+          update({ loaded: true })
+        }
       }}
       onStructureSelected={(structureId) => {
         const selectedStructureIds = observationRef.current.selectedStructureIds.includes(

@@ -24,6 +24,7 @@ export interface PrimitiveProgress {
 }
 
 export interface CaseProgress {
+  entrySeed?: number
   openedClueIds: string[]
   reviewedClueIds: string[]
   clueOpenContexts: Record<string, CaseClueOpenRecord>
@@ -36,10 +37,7 @@ export interface CaseProgress {
     inspectedFindingIds?: string[]
   }
   differential: Record<string, 'unlikely' | 'possible' | 'likely'>
-  differentialCheckpoints: Record<
-    string,
-    Record<string, 'unlikely' | 'possible' | 'likely'>
-  >
+  differentialCheckpoints: Record<string, Record<string, 'unlikely' | 'possible' | 'likely'>>
 }
 
 export interface ActivitySession {

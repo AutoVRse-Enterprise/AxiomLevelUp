@@ -12,6 +12,7 @@ import { ContentContext } from '@/app/contentContext'
 import { loadContent, type ContentRegistry } from '@/content/loader'
 import type { CaseDocument } from '@/content/schema'
 import type { TypedPrimitive } from '@/content/schema/primitives'
+import { selectUnknownWaypoint } from '@/engines/cases/entry'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, subscribeToEvents } from '@/events/bus'
 import {
@@ -29,6 +30,7 @@ import { contentResponses } from '@/test/contentFixtures'
 vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
   AnatomyViewer: (props: AnatomyViewerProps) => {
     const reportedFailure = useRef(false)
+    const reportedEntry = useRef(false)
     const [waypointId, setWaypointId] = useState(
       props.startView && 'waypointId' in props.startView ? props.startView.waypointId : null,
     )
@@ -39,15 +41,44 @@ vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
       props.onFailed?.('WebGL unavailable in deterministic test substitute')
     }, [props])
 
+    useEffect(() => {
+      if (
+        reportedEntry.current ||
+        props.disabled ||
+        !props.neutralNavigationLabels ||
+        !props.startView ||
+        !('waypointId' in props.startView)
+      ) {
+        return
+      }
+      reportedEntry.current = true
+      props.onWaypointReached?.(props.startView.waypointId)
+    }, [props])
+
     const selectableLevels = new Set(props.selectableLevelIds ?? [])
     const structures = props.map.structures.filter(
       ({ levelId }) => selectableLevels.size === 0 || selectableLevels.has(levelId),
     )
     const waypoint = props.map.waypoints.find(({ id }) => id === waypointId)
+    const parent = props.map.waypoints.find(({ next }) => waypointId && next.includes(waypointId))
+    const waypointLabel = (candidate: NonNullable<typeof waypoint>) =>
+      props.neutralNavigationLabels ? (candidate.neutralLabel ?? 'Branch') : candidate.label
 
     return (
       <section aria-label="Unavailable 3D anatomy substitute">
         <p role="status">3D anatomy unavailable; use the equivalent structure list.</p>
+        {parent ? (
+          <button
+            disabled={props.disabled}
+            type="button"
+            onClick={() => {
+              setWaypointId(parent.id)
+              props.onWaypointReached?.(parent.id)
+            }}
+          >
+            Back to {waypointLabel(parent)}
+          </button>
+        ) : null}
         {waypoint?.next.map((nextId) => {
           const next = props.map.waypoints.find(({ id }) => id === nextId)
           return (
@@ -60,7 +91,7 @@ vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
                 props.onWaypointReached?.(nextId)
               }}
             >
-              {next?.label ?? nextId}
+              {next ? waypointLabel(next) : nextId}
             </button>
           )
         })}
@@ -140,7 +171,7 @@ function renderCaseRoute(path: string, registry: ContentRegistry) {
       { path: '/learn', element: <p>Learn route</p> },
       { path: '/challenge', element: <p>Challenge route</p> },
     ],
-    { initialEntries: [path] },
+    { initialEntries: [`${path}${path.includes('?') ? '&' : '?'}caseSeed=0`] },
   )
 
   return render(
@@ -164,7 +195,8 @@ function waypointPath(registry: ContentRegistry, mapId: string, startId: string,
   while (queue.length) {
     const path = queue.shift()!
     const current = map.waypoints.find(({ id }) => id === path.at(-1))
-    for (const nextId of current?.next ?? []) {
+    const parentId = map.waypoints.find(({ next }) => next.includes(current?.id ?? ''))?.id
+    for (const nextId of [...(current?.next ?? []), ...(parentId ? [parentId] : [])]) {
       const nextPath = [...path, nextId]
       if (nextId === targetId) return nextPath
       if (!visited.has(nextId)) {
@@ -181,6 +213,7 @@ async function answerAnatomyExplore(
   primitive: Extract<TypedPrimitive, { type: 'anatomy_explore' }>,
   response: unknown,
   registry: ContentRegistry,
+  caseDoc: CaseDocument,
 ) {
   const observation = response as {
     selectedStructureIds?: string[]
@@ -188,15 +221,31 @@ async function answerAnatomyExplore(
     inspectedFindingIds?: string[]
   }
   const map = registry.anatomyMapById.get(primitive.content.anatomyMapId)!
+  const sessionSeed = useActivitySessionStore.getState().session?.caseProgress?.entrySeed
+  const selectedEntry =
+    caseDoc.entry.mode === 'unknown_waypoint' && sessionSeed !== undefined
+      ? selectUnknownWaypoint(caseDoc.entry, sessionSeed)
+      : null
   let currentId =
-    'waypointId' in primitive.content.startView ? primitive.content.startView.waypointId : null
+    selectedEntry ??
+    ('waypointId' in primitive.content.startView ? primitive.content.startView.waypointId : null)
   for (const targetId of observation.reachedWaypointIds ?? []) {
     if (!currentId) throw new Error('Waypoint responses require a waypoint start view.')
+    if (currentId === targetId) continue
     const path = waypointPath(registry, primitive.content.anatomyMapId, currentId, targetId)
     for (const nextId of path.slice(1)) {
-      const label = map.waypoints.find(({ id }) => id === nextId)?.label
-      if (!label) throw new Error(`Missing waypoint "${nextId}".`)
-      await user.click(await screen.findByRole('button', { name: label }))
+      const waypoint = map.waypoints.find(({ id }) => id === nextId)
+      if (!waypoint) throw new Error(`Missing waypoint "${nextId}".`)
+      const label =
+        caseDoc.entry.mode === 'unknown_waypoint'
+          ? (waypoint.neutralLabel ?? 'Branch')
+          : waypoint.label
+      const isBack = waypoint.next.includes(currentId)
+      await user.click(
+        await screen.findByRole('button', {
+          name: isBack ? `Back to ${label}` : label,
+        }),
+      )
     }
     currentId = targetId
   }
@@ -284,7 +333,7 @@ async function answerStep(
 ) {
   switch (primitive.type) {
     case 'anatomy_explore':
-      await answerAnatomyExplore(user, primitive, response, registry)
+      await answerAnatomyExplore(user, primitive, response, registry, caseDoc)
       return
     case 'anatomy_locate':
       await answerAnatomyLocate(user, primitive, response, registry)
@@ -533,6 +582,13 @@ describe('configured Case Lab flows', () => {
       initializeLearningProgressHandlers(registry)
       renderCaseRoute(`/learn/cases/${caseId}/play`, registry)
 
+      if (caseDoc.entry.mode === 'unknown_waypoint') {
+        await waitFor(() =>
+          expect(
+            useActivitySessionStore.getState().session?.caseProgress?.entrySeed,
+          ).toBeTypeOf('number'),
+        )
+      }
       await completeCase(user, caseDoc, registry)
 
       await waitFor(() => {
