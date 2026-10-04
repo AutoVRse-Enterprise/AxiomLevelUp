@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui'
 import type { NumericPrimitive as NumericPrimitiveConfig } from '@/content/schema/primitives'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
@@ -86,13 +87,11 @@ export function NumericPrimitive({
       ) : null}
 
       {mode === 'interactive' ? (
-        <Button
-          className="mt-6 w-full sm:w-auto"
-          type="submit"
-          disabled={!response.trim() || disabled}
-        >
-          Check answer
-        </Button>
+        <StepActionSlot>
+          <Button className="w-full sm:w-auto" type="submit" disabled={!response.trim() || disabled}>
+            Check answer
+          </Button>
+        </StepActionSlot>
       ) : null}
     </form>
   )

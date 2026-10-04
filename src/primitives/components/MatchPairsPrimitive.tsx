@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui'
 import type { MatchPairsPrimitive as MatchPairsPrimitiveConfig } from '@/content/schema/primitives'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { cn } from '@/lib/cn'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
@@ -153,13 +154,15 @@ export function MatchPairsPrimitive({
       </fieldset>
 
       {mode === 'interactive' ? (
-        <Button
-          className="mt-6 w-full sm:w-auto"
-          type="submit"
-          disabled={Object.keys(matches).length !== primitive.content.left.length || disabled}
-        >
-          Check answer
-        </Button>
+        <StepActionSlot>
+          <Button
+            className="w-full sm:w-auto"
+            type="submit"
+            disabled={Object.keys(matches).length !== primitive.content.left.length || disabled}
+          >
+            Check answer
+          </Button>
+        </StepActionSlot>
       ) : null}
     </form>
   )

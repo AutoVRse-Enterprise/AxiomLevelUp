@@ -8,6 +8,7 @@ import { Button } from '@/components/ui'
 import type { DicomRegionResponse } from '@/imaging/evaluation'
 import { isSliceInRange } from '@/imaging/geometry'
 import { DicomViewer } from '@/imaging/viewer/DicomViewer'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { defaultDicomTools, useDicomPrimitiveContext } from '@/primitives/components/dicomUtils'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
@@ -46,9 +47,11 @@ export function DicomIdentifyRegionPrimitive({
         <p>No marker placed yet.</p>
       )}
       {!disabled ? (
-        <Button disabled={!selection} onClick={() => onSubmit(selection)}>
-          Check location
-        </Button>
+        <StepActionSlot>
+          <Button disabled={!selection} onClick={() => onSubmit(selection)}>
+            Check location
+          </Button>
+        </StepActionSlot>
       ) : null}
     </div>
   )

@@ -7,6 +7,7 @@ import type {
   NormalizedPoint,
 } from '@/content/schema/primitives'
 import { useAsset } from '@/content/useAssetUrl'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { isNormalizedPoint } from '@/primitives/definitions/imageHitTesting'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { regionCenter } from '@/primitives/shared/imageRegionMath'
@@ -236,14 +237,16 @@ export function ImageHotspotPrimitive({
         </div>
       ) : null}
       {assessMode && mode === 'interactive' ? (
-        <Button
-          disabled={!selectedPoint || disabled}
-          onClick={() => {
-            if (selectedPoint) onSubmit(selectedPoint)
-          }}
-        >
-          Check location
-        </Button>
+        <StepActionSlot>
+          <Button
+            disabled={!selectedPoint || disabled}
+            onClick={() => {
+              if (selectedPoint) onSubmit(selectedPoint)
+            }}
+          >
+            Check location
+          </Button>
+        </StepActionSlot>
       ) : null}
       {assessMode && mode === 'review' && review?.revealAnswer ? (
         <p className="text-small font-medium text-neutral-700">

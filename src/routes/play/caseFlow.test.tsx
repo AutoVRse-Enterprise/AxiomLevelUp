@@ -602,7 +602,9 @@ describe('configured Case Lab flows', () => {
   it('has no detectable WCAG A/AA violations in the active unavailable-3D case state', async () => {
     const { container } = renderCaseRoute('/learn/cases/asthma-foundation/play', registry)
 
-    expect(screen.getByText('3D anatomy unavailable; use the equivalent structure list.')).toBeVisible()
+    expect(
+      screen.getByText('3D anatomy unavailable; use the equivalent structure list.'),
+    ).toBeVisible()
     expect((await axe.run(container, axeOptions)).violations).toEqual([])
   })
 })

@@ -21,6 +21,7 @@ import { ArrowDown, ArrowUp, GripVertical } from 'lucide-react'
 
 import { Button } from '@/components/ui'
 import type { OrderingPrimitive as OrderingPrimitiveConfig } from '@/content/schema/primitives'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import { seededUnsolvedOrder } from '@/primitives/shared/seededShuffle'
 import type { EvaluationResult, PrimitiveComponentProps } from '@/primitives/types'
@@ -251,9 +252,11 @@ export function OrderingPrimitive({
       </fieldset>
 
       {mode === 'interactive' ? (
-        <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={disabled}>
-          Check answer
-        </Button>
+        <StepActionSlot>
+          <Button className="w-full sm:w-auto" type="submit" disabled={disabled}>
+            Check answer
+          </Button>
+        </StepActionSlot>
       ) : null}
     </form>
   )

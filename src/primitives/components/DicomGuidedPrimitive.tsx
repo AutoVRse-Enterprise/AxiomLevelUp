@@ -6,6 +6,7 @@ import { Button } from '@/components/ui'
 import { guidedStepSatisfied, type DicomObservation } from '@/imaging/requirements'
 import { DicomViewer } from '@/imaging/viewer/DicomViewer'
 import type { DicomMeasurement } from '@/imaging/viewer/controller'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { defaultDicomTools, useDicomPrimitiveContext } from '@/primitives/components/dicomUtils'
 import type { PrimitiveComponentProps, PrimitiveInteraction } from '@/primitives/types'
 
@@ -114,18 +115,20 @@ export function DicomGuidedPrimitive({
         })}
       </ol>
       {currentStep?.condition.type === 'acknowledge' && !disabled ? (
-        <Button
-          onClick={() => {
-            const acknowledged = new Set(observationRef.current.acknowledgedStepIds)
-            acknowledged.add(currentStep.id)
-            record(
-              { acknowledgedStepIds: acknowledged },
-              { name: 'dicom_requirement', key: currentStep.id },
-            )
-          }}
-        >
-          Done
-        </Button>
+        <StepActionSlot>
+          <Button
+            onClick={() => {
+              const acknowledged = new Set(observationRef.current.acknowledgedStepIds)
+              acknowledged.add(currentStep.id)
+              record(
+                { acknowledgedStepIds: acknowledged },
+                { name: 'dicom_requirement', key: currentStep.id },
+              )
+            }}
+          >
+            Done
+          </Button>
+        </StepActionSlot>
       ) : null}
       {stepsComplete && checkpoint ? (
         <fieldset className="space-y-3">
@@ -147,9 +150,11 @@ export function DicomGuidedPrimitive({
             </label>
           ))}
           {!disabled ? (
-            <Button disabled={!selectedOptionId} onClick={() => onSubmit(selectedOptionId)}>
-              Check answer
-            </Button>
+            <StepActionSlot>
+              <Button disabled={!selectedOptionId} onClick={() => onSubmit(selectedOptionId)}>
+                Check answer
+              </Button>
+            </StepActionSlot>
           ) : null}
         </fieldset>
       ) : null}

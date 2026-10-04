@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui'
 import type { FillBlankPrimitive as FillBlankPrimitiveConfig } from '@/content/schema/primitives'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
@@ -123,9 +124,11 @@ export function FillBlankPrimitive({
       </div>
 
       {mode === 'interactive' ? (
-        <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={!complete || disabled}>
-          Check answer
-        </Button>
+        <StepActionSlot>
+          <Button className="w-full sm:w-auto" type="submit" disabled={!complete || disabled}>
+            Check answer
+          </Button>
+        </StepActionSlot>
       ) : null}
     </form>
   )

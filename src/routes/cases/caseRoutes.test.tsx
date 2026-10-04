@@ -120,7 +120,9 @@ describe('Case Lab routes', () => {
     expect(screen.getByText(fixtureCase.mission.role)).toBeVisible()
     expect(screen.getByRole('heading', { name: 'How this case works' })).toBeVisible()
     expect(screen.getByText('Your first answer is scored.')).toBeVisible()
-    expect(screen.getByText('Each optional clue costs 2 points, up to 10 points total.')).toBeVisible()
+    expect(
+      screen.getByText('Each optional clue costs 2 points, up to 10 points total.'),
+    ).toBeVisible()
     expect(screen.getByText('Basic: untimed practice; speed is not scored.')).toBeVisible()
     expect(screen.getByText('Basic: full hints are available.')).toBeVisible()
     expect(screen.getByRole('link', { name: /Start case/ })).toBeVisible()

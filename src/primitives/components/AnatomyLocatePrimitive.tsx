@@ -9,6 +9,7 @@ import type {
 } from '@/content/schema/primitives'
 import { useAsset } from '@/content/useAssetUrl'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
@@ -310,31 +311,35 @@ export function AnatomyLocatePrimitive({
         <h2 className="mt-1 text-title font-bold text-neutral-950">{primitive.content.prompt}</h2>
       </header>
       {renderLevel(level, false)}
-      <div className="flex flex-wrap justify-between gap-3">
-        <Button
-          disabled={disabled || levelIndex === 0}
-          type="button"
-          variant="secondary"
-          onClick={() => setLevelIndex((current) => Math.max(0, current - 1))}
-        >
-          Previous level
-        </Button>
-        {lastLevel ? (
-          <Button disabled={disabled || !selected} type="submit">
-            Check locations
-          </Button>
-        ) : (
+      <StepActionSlot className="justify-between">
+        <div className="flex w-full flex-wrap justify-between gap-3">
           <Button
-            disabled={disabled || !selected}
+            disabled={disabled || levelIndex === 0}
             type="button"
-            onClick={() =>
-              setLevelIndex((current) => Math.min(primitive.content.levels.length - 1, current + 1))
-            }
+            variant="secondary"
+            onClick={() => setLevelIndex((current) => Math.max(0, current - 1))}
           >
-            Next level
+            Previous level
           </Button>
-        )}
-      </div>
+          {lastLevel ? (
+            <Button disabled={disabled || !selected} type="submit">
+              Check locations
+            </Button>
+          ) : (
+            <Button
+              disabled={disabled || !selected}
+              type="button"
+              onClick={() =>
+                setLevelIndex((current) =>
+                  Math.min(primitive.content.levels.length - 1, current + 1),
+                )
+              }
+            >
+              Next level
+            </Button>
+          )}
+        </div>
+      </StepActionSlot>
     </form>
   )
 }

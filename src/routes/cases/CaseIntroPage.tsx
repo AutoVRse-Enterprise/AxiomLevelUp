@@ -1,11 +1,4 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-  History,
-  RefreshCw,
-  Stethoscope,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle2, History, RefreshCw, Stethoscope } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
@@ -187,7 +180,9 @@ export function CaseIntroPage() {
                 </p>
                 <h3 className="mt-1 font-bold text-neutral-950">{step.title}</h3>
                 <p className="mt-2 text-small text-neutral-700">{step.description}</p>
-                {detail ? <p className="mt-2 text-small font-semibold text-brand-900">{detail}</p> : null}
+                {detail ? (
+                  <p className="mt-2 text-small font-semibold text-brand-900">{detail}</p>
+                ) : null}
               </li>
             )
           })}

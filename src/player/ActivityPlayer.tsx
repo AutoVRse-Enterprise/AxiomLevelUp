@@ -30,6 +30,7 @@ import { StepFrame } from '@/player/StepFrame'
 import { TimerBadge } from '@/player/TimerBadge'
 import { useActiveElapsed } from '@/player/useActiveElapsed'
 import { useAttemptTimer } from '@/player/useAttemptTimer'
+import type { WorkspaceSegment } from '@/player/case/CaseWorkspace'
 import { evaluatePrimitive, evaluatePrimitiveTimeout } from '@/primitives/definitions'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -86,6 +87,10 @@ export interface ActivityPlayerProps {
   renderChrome?: (context: ActivityPlayerChromeContext) => {
     header?: ReactNode
     aside?: ReactNode
+    notes?: ReactNode
+    evidenceAnnouncement?: string
+    workspaceSegment?: WorkspaceSegment
+    onWorkspaceSegmentChange?: (segment: WorkspaceSegment) => void
   }
   onStarted?: (resumed: boolean) => void
   onStepBoundary?: (boundary: ActivityPlayerStepBoundary) => void
@@ -505,6 +510,10 @@ export function ActivityPlayer({
         layout={step.layout}
         chromeHeader={chrome?.header}
         chromeAside={chrome?.aside}
+        chromeNotes={chrome?.notes}
+        evidenceAnnouncement={chrome?.evidenceAnnouncement}
+        workspaceSegment={chrome?.workspaceSegment}
+        onWorkspaceSegmentChange={chrome?.onWorkspaceSegmentChange}
         onExit={() => navigate(exitPath)}
         timer={
           session.phase === 'step' && attemptTimer ? (

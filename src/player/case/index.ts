@@ -1,6 +1,7 @@
 export { CaseCompare } from './CaseCompare'
 export { CasePlayer, type CaseClueOpened, type CasePlayerProps } from './CasePlayer'
 export { CaseResults } from './CaseResults'
+export { CaseWorkspace, type WorkspaceSegment } from './CaseWorkspace'
 export { ClueBoard } from './ClueBoard'
 export { StageBanner } from './StageBanner'
 export { StageHeader } from './StageHeader'

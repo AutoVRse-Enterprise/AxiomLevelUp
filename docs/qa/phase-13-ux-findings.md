@@ -63,13 +63,13 @@ Two audit corrections were applied at baseline:
 
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
-| U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Partial: mission and first-run walkthrough landed |
+| U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Partial: mission, walkthrough and workspace landed |
 | U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Open |
 | U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Closed: mission and operating rules render before launch |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
-| U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Open |
+| U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Partial: task and evidence now share one workspace |
 | U06 | 3D interaction contract is not taught | P13-T03, P13-T07 | Partial: replayable walkthrough establishes workspace |
-| U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Open |
+| U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Partial: evidence is in-flow beside each task |
 | U08 | Clue economy is not an informed choice | P13-T05 | Open |
 | U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Partial: every scored step declares decisive clues |
 | U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Open |
@@ -79,7 +79,7 @@ Two audit corrections were applied at baseline:
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Partial: stage updates are announced inline |
 | U15 | Time expectations conflict | P13-T02, P13-T09 | Partial: estimated duration is validated against targets |
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Partial: briefing explains the first-attempt rule |
-| U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Open |
+| U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Open |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Open |
 | U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Partial: pathway case destination fixed; IA copy remains |

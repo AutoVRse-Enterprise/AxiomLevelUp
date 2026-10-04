@@ -7,6 +7,7 @@ import type {
   ScenarioPrimitive as ScenarioPrimitiveConfig,
 } from '@/content/schema/primitives'
 import { useAsset } from '@/content/useAssetUrl'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import {
   getScenarioNode,
   isScenarioPath,
@@ -171,16 +172,18 @@ export function ScenarioPrimitive({
             <p className="text-neutral-700">
               Continue when you are ready to make the next decision.
             </p>
-            <Button
-              disabled={disabled}
-              onClick={() => {
-                const next = scenarioEngine.advance(primitive.content, state)
-                updateState(next)
-                onInteract({ name: 'scenario_advanced', key: node.id })
-              }}
-            >
-              Continue
-            </Button>
+            <StepActionSlot>
+              <Button
+                disabled={disabled}
+                onClick={() => {
+                  const next = scenarioEngine.advance(primitive.content, state)
+                  updateState(next)
+                  onInteract({ name: 'scenario_advanced', key: node.id })
+                }}
+              >
+                Continue
+              </Button>
+            </StepActionSlot>
           </>
         ) : null}
 
@@ -229,16 +232,18 @@ export function ScenarioPrimitive({
                 <p className="font-semibold text-neutral-950" aria-live="polite" role="status">
                   {node.choices.find(({ id }) => id === state.path.at(-1)?.choiceId)?.consequence}
                 </p>
-                <Button
-                  disabled={disabled}
-                  onClick={() => {
-                    const next = scenarioEngine.advance(primitive.content, state)
-                    updateState(next)
-                    onInteract({ name: 'scenario_consequence_continued', key: node.id })
-                  }}
-                >
-                  Continue
-                </Button>
+                <StepActionSlot>
+                  <Button
+                    disabled={disabled}
+                    onClick={() => {
+                      const next = scenarioEngine.advance(primitive.content, state)
+                      updateState(next)
+                      onInteract({ name: 'scenario_consequence_continued', key: node.id })
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </StepActionSlot>
               </div>
             ) : null}
           </>
@@ -261,9 +266,11 @@ export function ScenarioPrimitive({
                 revealBest={false}
               />
             </div>
-            <Button disabled={disabled} onClick={() => onSubmit(state.path)}>
-              Complete scenario
-            </Button>
+            <StepActionSlot>
+              <Button disabled={disabled} onClick={() => onSubmit(state.path)}>
+                Complete scenario
+              </Button>
+            </StepActionSlot>
           </>
         ) : null}
       </section>

@@ -95,9 +95,7 @@ export function CaseWalkthrough({ open, onClose }: CaseWalkthroughProps) {
                 Start case
               </Button>
             ) : (
-              <Button
-                onClick={() => setStepIndex((current) => current + 1)}
-              >
+              <Button onClick={() => setStepIndex((current) => current + 1)}>
                 Next <ArrowRight aria-hidden="true" size={16} />
               </Button>
             )}

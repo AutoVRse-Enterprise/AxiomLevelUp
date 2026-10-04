@@ -11,12 +11,7 @@ interface StageHeaderProps {
   clock?: ReactNode
 }
 
-export function StageHeader({
-  stages,
-  currentStage,
-  onShowWalkthrough,
-  clock,
-}: StageHeaderProps) {
+export function StageHeader({ stages, currentStage, onShowWalkthrough, clock }: StageHeaderProps) {
   const currentIndex = stages.findIndex(({ stageId }) => stageId === currentStage.stageId)
 
   return (

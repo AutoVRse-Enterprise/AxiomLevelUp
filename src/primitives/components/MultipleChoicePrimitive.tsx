@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui'
 import type { MultipleChoicePrimitive as MultipleChoicePrimitiveConfig } from '@/content/schema/primitives'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { seededShuffle } from '@/primitives/shared/seededShuffle'
 import type { PrimitiveComponentProps } from '@/primitives/types'
@@ -54,9 +55,11 @@ export function MultipleChoicePrimitive({
         }}
       />
       {mode === 'interactive' ? (
-        <Button className="mt-6 w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
-          Check answer
-        </Button>
+        <StepActionSlot>
+          <Button className="w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
+            Check answer
+          </Button>
+        </StepActionSlot>
       ) : null}
     </form>
   )

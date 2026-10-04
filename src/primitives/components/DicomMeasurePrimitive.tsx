@@ -5,6 +5,7 @@ import { Button } from '@/components/ui'
 import type { DicomMeasurementResponse } from '@/imaging/evaluation'
 import { DicomViewer } from '@/imaging/viewer/DicomViewer'
 import type { DicomMeasurement } from '@/imaging/viewer/controller'
+import { StepActionSlot } from '@/player/StepActionSlot'
 import { useDicomPrimitiveContext } from '@/primitives/components/dicomUtils'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
@@ -52,9 +53,11 @@ export function DicomMeasurePrimitive({
         </p>
       ) : null}
       {!disabled ? (
-        <Button disabled={!measurement || !calibrated} onClick={() => onSubmit(measurement)}>
-          Check measurement
-        </Button>
+        <StepActionSlot>
+          <Button disabled={!measurement || !calibrated} onClick={() => onSubmit(measurement)}>
+            Check measurement
+          </Button>
+        </StepActionSlot>
       ) : null}
       {review?.revealAnswer ? (
         <p>

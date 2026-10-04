@@ -2,8 +2,9 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T03 are complete; P13-T04 unified
-CaseWorkspace is next. Phase 9 remains active for physical Android and iOS gates P9-M01 through
+Phase 13 client demo readiness is active. P13-T00 through P13-T04 are complete; P13-T05 clue
+economy and evidence scoping is next. Phase 9 remains active for physical Android and iOS gates
+P9-M01 through
 P9-M03.
 
 ## Done
@@ -49,6 +50,10 @@ P9-M03.
   pauses both case and task timing.
 - Blocking stage dialogs are removed. Inline, focus-managed stage banners introduce each purpose
   and patient update, and the case header exposes one four-stage progress model.
+- Active cases now use an in-flow two-column desktop workspace and Task/Evidence/Notes mobile
+  segments; fixed clue rails and mobile evidence sheets are no longer part of the active route.
+- Shared sticky action slots keep assessment and continuation actions reachable above mobile safe
+  areas without covering the task.
 
 ## Verification
 
@@ -85,14 +90,14 @@ P9-M03.
 
 ## In progress
 
-- P13-T04 workspace implementation is next.
-- P13-T03 is committed locally after full unit and lint verification.
+- P13-T05 evidence semantics are next.
+- P13-T04 passes TypeScript, lint and focused workspace/player/primitive tests.
 
 ## Next three steps
 
-1. Build the unified desktop/mobile CaseWorkspace in P13-T04.
-2. Finish clue relevance and stage-scoped notes in P13-T05.
-3. Add evidence-selection and differential checkpoints in P13-T06.
+1. Finish clue relevance and current/earlier-stage note scoping in P13-T05.
+2. Add evidence-selection and differential checkpoints in P13-T06.
+3. Improve anatomy task framing and finding feedback in P13-T07.
 
 ## Blockers/questions for the user
 

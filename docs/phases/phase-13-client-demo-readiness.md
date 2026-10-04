@@ -63,7 +63,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Remove blocking stage dialogs; replace them with an inline accessible StageBanner.
   - Simplify stage chrome and record ADR-097.
 
-- [ ] **P13-T04 — Unified case workspace**
+- [x] **P13-T04 — Unified case workspace** — completed 2026-10-04
   - Add a two-column desktop workspace and Task/Evidence/Notes mobile workspace.
   - Replace the fixed edge rail with an in-flow evidence panel.
   - Add a case-only StepActionSlot for a sticky primary action.

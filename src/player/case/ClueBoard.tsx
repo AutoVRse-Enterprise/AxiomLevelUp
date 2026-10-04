@@ -20,7 +20,7 @@ interface ClueBoardProps {
   relevantClueIds?: readonly string[]
   optionalClueCost: number
   clueReview: CaseLabConfig['clueReview']
-  variant: 'mobile' | 'desktop'
+  variant: 'mobile' | 'desktop' | 'panel'
   onPresentClue: (clueId: string) => void
   onOpenNoteClue?: (clueId: string) => void
   onReviewClue: (clueId: string, method: CaseClueReviewMethod) => void
@@ -318,6 +318,17 @@ export function ClueBoard(props: ClueBoardProps) {
     onBlockingChange?.(mobileOpen)
     return () => onBlockingChange?.(false)
   }, [mobileOpen, onBlockingChange, variant])
+
+  if (variant === 'panel') {
+    return (
+      <>
+        <p className="sr-only" role="status" aria-live="polite">
+          {newEvidenceAnnouncement}
+        </p>
+        <Board {...props} />
+      </>
+    )
+  }
 
   if (variant === 'desktop') {
     if (mobileViewport) return null

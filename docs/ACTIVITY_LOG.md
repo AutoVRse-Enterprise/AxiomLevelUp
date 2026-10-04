@@ -2965,3 +2965,20 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   replayed from the case header.
 - **Follow-ups:** Build the unified task/evidence/notes workspace and shared primary-action slot in
   P13-T04.
+
+### [2026-10-04 22:06] P13-T04 - Unify the active case workspace
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replaced the fixed clue rail and mobile sheets in active cases with an in-flow
+  two-column desktop workspace and controlled Task/Evidence/Notes mobile segments. Added the
+  shared sticky `StepActionSlot`, applied it to case assessment actions, reset the mobile segment
+  on task boundaries and directed opened evidence to the evidence segment.
+- **Files changed:** `CaseWorkspace`, `StepFrame`, `ActivityPlayer`, `CasePlayer`, `ClueBoard`,
+  assessment/anatomy/DICOM/scenario primitives and focused tests; Phase 13 tracking docs.
+- **Commands run:** `npm run typecheck`; focused Vitest (7 files / 83 tests, then workspace/player
+  integration 2 files / 13 tests); full Vitest (72 files / 483 tests); `npm run lint`; IDE
+  diagnostics.
+- **Result/verification:** TypeScript, lint and all unit tests pass. Desktop evidence remains
+  scrollable in document flow, while mobile task, evidence and notes share one non-modal workspace.
+- **Follow-ups:** Complete current/earlier-stage evidence scoping and clue decision semantics in
+  P13-T05.

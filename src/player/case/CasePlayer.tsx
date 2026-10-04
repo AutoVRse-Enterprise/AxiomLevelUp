@@ -27,11 +27,7 @@ import {
   updateCaseEvidencePins,
   type CaseEvidenceItem,
 } from '@/engines/cases/evidence'
-import {
-  buildCasePlan,
-  stageForStep,
-  type CasePlan,
-} from '@/engines/cases/plan'
+import { buildCasePlan, stageForStep, type CasePlan } from '@/engines/cases/plan'
 import { normalizeCaseResponse } from '@/engines/cases/responses'
 import { calculateCaseScore } from '@/engines/cases/scoring'
 import type { ActivitySession, CaseProgress } from '@/engines/learning/session'
@@ -46,6 +42,7 @@ import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseNotes } from '@/player/case/CaseNotes'
 import { CaseResults } from '@/player/case/CaseResults'
 import { CaseWalkthrough } from '@/player/case/CaseWalkthrough'
+import type { WorkspaceSegment } from '@/player/case/CaseWorkspace'
 import { ClueBoard } from '@/player/case/ClueBoard'
 import { StageBanner } from '@/player/case/StageBanner'
 import { StageHeader } from '@/player/case/StageHeader'
@@ -399,6 +396,7 @@ export function CasePlayer({
   const walkthroughSeen = useLearnerStore((state) => state.caseLab.walkthroughSeen)
   const markWalkthroughSeen = useLearnerStore((state) => state.markCaseLabWalkthroughSeen)
   const [walkthroughOpen, setWalkthroughOpen] = useState(false)
+  const [workspaceSegment, setWorkspaceSegment] = useState<WorkspaceSegment>('task')
   const entryClueAfterWalkthrough = useRef(false)
   const [cluePresenterBlocking, setCluePresenterBlocking] = useState(false)
   const entryHandled = useRef(false)
@@ -489,6 +487,7 @@ export function CasePlayer({
         setCluePresentation({ selectedClueId: null, presenterOpen: false })
         setCluePresenterBlocking(false)
         setWalkthroughOpen(false)
+        setWorkspaceSegment('task')
         entryClueAfterWalkthrough.current = false
         entryHandled.current = false
       }),
@@ -511,6 +510,7 @@ export function CasePlayer({
         stageForStep(plan, currentStepIndex)?.stageId ?? plan.stageBoundaries[0]?.stageId ?? ''
       const result = openClue(caseProgressRef.current.openedClueIds, clueId)
       setCluePresentation({ selectedClueId: clueId, presenterOpen: true })
+      setWorkspaceSegment('evidence')
       if (!result.newlyOpened) return
       const opened: CaseClueOpenRecord = { context, beforeResponse }
       persistProgress({
@@ -542,6 +542,7 @@ export function CasePlayer({
 
   const closeWalkthrough = useCallback(() => {
     setWalkthroughOpen(false)
+    setWorkspaceSegment('task')
     markWalkthroughSeen()
     if (entryClueAfterWalkthrough.current) {
       entryClueAfterWalkthrough.current = false
@@ -653,6 +654,7 @@ export function CasePlayer({
     setCluePresentation({ selectedClueId: null, presenterOpen: false })
     setCluePresenterBlocking(false)
     setWalkthroughOpen(false)
+    setWorkspaceSegment('task')
     entryClueAfterWalkthrough.current = false
     persistProgress(normalizeCaseProgress())
   }, [persistProgress])
@@ -741,6 +743,7 @@ export function CasePlayer({
         }}
         onAttemptTimed={handleAttempt}
         onStepBoundary={({ fromStepIndex, toStepIndex }) => {
+          setWorkspaceSegment('task')
           const from = stageForStep(plan, fromStepIndex)
           const to = toStepIndex === null ? null : stageForStep(plan, toStepIndex)
           if (
@@ -761,7 +764,7 @@ export function CasePlayer({
             setCluePresenterBlocking(false)
           }
         }}
-        renderChrome={({ stepIndex, session }) => {
+        renderChrome={({ stepIndex, step, session }) => {
           const stage = stageForStep(plan, stepIndex) ?? plan.stageBoundaries[0]!
           const stageClues = stage.clueIds.flatMap((id) => {
             const clue = plan.clueMap.get(id)
@@ -784,6 +787,7 @@ export function CasePlayer({
             selectedClueId: cluePresentation.selectedClueId,
             presenterOpen: cluePresentation.presenterOpen,
             labelEssentialClues: plan.tierPreset.labelEssentialClues,
+            relevantClueIds: step.primitive.clueIds,
             optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
             clueReview: caseLab.clueReview,
             onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
@@ -792,20 +796,6 @@ export function CasePlayer({
             onPresenterOpenChange: (presenterOpen: boolean) =>
               setCluePresentation((current) => ({ ...current, presenterOpen })),
             onBlockingChange: setCluePresenterBlocking,
-            renderNotes: (openClue: (clueId: string) => void) => (
-              <CaseNotes
-                caseDoc={caseDoc}
-                progress={caseProgress}
-                inspectedFindingIds={selectInspectedFindingIds(session)}
-                currentLocationLabel={resolveCaseLocationLabel(
-                  anatomyMap,
-                  caseProgress.evidence.currentLocation,
-                )}
-                onOpenClue={openClue}
-                onPinChange={updateEvidencePin}
-                onHypothesisChange={updateHypothesis}
-              />
-            ),
           }
           return {
             header: (
@@ -829,10 +819,29 @@ export function CasePlayer({
                   }
                 />
                 <StageBanner stage={stage} />
-                <ClueBoard {...commonClueProps} variant="mobile" />
               </div>
             ),
-            aside: <ClueBoard {...commonClueProps} variant="desktop" />,
+            aside: <ClueBoard {...commonClueProps} variant="panel" />,
+            notes: (
+              <CaseNotes
+                caseDoc={caseDoc}
+                progress={caseProgress}
+                availableClueIds={stage.clueIds}
+                inspectedFindingIds={selectInspectedFindingIds(session)}
+                currentLocationLabel={resolveCaseLocationLabel(
+                  anatomyMap,
+                  caseProgress.evidence.currentLocation,
+                )}
+                onOpenClue={(clueId) => presentClue(clueId, 'remediation')}
+                onPinChange={updateEvidencePin}
+                onHypothesisChange={updateHypothesis}
+              />
+            ),
+            evidenceAnnouncement: `${stageClues.length} evidence ${
+              stageClues.length === 1 ? 'item is' : 'items are'
+            } available in ${stage.title}.`,
+            workspaceSegment,
+            onWorkspaceSegmentChange: setWorkspaceSegment,
           }
         }}
         renderCompletion={(context) => (
