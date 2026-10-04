@@ -353,6 +353,13 @@ describe('application surfaces', () => {
 
     expect(screen.getByText('Alex Morgan')).toBeVisible()
     expect(screen.getByText('0%', { selector: '.text-title' })).toBeVisible()
+    expect(screen.getByText('Complete 1 qualifying case.')).toBeVisible()
+    expect(
+      screen.getByText(
+        'Score at least 90% in diagnosis while opening at most 1 optional clue.',
+      ),
+    ).toBeVisible()
+    expect(screen.queryByText(/undefined/)).not.toBeInTheDocument()
     expect(screen.getByRole('contentinfo', { name: 'About Autovrse LevelUp' })).toBeVisible()
     expect(screen.getByRole('img', { name: 'Autovrse logo' })).toHaveAttribute(
       'src',

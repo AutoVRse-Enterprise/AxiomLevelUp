@@ -85,7 +85,11 @@ export function StepFrame({
   return (
     <StepActionScope sticky={Boolean(chromeAside && chromeNotes)}>
       <div
-        className={`mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:py-8 ${
+        className={`mx-auto px-4 pt-4 sm:px-6 md:py-8 ${
+          chromeAside && chromeNotes
+            ? 'pb-[calc(10rem+env(safe-area-inset-bottom))]'
+            : 'pb-[calc(6rem+env(safe-area-inset-bottom))]'
+        } ${
           chromeAside && chromeNotes
             ? 'max-w-7xl'
             : layout === 'viewer'

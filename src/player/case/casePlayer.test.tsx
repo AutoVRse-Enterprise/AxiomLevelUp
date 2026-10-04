@@ -255,7 +255,7 @@ describe('case player integration', () => {
 
     await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
     expect(screen.getAllByText('Model answer').length).toBeGreaterThan(0)
-    expect(screen.getByRole('heading', { name: 'You versus the model answer' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'You versus Model answer' })).toBeVisible()
     expect(
       screen.getByText('The configured evidence localizes the target structure.'),
     ).toBeVisible()
@@ -309,7 +309,9 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('button', { name: 'Start' }))
     expect(screen.getAllByRole('timer')).toHaveLength(1)
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time/)
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled()
     await user.click(await screen.findByRole('button', { name: 'Explore anatomy' }))
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled()
     await user.click(screen.getByRole('button', { name: 'Continue' }))
 
     await user.click(await screen.findByRole('radio', { name: 'Other structure' }))

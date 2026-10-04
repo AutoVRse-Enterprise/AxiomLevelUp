@@ -31,7 +31,7 @@ export function StepActionSlot({ children, className }: StepActionSlotProps) {
       className={cn(
         'mt-6 flex justify-end',
         sticky &&
-          'sticky bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-20 rounded-xl border border-neutral-200 bg-white/95 p-2 shadow-overlay backdrop-blur md:static md:border-0 md:bg-transparent md:p-0 md:shadow-none',
+          'fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 z-20 w-[calc(100vw-2rem)] rounded-xl border border-neutral-200 bg-white/95 p-2 shadow-overlay backdrop-blur md:static md:w-auto md:border-0 md:bg-transparent md:p-0 md:shadow-none',
         className,
       )}
       data-step-action-slot=""

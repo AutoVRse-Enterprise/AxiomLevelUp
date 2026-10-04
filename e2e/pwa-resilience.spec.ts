@@ -93,7 +93,9 @@ test.describe('P12-T09 offline case package', () => {
       )
       .toBe(true)
 
-    await page.getByRole('button', { name: /^Clues/ }).click()
+    const skipWalkthrough = page.getByRole('button', { name: 'Skip', exact: true })
+    if (await skipWalkthrough.isVisible()) await skipWalkthrough.click()
+    await page.getByRole('tab', { name: 'Clues', exact: true }).click()
     await page.getByRole('button', { name: /Conducting-airway reference/ }).click()
     const clueImage = page.getByRole('img', {
       name: 'Illustration of a bronchiole leading to alveolar ducts and alveoli.',
@@ -174,9 +176,10 @@ test.describe('P12-T10 anatomy and session resilience', () => {
     await page.getByText('Choose from list').click()
     await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
     await page.getByText('Inspect spatial findings').click()
+    await page.getByRole('button', { name: 'Diffuse airway-wall change' }).click()
     await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
 
-    await page.getByRole('button', { name: /^Clues/ }).click()
+    await page.getByRole('tab', { name: 'Clues', exact: true }).click()
     const notesTab = page.getByRole('tab', { name: 'Case notes' })
     if (await notesTab.isVisible()) {
       await notesTab.click()
@@ -189,6 +192,8 @@ test.describe('P12-T10 anatomy and session resilience', () => {
     const close = page.getByRole('button', { name: 'Close' })
     if (await close.isVisible()) await close.click()
 
+    const taskTab = page.getByRole('tab', { name: 'Task', exact: true })
+    if (await taskTab.isVisible()) await taskTab.click()
     await page.getByRole('button', { name: 'Continue', exact: true }).click()
     await page.getByText('Choose from list').click()
     await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
@@ -198,7 +203,7 @@ test.describe('P12-T10 anatomy and session resilience', () => {
     await page.goto('/learn')
     await page.goto('/learn/cases/asthma-foundation/play')
     await expect(page.getByRole('listitem', { name: 'Orient: current' })).toBeVisible()
-    await page.getByRole('button', { name: /^Clues/ }).click()
+    await page.getByRole('tab', { name: 'Clues', exact: true }).click()
     if (await notesTab.isVisible()) {
       await notesTab.click()
     } else {

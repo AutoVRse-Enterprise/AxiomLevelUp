@@ -42,6 +42,7 @@ export default defineConfig({
     command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${previewPort} --strictPort`,
     env: {
       VITE_E2E: 'true',
+      VITE_ENABLE_DEV_TOOLS: 'true',
     },
     url: `http://127.0.0.1:${previewPort}`,
     reuseExistingServer: false,

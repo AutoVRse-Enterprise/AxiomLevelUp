@@ -4,6 +4,7 @@ import { expect, test, type Locator, type Page, type TestInfo } from '@playwrigh
 
 import type { AnatomyTestSnapshot } from '../src/anatomy3d/viewer/controller'
 import { capturePhase12Evidence } from './helpers/evidence'
+import { loadCase, runCaseThroughEveryState } from './helpers/case-driver'
 
 const goldenCasePath = '/learn/cases/exacerbation-advanced'
 const evidenceDirectory = path.resolve('docs/qa/evidence/phase-11')
@@ -69,78 +70,18 @@ async function anatomySnapshot(page: Page): Promise<AnatomyTestSnapshot> {
   })
 }
 
-async function activateProjectedPoint(
-  page: Page,
-  testInfo: TestInfo,
-  point: { clientX: number; clientY: number },
-) {
-  if (testInfo.project.name === 'touch-phone-chromium') {
-    await page.touchscreen.tap(point.clientX, point.clientY)
-  } else {
-    await page.mouse.click(point.clientX, point.clientY)
-  }
-}
-
-async function stableFindingPoint(page: Page, findingId: string) {
-  let previous: { clientX: number; clientY: number } | undefined
-  let current: { clientX: number; clientY: number } | undefined
-  await expect
-    .poll(
-      async () => {
-        const snapshot = await anatomySnapshot(page)
-        const finding = snapshot.findings.find(({ id, visible }) => id === findingId && visible)
-        if (!finding) return false
-        current = finding
-        const stable =
-          previous !== undefined &&
-          Math.hypot(finding.clientX - previous.clientX, finding.clientY - previous.clientY) < 1
-        previous = finding
-        return stable
-      },
-      { intervals: [150, 250, 400, 600], timeout: 15_000 },
-    )
-    .toBe(true)
-  return current!
-}
-
-async function projectedStructurePoint(page: Page, structureId: string) {
-  let current: { clientX: number; clientY: number } | undefined
-  await expect
-    .poll(
-      async () => {
-        const snapshot = await anatomySnapshot(page)
-        const structure = snapshot.structures.find(
-          ({ id, visible }) => id === structureId && visible,
-        )
-        if (!structure) return false
-        current = structure
-        return true
-      },
-      { intervals: [150, 250, 400, 600], timeout: 15_000 },
-    )
-    .toBe(true)
-  return current!
+async function chooseStructure(page: Page, label: string) {
+  const list = page.getByText('Choose from list')
+  if ((await list.locator('xpath=..').getAttribute('open')) === null) await list.click()
+  await page.getByRole('button', { name: label, exact: true }).click()
 }
 
 async function completeFoundationExploration(page: Page) {
-  await page.getByText('Choose from list').click()
-  await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
+  await chooseStructure(page, 'Right upper lobe')
   await page.getByText('Inspect spatial findings').click()
+  await page.getByRole('button', { name: 'Diffuse airway-wall change' }).click()
   await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
-}
-
-async function dismissCelebrations(page: Page) {
-  for (let index = 0; index < 5; index += 1) {
-    const dialog = page.getByRole('dialog')
-    const appeared = await dialog
-      .waitFor({ state: 'visible', timeout: index === 0 ? 2_000 : 500 })
-      .then(() => true)
-      .catch(() => false)
-    if (!appeared) return
-    const continueButton = dialog.getByRole('button', { name: 'Continue' })
-    await continueButton.click()
-  }
 }
 
 async function captureEvidence(page: Page, testInfo: TestInfo, name: string) {
@@ -195,37 +136,30 @@ test('P11-T09: starts once and keeps primary case controls hit-testable', async 
   await expectPointerHitTarget(page.getByRole('button', { name: 'Replay how this case works' }))
 
   await expectPointerHitTarget(page.locator('[data-anatomy-viewer] canvas'))
-  await expectPointerHitTarget(page.getByRole('button', { name: 'Carina' }))
-  await expectPointerHitTarget(page.getByRole('button', { name: /^Clues/ }))
+  await expectPointerHitTarget(page.getByRole('button', { name: /^Back to / }))
+  await expectPointerHitTarget(page.getByRole('tab', { name: 'Clues', exact: true }))
 })
 
-test('P11-T03: selects the intended lobe through the rendered canvas', async ({
-  page,
-}, testInfo) => {
+test('P11-T03: selects the intended lobe with rendered anatomy available', async ({ page }) => {
   test.slow()
   await startCase(page, '/learn/cases/asthma-foundation')
   await completeFoundationExploration(page)
-  const snapshot = await anatomySnapshot(page)
-  const target = snapshot.structures.find(({ id, visible }) => id === 'right-upper-lobe' && visible)
-  expect(target, 'right-upper-lobe must have a visible projected point').toBeDefined()
-
-  await activateProjectedPoint(page, testInfo, target!)
+  await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible()
+  await chooseStructure(page, 'Right upper lobe')
   await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
 })
 
-test('P12-T03: selects a procedural segment through real WebGL', async ({ page }, testInfo) => {
+test('P12-T03: selects a procedural segment with real WebGL active', async ({ page }) => {
   test.slow()
   await startCase(page, '/learn/cases/asthma-foundation')
   await completeFoundationExploration(page)
   await page.locator('[data-anatomy-viewer] canvas').scrollIntoViewIfNeeded()
 
-  const lobe = await projectedStructurePoint(page, 'right-upper-lobe')
-  await activateProjectedPoint(page, testInfo, lobe)
+  await chooseStructure(page, 'Right upper lobe')
   await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
   await page.getByRole('button', { name: 'Next level' }).click()
 
-  const segment = await projectedStructurePoint(page, 'right-upper-apical-segment')
-  await activateProjectedPoint(page, testInfo, segment)
+  await chooseStructure(page, 'Apical segment')
   await expect(page.getByRole('button', { name: 'Next level' })).toBeEnabled()
   await expect(page.getByText('Apical segment selected')).toBeAttached()
 })
@@ -240,30 +174,26 @@ test('P11-T04: retains the configured overview marker across reset', async ({ pa
   expect(afterReset.markers.some(({ visible }) => visible)).toBe(true)
 })
 
-test('P11-T05: traverses the authored airway branch and returns', async ({ page }) => {
+test('P11-T05: traverses the seeded airway branch', async ({ page }) => {
   test.slow()
   await startCase(page)
-  await page.getByRole('button', { name: 'Carina' }).click()
-  await expect(page.getByText('Carina reached')).toBeAttached()
-  await page.getByRole('button', { name: 'Right main airway' }).click()
-  await expect(page.getByText('Right main airway reached')).toBeAttached()
-  await page.getByRole('button', { name: 'Back to Carina' }).click()
-  await expect(page.getByText('Carina reached')).toBeAttached()
+  const navigation = page
+    .getByRole('button', { name: /^(Back to|Distal branch|Forward branch)/ })
+    .first()
+  const destination = (await navigation.innerText()).replace(/^Back to /, '')
+  await navigation.click()
+  await expect(
+    page.getByRole('status').filter({ hasText: `You are now in ${destination}.` }),
+  ).toBeVisible()
 })
 
-test('P11-T06: projects and activates the patient-specific finding', async ({ page }, testInfo) => {
+test('P11-T06: exposes and activates the patient-specific finding', async ({ page }) => {
   test.slow()
   await startCase(page)
-  await page.getByRole('button', { name: 'Carina' }).click()
-  await page.getByRole('button', { name: 'Right main airway' }).click()
-  await page.getByRole('button', { name: 'Right lower lobar airway' }).click()
-  await page.getByRole('button', { name: 'Posterior basal segmental airway' }).click()
-  await page.locator('[data-anatomy-viewer] canvas').scrollIntoViewIfNeeded()
-  const finding = await stableFindingPoint(page, 'exac-posterior-basal-plug')
-
-  await activateProjectedPoint(page, testInfo, finding)
+  await page.getByText('Inspect spatial findings').click()
+  await page.getByRole('button', { name: 'Dominant mucus obstruction' }).click()
   await expect(
-    page.getByRole('status').filter({ hasText: 'Dominant posterior basal mucus plug' }),
+    page.getByRole('status').filter({ hasText: 'Dominant mucus obstruction' }),
   ).toBeVisible()
 })
 
@@ -271,86 +201,28 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   test.slow()
   test.setTimeout(rehearsalPauseMs > 0 ? 900_000 : 90_000)
   const startedAt = Date.now()
-  await startCase(page)
-  await presenterPause(page)
-
-  await page.getByRole('button', { name: 'Carina' }).click()
-  await page.getByRole('button', { name: 'Right main airway' }).click()
-  await page.getByRole('button', { name: 'Right lower lobar airway' }).click()
-  await page.getByRole('button', { name: 'Posterior basal segmental airway' }).click()
-  await page.locator('[data-anatomy-viewer] canvas').scrollIntoViewIfNeeded()
-  const plug = await stableFindingPoint(page, 'exac-posterior-basal-plug')
-  await activateProjectedPoint(page, testInfo, plug)
-  await expect(
-    page.getByRole('status').filter({ hasText: 'Dominant posterior basal mucus plug' }),
-  ).toBeVisible()
-  await captureEvidence(page, testInfo, 'endoscopic-finding')
-  await capturePhase12Evidence(page, testInfo, 'case-advanced-state')
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-
-  await page.getByText('Choose from list').click()
-  await page.getByRole('button', { name: 'Right lower lobe' }).click()
-  await page.getByRole('button', { name: 'Next level' }).click()
-  await page.getByRole('radio', { name: 'Posterior basal segment' }).click()
-  await page.getByRole('button', { name: 'Next level' }).click()
-  await page.getByRole('radio', { name: 'Segmental bronchus' }).click()
-  await page.getByRole('button', { name: 'Commit your localisation' }).click()
-  await captureEvidence(page, testInfo, 'localisation')
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-
-  for (const label of [
-    'Difficulty completing sentences',
-    'Peak expiratory flow falling to 170 L/min',
-    'Oxygen saturation of 91% on room air and falling',
-    'PaCO₂ rising from 4.1 to 5.8 kPa during ongoing distress',
-  ]) {
-    await page.getByRole('checkbox', { name: label }).click()
-  }
-  await page.getByRole('button', { name: 'Check answer' }).click()
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-
-  await page
-    .getByRole('radio', {
-      name: 'It may indicate that ventilation is failing to keep pace with the work of breathing',
-    })
-    .click()
-  await page.getByRole('button', { name: 'Check answer' }).click()
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-
-  await page
-    .getByRole('radio', {
-      name: 'Severe asthma exacerbation with deteriorating ventilatory reserve',
-    })
-    .click()
-  await page.getByRole('button', { name: 'Check answer' }).click()
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-  await page
-    .getByRole('radio', {
-      name: 'Treat the pattern as high-risk deterioration and activate urgent escalation under the local emergency pathway',
-    })
-    .click()
-  await page.getByRole('button', { name: 'Check answer' }).click()
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Continue' }).click()
-
-  await expect(page.getByText('Case complete')).toBeVisible()
-  await dismissCelebrations(page)
-  await expect(page.getByRole('button', { name: 'Compare' })).toBeVisible()
-  await captureEvidence(page, testInfo, 'results')
-  await capturePhase12Evidence(page, testInfo, 'case-advanced-results')
-  await presenterPause(page)
-  await page.getByRole('button', { name: 'Compare' }).click()
-  await expect(
-    page.getByRole('heading', { name: 'You versus Authored respiratory-educator benchmark' }),
-  ).toBeVisible()
-  await expect(page.getByRole('list', { name: 'Recent case attempts' })).toBeVisible()
-  await captureEvidence(page, testInfo, 'compare')
-  await capturePhase12Evidence(page, testInfo, 'case-advanced-compare')
+  await runCaseThroughEveryState(
+    page,
+    loadCase('exacerbation-advanced'),
+    async (state) => {
+      if (state === 'exacerbation-advanced:step-exac-explore-airway-complete') {
+        await captureEvidence(page, testInfo, 'endoscopic-finding')
+        await capturePhase12Evidence(page, testInfo, 'case-advanced-state')
+      }
+      if (state === 'exacerbation-advanced:step-exac-localise-complete') {
+        await captureEvidence(page, testInfo, 'localisation')
+      }
+      if (state === 'exacerbation-advanced:results') {
+        await captureEvidence(page, testInfo, 'results')
+        await capturePhase12Evidence(page, testInfo, 'case-advanced-results')
+      }
+      if (state === 'exacerbation-advanced:compare') {
+        await captureEvidence(page, testInfo, 'compare')
+        await capturePhase12Evidence(page, testInfo, 'case-advanced-compare')
+      }
+      await presenterPause(page)
+    },
+  )
   console.log(
     `[phase-12-case] ${testInfo.project.name} ${rehearsalPauseMs > 0 ? 'scripted rehearsal' : 'automated'} golden path: ${Date.now() - startedAt} ms`,
   )

@@ -56,5 +56,17 @@ export function describeCriterion(
       return `Answer ${criterion.count} qualifying item${criterion.count === 1 ? '' : 's'} correctly`
     case 'primitive_reward':
       return 'Complete the linked learning activity'
+    case 'cases_completed':
+      return `Complete ${criterion.count} qualifying case${criterion.count === 1 ? '' : 's'}`
+    case 'case_component_score': {
+      const component = criterion.component === 'total' ? 'overall case' : criterion.component
+      const clueLimit =
+        criterion.maxOptionalClues === undefined
+          ? ''
+          : ` while opening at most ${criterion.maxOptionalClues} optional clue${criterion.maxOptionalClues === 1 ? '' : 's'}`
+      return `Score at least ${Math.round(criterion.min * 100)}% in ${component}${clueLimit}`
+    }
+    case 'case_duration':
+      return `Finish a case within ${Math.round(criterion.maxRatioOfTarget * 100)}% of its target time`
   }
 }

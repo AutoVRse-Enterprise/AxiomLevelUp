@@ -238,7 +238,7 @@ describe('Case Lab routes', () => {
     expect(screen.getByText(/unavailable for this legacy attempt/i)).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
     expect(screen.getAllByText('Model answer').length).toBeGreaterThan(0)
-    expect(screen.getByRole('heading', { name: 'You versus the model answer' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'You versus Model answer' })).toBeVisible()
   })
 
   it('renders persisted v6 speed components and actual awarded XP without reconstruction', async () => {

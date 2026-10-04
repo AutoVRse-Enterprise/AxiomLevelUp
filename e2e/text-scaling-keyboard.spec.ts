@@ -26,21 +26,17 @@ test('P12-T10: CasePlayer, results and comparison support 200% text', async ({ p
   await expect(page.locator('[data-anatomy-viewer]')).toBeVisible()
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer viewer at 200% text')
 
-  await page.getByRole('button', { name: /^Clues/ }).click()
+  await page.getByRole('tab', { name: 'Clues', exact: true }).click()
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer Clues at 200% text')
-  const close = page.getByRole('button', { name: 'Close' })
   const notesTab = page.getByRole('tab', { name: 'Case notes' })
-  if (await notesTab.isVisible()) {
-    await notesTab.click()
-  } else {
-    await close.click()
-    await page.getByRole('button', { name: 'Case notes', exact: true }).click()
-  }
+  await notesTab.click()
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer Notes at 200% text')
-  if (await close.isVisible()) await close.click()
+  const taskTab = page.getByRole('tab', { name: 'Task', exact: true })
+  if (await taskTab.isVisible()) await taskTab.click()
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
   await page.getByText('Inspect spatial findings').click()
+  await page.getByRole('button', { name: 'Diffuse airway-wall change' }).click()
   await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
   await expectReachable(page.getByRole('button', { name: 'Continue', exact: true }))
 
@@ -48,9 +44,9 @@ test('P12-T10: CasePlayer, results and comparison support 200% text', async ({ p
   await applyTwoHundredPercentText(page)
   await expect(page.getByText('Case complete')).toBeVisible()
   await expectNoDocumentHorizontalOverflow(page, 'CaseResults at 200% text')
-  await expectReachable(page.getByRole('button', { name: 'Compare' }))
-  await page.getByRole('button', { name: 'Compare' }).click()
-  await expect(page.getByText('Attempt comparison')).toBeVisible()
+  await expectReachable(page.getByRole('button', { name: 'Compare with model answer' }))
+  await page.getByRole('button', { name: 'Compare with model answer' }).click()
+  await expect(page.getByRole('heading', { name: 'You versus Model answer' })).toBeVisible()
   await expectNoDocumentHorizontalOverflow(page, 'CaseCompare at 200% text')
   await expectReachable(page.getByRole('button', { name: 'Continue', exact: true }))
 })
@@ -75,6 +71,21 @@ test('P12-T10: keyboard-only learner path reaches case completion', async ({ pag
   await keyboardActivate(page, page.getByRole('button', { name: 'Check answer' }))
   await keyboardActivate(page, page.getByRole('button', { name: 'Continue', exact: true }))
 
+  await keyboardActivate(page, page.getByRole('tab', { name: 'Clues', exact: true }))
+  for (const clue of ['Trigger pattern', 'Before-and-after flow']) {
+    await keyboardActivate(page, page.getByRole('button', { name: new RegExp(clue) }))
+    await page.waitForTimeout(1_300)
+  }
+  const taskTab = page.getByRole('tab', { name: 'Task', exact: true })
+  if (await taskTab.isVisible()) await keyboardActivate(page, taskTab)
+  await keyboardActivate(page, page.getByRole('checkbox', { name: /Trigger pattern/ }), 'Space')
+  await keyboardActivate(
+    page,
+    page.getByRole('checkbox', { name: /Before-and-after flow/ }),
+    'Space',
+  )
+  await keyboardActivate(page, page.getByRole('button', { name: 'Cite evidence', exact: true }))
+  await keyboardActivate(page, page.getByRole('button', { name: 'Continue', exact: true }))
   await keyboardActivate(page, page.getByRole('button', { name: 'Continue', exact: true }))
   await keyboardActivate(
     page,

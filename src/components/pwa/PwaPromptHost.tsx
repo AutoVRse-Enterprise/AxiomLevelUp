@@ -64,7 +64,7 @@ export function PwaPromptHost() {
   return (
     <aside
       aria-label="Application notifications"
-      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-50 grid w-[min(24rem,calc(100vw-2rem))] gap-3"
+      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-auto z-50 grid w-[calc(100vw-2rem)] max-w-sm gap-3 sm:left-auto sm:right-4"
     >
       {serviceWorker.needRefresh ? (
         <Card className="min-w-0 shadow-lg">

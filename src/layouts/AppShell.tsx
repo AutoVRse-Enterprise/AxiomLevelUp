@@ -29,10 +29,10 @@ export function AppShell() {
 
       <nav
         aria-label="Primary navigation"
-        className="fixed inset-x-0 bottom-0 z-nav border-t border-neutral-200 bg-white/95 backdrop-blur-lg lg:hidden"
+        className="fixed bottom-0 left-0 z-nav w-[100vw] max-w-[100vw] overflow-x-hidden border-t border-neutral-200 bg-white/95 backdrop-blur-lg lg:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className="mx-auto grid min-h-16 max-w-xl grid-cols-5">
+        <div className="mx-auto grid min-h-16 w-[100vw] min-w-0 max-w-xl grid-cols-5">
           {primaryNavigation.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               className={({ isActive }) =>
@@ -46,7 +46,7 @@ export function AppShell() {
               to={to}
             >
               <Icon aria-hidden="true" size={21} strokeWidth={2.1} />
-              <span className="truncate">{label}</span>
+              <span className="block w-full min-w-0 truncate text-center">{label}</span>
             </NavLink>
           ))}
         </div>

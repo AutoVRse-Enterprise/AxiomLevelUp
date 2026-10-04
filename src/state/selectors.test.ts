@@ -15,6 +15,7 @@ import {
   learnerSeedSchema,
 } from '@/content/schema'
 import {
+  describeCriterion,
   selectCourseCompletion,
   selectCourseSummary,
   selectContinueLearning,
@@ -160,5 +161,22 @@ describe('derived learner selectors', () => {
       expect.objectContaining({ level: 7, nextLevelXp: 6000 }),
     )
     expect(selectGreetingPeriod(new Date('2026-10-01T19:00:00'))).toBe('evening')
+  })
+
+  it('describes every case-specific achievement criterion', () => {
+    expect(describeCriterion({ type: 'cases_completed', count: 1 })).toBe(
+      'Complete 1 qualifying case',
+    )
+    expect(
+      describeCriterion({
+        type: 'case_component_score',
+        component: 'diagnosis',
+        min: 0.9,
+        maxOptionalClues: 1,
+      }),
+    ).toBe('Score at least 90% in diagnosis while opening at most 1 optional clue')
+    expect(describeCriterion({ type: 'case_duration', maxRatioOfTarget: 0.75 })).toBe(
+      'Finish a case within 75% of its target time',
+    )
   })
 })

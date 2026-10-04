@@ -246,7 +246,7 @@ export function ProfilePage() {
                       description={
                         badge.unlocked
                           ? badge.description
-                          : `${badge.description} ${describeCriterion(badge.criteria)}.`
+                          : `${describeCriterion(badge.criteria)}.`
                       }
                       icon={getBadgeIcon(badge.icon)}
                       key={badge.id}

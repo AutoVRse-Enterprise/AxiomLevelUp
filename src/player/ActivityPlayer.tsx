@@ -528,8 +528,11 @@ export function ActivityPlayer({
           ) : undefined
         }
         footer={
-          session.phase === 'step' && stepProgress.completed ? (
-            <Button onClick={handleContinue}>Continue</Button>
+          session.phase === 'step' &&
+          (stepProgress.completed || step.primitive.type === 'anatomy_explore') ? (
+            <Button disabled={!stepProgress.completed} onClick={handleContinue}>
+              Continue
+            </Button>
           ) : undefined
         }
       >

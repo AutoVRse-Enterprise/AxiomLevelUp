@@ -78,16 +78,16 @@ export async function expectNoDocumentHorizontalOverflow(page: Page, state: stri
       clientWidth,
       scrollWidth: document.documentElement.scrollWidth,
       offenders: [...document.querySelectorAll<HTMLElement>('body *')]
-        .filter((element) => {
-          const rect = element.getBoundingClientRect()
-          return rect.right > clientWidth + 1 || rect.left < -1
-        })
-        .slice(0, 8)
         .map((element) => ({
           element: element.outerHTML.slice(0, 240),
           left: element.getBoundingClientRect().left,
           right: element.getBoundingClientRect().right,
-        })),
+        }))
+        .filter(({ left, right }) => {
+          return right > clientWidth + 1 || left < -1
+        })
+        .sort((left, right) => right.right - left.right)
+        .slice(0, 12),
     }
   })
   expect(
