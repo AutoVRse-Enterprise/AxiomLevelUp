@@ -169,6 +169,16 @@ Every lesson primitive and challenge item passes through the same parser and sem
 Primitive definitions default timeout credit to `none`; `anatomy_locate` opts into
 `committed_progress` so its evaluator can retain weighted completed-level credit on expiry.
 
+Case-backed challenges may include a `recordedOpponent` with a display name, training role,
+timestamp and recorded anatomy, diagnosis, speed, total, duration and clue-count metrics. The
+runtime labels this as simulated data, plays the linked case normally and presents the configured
+record through the shared case comparison view. Semantic validation resolves the linked case and
+rejects recorded clue counts greater than the case clue catalogue.
+
+Leaderboard configuration may set `simulated: true`. Seeded rows can declare `country`,
+`specialty` and `institution`; the learner-facing ranking then exposes those three local filters
+and visibly identifies the data as simulated.
+
 ### DICOM primitive content
 
 All four modes require `seriesAssetId`, `prompt`, at least one inline

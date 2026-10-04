@@ -439,6 +439,8 @@ async function answerStep(
 async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: ContentRegistry) {
   const manualStart = screen.queryByRole('button', { name: /^(Start|Resume)$/ })
   if (manualStart) await user.click(manualStart)
+  const walkthroughSkip = await screen.findByRole('button', { name: 'Skip' })
+  await user.click(walkthroughSkip)
 
   for (const stage of caseDoc.stages) {
     for (const step of stage.steps) {
@@ -455,7 +457,7 @@ async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: Con
 
   expect(await screen.findByText('Case complete')).toBeVisible()
   expect(screen.getByText(/^\d+\/100$/)).toBeVisible()
-  expect(screen.getByRole('heading', { name: 'Score details' })).toBeVisible()
+  expect(screen.getByText('Score details')).toBeVisible()
 }
 
 function fourthCatalogueResponses() {
@@ -623,14 +625,9 @@ describe('configured Case Lab flows', () => {
         ]),
       )
 
-      await user.click(screen.getByRole('button', { name: 'Compare' }))
-      expect(screen.getByText('Attempt comparison')).toBeVisible()
-      expect(
-        screen.getByRole('heading', {
-          name: `You versus ${caseDoc.expertBenchmark.name}`,
-        }),
-      ).toBeVisible()
-      expect(screen.getAllByText('Matched expert')).toHaveLength(
+      await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+      expect(screen.getByRole('heading', { name: 'You versus Model answer' })).toBeVisible()
+      expect(screen.getAllByText('Matched model answer')).toHaveLength(
         caseDoc.stages
           .flatMap(({ steps }) => steps)
           .filter(({ type }) => type !== 'anatomy_explore' && type !== 'case_differential').length,
@@ -675,9 +672,8 @@ describe('configured Case Lab flows', () => {
       ]),
     )
 
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
-    expect(screen.getByText('Attempt comparison')).toBeVisible()
-    expect(screen.getAllByText('Matched expert')).toHaveLength(3)
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+    expect(screen.getAllByText('Matched model answer')).toHaveLength(3)
   }, 15_000)
 
   it('loads and plays a content-only fourth catalogue fixture while keeping quick case separate', async () => {
@@ -702,9 +698,9 @@ describe('configured Case Lab flows', () => {
       bestTotal: 100,
     })
     expect(screen.getByText('100/100')).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
-    expect(screen.getByRole('heading', { name: 'You versus Configured expert' })).toBeVisible()
-    expect(screen.getAllByText('Matched expert')).toHaveLength(2)
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+    expect(screen.getByRole('heading', { name: 'You versus Model answer' })).toBeVisible()
+    expect(screen.getAllByText('Matched model answer')).toHaveLength(2)
   }, 15_000)
 
   it('has no detectable WCAG A/AA violations in the active unavailable-3D case state', async () => {

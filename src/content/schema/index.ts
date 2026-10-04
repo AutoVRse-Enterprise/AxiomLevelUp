@@ -212,14 +212,30 @@ const challengeBaseSchema = z.object({
   progressRule: badgeSchema.shape.criteria.optional(),
 })
 
+export const recordedOpponentSchema = z.strictObject({
+  name: z.string().trim().min(1),
+  role: z.string().trim().min(1),
+  recordedAt: isoDateSchema,
+  breakdown: z.strictObject({
+    anatomy: z.number().min(0).max(1),
+    diagnosis: z.number().min(0).max(1),
+    speed: z.number().min(0).max(1),
+    total: z.number().min(0).max(100),
+    durationSeconds: z.number().int().positive(),
+    openedClueCount: z.number().int().nonnegative(),
+  }),
+})
+
 export const challengeSchema = z.union([
   challengeBaseSchema.extend({
     items: z.array(primitiveBaseSchema).default([]),
     caseId: z.never().optional(),
+    recordedOpponent: z.never().optional(),
   }),
   challengeBaseSchema.extend({
     caseId: idSchema,
     items: z.never().optional(),
+    recordedOpponent: recordedOpponentSchema.optional(),
   }),
 ])
 
@@ -232,6 +248,9 @@ export const leaderboardEntrySchema = z
     totalXp: z.number().int().nonnegative().optional(),
     isCurrentLearner: z.boolean().default(false),
     previousRank: z.number().int().positive().optional(),
+    country: z.string().trim().min(1).optional(),
+    specialty: z.string().trim().min(1).optional(),
+    institution: z.string().trim().min(1).optional(),
   })
   .superRefine((entry, context) => {
     if (entry.monthlyXp !== undefined && entry.monthlyXp < entry.weeklyXp) {
@@ -615,6 +634,7 @@ export const appConfigSchema = z.object({
   leaderboard: z.strictObject({
     scope: z.string().min(1),
     period: z.enum(['weekly', 'monthly', 'all_time']).default('weekly'),
+    simulated: z.boolean().default(false),
     entries: z.array(leaderboardEntrySchema).min(1),
   }),
 })
@@ -992,6 +1012,7 @@ export const contentManifestSchema = z.object({
 export type Course = z.infer<typeof courseSchema>
 export type Lesson = z.infer<typeof lessonSchema>
 export type AppConfig = z.infer<typeof appConfigSchema>
+export type RecordedOpponent = z.infer<typeof recordedOpponentSchema>
 export type LearnerSeed = z.infer<typeof learnerSeedSchema>
 export type CaseAttemptRecord = z.infer<typeof caseAttemptRecordSchema>
 export type ContentManifest = z.infer<typeof contentManifestSchema>

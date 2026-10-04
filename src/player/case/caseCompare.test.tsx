@@ -87,4 +87,38 @@ describe('case comparison', () => {
     ).toBeVisible()
     expect(screen.queryByText(/case state pipeline/i)).not.toBeInTheDocument()
   })
+
+  it('reuses the comparison view for an explicitly simulated recorded opponent', () => {
+    render(
+      <CaseCompare
+        caseDoc={caseDoc}
+        caseLab={caseLab}
+        result={result}
+        history={[]}
+        historyLimit={10}
+        opponent={{
+          name: 'Samir Patel',
+          role: 'Respiratory medicine trainee',
+          recordedAt: '2026-09-30T14:20:00+05:30',
+          breakdown: {
+            anatomy: 0.9,
+            diagnosis: 0.85,
+            speed: 0.8,
+            total: 86,
+            durationSeconds: 142,
+            openedClueCount: 2,
+          },
+        }}
+        onBack={vi.fn()}
+        onContinue={vi.fn()}
+        onReplay={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Simulated data')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'You versus Samir Patel' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Head-to-head result' })).toBeVisible()
+    expect(screen.getByText(/no live learner/i)).toBeVisible()
+    expect(screen.getByText('Model answer debrief')).toBeVisible()
+  })
 })

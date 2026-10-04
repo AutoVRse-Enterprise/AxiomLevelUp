@@ -2,7 +2,7 @@ import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { useEffect } from 'react'
 
 import { Button, Card, Chip } from '@/components/ui'
-import type { CaseDocument, CaseLabConfig } from '@/content/schema'
+import type { CaseDocument, CaseLabConfig, RecordedOpponent } from '@/content/schema'
 import {
   formatCaseOrganSystem,
   formatCaseTier,
@@ -20,6 +20,7 @@ interface CaseCompareProps {
   history: readonly CaseAttemptHistoryItem[]
   historyLimit: number
   evidenceAnchor?: string | null
+  opponent?: RecordedOpponent
   onBack: () => void
   onContinue: () => void
   onReplay: () => void
@@ -36,6 +37,7 @@ export function CaseCompare({
   history,
   historyLimit,
   evidenceAnchor,
+  opponent,
   onBack,
   onContinue,
   onReplay,
@@ -82,6 +84,8 @@ export function CaseCompare({
       : result.breakdown.speedScored === true
         ? percentage(value)
         : 'Unavailable'
+  const comparisonBreakdown = opponent?.breakdown ?? caseDoc.expertBenchmark.breakdown
+  const comparisonLabel = opponent?.name ?? 'Model answer'
   const inspectedFindingIds = new Set(
     result.evidence?.inspectedFindingIds ??
       result.stepResults.flatMap(({ response }) => {
@@ -134,13 +138,17 @@ export function CaseCompare({
       >
         Back to results
       </Button>
-      <p className="mt-5 text-small font-semibold text-brand-700">Model answer</p>
+      <p className="mt-5 text-small font-semibold text-brand-700">
+        {opponent ? 'Recorded-opponent challenge' : 'Model answer'}
+      </p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
       <p className="mt-3 max-w-2xl text-neutral-700">
-        This is one authored reasoning route for comparison, not the only valid way to approach the
-        case.
+        {opponent
+          ? `Compare your completed attempt with ${opponent.name}'s prerecorded result. No live learner or multiplayer service is connected.`
+          : 'This is one authored reasoning route for comparison, not the only valid way to approach the case.'}
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
+        {opponent ? <Chip tone="brand">Simulated data</Chip> : null}
         <Chip>{formatCaseTier(caseLab, caseDoc.tier)}</Chip>
         <Chip>{formatCaseOrganSystem(caseLab, caseDoc.organSystem)}</Chip>
       </div>
@@ -148,20 +156,22 @@ export function CaseCompare({
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
         <Card>
           <h2 className="text-heading font-bold text-neutral-950">
-            You versus the model answer
+            You versus {comparisonLabel}
           </h2>
           <p className="mt-2 text-small text-neutral-600">
-            Prepared as {caseDoc.expertBenchmark.name}.
+            {opponent
+              ? `${opponent.role} · recorded ${new Intl.DateTimeFormat('en', { dateStyle: 'medium' }).format(new Date(opponent.recordedAt))}`
+              : `Prepared as ${caseDoc.expertBenchmark.name}.`}
           </p>
           <dl className="mt-5 space-y-4">
             {[
-              ['Anatomy', result.breakdown.anatomy, caseDoc.expertBenchmark.breakdown.anatomy],
+              ['Anatomy', result.breakdown.anatomy, comparisonBreakdown.anatomy],
               [
                 'Diagnosis',
                 result.breakdown.diagnosis,
-                caseDoc.expertBenchmark.breakdown.diagnosis,
+                comparisonBreakdown.diagnosis,
               ],
-              ['Speed', result.breakdown.speed, caseDoc.expertBenchmark.breakdown.speed],
+              ['Speed', result.breakdown.speed, comparisonBreakdown.speed],
             ].map(([label, learner, expert]) => (
               <div
                 className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:gap-4"
@@ -175,8 +185,10 @@ export function CaseCompare({
                     : percentage(learner as number)}
                 </dd>
                 <dd className="text-right text-small">
-                  <span className="block text-neutral-500">Model answer</span>
-                  {label === 'Speed' ? speedValue(expert as number) : percentage(expert as number)}
+                  <span className="block text-neutral-500">{comparisonLabel}</span>
+                  {label === 'Speed' && !opponent
+                    ? speedValue(expert as number)
+                    : percentage(expert as number)}
                 </dd>
               </div>
             ))}
@@ -186,23 +198,58 @@ export function CaseCompare({
                 {formatDuration(result.breakdown.durationSeconds)}
               </dd>
               <dd className="text-right text-small">
-                {formatDuration(caseDoc.expertBenchmark.durationSeconds)}
+                {formatDuration(
+                  opponent?.breakdown.durationSeconds ??
+                    caseDoc.expertBenchmark.durationSeconds,
+                )}
               </dd>
             </div>
             <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto] sm:gap-4">
               <dt className="font-semibold text-neutral-800">Clues</dt>
               <dd className="text-right text-small">{result.breakdown.openedClueIds.length}</dd>
               <dd className="text-right text-small">
-                {caseDoc.expertBenchmark.openedClueIds.length}
+                {opponent?.breakdown.openedClueCount ??
+                  caseDoc.expertBenchmark.openedClueIds.length}
               </dd>
             </div>
           </dl>
         </Card>
 
         <Card>
-          <h2 className="text-heading font-bold text-neutral-950">Your history</h2>
-          <p className="mt-2 text-small text-neutral-600">Best score: {formatScore(best)}</p>
-          {recent.length ? (
+          <h2 className="text-heading font-bold text-neutral-950">
+            {opponent ? 'Head-to-head result' : 'Your history'}
+          </h2>
+          {opponent ? (
+            <>
+              <p className="mt-2 text-small text-neutral-600">
+                Recorded result: {formatScore(opponent.breakdown.total)}
+              </p>
+              <div className="mt-5 space-y-3">
+                {[
+                  ['You', result.breakdown.total, 'bg-brand-700'],
+                  [opponent.name, opponent.breakdown.total, 'bg-info-600'],
+                ].map(([label, total, color]) => (
+                  <div className="flex items-center gap-3" key={label as string}>
+                    <span className="w-24 text-small font-semibold text-neutral-700">
+                      {label as string}
+                    </span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100">
+                      <div
+                        className={`h-full rounded-full ${color as string}`}
+                        style={{ width: `${total as number}%` }}
+                      />
+                    </div>
+                    <span className="w-14 text-right font-semibold">
+                      {formatScore(total as number)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mt-2 text-small text-neutral-600">Best score: {formatScore(best)}</p>
+              {recent.length ? (
             <ol className="mt-5 space-y-3" aria-label="Recent case attempts">
               {recent.map((attempt, index) => (
                 <li className="flex items-center gap-3" key={attempt.attemptId}>
@@ -236,11 +283,16 @@ export function CaseCompare({
               This is your first recorded attempt. Complete this case again to compare your next
               result.
             </p>
+              )}
+            </>
           )}
         </Card>
       </div>
 
       <Card className="mt-5">
+        {opponent ? (
+          <p className="mb-5 text-small font-semibold text-brand-700">Model answer debrief</p>
+        ) : null}
         <section aria-labelledby="expert-path-heading">
           <h2 className="text-heading font-bold text-neutral-950" id="expert-path-heading">
             How the model answer approached it
@@ -357,7 +409,9 @@ export function CaseCompare({
                     <span
                       className={`min-w-0 ${matched ? 'text-success-700' : 'text-warning-700'}`}
                     >
-                      {matched ? 'Matched expert' : `${Math.round(step.firstAttemptScore * 100)}%`}
+                      {matched
+                        ? 'Matched model answer'
+                        : `${Math.round(step.firstAttemptScore * 100)}%`}
                     </span>
                   </div>
                   {authored.rationale ? (

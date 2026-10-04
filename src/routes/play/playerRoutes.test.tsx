@@ -22,7 +22,7 @@ import { makeValidContentBundle } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
 
-function makeQuickCaseRegistry() {
+function makeQuickCaseRegistry(withRecordedOpponent = false) {
   const caseRegistry = makeCaseRegistry()
   const appConfig = appConfigSchema.parse({
     ...caseRegistry.appConfig,
@@ -37,6 +37,23 @@ function makeQuickCaseRegistry() {
         rewardXp: 50,
         itemCount: 1,
         caseId: fixtureCase.id,
+        ...(withRecordedOpponent
+          ? {
+              recordedOpponent: {
+                name: 'Samir Patel',
+                role: 'Respiratory medicine trainee',
+                recordedAt: '2026-09-30T14:20:00+05:30',
+                breakdown: {
+                  anatomy: 0.9,
+                  diagnosis: 0.85,
+                  speed: 0.8,
+                  total: 86,
+                  durationSeconds: 142,
+                  openedClueCount: 1,
+                },
+              },
+            }
+          : {}),
       },
     ],
   })
@@ -243,12 +260,36 @@ describe('player routes', () => {
       completed: true,
       bestScore: 100,
     })
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
     expect(screen.getByRole('heading', { name: 'Your history' })).toBeVisible()
     expect(screen.getByText('88/100')).toBeVisible()
     const history = screen.getByRole('list', { name: 'Recent case attempts' })
     expect(within(history).getAllByRole('listitem')).toHaveLength(2)
     expect(within(history).getAllByText('Current')).toHaveLength(1)
     expect(within(history).getAllByText('100/100')).toHaveLength(1)
+  })
+
+  it('opens the recorded-opponent comparison after completing a simulated case match', async () => {
+    const user = userEvent.setup()
+    const quickCaseRegistry = makeQuickCaseRegistry(true)
+    useLearnerStore.getState().replaceWithSeed(quickCaseRegistry.seed)
+    initializeLearningProgressHandlers(quickCaseRegistry)
+    renderRoute('/challenge/daily-quick-case/play', quickCaseRegistry)
+
+    expect(screen.getByText('Simulated data')).toBeVisible()
+    expect(screen.getByText(/compare with Samir Patel/i)).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    await user.click(await screen.findByRole('radio', { name: 'True' }))
+    await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'You versus Samir Patel' }),
+    ).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Head-to-head result' })).toBeVisible()
+    expect(screen.getAllByText('86/100')).not.toHaveLength(0)
   })
 })

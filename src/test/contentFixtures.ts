@@ -44,6 +44,9 @@ export function makeValidContentBundle(): ContentBundleInput {
     }>
   }
   delete fixtureAppConfig.caseLab
+  fixtureAppConfig.challenges = fixtureAppConfig.challenges.filter(
+    (challenge) => !('recordedOpponent' in challenge),
+  )
   fixtureAppConfig.pathways.forEach((pathway) => {
     pathway.nodes.forEach((node) => {
       if (node.type !== 'case') return

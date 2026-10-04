@@ -116,7 +116,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Add demo-only profile switching/reset and label the leaderboard “Sample cohort.”
   - Record ADR-101.
 
-- [ ] **P13-T13 — Simulated concept previews**
+- [x] **P13-T13 — Simulated concept previews** — completed 2026-10-04
   - Add an explicitly simulated recorded-opponent challenge.
   - Add country, specialty and institution filters over seeded leaderboard data.
   - This is the first task to defer if schedule or quality is at risk.

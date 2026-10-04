@@ -389,6 +389,29 @@
       "caseId": "wheeze-quick"
     },
     {
+      "id": "recorded-opponent-case",
+      "type": "daily",
+      "title": "Recorded Case Match",
+      "description": "Complete a quick respiratory case, then compare your result with a prerecorded learner attempt.",
+      "estimatedMinutes": 3,
+      "rewardXp": 50,
+      "itemCount": 1,
+      "caseId": "wheeze-quick",
+      "recordedOpponent": {
+        "name": "Samir Patel",
+        "role": "Respiratory medicine trainee",
+        "recordedAt": "2026-09-30T14:20:00+05:30",
+        "breakdown": {
+          "anatomy": 0.9,
+          "diagnosis": 0.85,
+          "speed": 0.8,
+          "total": 86,
+          "durationSeconds": 142,
+          "openedClueCount": 2
+        }
+      }
+    },
+    {
       "id": "weekly-imaging-sprint",
       "type": "weekly",
       "title": "Scientific Imaging Sprint",
@@ -408,22 +431,23 @@
   "leaderboard": {
     "scope": "Sample cohort",
     "period": "weekly",
+    "simulated": true,
     "entries": [
-      { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "monthlyXp": 5220, "totalXp": 12480, "isCurrentLearner": false, "previousRank": 1 },
-      { "id": "claire-m", "name": "Claire M.", "weeklyXp": 1360, "monthlyXp": 4680, "totalXp": 10360, "isCurrentLearner": false, "previousRank": 3 },
-      { "id": "vikram-s", "name": "Vikram S.", "weeklyXp": 1310, "monthlyXp": 4510, "totalXp": 11310, "isCurrentLearner": false, "previousRank": 2 },
-      { "id": "lucas-b", "name": "Lucas B.", "weeklyXp": 1195, "monthlyXp": 4100, "totalXp": 9195, "isCurrentLearner": false, "previousRank": 6 },
-      { "id": "fatima-k", "name": "Fatima K.", "weeklyXp": 1110, "monthlyXp": 3920, "totalXp": 10110, "isCurrentLearner": false, "previousRank": 4 },
-      { "id": "jonas-l", "name": "Jonas L.", "weeklyXp": 1035, "monthlyXp": 3500, "totalXp": 8035, "isCurrentLearner": false, "previousRank": 5 },
-      { "id": "elena-p", "name": "Elena P.", "weeklyXp": 980, "monthlyXp": 3360, "totalXp": 7980, "isCurrentLearner": false, "previousRank": 7 },
-      { "id": "maya-chen", "name": "Maya Chen", "weeklyXp": 940, "monthlyXp": 3180, "totalXp": 4820, "isCurrentLearner": true, "previousRank": 11 },
-      { "id": "marcus-t", "name": "Marcus T.", "weeklyXp": 910, "monthlyXp": 3290, "totalXp": 6910, "isCurrentLearner": false, "previousRank": 8 },
-      { "id": "sofia-g", "name": "Sofia G.", "weeklyXp": 875, "monthlyXp": 2980, "totalXp": 5875, "isCurrentLearner": false, "previousRank": 10 },
-      { "id": "nora-a", "name": "Nora A.", "weeklyXp": 830, "monthlyXp": 3010, "totalXp": 7830, "isCurrentLearner": false, "previousRank": 9 },
-      { "id": "daniel-w", "name": "Daniel W.", "weeklyXp": 765, "monthlyXp": 2765, "totalXp": 6765, "isCurrentLearner": false, "previousRank": 12 },
-      { "id": "yuki-n", "name": "Yuki N.", "weeklyXp": 720, "monthlyXp": 2540, "totalXp": 4720, "isCurrentLearner": false, "previousRank": 13 },
-      { "id": "amadou-c", "name": "Amadou C.", "weeklyXp": 680, "monthlyXp": 2480, "totalXp": 5680, "isCurrentLearner": false, "previousRank": 15 },
-      { "id": "lena-v", "name": "Lena V.", "weeklyXp": 645, "monthlyXp": 2310, "totalXp": 4310, "isCurrentLearner": false, "previousRank": 14 }
+      { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "monthlyXp": 5220, "totalXp": 12480, "isCurrentLearner": false, "previousRank": 1, "country": "India", "specialty": "Respiratory medicine", "institution": "Northstar Teaching Hospital" },
+      { "id": "claire-m", "name": "Claire M.", "weeklyXp": 1360, "monthlyXp": 4680, "totalXp": 10360, "isCurrentLearner": false, "previousRank": 3, "country": "France", "specialty": "Clinical research", "institution": "Helix Research Institute" },
+      { "id": "vikram-s", "name": "Vikram S.", "weeklyXp": 1310, "monthlyXp": 4510, "totalXp": 11310, "isCurrentLearner": false, "previousRank": 2, "country": "India", "specialty": "Medical imaging", "institution": "Northstar Teaching Hospital" },
+      { "id": "lucas-b", "name": "Lucas B.", "weeklyXp": 1195, "monthlyXp": 4100, "totalXp": 9195, "isCurrentLearner": false, "previousRank": 6, "country": "Brazil", "specialty": "Clinical research", "institution": "Helix Research Institute" },
+      { "id": "fatima-k", "name": "Fatima K.", "weeklyXp": 1110, "monthlyXp": 3920, "totalXp": 10110, "isCurrentLearner": false, "previousRank": 4, "country": "United Kingdom", "specialty": "Respiratory medicine", "institution": "Riverside Clinical Academy" },
+      { "id": "jonas-l", "name": "Jonas L.", "weeklyXp": 1035, "monthlyXp": 3500, "totalXp": 8035, "isCurrentLearner": false, "previousRank": 5, "country": "Germany", "specialty": "Medical imaging", "institution": "Central Imaging Centre" },
+      { "id": "elena-p", "name": "Elena P.", "weeklyXp": 980, "monthlyXp": 3360, "totalXp": 7980, "isCurrentLearner": false, "previousRank": 7, "country": "Spain", "specialty": "General medicine", "institution": "Riverside Clinical Academy" },
+      { "id": "maya-chen", "name": "Maya Chen", "weeklyXp": 940, "monthlyXp": 3180, "totalXp": 4820, "isCurrentLearner": true, "previousRank": 11, "country": "Singapore", "specialty": "Respiratory medicine", "institution": "Northstar Teaching Hospital" },
+      { "id": "marcus-t", "name": "Marcus T.", "weeklyXp": 910, "monthlyXp": 3290, "totalXp": 6910, "isCurrentLearner": false, "previousRank": 8, "country": "United States", "specialty": "General medicine", "institution": "Central Imaging Centre" },
+      { "id": "sofia-g", "name": "Sofia G.", "weeklyXp": 875, "monthlyXp": 2980, "totalXp": 5875, "isCurrentLearner": false, "previousRank": 10, "country": "Spain", "specialty": "Clinical research", "institution": "Helix Research Institute" },
+      { "id": "nora-a", "name": "Nora A.", "weeklyXp": 830, "monthlyXp": 3010, "totalXp": 7830, "isCurrentLearner": false, "previousRank": 9, "country": "United Kingdom", "specialty": "Medical imaging", "institution": "Riverside Clinical Academy" },
+      { "id": "daniel-w", "name": "Daniel W.", "weeklyXp": 765, "monthlyXp": 2765, "totalXp": 6765, "isCurrentLearner": false, "previousRank": 12, "country": "United States", "specialty": "Respiratory medicine", "institution": "Central Imaging Centre" },
+      { "id": "yuki-n", "name": "Yuki N.", "weeklyXp": 720, "monthlyXp": 2540, "totalXp": 4720, "isCurrentLearner": false, "previousRank": 13, "country": "Japan", "specialty": "Medical imaging", "institution": "Northstar Teaching Hospital" },
+      { "id": "amadou-c", "name": "Amadou C.", "weeklyXp": 680, "monthlyXp": 2480, "totalXp": 5680, "isCurrentLearner": false, "previousRank": 15, "country": "Senegal", "specialty": "General medicine", "institution": "Riverside Clinical Academy" },
+      { "id": "lena-v", "name": "Lena V.", "weeklyXp": 645, "monthlyXp": 2310, "totalXp": 4310, "isCurrentLearner": false, "previousRank": 14, "country": "Germany", "specialty": "Clinical research", "institution": "Helix Research Institute" }
     ]
   }
 }

@@ -27,13 +27,13 @@ Two audit corrections were applied at baseline:
 
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
-| H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Open; simulated preview only |
-| H02 | Segmented rankings absent | P13-T13 | Open; simulated preview only |
+| H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Closed for phase scope: an explicitly simulated prerecorded-opponent challenge demonstrates the concept without implying live multiplayer |
+| H02 | Segmented rankings absent | P13-T13 | Closed: seeded country, specialty and institution filters are available |
 | H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: unknown-point localisation and cited findings are scored; bridge-free browser proof remains |
 | H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Closed: mission, progressive patient timeline and cited evidence connect the case |
 | H06 | Benchmark purpose is unclear | P13-T10 | Closed: comparison is framed as one authored Model answer |
-| H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Partial: ranking scope is “Sample cohort”; simulated-preview labels remain in P13-T13 |
+| H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Closed: ranking scope says “Sample cohort” and both concept previews say “Simulated data” |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
 | H09 | Cross-organ reuse is not demonstrated | P13-T16 | Approved scope deferral; position honestly |
 | H11 | DICOM toolbar is hard to operate at 375 px | P13-T01 | Closed: tool and preset groups wrap |

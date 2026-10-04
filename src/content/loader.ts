@@ -1744,6 +1744,19 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       `challenges.${challengeIndex}.caseId`,
       'case',
     )
+    const challengeCase = caseById.get(challenge.caseId)
+    if (
+      challenge.recordedOpponent &&
+      challengeCase &&
+      challenge.recordedOpponent.breakdown.openedClueCount > challengeCase.clues.length
+    ) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `challenges.${challengeIndex}.recordedOpponent.breakdown.openedClueCount`,
+        message: `Recorded opponent clue count cannot exceed the ${challengeCase.clues.length} clues in case "${challenge.caseId}".`,
+        severity: 'error',
+      })
+    }
     if (
       challenge.type === 'daily' &&
       appConfig.caseLab &&

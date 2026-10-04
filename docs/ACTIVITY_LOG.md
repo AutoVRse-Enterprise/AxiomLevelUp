@@ -3114,3 +3114,20 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   now guarantees a real manifest seed and the default first-use experience starts at Foundation.
 - **Follow-ups:** Add or explicitly defer the simulated challenge and segmented leaderboard
   previews in P13-T13.
+
+### [2026-10-04 23:45] P13-T13 - Add explicitly simulated concept previews
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a configured recorded-opponent case challenge that enters the normal Case Lab
+  and reuses its comparison view as a head-to-head result. Added country, specialty and
+  institution filters over seeded ranking rows. Both surfaces now carry a visible “Simulated
+  data” label and the challenge states that no live learner or multiplayer service is connected.
+- **Files changed:** Challenge and leaderboard configuration/schema; content validation and
+  generated schema; challenge, player, comparison and leaderboard routes; content, route,
+  comparison and complete case-flow tests; content schema and Phase 13 tracking docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; `npm run lint`;
+  `npm run validate:content`; focused Vitest including 7 complete Case Lab flows.
+- **Result/verification:** The recorded attempt is bounds-checked against its case clue catalogue,
+  completion opens the head-to-head comparison, all three ranking filters operate over configured
+  fields, and the focused suites pass.
+- **Follow-ups:** Expand browser, viewport and visual-regression coverage in P13-T14.

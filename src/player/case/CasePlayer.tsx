@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { AnatomyFindingProvider } from '@/anatomy3d/viewer/findingContext'
 import { Chip } from '@/components/ui'
-import type { AnatomyMap, AppConfig, CaseDocument } from '@/content/schema'
+import type { AnatomyMap, AppConfig, CaseDocument, RecordedOpponent } from '@/content/schema'
 import {
   createCaseClock,
   pauseCaseClock,
@@ -118,6 +118,7 @@ export interface CasePlayerProps {
   continuePath: string
   exitPath: string
   challengeId?: string
+  recordedOpponent?: RecordedOpponent
   attemptHistory?: readonly CaseAttemptHistoryItem[]
   onClueOpened?: (opened: CaseClueOpened) => void
   onComplete?: (result: CaseAttemptResult) => void
@@ -324,6 +325,7 @@ function CompletionFlow({
   config,
   caseProgress,
   attemptHistory,
+  recordedOpponent,
   onComplete,
   onResetProgress,
 }: {
@@ -332,10 +334,13 @@ function CompletionFlow({
   config: AppConfig
   caseProgress: CaseProgress
   attemptHistory: readonly CaseAttemptHistoryItem[]
+  recordedOpponent?: RecordedOpponent
   onComplete?: (result: CaseAttemptResult) => void
   onResetProgress: () => void
 }) {
-  const [view, setView] = useState<'results' | 'compare'>('results')
+  const [view, setView] = useState<'results' | 'compare'>(
+    recordedOpponent ? 'compare' : 'results',
+  )
   const [evidenceAnchor, setEvidenceAnchor] = useState<string | null>(null)
   const result = useMemo(
     () => buildResult(caseDoc, context.plan as CasePlan, context.session, caseProgress, config),
@@ -389,6 +394,7 @@ function CompletionFlow({
       history={attemptHistory}
       historyLimit={caseLab.historyLimit}
       evidenceAnchor={evidenceAnchor}
+      opponent={recordedOpponent}
       onBack={() => setView('results')}
       onContinue={context.onContinue}
       onReplay={replay}
@@ -406,6 +412,7 @@ export function CasePlayer({
   continuePath,
   exitPath,
   challengeId,
+  recordedOpponent,
   attemptHistory = [],
   onClueOpened,
   onComplete,
@@ -989,6 +996,7 @@ export function CasePlayer({
               config={config}
               caseProgress={caseProgress}
               attemptHistory={attemptHistory}
+              recordedOpponent={recordedOpponent}
               onComplete={notifyComplete}
               onResetProgress={resetProgress}
             />

@@ -4,7 +4,7 @@ import { useRef, useState, type KeyboardEvent } from 'react'
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { LeaderboardRow, StatTile } from '@/components/learning'
-import { Card } from '@/components/ui'
+import { Button, Card, Chip } from '@/components/ui'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectLeaderboardView, type LeaderboardPeriod } from '@/state/selectors'
 
@@ -39,11 +39,31 @@ export function LeaderboardPage() {
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const [period, setPeriod] = useState<LeaderboardPeriod>(appConfig.leaderboard.period)
+  const [segments, setSegments] = useState({
+    country: '',
+    specialty: '',
+    institution: '',
+  })
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
   const activePeriod = periods.find(({ id }) => id === period) ?? periods[0]!
+  const segmentOptions = {
+    country: [...new Set(appConfig.leaderboard.entries.flatMap(({ country }) => country ?? []))],
+    specialty: [
+      ...new Set(appConfig.leaderboard.entries.flatMap(({ specialty }) => specialty ?? [])),
+    ],
+    institution: [
+      ...new Set(appConfig.leaderboard.entries.flatMap(({ institution }) => institution ?? [])),
+    ],
+  }
+  const filteredEntries = appConfig.leaderboard.entries.filter(
+    (entry) =>
+      (!segments.country || entry.country === segments.country) &&
+      (!segments.specialty || entry.specialty === segments.specialty) &&
+      (!segments.institution || entry.institution === segments.institution),
+  )
   const view = selectLeaderboardView(
     { learner, xp },
-    appConfig.leaderboard.entries,
+    filteredEntries,
     appConfig.product.leaderboard.visibleWindow,
     period,
   )
@@ -77,7 +97,52 @@ export function LeaderboardPage() {
         <Trophy aria-hidden="true" className="mx-auto text-star" size={34} />
         <h1 className="mt-3 text-display font-bold">{appConfig.leaderboard.scope}</h1>
         <p className="mt-2 text-neutral-600">{activePeriod.description}</p>
+        {appConfig.leaderboard.simulated ? (
+          <div className="mt-3">
+            <Chip tone="brand">Simulated data</Chip>
+          </div>
+        ) : null}
       </header>
+
+      {appConfig.leaderboard.simulated ? (
+        <Card>
+          <div className="flex flex-wrap items-end gap-3">
+            {(
+              [
+                ['country', 'Country'],
+                ['specialty', 'Specialty'],
+                ['institution', 'Institution'],
+              ] as const
+            ).map(([field, label]) => (
+              <label className="min-w-40 flex-1 text-small font-semibold text-neutral-800" key={field}>
+                {label}
+                <select
+                  className="mt-1 min-h-11 w-full rounded-md border border-neutral-300 bg-white px-3 font-normal text-neutral-900 focus-visible:outline-2"
+                  value={segments[field]}
+                  onChange={(event) =>
+                    setSegments((current) => ({ ...current, [field]: event.target.value }))
+                  }
+                >
+                  <option value="">All {label.toLowerCase()}s</option>
+                  {segmentOptions[field].map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+            <Button
+              disabled={!Object.values(segments).some(Boolean)}
+              size="sm"
+              variant="secondary"
+              onClick={() => setSegments({ country: '', specialty: '', institution: '' })}
+            >
+              Clear filters
+            </Button>
+          </div>
+        </Card>
+      ) : null}
 
       <div className="flex justify-center gap-2" aria-label="Leaderboard period" role="tablist">
         {periods.map((option, index) => (
@@ -142,19 +207,25 @@ export function LeaderboardPage() {
         <h2 className="text-heading font-bold" id="leaderboard-ranking-heading">
           {activePeriod.heading}
         </h2>
-        <ol className="mt-4 divide-y divide-neutral-100 overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-card">
-          {view.rows.map((row) => (
-            <LeaderboardRow
-              current={row.isCurrentLearner}
-              key={row.id}
-              movement={row.movement}
-              name={row.name}
-              rank={row.rank}
-              showMovement={period === 'weekly'}
-              xp={row.periodXp}
-            />
-          ))}
-        </ol>
+        {view.rows.length ? (
+          <ol className="mt-4 divide-y divide-neutral-100 overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-card">
+            {view.rows.map((row) => (
+              <LeaderboardRow
+                current={row.isCurrentLearner}
+                key={row.id}
+                movement={row.movement}
+                name={row.name}
+                rank={row.rank}
+                showMovement={period === 'weekly'}
+                xp={row.periodXp}
+              />
+            ))}
+          </ol>
+        ) : (
+          <p className="mt-4 rounded-lg border border-neutral-200 bg-white p-5 text-neutral-600">
+            No sample learners match these filters.
+          </p>
+        )}
       </section>
 
       {view.rank === null ? (

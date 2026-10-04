@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
+import { Card, Chip } from '@/components/ui'
 import { buildActivityPlan, challengeActivity } from '@/engines/learning/plan'
 import { challengePackage } from '@/offline/package'
 import { isChallengeOfflineReady } from '@/offline/readiness'
@@ -57,20 +58,37 @@ export function ChallengePlayerPage() {
 
     const progress = caseProgress[caseDoc.id]
     return (
-      <CasePlayer
-        anatomyMap={registry.anatomyMapById.get(caseDoc.anatomyMapId)}
-        attemptHistory={(caseAttempts[caseDoc.id] ?? []).filter(
-          ({ attemptId }) => attemptId !== completedCaseAttemptId,
-        )}
-        caseDoc={caseDoc}
-        challengeId={challenge.id}
-        config={appConfig}
-        continuePath="/challenge"
-        exitPath="/challenge"
-        previousAttempts={progress?.completions ?? 0}
-        previousBestScore={progress?.bestTotal ?? null}
-        onComplete={({ attemptId }) => setCompletedCaseAttemptId(attemptId)}
-      />
+      <>
+        {challenge.recordedOpponent ? (
+          <Card className="mx-auto mb-5 max-w-4xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <Chip tone="brand">Simulated data</Chip>
+              <Chip>Recorded opponent</Chip>
+            </div>
+            <p className="mt-3 font-semibold text-neutral-950">
+              Complete the case, then compare with {challenge.recordedOpponent.name}.
+            </p>
+            <p className="mt-1 text-small text-neutral-600">
+              This is a prerecorded demonstration result, not a live match.
+            </p>
+          </Card>
+        ) : null}
+        <CasePlayer
+          anatomyMap={registry.anatomyMapById.get(caseDoc.anatomyMapId)}
+          attemptHistory={(caseAttempts[caseDoc.id] ?? []).filter(
+            ({ attemptId }) => attemptId !== completedCaseAttemptId,
+          )}
+          caseDoc={caseDoc}
+          challengeId={challenge.id}
+          config={appConfig}
+          continuePath="/challenge"
+          exitPath="/challenge"
+          previousAttempts={progress?.completions ?? 0}
+          previousBestScore={progress?.bestTotal ?? null}
+          recordedOpponent={challenge.recordedOpponent}
+          onComplete={({ attemptId }) => setCompletedCaseAttemptId(attemptId)}
+        />
+      </>
     )
   }
 

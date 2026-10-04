@@ -287,6 +287,9 @@ describe('application surfaces', () => {
     )
 
     renderSurface(<ChallengePage />, '/challenge', '/challenge')
+    expect(screen.getByRole('heading', { name: 'Asynchronous challenge' })).toBeVisible()
+    expect(screen.getByText('Recorded opponent: Samir Patel')).toBeVisible()
+    expect(screen.getByRole('link', { name: 'Start match' })).toBeVisible()
     await user.click(screen.getByRole('link', { name: /Start challenge/ }))
     expect(subscriber).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -327,6 +330,21 @@ describe('application surfaces', () => {
     expect(screen.getByRole('heading', { name: 'All-time ranking' })).toBeVisible()
     expect(screen.getByText('#13')).toBeVisible()
     expect(screen.getByText('4,820 XP')).toBeVisible()
+  })
+
+  it('filters the simulated leaderboard by configured learner segments', async () => {
+    const user = userEvent.setup()
+    renderSurface(<LeaderboardPage />, '/leaderboard', '/leaderboard')
+
+    expect(screen.getByText('Simulated data')).toBeVisible()
+    await user.selectOptions(screen.getByLabelText('Country'), 'India')
+
+    expect(screen.getByText('Ananya R.')).toBeVisible()
+    expect(screen.getByText('Vikram S.')).toBeVisible()
+    expect(screen.queryByText('Lucas B.')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Clear filters' }))
+    expect(screen.getByText('Lucas B.')).toBeVisible()
   })
 
   it('renders Profile for a fresh learner without invalid arithmetic', () => {

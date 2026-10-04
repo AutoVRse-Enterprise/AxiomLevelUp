@@ -1,4 +1,12 @@
-import { ArrowRight, CalendarDays, CheckCircle2, Clock, Target, Trophy } from 'lucide-react'
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  Target,
+  Trophy,
+  Users,
+} from 'lucide-react'
 import { Link } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
@@ -21,7 +29,10 @@ export function ChallengePage() {
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
   const caseProgress = useLearnerStore((state) => state.caseProgress)
   const caseAttempts = useLearnerStore((state) => state.caseAttempts)
-  const daily = appConfig.challenges.filter(({ type }) => type === 'daily')
+  const daily = appConfig.challenges.filter(
+    ({ type, recordedOpponent }) => type === 'daily' && !recordedOpponent,
+  )
+  const recorded = appConfig.challenges.filter(({ recordedOpponent }) => recordedOpponent)
   const weekly = appConfig.challenges.filter(({ type }) => type === 'weekly')
 
   if (!appConfig.challenges.length) {
@@ -107,6 +118,60 @@ export function ChallengePage() {
           })}
         </div>
       </section>
+
+      {recorded.length ? (
+        <section aria-label="Recorded opponent challenges">
+          <SectionHeader
+            description="Try a case independently, then compare your result with a prerecorded learner attempt."
+            title="Asynchronous challenge"
+          />
+          <div className="mt-4 grid gap-5 lg:grid-cols-2">
+            {recorded.map((challenge) => {
+              const opponent = challenge.recordedOpponent!
+              const period = selectChallengePeriod(
+                { gamification },
+                challenge,
+                today(),
+                appConfig.product.weekStartsOn,
+              )
+              return (
+                <Card key={challenge.id}>
+                  <Users aria-hidden="true" className="text-brand-700" size={30} />
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Chip tone="brand">Simulated data</Chip>
+                    <Chip>{period.completed ? 'Completed today' : 'Ready'}</Chip>
+                  </div>
+                  <h2 className="mt-4 text-title font-bold">{challenge.title}</h2>
+                  <p className="mt-2 text-neutral-600">{challenge.description}</p>
+                  <p className="mt-4 text-small font-semibold text-neutral-800">
+                    Recorded opponent: {opponent.name}
+                  </p>
+                  <p className="mt-1 text-small text-neutral-600">{opponent.role}</p>
+                  <div className="mt-5 flex flex-wrap gap-4 text-small font-medium text-neutral-600">
+                    <span className="flex items-center gap-1.5">
+                      <Clock aria-hidden="true" size={16} />{' '}
+                      {formatEstimatedMinutes(challenge.estimatedMinutes, true)}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Trophy aria-hidden="true" size={16} /> +{formatXp(challenge.rewardXp)}
+                    </span>
+                  </div>
+                  <Link
+                    className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-700 px-4 font-semibold text-white hover:bg-brand-800 focus-visible:outline-2"
+                    onClick={() =>
+                      emitEvent({ event: 'challenge_opened', challengeId: challenge.id })
+                    }
+                    to={`/challenge/${challenge.id}/play`}
+                  >
+                    {period.completed ? 'Replay match' : 'Start match'}
+                    <ArrowRight aria-hidden="true" size={17} />
+                  </Link>
+                </Card>
+              )
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <section aria-label="Weekly challenges">
         <SectionHeader

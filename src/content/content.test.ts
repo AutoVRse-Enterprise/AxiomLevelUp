@@ -763,12 +763,12 @@ describe('content loader', () => {
       label: 'Apical segment',
       volume: { shape: 'ellipsoid' },
     })
-    expect(registry.seed.caseAttempts['exacerbation-advanced']).toEqual([
-      expect.objectContaining({
-        resultVersion: 8,
-        attemptId: 'seed-exacerbation-advanced-1',
-      }),
-    ])
+    expect(registry.seed.seedProfile).toBe('fresh')
+    expect(registry.seed.learner).toMatchObject({
+      name: 'Alex Morgan',
+      role: 'Trainee doctor',
+    })
+    expect(registry.seed.caseAttempts).toEqual({})
     const quickCase = registry.caseById.get('wheeze-quick')
     expect(quickCase?.estimatedMinutes).toBe(3)
     expect(quickCase?.clues).toHaveLength(3)
@@ -1086,6 +1086,51 @@ describe('content loader', () => {
           expect.objectContaining({
             path: 'challenges.2.caseId',
             message: expect.stringContaining('Unknown case reference "missing-case"'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('validates recorded-opponent attempts against their challenge case', () => {
+    const bundle = withCaseFixture()
+    const appConfig = bundle.appConfig as { challenges: Array<Record<string, unknown>> }
+    appConfig.challenges.push({
+      id: 'recorded-opponent-case',
+      type: 'daily',
+      title: 'Recorded case match',
+      description: 'Compare with a prerecorded learner attempt.',
+      estimatedMinutes: 3,
+      rewardXp: 50,
+      itemCount: 1,
+      caseId: 'case-contract-fixture',
+      recordedOpponent: {
+        name: 'Samir Patel',
+        role: 'Respiratory medicine trainee',
+        recordedAt: '2026-09-30T14:20:00+05:30',
+        breakdown: {
+          anatomy: 0.9,
+          diagnosis: 0.85,
+          speed: 0.8,
+          total: 86,
+          durationSeconds: 142,
+          openedClueCount: 1,
+        },
+      },
+    })
+
+    expect(() => validateContentBundle(bundle)).not.toThrow()
+
+    const recordedOpponent = appConfig.challenges.at(-1)!.recordedOpponent as {
+      breakdown: { openedClueCount: number }
+    }
+    recordedOpponent.breakdown.openedClueCount = 99
+    expect(() => validateContentBundle(bundle)).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'challenges.2.recordedOpponent.breakdown.openedClueCount',
+            message: expect.stringContaining('cannot exceed'),
           }),
         ]),
       }),
