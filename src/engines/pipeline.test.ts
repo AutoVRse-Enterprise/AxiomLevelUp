@@ -127,6 +127,7 @@ function caseCompletion(attemptId: string, total = 100): LearnerEventDraft {
       'supported-hypothesis': 'likely',
       'alternative-hypothesis': 'unlikely',
     },
+    differentialCheckpoints: {},
     timeoutCreditApplied: false,
     stepResults: [
       {
@@ -267,7 +268,7 @@ describe('learner event pipeline', () => {
     })
     expect(state.caseAttempts[caseDocument.id]).toHaveLength(1)
     expect(state.caseAttempts[caseDocument.id]?.[0]).toMatchObject({
-      resultVersion: 7,
+      resultVersion: 8,
       perStepSpeed: 0,
       caseSpeed: 0,
       speedModel: 'time_eligible',
@@ -290,6 +291,7 @@ describe('learner event pipeline', () => {
         'supported-hypothesis': 'likely',
         'alternative-hypothesis': 'unlikely',
       },
+      differentialCheckpoints: {},
       timeoutCreditApplied: false,
       stepResults: [
         expect.objectContaining({

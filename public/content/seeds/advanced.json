@@ -48,7 +48,7 @@
   "caseAttempts": {
     "asthma-foundation": [
       {
-        "resultVersion": 7,
+        "resultVersion": 8,
         "attemptId": "seed-asthma-foundation-1",
         "tier": "foundation",
         "total": 94,
@@ -141,13 +141,27 @@
           "inducible-laryngeal-obstruction": "possible",
           "bronchiectasis": "unlikely"
         },
+        "differentialCheckpoints": {
+          "foundation-differential-observe": {
+            "asthma": "possible",
+            "copd": "possible",
+            "inducible-laryngeal-obstruction": "possible",
+            "bronchiectasis": "unlikely"
+          },
+          "foundation-differential-interpret": {
+            "asthma": "likely",
+            "copd": "unlikely",
+            "inducible-laryngeal-obstruction": "possible",
+            "bronchiectasis": "unlikely"
+          }
+        },
         "timeoutCreditApplied": false,
         "completedAt": "2026-09-27T10:30:00+05:30"
       }
     ],
     "copd-intermediate": [
       {
-        "resultVersion": 7,
+        "resultVersion": 8,
         "attemptId": "seed-copd-intermediate-1",
         "tier": "intermediate",
         "total": 93,
@@ -240,13 +254,27 @@
           "bronchiectasis": "possible",
           "heart-failure": "unlikely"
         },
+        "differentialCheckpoints": {
+          "intermediate-differential-observe": {
+            "copd": "possible",
+            "asthma": "possible",
+            "bronchiectasis": "possible",
+            "heart-failure": "unlikely"
+          },
+          "intermediate-differential-interpret": {
+            "copd": "likely",
+            "asthma": "possible",
+            "bronchiectasis": "possible",
+            "heart-failure": "unlikely"
+          }
+        },
         "timeoutCreditApplied": false,
         "completedAt": "2026-09-29T11:15:00+05:30"
       }
     ],
     "exacerbation-advanced": [
       {
-        "resultVersion": 7,
+        "resultVersion": 8,
         "attemptId": "seed-exacerbation-advanced-1",
         "tier": "advanced",
         "total": 85,
@@ -338,6 +366,20 @@
           "copd-exacerbation": "unlikely",
           "lobar-pneumonia": "possible",
           "pulmonary-embolism": "possible"
+        },
+        "differentialCheckpoints": {
+          "exac-differential-observe": {
+            "severe-asthma-exacerbation": "possible",
+            "copd-exacerbation": "possible",
+            "lobar-pneumonia": "possible",
+            "pulmonary-embolism": "possible"
+          },
+          "exac-differential-interpret": {
+            "severe-asthma-exacerbation": "likely",
+            "copd-exacerbation": "unlikely",
+            "lobar-pneumonia": "possible",
+            "pulmonary-embolism": "possible"
+          }
         },
         "timeoutCreditApplied": false,
         "completedAt": "2026-09-30T14:20:00+05:30"

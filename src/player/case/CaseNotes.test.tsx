@@ -24,6 +24,7 @@ const progress: CaseProgress = {
   caseClockExpired: false,
   evidence: { pinned: [] },
   differential: {},
+  differentialCheckpoints: {},
 }
 
 function renderNotes(overrides: { caseComplete?: boolean; availableClueIds?: string[] } = {}) {

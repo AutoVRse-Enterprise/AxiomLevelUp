@@ -1,6 +1,6 @@
 import fixtureAnatomyMap from '../../../public/content/fixtures/anatomy-map.json'
 import fixtureCase from '../../../public/content/fixtures/case.json'
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useEffect, useRef, useState } from 'react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
@@ -279,6 +279,7 @@ async function answerStep(
   primitive: TypedPrimitive,
   response: unknown,
   registry: ContentRegistry,
+  caseDoc: CaseDocument,
 ) {
   switch (primitive.type) {
     case 'anatomy_explore':
@@ -332,6 +333,52 @@ async function answerStep(
     case 'scenario':
       await answerScenario(user, primitive, response)
       return
+    case 'case_differential': {
+      const ratings = response as Record<string, 'unlikely' | 'possible' | 'likely'>
+      const task = document.querySelector<HTMLElement>('[data-case-task]')
+      if (!task) throw new Error('Missing case task workspace.')
+      for (const hypothesis of primitive.content.hypotheses) {
+        const rating = ratings[hypothesis.id]
+        if (!rating) throw new Error(`Missing expert rating for "${hypothesis.id}".`)
+        const group = await within(task).findByRole('group', { name: hypothesis.label })
+        await user.click(
+          group.querySelectorAll('button')[{ unlikely: 0, possible: 1, likely: 2 }[rating]]!,
+        )
+      }
+      return
+    }
+    case 'case_evidence_select': {
+      const citedEvidence = response as Array<{ kind: 'clue' | 'finding'; id: string }>
+      const task = document.querySelector<HTMLElement>('[data-case-task]')
+      if (!task) throw new Error('Missing case task workspace.')
+      await within(task).findByRole('button', { name: 'Cite evidence' })
+      for (const evidence of citedEvidence) {
+        const label =
+          evidence.kind === 'clue'
+            ? caseDoc.clues.find(({ id }) => id === evidence.id)?.title
+            : caseDoc.findings?.find(({ id }) => id === evidence.id)?.label
+        if (!label) throw new Error(`Missing ${evidence.kind} "${evidence.id}".`)
+        const checkbox = within(task).getByRole('checkbox', { name: new RegExp(label, 'i') })
+        if (evidence.kind === 'clue' && checkbox.hasAttribute('disabled')) {
+          const evidencePanel = document.querySelector<HTMLElement>('#case-workspace-evidence')
+          if (!evidencePanel) throw new Error('Missing case evidence workspace.')
+          const clueButton = within(evidencePanel)
+            .getAllByText(label)
+            .map((element) => element.closest('button'))
+            .find((button): button is HTMLButtonElement => Boolean(button))
+          if (!clueButton) throw new Error(`Missing clue control for "${evidence.id}".`)
+          await user.click(clueButton)
+          const confirm = screen.queryByRole('button', { name: 'Open clue' })
+          if (confirm) await user.click(confirm)
+        }
+        await waitFor(() =>
+          expect(within(task).getByRole('checkbox', { name: new RegExp(label, 'i') })).toBeEnabled(),
+        )
+        await user.click(within(task).getByRole('checkbox', { name: new RegExp(label, 'i') }))
+      }
+      await user.click(within(task).getByRole('button', { name: 'Cite evidence' }))
+      return
+    }
     default:
       throw new Error(`Case-flow driver does not support "${primitive.type}".`)
   }
@@ -348,6 +395,7 @@ async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: Con
         step as TypedPrimitive,
         caseDoc.expertBenchmark.responses[step.id],
         registry,
+        caseDoc,
       )
       await user.click(await screen.findByRole('button', { name: 'Continue' }))
     }
@@ -436,6 +484,7 @@ let registry: ContentRegistry
 
 beforeAll(async () => {
   registry = await loadRegistry(contentResponses)
+  if (registry.appConfig.caseLab) registry.appConfig.caseLab.clueReview.minVisibleMs = 1
 })
 
 beforeEach(async () => {
@@ -492,7 +541,7 @@ describe('configured Case Lab flows', () => {
       const attempts = state.caseAttempts[caseId] ?? []
       expect(attempts).toHaveLength(priorAttempts + 1)
       expect(attempts.at(-1)).toMatchObject({
-        resultVersion: 7,
+        resultVersion: 8,
         anatomy: 1,
         diagnosis: 1,
         actualAwardedXpSource: 'gamification_activity_result',
@@ -525,7 +574,9 @@ describe('configured Case Lab flows', () => {
       expect(screen.getAllByText('Matched expert')).toHaveLength(
         caseDoc.stages
           .flatMap(({ steps }) => steps)
-          .filter(({ type }) => type !== 'anatomy_explore').length,
+          .filter(
+            ({ type }) => type !== 'anatomy_explore' && type !== 'case_differential',
+          ).length,
       )
     },
     20_000,
@@ -569,7 +620,7 @@ describe('configured Case Lab flows', () => {
 
     await user.click(screen.getByRole('button', { name: 'Compare' }))
     expect(screen.getByText('Attempt comparison')).toBeVisible()
-    expect(screen.getAllByText('Matched expert')).toHaveLength(2)
+    expect(screen.getAllByText('Matched expert')).toHaveLength(3)
   }, 15_000)
 
   it('loads and plays a content-only fourth catalogue fixture while keeping quick case separate', async () => {

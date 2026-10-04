@@ -353,6 +353,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
           "feedback": { "retry": false }
+        },
+        {
+          "id": "exac-differential-observe",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Rate each working hypothesis after reviewing the deterioration.",
+            "hypotheses": [
+              { "id": "severe-asthma-exacerbation", "label": "Severe asthma exacerbation" },
+              { "id": "copd-exacerbation", "label": "COPD exacerbation" },
+              { "id": "lobar-pneumonia", "label": "Lobar pneumonia" },
+              { "id": "pulmonary-embolism", "label": "Pulmonary embolism" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -391,7 +409,7 @@
               },
               {
                 "id": "rules-out-obstruction",
-                "label": "It rules out clinically important airflow obstruction"
+                "label": "It is more consistent with improving airflow obstruction"
               }
             ],
             "correctOptionId": "reduced-ventilatory-reserve",
@@ -401,6 +419,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "advanced" },
           "feedback": { "retry": false }
+        },
+        {
+          "id": "exac-differential-interpret",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Revise each hypothesis after interpreting the serial physiology.",
+            "hypotheses": [
+              { "id": "severe-asthma-exacerbation", "label": "Severe asthma exacerbation" },
+              { "id": "copd-exacerbation", "label": "COPD exacerbation" },
+              { "id": "lobar-pneumonia", "label": "Lobar pneumonia" },
+              { "id": "pulmonary-embolism", "label": "Pulmonary embolism" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -418,6 +454,34 @@
       "clueIds": ["exac-history", "exac-flow", "exac-gas", "exac-pathology-reference"],
       "steps": [
         {
+          "id": "exac-cite-evidence",
+          "type": "case_evidence_select",
+          "clueIds": ["exac-history", "exac-flow", "exac-gas"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which reviewed evidence makes the leading conclusion most defensible?",
+            "evidence": [
+              { "kind": "clue", "id": "exac-history" },
+              { "kind": "clue", "id": "exac-flow" },
+              { "kind": "clue", "id": "exac-gas" },
+              { "kind": "clue", "id": "exac-airway-reference" },
+              { "kind": "finding", "id": "exac-posterior-basal-plug" }
+            ],
+            "correctEvidence": [
+              { "kind": "clue", "id": "exac-history" },
+              { "kind": "clue", "id": "exac-flow" },
+              { "kind": "clue", "id": "exac-gas" },
+              { "kind": "finding", "id": "exac-posterior-basal-plug" }
+            ],
+            "minSelections": 1,
+            "explanation": "The prior pattern, serial deterioration and inspected obstruction jointly support the conclusion."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "advanced" },
+          "feedback": { "retry": false }
+        },
+        {
           "id": "exac-best-diagnosis",
           "type": "multiple_choice",
           "clueIds": ["exac-history", "exac-flow", "exac-gas"],
@@ -431,15 +495,15 @@
               },
               {
                 "id": "copd-exacerbation",
-                "label": "COPD exacerbation without prior chronic airflow-limitation history"
+                "label": "COPD exacerbation with a chronic obstructive pattern"
               },
               {
                 "id": "lobar-pneumonia",
-                "label": "Lobar pneumonia as the sole explanation"
+                "label": "Lobar pneumonia with a focal infection pattern"
               },
               {
                 "id": "pulmonary-embolism",
-                "label": "Pulmonary embolism as the sole explanation"
+                "label": "Pulmonary embolism with an acute vascular pattern"
               }
             ],
             "correctOptionId": "severe-asthma-exacerbation",
@@ -464,15 +528,15 @@
               },
               {
                 "id": "routine-follow-up",
-                "label": "Arrange routine follow-up because the PaCO₂ is near the reference range"
+                "label": "Continue close observation and schedule reassessment"
               },
               {
                 "id": "delay-for-repeat",
-                "label": "Delay escalation until a later peak-flow measurement confirms the trend"
+                "label": "Obtain another peak-flow measurement before deciding whether to escalate"
               },
               {
                 "id": "anatomy-alone",
-                "label": "Base the response only on the focal airway finding"
+                "label": "Prioritize the focal airway finding when selecting the immediate response"
               }
             ],
             "correctOptionId": "urgent-escalation",
@@ -511,6 +575,24 @@
         "co2-rising"
       ],
       "exac-co2-reasoning": "reduced-ventilatory-reserve",
+      "exac-differential-observe": {
+        "severe-asthma-exacerbation": "likely",
+        "copd-exacerbation": "possible",
+        "lobar-pneumonia": "possible",
+        "pulmonary-embolism": "possible"
+      },
+      "exac-differential-interpret": {
+        "severe-asthma-exacerbation": "likely",
+        "copd-exacerbation": "unlikely",
+        "lobar-pneumonia": "unlikely",
+        "pulmonary-embolism": "unlikely"
+      },
+      "exac-cite-evidence": [
+        { "kind": "clue", "id": "exac-history" },
+        { "kind": "clue", "id": "exac-flow" },
+        { "kind": "clue", "id": "exac-gas" },
+        { "kind": "finding", "id": "exac-posterior-basal-plug" }
+      ],
       "exac-best-diagnosis": "severe-asthma-exacerbation",
       "exac-immediate-consequence": "urgent-escalation"
     },
@@ -518,7 +600,10 @@
       "exac-explore-airway": "The authored route reaches the posterior basal segment and inspects the dominant mucus occlusion.",
       "exac-localise": "The finding lies in the right lower lobe posterior basal segmental bronchus.",
       "exac-severity-signals": "Each selected item contributes acute severity information rather than disease identity alone.",
+      "exac-differential-observe": "The initial ratings preserve competing acute explanations while recognising the deteriorating airway pattern.",
       "exac-co2-reasoning": "The trend is interpreted with work of breathing, flow and oxygenation rather than against a reference interval in isolation.",
+      "exac-differential-interpret": "The revised ratings show how the serial physiology changes the relative likelihoods.",
+      "exac-cite-evidence": "The cited history, serial physiology and inspected obstruction support the high-risk synthesis.",
       "exac-best-diagnosis": "Variable airway symptoms and the acute objective trajectory form the most coherent synthesis.",
       "exac-immediate-consequence": "The combined deterioration signals justify urgent escalation through the applicable emergency pathway."
     },
@@ -526,6 +611,7 @@
       "exac-localise": { "elapsedMs": 48000, "timedOut": false },
       "exac-severity-signals": { "elapsedMs": 52000, "timedOut": false },
       "exac-co2-reasoning": { "elapsedMs": 50000, "timedOut": false },
+      "exac-cite-evidence": { "elapsedMs": 42000, "timedOut": false },
       "exac-best-diagnosis": { "elapsedMs": 51000, "timedOut": false },
       "exac-immediate-consequence": { "elapsedMs": 51000, "timedOut": false }
     },
@@ -575,7 +661,7 @@
       }
     ],
     "diagnosisRationale": "Prior variable airway symptoms, rapidly falling expiratory flow, hypoxaemia and a rising PaCO₂ during ongoing distress converge on severe asthma exacerbation with diminishing ventilatory reserve. The focal mucus plug supports the obstructive picture but must not be interpreted alone.",
-    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.94 }
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.95 }
   },
   "debrief": {
     "summary": "The spatial task identified a dominant posterior basal mucus obstruction against diffuse airway-wall change. The diagnostic task kept disease identity separate from severity, then integrated falling flow, hypoxaemia and a rising PaCO₂ into a high-risk deterioration pattern.",

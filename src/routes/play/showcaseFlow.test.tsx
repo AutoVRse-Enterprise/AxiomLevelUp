@@ -194,7 +194,10 @@ describe('showcase lesson integration', () => {
       return result
     }, {})
 
-    expect([...new Set(representedTypes)].sort()).toEqual([...primitiveTypes].sort())
+    const lessonPrimitiveTypes = primitiveTypes.filter(
+      (type) => type !== 'case_differential' && type !== 'case_evidence_select',
+    )
+    expect([...new Set(representedTypes)].sort()).toEqual(lessonPrimitiveTypes.sort())
     expect(Object.fromEntries(Object.entries(counts).filter(([, count]) => count > 1))).toEqual({
       image_hotspot: 2,
     })

@@ -16,6 +16,18 @@ export type PrimitiveInteraction =
   | { name: 'anatomy_waypoint_reached'; waypointId: string; key: string }
   | { name: 'anatomy_finding_inspected'; findingId: string; key: string }
   | {
+      name: 'case_hypothesis_rated'
+      hypothesisId: string
+      confidence: 'unlikely' | 'possible' | 'likely'
+      key: string
+    }
+  | {
+      name: 'case_evidence_selected'
+      evidence: { kind: 'clue' | 'finding'; id: string }
+      selected: boolean
+      key: string
+    }
+  | {
       name: 'anatomy_view_changed'
       position: AnatomyVector3
       target: AnatomyVector3

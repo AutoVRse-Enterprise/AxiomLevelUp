@@ -59,6 +59,7 @@ export interface EventPayloads {
     caseId: string
     hypothesisId: string
     confidence: 'unlikely' | 'possible' | 'likely'
+    checkpointId?: string
   }
   case_stage_completed: { caseId: string; stageId: string; stageIndex: number }
   case_completed: {
@@ -72,6 +73,7 @@ export interface EventPayloads {
     reviewedClueIds: string[]
     evidence: CaseProgress['evidence']
     differential: CaseProgress['differential']
+    differentialCheckpoints: CaseProgress['differentialCheckpoints']
     timeoutCreditApplied: boolean
     challengeId?: string
   }

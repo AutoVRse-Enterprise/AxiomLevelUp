@@ -5,6 +5,11 @@ import type { AudioPrimitive } from './audio'
 import { audioContentSchema } from './audio'
 import type { CarouselPrimitive } from './carousel'
 import { carouselContentSchema } from './carousel'
+import type { CaseDifferentialPrimitive, CaseEvidenceSelectPrimitive } from './caseReasoning'
+import {
+  caseDifferentialContentSchema,
+  caseEvidenceSelectContentSchema,
+} from './caseReasoning'
 import type { ChartPrimitive } from './chart'
 import { chartContentSchema } from './chart'
 import type { ClassificationPrimitive } from './classification'
@@ -73,6 +78,16 @@ export {
   type AnatomyStartViewContent,
 } from './anatomy'
 export { carouselPrimitiveSchema, type CarouselPrimitive } from './carousel'
+export {
+  caseConfidenceSchema,
+  caseDifferentialPrimitiveSchema,
+  caseEvidenceOptionSchema,
+  caseEvidenceSelectPrimitiveSchema,
+  type CaseConfidence,
+  type CaseDifferentialPrimitive,
+  type CaseEvidenceOption,
+  type CaseEvidenceSelectPrimitive,
+} from './caseReasoning'
 export { classificationPrimitiveSchema, type ClassificationPrimitive } from './classification'
 export { chartPrimitiveSchema, type ChartPrimitive } from './chart'
 export { dataTablePrimitiveSchema, type DataTablePrimitive } from './dataTable'
@@ -136,6 +151,8 @@ export type { PrimitiveAssetRef, PrimitiveAssetType, PrimitiveContentSchema } fr
 export const primitiveContentSchemas = {
   anatomy_explore: anatomyExploreContentSchema,
   anatomy_locate: anatomyLocateContentSchema,
+  case_differential: caseDifferentialContentSchema,
+  case_evidence_select: caseEvidenceSelectContentSchema,
   rich_text: richTextContentSchema,
   image: imageContentSchema,
   zoomable_image: zoomableImageContentSchema,
@@ -166,6 +183,8 @@ export const primitiveContentSchemas = {
 export type TypedPrimitive =
   | AnatomyExplorePrimitive
   | AnatomyLocatePrimitive
+  | CaseDifferentialPrimitive
+  | CaseEvidenceSelectPrimitive
   | RichTextPrimitive
   | ImagePrimitive
   | ZoomableImagePrimitive

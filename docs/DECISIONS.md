@@ -1782,3 +1782,28 @@ walkthrough unseen; the experienced demo seed opts out and the fresh seed sees i
 gates. Focus ownership moves from the generic hidden task heading to the visible stage banner when
 case chrome is present. Opening any blocking clue or walkthrough pauses both case and per-task
 timing, and resuming does not add hidden elapsed time.
+
+## ADR-098: Case reasoning uses required checkpoints and reviewed evidence
+
+**Status:** Accepted
+
+**Context:** A learner could previously reach a correct diagnosis without externalizing a
+differential or reviewing the evidence that justified it. Notes stored only a latest optional
+rating, so comparison could report every hypothesis as `Not rated` after an otherwise successful
+attempt.
+
+**Decision:** Add an unscored `case_differential` primitive at the end of every Observe and
+Interpret stage in full learner-visible cases. It requires a rating for every authored hypothesis
+and snapshots each checkpoint. Add a scored `case_evidence_select` primitive before the final
+Diagnose conclusion; only reviewed clues and inspected findings are selectable, and partial credit
+is calculated from the configured correct evidence set. Semantic validation enforces placement,
+references and inclusion of every decisive clue.
+
+Persist checkpoint history in activity session v6 and case result v8 while defaulting missing
+history for legacy sessions and attempts. Keep these primitives out of the lesson showcase because
+their availability and meaning depend on Case Lab context.
+
+**Consequences:** The learner must expose a changing hypothesis model and cite evidence before
+committing. Expert comparison receives meaningful checkpoint data, and full diagnosis credit now
+depends on evidence use. Authors must provide complete checkpoint responses, rationales and timing
+metadata, and benchmark findings must have been inspected by the authored path.

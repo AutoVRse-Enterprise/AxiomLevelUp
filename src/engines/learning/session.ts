@@ -36,6 +36,10 @@ export interface CaseProgress {
     inspectedFindingIds?: string[]
   }
   differential: Record<string, 'unlikely' | 'possible' | 'likely'>
+  differentialCheckpoints: Record<
+    string,
+    Record<string, 'unlikely' | 'possible' | 'likely'>
+  >
 }
 
 export interface ActivitySession {

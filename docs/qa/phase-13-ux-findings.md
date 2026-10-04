@@ -29,9 +29,9 @@ Two audit corrections were applied at baseline:
 | --- | --- | --- | --- |
 | H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Open; simulated preview only |
 | H02 | Segmented rankings absent | P13-T13 | Open; simulated preview only |
-| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Open |
-| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Partial: numeric answer-leak lint active |
-| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Partial: mission and patient-update contract landed |
+| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: inspected findings can now be required cited evidence |
+| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Partial: numeric leakage is rejected and reasoning prompts no longer restate evidence |
+| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Partial: mission, updates and evidence citation now connect artifacts |
 | H06 | Benchmark purpose is unclear | P13-T10 | Open |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
@@ -51,7 +51,7 @@ Two audit corrections were applied at baseline:
 | M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
 | M04 | Results and comparisons are dense | P13-T10 | Open |
 | M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Open |
-| M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Partial: findings now explain significance |
+| M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Closed: full cases require authored clue and inspected-finding citation |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
 | M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |
 | M09 | Core mobile routes underperform Home | P13-T14, P13-T16 | Open |
@@ -63,7 +63,7 @@ Two audit corrections were applied at baseline:
 
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
-| U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Partial: mission, walkthrough and workspace landed |
+| U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Closed: mission, walkthrough, workspace and required reasoning loop landed |
 | U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Open |
 | U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Closed: mission and operating rules render before launch |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
@@ -71,11 +71,11 @@ Two audit corrections were applied at baseline:
 | U06 | 3D interaction contract is not taught | P13-T03, P13-T07 | Partial: replayable walkthrough establishes workspace |
 | U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Closed: evidence is in-flow and relevance-labelled |
 | U08 | Clue economy is not an informed choice | P13-T05 | Closed: cost/status are visible before opening |
-| U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Partial: every scored step declares decisive clues |
-| U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Partial: notes are scoped and pinning is explicit |
-| U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Open |
+| U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Closed: diagnosis includes a scored reviewed-evidence citation |
+| U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Closed: scoped evidence feeds citation and differential checkpoints persist |
+| U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Partial: required checkpoints remove missing ratings; comparison framing remains |
 | U12 | Notes reveal information prematurely | P13-T05 | Closed: only unlocked clues and inspected findings appear |
-| U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Partial: exact numeric clue leakage is rejected |
+| U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Closed: numeric leakage is rejected and cases require hypothesis weighing plus citation |
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Partial: stage updates are announced inline |
 | U15 | Time expectations conflict | P13-T02, P13-T09 | Partial: estimated duration is validated against targets |
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Partial: briefing explains the first-attempt rule |

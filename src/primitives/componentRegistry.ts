@@ -10,6 +10,16 @@ const AnatomyLocatePrimitive = lazy(async () => {
   return { default: module.AnatomyLocatePrimitive }
 })
 
+const CaseDifferentialPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/CaseDifferentialPrimitive')
+  return { default: module.CaseDifferentialPrimitive }
+})
+
+const CaseEvidenceSelectPrimitive = lazy(async () => {
+  const module = await import('@/primitives/components/CaseEvidenceSelectPrimitive')
+  return { default: module.CaseEvidenceSelectPrimitive }
+})
+
 const RichTextPrimitive = lazy(async () => {
   const module = await import('@/primitives/components/RichTextPrimitive')
   return { default: module.RichTextPrimitive }
@@ -138,6 +148,8 @@ const DicomMeasurePrimitive = lazy(async () => {
 export const primitiveComponents = {
   anatomy_explore: AnatomyExplorePrimitive,
   anatomy_locate: AnatomyLocatePrimitive,
+  case_differential: CaseDifferentialPrimitive,
+  case_evidence_select: CaseEvidenceSelectPrimitive,
   rich_text: RichTextPrimitive,
   image: ImagePrimitive,
   zoomable_image: ZoomableImagePrimitive,

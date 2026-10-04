@@ -216,6 +216,31 @@
       "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
       "steps": [
         {
+          "id": "quick-cite-evidence",
+          "type": "case_evidence_select",
+          "clueIds": ["quick-history", "quick-flow"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which reviewed evidence best supports the working conclusion?",
+            "evidence": [
+              { "kind": "clue", "id": "quick-history" },
+              { "kind": "clue", "id": "quick-wheeze" },
+              { "kind": "clue", "id": "quick-flow" },
+              { "kind": "finding", "id": "quick-diffuse-wall-change" }
+            ],
+            "correctEvidence": [
+              { "kind": "clue", "id": "quick-history" },
+              { "kind": "clue", "id": "quick-flow" }
+            ],
+            "minSelections": 1,
+            "explanation": "The trigger-linked pattern and measured response provide the decisive evidence."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": false }
+        },
+        {
           "id": "quick-diagnosis",
           "type": "scenario",
           "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
@@ -265,7 +290,7 @@
                   },
                   {
                     "id": "single-finding",
-                    "label": "The 3D wall finding proves the diagnosis by itself",
+                    "label": "The 3D wall finding should carry the greatest diagnostic weight",
                     "consequence": "The illustrative finding cannot determine the diagnosis alone.",
                     "next": "quick-overcalled",
                     "score": 0,
@@ -311,6 +336,10 @@
         "inspectedFindingIds": ["quick-diffuse-wall-change"]
       },
       "quick-structure": "conducting-airway",
+      "quick-cite-evidence": [
+        { "kind": "clue", "id": "quick-history" },
+        { "kind": "clue", "id": "quick-flow" }
+      ],
       "quick-diagnosis": [
         { "nodeId": "quick-commit", "choiceId": "variable-obstruction" },
         { "nodeId": "quick-check", "choiceId": "case-supported" }
@@ -319,10 +348,12 @@
     "rationales": {
       "quick-explore": "The marker opens a brief required inspection of the lobe and diffuse wall finding.",
       "quick-structure": "The conducting airway is the structure directly associated with variable expiratory narrowing.",
+      "quick-cite-evidence": "The cited trigger pattern and measured response support a variable obstructive process.",
       "quick-diagnosis": "Trigger-linked recurrence and improved flow support variable obstruction; the illustrative finding remains supporting context."
     },
     "stepTimings": {
       "quick-structure": { "elapsedMs": 30000, "timedOut": false },
+      "quick-cite-evidence": { "elapsedMs": 25000, "timedOut": false },
       "quick-diagnosis": { "elapsedMs": 50000, "timedOut": false }
     },
     "path": [

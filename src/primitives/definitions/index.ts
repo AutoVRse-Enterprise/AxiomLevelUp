@@ -5,6 +5,10 @@ import { primitiveContentSchemas, type TypedPrimitive } from '@/content/schema/p
 import { anatomyExploreDefinition, anatomyLocateDefinition } from '@/primitives/definitions/anatomy'
 import { audioDefinition } from '@/primitives/definitions/audio'
 import { carouselDefinition } from '@/primitives/definitions/carousel'
+import {
+  caseDifferentialDefinition,
+  caseEvidenceSelectDefinition,
+} from '@/primitives/definitions/caseReasoning'
 import { chartDefinition } from '@/primitives/definitions/chart'
 import { classificationDefinition } from '@/primitives/definitions/classification'
 import { dataTableDefinition } from '@/primitives/definitions/dataTable'
@@ -38,6 +42,8 @@ export * from '@/primitives/definitions/types'
 export const primitiveDefinitions = {
   anatomy_explore: anatomyExploreDefinition,
   anatomy_locate: anatomyLocateDefinition,
+  case_differential: caseDifferentialDefinition,
+  case_evidence_select: caseEvidenceSelectDefinition,
   rich_text: richTextDefinition,
   image: imageDefinition,
   zoomable_image: zoomableImageDefinition,

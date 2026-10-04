@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T05 are complete; P13-T06 scored
-reasoning checkpoints is next. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 through P13-T06 are complete; P13-T07 anatomy
+interaction contract is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through
 P9-M03.
 
@@ -56,6 +56,9 @@ P9-M03.
   areas without covering the task.
 - Clues disclose status, exact cost and question relevance before opening. Optional-clue
   confirmation is once per run, and notes include only unlocked evidence and inspected findings.
+- Full cases now require differential ratings after Observe and Interpret and a scored
+  reviewed-evidence citation before conclusion. Session v6 and result v8 persist checkpoint
+  history with legacy defaults.
 
 ## Verification
 
@@ -89,22 +92,21 @@ P9-M03.
 - No full application check was rerun because the audit changed no runtime source or content.
 - P13-T03 full unit suite: **71 files / 481 tests passed**.
 - P13-T03 ESLint: passed with zero warnings.
+- P13-T06 full unit suite: **73 files / 486 tests passed**.
+- P13-T06 TypeScript, ESLint and content validation pass with zero warnings.
 
 ## In progress
 
-- P13-T06 reasoning primitive and migration work is next.
-- P13-T05 passes TypeScript, lint and focused player/clue/notes tests.
+- P13-T07 anatomy interaction contract is next.
 
 ## Next three steps
 
-1. Add evidence-selection and differential checkpoints in P13-T06.
-2. Improve anatomy task framing and finding feedback in P13-T07.
-3. Implement unknown-waypoint case entry in P13-T08.
+1. Improve anatomy task framing and finding feedback in P13-T07.
+2. Implement unknown-waypoint case entry in P13-T08.
+3. Add patient timeline, timing semantics and first-attempt notice in P13-T09.
 
 ## Blockers/questions for the user
 
-- Self-guided trainee use still needs one unified workspace and scored evidence/differential
-  checkpoints; mission and interaction onboarding are now explicit.
 - The Home surface promotes the advanced case before introducing Case Lab, and the relationship
   among Pathway, Course, Case Lab and Challenge is not explained.
 - Physical-device approval requires Android/iOS hardware or an approved device service, a

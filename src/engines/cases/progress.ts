@@ -19,7 +19,7 @@ export function applyCaseProgressEvent(
     lastCompletedAt: null,
   }
   const record: CaseAttemptRecord = {
-    resultVersion: 7,
+    resultVersion: 8,
     attemptId: event.attemptId,
     tier: event.tier,
     total: event.breakdown.total,
@@ -41,6 +41,7 @@ export function applyCaseProgressEvent(
     reviewedClueIds: [...new Set(event.reviewedClueIds)],
     evidence: structuredClone(event.evidence),
     differential: structuredClone(event.differential),
+    differentialCheckpoints: structuredClone(event.differentialCheckpoints),
     timeoutCreditApplied: event.timeoutCreditApplied,
     stepResults: event.stepResults.map((step) => ({
       ...structuredClone(step),

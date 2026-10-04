@@ -782,7 +782,7 @@ const caseEvidenceSchema = z.strictObject({
     .optional(),
 })
 
-const currentCaseAttemptRecordSchema = resultV6CaseAttemptRecordSchema
+const resultV7CaseAttemptRecordSchema = resultV6CaseAttemptRecordSchema
   .omit({ resultVersion: true })
   .extend({
     resultVersion: z.literal(7),
@@ -802,9 +802,20 @@ const currentCaseAttemptRecordSchema = resultV6CaseAttemptRecordSchema
     timeoutCreditApplied: z.boolean(),
   })
 
+const currentCaseAttemptRecordSchema = resultV7CaseAttemptRecordSchema
+  .omit({ resultVersion: true })
+  .extend({
+    resultVersion: z.literal(8),
+    differentialCheckpoints: z.record(
+      idSchema,
+      z.record(idSchema, z.enum(['unlikely', 'possible', 'likely'])),
+    ),
+  })
+
 export const caseAttemptRecordSchema = z.discriminatedUnion('resultVersion', [
   legacyCaseAttemptRecordSchema,
   resultV6CaseAttemptRecordSchema,
+  resultV7CaseAttemptRecordSchema,
   currentCaseAttemptRecordSchema,
 ])
 

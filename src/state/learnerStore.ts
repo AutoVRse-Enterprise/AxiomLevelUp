@@ -136,7 +136,10 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
       Object.entries(persistedCaseAttempts ?? {}).map(([caseId, attempts]) => [
         caseId,
         attempts.map((attempt) =>
-          attempt.resultVersion === 5 || attempt.resultVersion === 6 || attempt.resultVersion === 7
+          attempt.resultVersion === 5 ||
+          attempt.resultVersion === 6 ||
+          attempt.resultVersion === 7 ||
+          attempt.resultVersion === 8
             ? attempt
             : { ...attempt, resultVersion: 5 },
         ),

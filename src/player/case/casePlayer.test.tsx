@@ -480,6 +480,7 @@ describe('case player integration', () => {
           currentLocation: { kind: 'structure', id: 'target-structure' },
         },
         differential: { 'supported-hypothesis': 'likely' },
+        differentialCheckpoints: {},
       },
     })
 

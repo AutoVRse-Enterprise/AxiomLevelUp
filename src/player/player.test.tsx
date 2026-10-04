@@ -491,7 +491,7 @@ describe('activity player', () => {
   })
 
   it('keeps primitive modules independent from events and stores', () => {
-    expect(Object.keys(primitiveSources)).toHaveLength(28)
+    expect(Object.keys(primitiveSources)).toHaveLength(30)
     for (const [path, source] of Object.entries(primitiveSources)) {
       expect(source, path).not.toMatch(
         /@\/events|@\/state|@\/engines\/learning\/sessionStore|sessionStore|learnerStore/u,

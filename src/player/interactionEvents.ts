@@ -45,6 +45,20 @@ export function mapInteractionToEvents(
     })
   }
 
+  if (
+    context.activityKind === 'case' &&
+    interaction.name === 'case_hypothesis_rated' &&
+    'hypothesisId' in interaction
+  ) {
+    events.push({
+      event: 'case_hypothesis_updated',
+      caseId: context.activityId,
+      checkpointId: context.primitiveId,
+      hypothesisId: interaction.hypothesisId,
+      confidence: interaction.confidence,
+    })
+  }
+
   if (interaction.name === 'media_progress' && 'fraction' in interaction) {
     for (const milestone of crossedMediaMilestones(previousMediaProgress, interaction.fraction)) {
       events.push({

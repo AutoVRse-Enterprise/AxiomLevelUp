@@ -2997,3 +2997,20 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   progressive evidence expectation with current-and-earlier-stage visibility.
 - **Follow-ups:** Make evidence selection and differential revision required scored checkpoints in
   P13-T06.
+
+### [2026-10-04 22:34] P13-T06 - Require differential revision and evidence citation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added context-aware differential and evidence-citation primitives; required
+  differential checkpoints at the end of Observe and Interpret and a scored evidence citation
+  before full-case conclusions; persisted checkpoint history in session v6 and case result v8;
+  migrated all case content and the experienced seed; and recorded ADR-098.
+- **Files changed:** Primitive schemas, definitions, components and registries; case player,
+  session/result state, events and tests; four case documents and the experienced seed; Phase 13
+  governance docs.
+- **Commands run:** `npm run validate:content`; `npm run typecheck`; focused Vitest for content,
+  primitive, player, showcase and end-to-end case-flow suites.
+- **Result/verification:** Content validates 5 courses, 13 lessons, 4 cases and one anatomy map
+  with zero warnings. TypeScript passes and the affected content/case-flow suites pass. The
+  foundation benchmark now inspects every finding it cites.
+- **Follow-ups:** Improve the anatomy interaction contract in P13-T07.

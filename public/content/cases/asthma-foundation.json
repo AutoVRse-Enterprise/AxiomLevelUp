@@ -239,7 +239,7 @@
             "navigation": "both",
             "findingIds": ["foundation-diffuse-wall-change", "foundation-upper-region"],
             "requiredStructureIds": ["right-upper-lobe"],
-            "requiredFindingIds": ["foundation-upper-region"]
+            "requiredFindingIds": ["foundation-diffuse-wall-change", "foundation-upper-region"]
           },
           "assets": [],
           "completion": { "mode": "explored" },
@@ -329,6 +329,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "foundation" },
           "feedback": { "retry": true, "hint": "Prioritise repeated pattern and measured change over one sound." }
+        },
+        {
+          "id": "foundation-differential-observe",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Rate each working hypothesis after reviewing the presentation.",
+            "hypotheses": [
+              { "id": "asthma", "label": "Asthma" },
+              { "id": "copd", "label": "Chronic obstructive pulmonary disease" },
+              { "id": "inducible-laryngeal-obstruction", "label": "Inducible laryngeal obstruction" },
+              { "id": "bronchiectasis", "label": "Bronchiectasis" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -383,6 +401,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "foundation" },
           "feedback": { "retry": true }
+        },
+        {
+          "id": "foundation-differential-interpret",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Revise each hypothesis after interpreting the measured evidence.",
+            "hypotheses": [
+              { "id": "asthma", "label": "Asthma" },
+              { "id": "copd", "label": "Chronic obstructive pulmonary disease" },
+              { "id": "inducible-laryngeal-obstruction", "label": "Inducible laryngeal obstruction" },
+              { "id": "bronchiectasis", "label": "Bronchiectasis" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -399,6 +435,34 @@
       },
       "clueIds": ["foundation-history", "foundation-wheeze", "foundation-spirometry", "foundation-biomarkers"],
       "steps": [
+        {
+          "id": "foundation-cite-evidence",
+          "type": "case_evidence_select",
+          "clueIds": ["foundation-history", "foundation-spirometry", "foundation-biomarkers"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which reviewed evidence best supports your conclusion?",
+            "evidence": [
+              { "kind": "clue", "id": "foundation-history" },
+              { "kind": "clue", "id": "foundation-wheeze" },
+              { "kind": "clue", "id": "foundation-spirometry" },
+              { "kind": "clue", "id": "foundation-biomarkers" },
+              { "kind": "finding", "id": "foundation-diffuse-wall-change" }
+            ],
+            "correctEvidence": [
+              { "kind": "clue", "id": "foundation-history" },
+              { "kind": "clue", "id": "foundation-spirometry" },
+              { "kind": "clue", "id": "foundation-biomarkers" },
+              { "kind": "finding", "id": "foundation-diffuse-wall-change" }
+            ],
+            "minSelections": 1,
+            "explanation": "The time pattern, measured reversibility, inflammatory context and inspected airway finding support the conclusion together."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "foundation" },
+          "feedback": { "retry": true, "hint": "Cite only evidence you reviewed or inspected." }
+        },
         {
           "id": "foundation-best-diagnosis",
           "type": "multiple_choice",
@@ -439,7 +503,7 @@
     "responses": {
       "foundation-explore": {
         "selectedStructureIds": ["right-upper-lobe"],
-        "inspectedFindingIds": ["foundation-upper-region"]
+        "inspectedFindingIds": ["foundation-diffuse-wall-change", "foundation-upper-region"]
       },
       "foundation-localise": {
         "lobe": "right-upper-lobe",
@@ -452,14 +516,35 @@
         "markers": "inflammation"
       },
       "foundation-reversibility": true,
+      "foundation-differential-observe": {
+        "asthma": "likely",
+        "copd": "possible",
+        "inducible-laryngeal-obstruction": "possible",
+        "bronchiectasis": "unlikely"
+      },
+      "foundation-differential-interpret": {
+        "asthma": "likely",
+        "copd": "unlikely",
+        "inducible-laryngeal-obstruction": "unlikely",
+        "bronchiectasis": "unlikely"
+      },
+      "foundation-cite-evidence": [
+        { "kind": "clue", "id": "foundation-history" },
+        { "kind": "clue", "id": "foundation-spirometry" },
+        { "kind": "clue", "id": "foundation-biomarkers" },
+        { "kind": "finding", "id": "foundation-diffuse-wall-change" }
+      ],
       "foundation-best-diagnosis": "asthma"
     },
     "rationales": {
       "foundation-explore": "Inspecting the illustrated wall change and marked lobe establishes the spatial context without scoring it.",
       "foundation-localise": "The lobe and procedural segment lead to a bronchiole, the relevant conducting-airway choice.",
       "foundation-key-observations": "Variability and measured reversibility are stronger than a single sound or biomarker.",
+      "foundation-differential-observe": "The initial ratings preserve plausible alternatives before the measured evidence is interpreted.",
       "foundation-sort-evidence": "Functional change and inflammatory context should be identified separately before synthesis.",
       "foundation-reversibility": "The authored FEV1 increase supports a reversible component.",
+      "foundation-differential-interpret": "The revised ratings show how measured reversibility changes the working differential.",
+      "foundation-cite-evidence": "The cited evidence combines time course, physiology, inflammatory context and the inspected airway finding.",
       "foundation-best-diagnosis": "The repeated trigger pattern and reversible flow change best support asthma among the authored alternatives."
     },
     "stepTimings": {
@@ -467,6 +552,7 @@
       "foundation-key-observations": { "elapsedMs": 40000, "timedOut": false },
       "foundation-sort-evidence": { "elapsedMs": 42000, "timedOut": false },
       "foundation-reversibility": { "elapsedMs": 30000, "timedOut": false },
+      "foundation-cite-evidence": { "elapsedMs": 35000, "timedOut": false },
       "foundation-best-diagnosis": { "elapsedMs": 38000, "timedOut": false }
     },
     "path": [

@@ -380,6 +380,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
           "feedback": { "retry": true }
+        },
+        {
+          "id": "intermediate-differential-observe",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Rate each working hypothesis after reviewing the presentation.",
+            "hypotheses": [
+              { "id": "copd", "label": "Chronic obstructive pulmonary disease" },
+              { "id": "asthma", "label": "Asthma" },
+              { "id": "bronchiectasis", "label": "Bronchiectasis" },
+              { "id": "heart-failure", "label": "Heart failure" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -431,6 +449,24 @@
           "completion": { "mode": "answer" },
           "scoring": { "weight": 1, "difficulty": "intermediate" },
           "feedback": { "retry": true }
+        },
+        {
+          "id": "intermediate-differential-interpret",
+          "type": "case_differential",
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Revise each hypothesis after comparing structural and functional evidence.",
+            "hypotheses": [
+              { "id": "copd", "label": "Chronic obstructive pulmonary disease" },
+              { "id": "asthma", "label": "Asthma" },
+              { "id": "bronchiectasis", "label": "Bronchiectasis" },
+              { "id": "heart-failure", "label": "Heart failure" }
+            ]
+          },
+          "assets": [],
+          "completion": { "mode": "all_rated" },
+          "scoring": { "weight": 1 },
+          "feedback": {}
         }
       ]
     },
@@ -447,6 +483,34 @@
       },
       "clueIds": ["intermediate-history", "intermediate-emphysema", "intermediate-spirometry", "intermediate-cardiac-context"],
       "steps": [
+        {
+          "id": "intermediate-cite-evidence",
+          "type": "case_evidence_select",
+          "clueIds": ["intermediate-history", "intermediate-emphysema", "intermediate-spirometry"],
+          "conceptIds": ["respiratory-diagnosis"],
+          "content": {
+            "prompt": "Which reviewed evidence best supports your conclusion?",
+            "evidence": [
+              { "kind": "clue", "id": "intermediate-history" },
+              { "kind": "clue", "id": "intermediate-spirometry" },
+              { "kind": "clue", "id": "intermediate-emphysema" },
+              { "kind": "clue", "id": "intermediate-cardiac-context" },
+              { "kind": "finding", "id": "intermediate-upper-region" }
+            ],
+            "correctEvidence": [
+              { "kind": "clue", "id": "intermediate-history" },
+              { "kind": "clue", "id": "intermediate-spirometry" },
+              { "kind": "clue", "id": "intermediate-emphysema" },
+              { "kind": "finding", "id": "intermediate-upper-region" }
+            ],
+            "minSelections": 1,
+            "explanation": "Exposure, persistent physiology and structural change carry the conclusion together."
+          },
+          "assets": [],
+          "completion": { "mode": "answer" },
+          "scoring": { "weight": 1, "difficulty": "intermediate" },
+          "feedback": { "retry": true, "hint": "Cite only evidence you reviewed or inspected." }
+        },
         {
           "id": "intermediate-best-diagnosis",
           "type": "multiple_choice",
@@ -500,6 +564,24 @@
         "low-ratio": "function"
       },
       "intermediate-differential": "weighted-comparison",
+      "intermediate-differential-observe": {
+        "copd": "likely",
+        "asthma": "possible",
+        "bronchiectasis": "possible",
+        "heart-failure": "possible"
+      },
+      "intermediate-differential-interpret": {
+        "copd": "likely",
+        "asthma": "unlikely",
+        "bronchiectasis": "unlikely",
+        "heart-failure": "unlikely"
+      },
+      "intermediate-cite-evidence": [
+        { "kind": "clue", "id": "intermediate-history" },
+        { "kind": "clue", "id": "intermediate-spirometry" },
+        { "kind": "clue", "id": "intermediate-emphysema" },
+        { "kind": "finding", "id": "intermediate-upper-region" }
+      ],
       "intermediate-best-diagnosis": "copd"
     },
     "rationales": {
@@ -507,7 +589,10 @@
       "intermediate-localise": "The model lobe and procedural apical segment establish location before the alveolar-unit choice.",
       "intermediate-key-observations": "Exposure and persistent obstruction are stronger than non-specific wheeze.",
       "intermediate-sort-evidence": "Structural and functional evidence should be distinguished before their convergence is assessed.",
+      "intermediate-differential-observe": "The initial ratings retain alternatives while prioritising the persistent obstructive pattern.",
       "intermediate-differential": "Each alternative explains part of the presentation, but none explains the full evidence set as coherently.",
+      "intermediate-differential-interpret": "The revised ratings reflect the convergence of exposure, physiology and structural evidence.",
+      "intermediate-cite-evidence": "The cited history, physiology and structural evidence jointly support the conclusion.",
       "intermediate-best-diagnosis": "The exposure, persistent airflow obstruction and structural change most strongly support COPD."
     },
     "stepTimings": {
@@ -515,6 +600,7 @@
       "intermediate-key-observations": { "elapsedMs": 49500, "timedOut": false },
       "intermediate-sort-evidence": { "elapsedMs": 49500, "timedOut": false },
       "intermediate-differential": { "elapsedMs": 49500, "timedOut": false },
+      "intermediate-cite-evidence": { "elapsedMs": 45000, "timedOut": false },
       "intermediate-best-diagnosis": { "elapsedMs": 49500, "timedOut": false }
     },
     "path": [
@@ -563,7 +649,7 @@
       }
     ],
     "diagnosisRationale": "The authored synthesis gives greatest weight to long inhalational exposure, progressive low-variability symptoms and persistent post-bronchodilator obstruction, with emphysematous structural change as support. Asthma, bronchiectasis and heart failure remain plausible partial explanations but fit the full set less well.",
-    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.95 }
+    "breakdown": { "anatomy": 1, "diagnosis": 1, "speed": 0.9583333333333333 }
   },
   "debrief": {
     "summary": "The leading conclusion uses convergent exposure, physiology and structure while retaining asthma, bronchiectasis and heart failure as less coherent alternatives.",

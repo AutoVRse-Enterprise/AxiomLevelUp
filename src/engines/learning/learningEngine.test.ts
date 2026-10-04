@@ -357,8 +357,8 @@ describe('activity planning and sessions', () => {
     expect(isPrimitiveComplete(ordering, { ...context, attempts: 2, correct: false })).toBe(true)
   })
 
-  it('restarts v1 sessions and migrates legacy case sessions into session v5', () => {
-    expect(ACTIVITY_SESSION_VERSION).toBe(5)
+  it('restarts v1 sessions and migrates legacy case sessions into session v6', () => {
+    expect(ACTIVITY_SESSION_VERSION).toBe(6)
     expect(migrateActivitySessionState({ session: { activityId: 'legacy' } }, 1)).toEqual({
       session: null,
     })
@@ -397,6 +397,7 @@ describe('activity planning and sessions', () => {
         reviewedClueIds: [],
         evidence: { pinned: [] },
         differential: {},
+        differentialCheckpoints: {},
       },
     )
   })

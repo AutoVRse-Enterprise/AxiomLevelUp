@@ -74,7 +74,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Confirm the first optional clue and simplify progress language.
   - Show only unlocked clues, inspected findings and appropriate hypothesis detail in Case notes.
 
-- [ ] **P13-T06 — In-flow differential and evidence citation**
+- [x] **P13-T06 — In-flow differential and evidence citation** — completed 2026-10-04
   - Add `case_differential` and `case_evidence_select` primitives.
   - Store differential checkpoints in session v6 and result v8 with legacy migrations.
   - Re-author all cases to remove answer leakage and weak distractors.

@@ -9,7 +9,7 @@ import {
 } from '@/engines/learning/session'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
-export const ACTIVITY_SESSION_VERSION = 5
+export const ACTIVITY_SESSION_VERSION = 6
 
 export function migrateActivitySessionState(
   persistedState: unknown,
@@ -64,6 +64,7 @@ export function migrateActivitySessionState(
           version < ACTIVITY_SESSION_VERSION ? [] : (session.caseProgress.reviewedClueIds ?? []),
         evidence: session.caseProgress.evidence ?? { pinned: [] },
         differential: session.caseProgress.differential ?? {},
+        differentialCheckpoints: session.caseProgress.differentialCheckpoints ?? {},
       },
     }
   }

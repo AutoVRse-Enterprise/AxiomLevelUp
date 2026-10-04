@@ -15,6 +15,8 @@ import {
   type AnatomyMap,
   type AssetManifest,
   type CaseDocument,
+  type CaseDifferentialPrimitive,
+  type CaseEvidenceSelectPrimitive,
   type ContentManifest,
   type Course,
   type DicomPrimitive,
@@ -1286,7 +1288,96 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
             )
           }
         }
+        if (parsedStep?.type === 'case_differential') {
+          const differentialStep = parsedStep as CaseDifferentialPrimitive
+          differentialStep.content.hypotheses.forEach((hypothesis, hypothesisIndex) =>
+            requireRef(
+              hypothesisIds,
+              hypothesis.id,
+              file,
+              `${path}.content.hypotheses.${hypothesisIndex}.id`,
+              'case differential',
+            ),
+          )
+          if (stage.kind !== 'observe' && stage.kind !== 'interpret') {
+            issues.push({
+              file,
+              path: `${path}.type`,
+              message: 'case_differential may only appear in Observe or Interpret stages.',
+              severity: 'error',
+            })
+          }
+        }
+        if (parsedStep?.type === 'case_evidence_select') {
+          const evidenceStep = parsedStep as CaseEvidenceSelectPrimitive
+          evidenceStep.content.evidence.forEach((ref, evidenceIndex) =>
+            requireRef(
+              ref.kind === 'clue' ? clueIds : findingIds,
+              ref.id,
+              file,
+              `${path}.content.evidence.${evidenceIndex}.id`,
+              `case ${ref.kind}`,
+            ),
+          )
+          evidenceStep.content.correctEvidence.forEach((ref, evidenceIndex) =>
+            requireRef(
+              ref.kind === 'clue' ? clueIds : findingIds,
+              ref.id,
+              file,
+              `${path}.content.correctEvidence.${evidenceIndex}.id`,
+              `case ${ref.kind}`,
+            ),
+          )
+          const correctClueIds = new Set(
+            evidenceStep.content.correctEvidence.flatMap((ref) =>
+              ref.kind === 'clue' ? [ref.id] : [],
+            ),
+          )
+          if (step.clueIds?.some((id) => !correctClueIds.has(id))) {
+            issues.push({
+              file,
+              path: `${path}.content.correctEvidence`,
+              message: 'Evidence citation must include every decisive clue in correctEvidence.',
+              severity: 'error',
+            })
+          }
+          if (stage.kind !== 'diagnose') {
+            issues.push({
+              file,
+              path: `${path}.type`,
+              message: 'case_evidence_select must appear in the Diagnose stage.',
+              severity: 'error',
+            })
+          }
+        }
       })
+
+      if (
+        learnerVisibleCaseIds.has(caseDocument.id) &&
+        (stage.kind === 'observe' || stage.kind === 'interpret') &&
+        caseDocument.differential?.length &&
+        stage.steps.at(-1)?.type !== 'case_differential'
+      ) {
+        issues.push({
+          file,
+          path: `stages.${stageIndex}.steps`,
+          message: `${stage.title} must end with a case_differential checkpoint.`,
+          severity: 'error',
+        })
+      }
+      if (
+        learnerVisibleCaseIds.has(caseDocument.id) &&
+        caseDocument.differential?.length &&
+        stage.kind === 'diagnose' &&
+        !stage.steps.slice(0, -1).some(({ type }) => type === 'case_evidence_select')
+      ) {
+        issues.push({
+          file,
+          path: `stages.${stageIndex}.steps`,
+          message: 'Diagnose must include case_evidence_select before the final conclusion.',
+          severity: 'error',
+        })
+      }
     })
 
     caseDocument.findings?.forEach(({ clueIds: findingClueIds }) =>

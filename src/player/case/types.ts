@@ -13,6 +13,7 @@ export interface CaseAttemptResult {
   reviewedClueIds: string[]
   evidence: CaseProgress['evidence']
   differential: CaseProgress['differential']
+  differentialCheckpoints: CaseProgress['differentialCheckpoints']
   timeoutCreditApplied: boolean
   completedAt: string
 }
@@ -21,7 +22,12 @@ export type CaseAttemptHistoryItem = CaseAttemptRecord
 
 export type CaseResultPresentation = Omit<
   CaseAttemptResult,
-  'breakdown' | 'reviewedClueIds' | 'evidence' | 'differential' | 'timeoutCreditApplied'
+  | 'breakdown'
+  | 'reviewedClueIds'
+  | 'evidence'
+  | 'differential'
+  | 'differentialCheckpoints'
+  | 'timeoutCreditApplied'
 > & {
   breakdown: Pick<
     CaseScoreBreakdown,
@@ -45,8 +51,9 @@ export type CaseResultPresentation = Omit<
   reviewedClueIds?: string[]
   evidence?: CaseProgress['evidence']
   differential?: CaseProgress['differential']
+  differentialCheckpoints?: CaseProgress['differentialCheckpoints']
   timeoutCreditApplied?: boolean
-  resultVersion: 5 | 6 | 7
+  resultVersion: 5 | 6 | 7 | 8
 }
 
 export function presentLiveCaseResult(
@@ -55,7 +62,7 @@ export function presentLiveCaseResult(
 ): CaseResultPresentation {
   return {
     ...result,
-    resultVersion: 7,
+    resultVersion: 8,
     breakdown: {
       anatomy: result.breakdown.anatomy,
       diagnosis: result.breakdown.diagnosis,
@@ -92,7 +99,7 @@ export function presentCaseAttemptRecord(
           timingMode: attempt.timingMode,
           clueCostPoints: attempt.clueCostPoints,
           weights: attempt.weights,
-          ...(attempt.resultVersion === 7
+          ...(attempt.resultVersion === 7 || attempt.resultVersion === 8
             ? {
                 speedModel: attempt.speedModel,
                 speedEligibility: attempt.speedEligibility,
@@ -115,12 +122,15 @@ export function presentCaseAttemptRecord(
       ...details,
     },
     stepResults: attempt.stepResults,
-    ...(attempt.resultVersion === 7
+    ...(attempt.resultVersion === 7 || attempt.resultVersion === 8
       ? {
           reviewedClueIds: attempt.reviewedClueIds,
           evidence: attempt.evidence,
           differential: attempt.differential,
           timeoutCreditApplied: attempt.timeoutCreditApplied,
+          ...(attempt.resultVersion === 8
+            ? { differentialCheckpoints: attempt.differentialCheckpoints }
+            : {}),
         }
       : {}),
     completedAt: attempt.completedAt,

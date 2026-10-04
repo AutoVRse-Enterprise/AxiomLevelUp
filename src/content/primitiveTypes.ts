@@ -23,6 +23,7 @@ export const assessmentPrimitiveTypes = [
   'fill_blank',
   'numeric',
   'anatomy_locate',
+  'case_evidence_select',
 ] as const
 
 export const timerCompatibleTypes = assessmentPrimitiveTypes
@@ -36,7 +37,12 @@ export const dicomPrimitiveTypes = [
 
 export const anatomyPrimitiveTypes = ['anatomy_explore', 'anatomy_locate'] as const
 
-export const domainPrimitiveTypes = ['scenario', ...dicomPrimitiveTypes, 'anatomy_explore'] as const
+export const domainPrimitiveTypes = [
+  'scenario',
+  ...dicomPrimitiveTypes,
+  'anatomy_explore',
+  'case_differential',
+] as const
 
 export const primitiveTypes = [
   ...contentPrimitiveTypes,

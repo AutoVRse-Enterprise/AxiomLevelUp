@@ -6,7 +6,7 @@ import {
   CaseWorkspace,
   type WorkspaceSegment,
 } from '@/player/case/CaseWorkspace'
-import { StepActionSlot } from '@/player/StepActionSlot'
+import { StepActionScope, StepActionSlot } from '@/player/StepActionSlot'
 import type { PrimitiveLayout } from '@/primitives/definitions'
 
 interface StepFrameProps {
@@ -81,48 +81,50 @@ export function StepFrame({
   )
 
   return (
-    <div
-      className={`mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:py-8 ${
-        chromeAside && chromeNotes
-          ? 'max-w-7xl'
-          : layout === 'viewer'
+    <StepActionScope sticky={Boolean(chromeAside && chromeNotes)}>
+      <div
+        className={`mx-auto px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-6 md:py-8 ${
+          chromeAside && chromeNotes
             ? 'max-w-7xl'
-            : layout === 'split'
-              ? 'max-w-6xl'
-              : 'max-w-3xl'
-      }`}
-      data-layout={layout}
-    >
-      <div className="flex items-start gap-4">
-        {chromeHeader ? (
-          <div className="min-w-0 flex-1">{chromeHeader}</div>
-        ) : progress !== undefined ? (
-          <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
-        ) : (
-          <div className="flex-1" />
-        )}
-        <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
+            : layout === 'viewer'
+              ? 'max-w-7xl'
+              : layout === 'split'
+                ? 'max-w-6xl'
+                : 'max-w-3xl'
+        }`}
+        data-layout={layout}
+      >
+        <div className="flex items-start gap-4">
+          {chromeHeader ? (
+            <div className="min-w-0 flex-1">{chromeHeader}</div>
+          ) : progress !== undefined ? (
+            <ProgressBar className="min-w-0 flex-1" value={progress} label="Activity progress" />
+          ) : (
+            <div className="flex-1" />
+          )}
+          <IconButton label="Exit activity" icon={<X aria-hidden="true" />} onClick={onExit} />
+        </div>
+        {chromeHeader && progress !== undefined ? (
+          <ProgressBar className="mt-5" value={progress} label="Activity progress" />
+        ) : null}
+        <div className="mt-5 sm:mt-8">
+          {chromeAside && chromeNotes ? (
+            <CaseWorkspace
+              task={task}
+              evidence={chromeAside}
+              notes={chromeNotes}
+              evidenceAnnouncement={evidenceAnnouncement}
+              segment={workspaceSegment ?? 'task'}
+              onSegmentChange={onWorkspaceSegmentChange ?? (() => undefined)}
+            />
+          ) : (
+            <>
+              {task}
+              {chromeAside ? <aside className="hidden md:block">{chromeAside}</aside> : null}
+            </>
+          )}
+        </div>
       </div>
-      {chromeHeader && progress !== undefined ? (
-        <ProgressBar className="mt-5" value={progress} label="Activity progress" />
-      ) : null}
-      <div className="mt-5 sm:mt-8">
-        {chromeAside && chromeNotes ? (
-          <CaseWorkspace
-            task={task}
-            evidence={chromeAside}
-            notes={chromeNotes}
-            evidenceAnnouncement={evidenceAnnouncement}
-            segment={workspaceSegment ?? 'task'}
-            onSegmentChange={onWorkspaceSegmentChange ?? (() => undefined)}
-          />
-        ) : (
-          <>
-            {task}
-            {chromeAside ? <aside className="hidden md:block">{chromeAside}</aside> : null}
-          </>
-        )}
-      </div>
-    </div>
+    </StepActionScope>
   )
 }

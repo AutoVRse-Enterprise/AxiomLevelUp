@@ -541,7 +541,7 @@ describe('content schemas', () => {
     expect(caseBadges).toHaveLength(3)
     expect(seededAttempts).toHaveLength(1)
     expect(seededAttempts[0]?.attemptId).toBe('seed-asthma-foundation-1')
-    expect(seededAttempts[0]?.resultVersion).toBe(7)
+    expect(seededAttempts[0]?.resultVersion).toBe(8)
     expect(seededAttempts[0]?.openedClueIds.every((id) => clueIds.has(id))).toBe(true)
     expect(advancedSeed.caseAttempts['copd-intermediate']).toHaveLength(1)
     expect(
@@ -648,11 +648,7 @@ describe('content loader', () => {
       const anatomyLocate = steps.find(({ type }) => type === 'anatomy_locate')
       const levels = (anatomyLocate?.content as { levels?: unknown[] }).levels
       expect(levels).toHaveLength(3)
-      if (caseDocument.id === 'exacerbation-advanced') {
-        expect(steps).toHaveLength(6)
-      } else {
-        expect(steps).toHaveLength(6)
-      }
+      expect(steps).toHaveLength(9)
       expect(steps.every((step) => step.timer === undefined)).toBe(true)
     }
     const goldenCase = registry.caseById.get('exacerbation-advanced')!
@@ -664,7 +660,10 @@ describe('content loader', () => {
       'exac-explore-airway',
       'exac-localise',
       'exac-severity-signals',
+      'exac-differential-observe',
       'exac-co2-reasoning',
+      'exac-differential-interpret',
+      'exac-cite-evidence',
       'exac-best-diagnosis',
       'exac-immediate-consequence',
     ])
@@ -679,8 +678,8 @@ describe('content loader', () => {
       requiredFindingIds: ['exac-posterior-basal-plug'],
     })
     expect(goldenSteps[1]?.content).not.toHaveProperty('findingIds')
-    expect(Object.keys(goldenCase.expertBenchmark.responses)).toEqual(
-      goldenSteps.map(({ id }) => id),
+    expect(Object.keys(goldenCase.expertBenchmark.responses).sort()).toEqual(
+      goldenSteps.map(({ id }) => id).sort(),
     )
     expect(Object.keys(goldenCase.expertBenchmark.rationales ?? {})).toEqual(
       goldenSteps.map(({ id }) => id),
@@ -766,7 +765,7 @@ describe('content loader', () => {
     })
     expect(registry.seed.caseAttempts['exacerbation-advanced']).toEqual([
       expect.objectContaining({
-        resultVersion: 7,
+        resultVersion: 8,
         attemptId: 'seed-exacerbation-advanced-1',
       }),
     ])
@@ -774,7 +773,7 @@ describe('content loader', () => {
     expect(quickCase?.estimatedMinutes).toBe(3)
     expect(quickCase?.clues).toHaveLength(3)
     expect(quickCase?.stages.map(({ kind }) => kind)).toEqual(['orient', 'diagnose'])
-    expect(quickCase?.stages.flatMap(({ steps }) => steps)).toHaveLength(3)
+    expect(quickCase?.stages.flatMap(({ steps }) => steps)).toHaveLength(4)
     expect(registry.anatomyMapById.get('lung-map')?.modelAssetId).toBe('lung-model')
     expect(registry.anatomyMaps).toHaveLength(1)
     expect(registry.warnings).toEqual([])

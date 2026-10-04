@@ -46,6 +46,7 @@ import type { WorkspaceSegment } from '@/player/case/CaseWorkspace'
 import { ClueBoard } from '@/player/case/ClueBoard'
 import { StageBanner } from '@/player/case/StageBanner'
 import { StageHeader } from '@/player/case/StageHeader'
+import { CaseReasoningProvider } from '@/player/case/reasoningContext'
 import {
   presentLiveCaseResult,
   type CaseAttemptHistoryItem,
@@ -63,6 +64,7 @@ const EMPTY_CASE_PROGRESS: CaseProgress = {
   caseClockExpired: false,
   evidence: { pinned: [] },
   differential: {},
+  differentialCheckpoints: {},
 }
 
 function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
@@ -80,6 +82,7 @@ function normalizeCaseProgress(progress?: CaseProgress): CaseProgress {
         : {}),
     },
     differential: { ...(progress?.differential ?? {}) },
+    differentialCheckpoints: { ...(progress?.differentialCheckpoints ?? {}) },
   }
 }
 
@@ -284,6 +287,7 @@ function buildResult(
       inspectedFindingIds: [...selectInspectedFindingIds(session)],
     },
     differential: { ...caseProgress.differential },
+    differentialCheckpoints: structuredClone(caseProgress.differentialCheckpoints),
     timeoutCreditApplied: scoredSteps.some(
       ({ primitive }) => session.progress[primitive.id]?.firstTimeoutCreditApplied === true,
     ),
@@ -439,8 +443,30 @@ export function CasePlayer({
     () =>
       subscribeToEvents((event) => {
         if (
+          event.event === 'case_hypothesis_updated' &&
+          event.caseId === caseDoc.id &&
+          event.checkpointId
+        ) {
+          const checkpoint = {
+            ...(caseProgressRef.current.differentialCheckpoints[event.checkpointId] ?? {}),
+            [event.hypothesisId]: event.confidence,
+          }
+          persistProgress({
+            differential: {
+              ...caseProgressRef.current.differential,
+              [event.hypothesisId]: event.confidence,
+            },
+            differentialCheckpoints: {
+              ...caseProgressRef.current.differentialCheckpoints,
+              [event.checkpointId]: checkpoint,
+            },
+          })
+          return
+        }
+        if (
           (event.event !== 'anatomy_waypoint_reached' &&
-            event.event !== 'anatomy_structure_selected') ||
+            event.event !== 'anatomy_structure_selected' &&
+            event.event !== 'anatomy_finding_inspected') ||
           event.activityKind !== 'case' ||
           event.activityId !== caseDoc.id
         ) {
@@ -454,6 +480,18 @@ export function CasePlayer({
           session.startedAt === null ||
           session.phase === 'complete'
         ) {
+          return
+        }
+        if (event.event === 'anatomy_finding_inspected') {
+          const inspectedFindingIds = [
+            ...new Set([
+              ...(caseProgressRef.current.evidence.inspectedFindingIds ?? []),
+              event.findingId,
+            ]),
+          ]
+          persistProgress({
+            evidence: { ...caseProgressRef.current.evidence, inspectedFindingIds },
+          })
           return
         }
         const currentLocation =
@@ -684,6 +722,7 @@ export function CasePlayer({
         reviewedClueIds: result.reviewedClueIds,
         evidence: result.evidence,
         differential: result.differential,
+        differentialCheckpoints: result.differentialCheckpoints,
         timeoutCreditApplied: result.timeoutCreditApplied,
         ...(challengeId ? { challengeId } : {}),
       })
@@ -715,7 +754,8 @@ export function CasePlayer({
 
   return (
     <AnatomyFindingProvider findingsByStepId={plan.findingsByStepId}>
-      <ActivityPlayer
+      <CaseReasoningProvider caseDoc={caseDoc} progress={caseProgress}>
+        <ActivityPlayer
         plan={plan}
         autoStartOrResume={autoStartOrResume}
         previousAttempts={previousAttempts}
@@ -877,7 +917,8 @@ export function CasePlayer({
             onResetProgress={resetProgress}
           />
         )}
-      />
+        />
+      </CaseReasoningProvider>
       <CaseWalkthrough open={walkthroughOpen} onClose={closeWalkthrough} />
     </AnatomyFindingProvider>
   )
