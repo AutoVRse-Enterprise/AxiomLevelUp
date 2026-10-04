@@ -1,9 +1,14 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "caseVersion": "1.0",
   "id": "invalid-case-semantics",
   "title": "Invalid semantic references",
   "summary": "A structurally valid case with invalid references and ordering.",
+  "mission": {
+    "role": "Fixture learner",
+    "objective": "Exercise semantic validation.",
+    "deliverables": ["Review invalid references", "Observe precise issue paths"]
+  },
   "tier": "foundation",
   "organSystem": "generic",
   "estimatedMinutes": 2,
@@ -44,6 +49,7 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Diagnose first",
+      "purpose": "Exercise invalid stage ordering.",
       "clueIds": ["missing-stage-clue"],
       "steps": [
         {
@@ -68,6 +74,7 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient too late",
+      "purpose": "Exercise invalid stage ordering.",
       "clueIds": [],
       "steps": [
         {

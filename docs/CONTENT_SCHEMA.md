@@ -24,21 +24,25 @@ as separate JSON Schema files.
 fetches and parses every listed document, then exposes ordered `cases` and `anatomyMaps`
 collections plus `caseById` and `anatomyMapById` registries.
 
-A case document contains patient context, a tier, an anatomy-map entry mode, optional configured
-findings, a content-only clue catalogue, ordered stages of reusable primitives, timing targets, an
-optional authored differential, an expert benchmark and a teaching debrief. The differential uses
-stable learner-facing hypotheses. The benchmark includes evaluated responses/timings, an ordered
-expert path, typed evidence weights and diagnosis rationale. Debrief `keyEvidence` entries reference
-a clue or finding, affected step IDs and authored significance. A finding has a stable ID,
-learner-facing label and description,
-one of four organ-agnostic kinds (`lumen_narrowing`, `lumen_occlusion`,
+A Case Lab document uses schema version `0.2`. It contains a required learner mission (role,
+objective and two-to-four deliverables), patient context, a tier, an anatomy-map entry mode,
+optional configured findings, a content-only clue catalogue, ordered stages of reusable
+primitives, timing targets, an expert benchmark and a debrief. A finding has a stable ID,
+learner-facing label and description, optional learner-facing `significance`, one of four
+organ-agnostic kinds (`lumen_narrowing`, `lumen_occlusion`,
 `wall_thickening`, `region`), normalized severity, clue references and either a `structure`
 anchor or `waypoint`, `toWaypoint` and position `t` along one directed edge. Stage kinds are
-unique and follow `orient`,
-`observe`, `interpret`, `diagnose` order; a short case may omit stages without changing that
-order. Semantic validation resolves case, anatomy-map, finding, clue, benchmark-step, concept and
-asset references. Expert benchmarks may add per-step rationale keyed by a valid case primitive ID.
-Primitive and finding IDs are unique in their respective case scopes.
+unique and follow `orient`, `observe`, `interpret`, `diagnose` order; a short case may omit stages
+without changing that order. Every stage defines its learner-facing purpose and may add a
+`{ timeLabel, narrative }` patient update for the in-flow timeline.
+
+Semantic validation resolves case, anatomy-map, finding, clue, benchmark-step, concept and asset
+references. When timing is configured, `estimatedMinutes` converted to seconds must sit between the
+case target and maximum. Every scored stage primitive declares non-empty decisive `clueIds`. For
+learner-visible cases, an ASCII numeric token contained in any decisive clue must not be repeated
+in the task prompt, statement or option labels; this prevents answer choices from copying measured
+values before the clue is reviewed. Expert benchmarks may add per-step rationale keyed by a valid
+case primitive ID. Primitive and finding IDs are unique in their respective case scopes.
 
 Clues accept only the registered content primitive types and cannot carry timers, XP, rewards or
 non-default score weights. Stage steps retain the normal strict primitive parsing, asset typing,
@@ -85,9 +89,8 @@ nearest mesh parent as context.
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
 clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, the first-attempt minimum score for time-only step-speed eligibility, static/media/visual
-clue-review thresholds, clue penalties, XP and attempt-history limit. Every configured case ID and
-clue category used by a case must resolve.
+defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
+and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
 
 ## Primitive registry
 
@@ -233,8 +236,7 @@ target modes use answer completion.
 - Case attempt result-v7 records use the `time_eligible` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
   semantics, normalized first responses, actual duration, timeout-credit use, reviewed clues,
-  pinned clue/finding evidence, current location, differential confidence and XP from the central
-  gamification activity result.
+  local evidence/differential placeholders and XP from the central gamification activity result.
   Migrated result-v5 and result-v6 records remain explicitly legacy and do not fabricate
   unavailable details.
 - Device-scoped offline course and case package records are persisted separately from learner state.

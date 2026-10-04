@@ -131,6 +131,46 @@ function collectFindingIdReferences(value: unknown, path = ''): ClueIdReference[
   })
 }
 
+function collectNumericTokens(value: unknown): Set<string> {
+  const tokens = new Set<string>()
+  const visit = (entry: unknown) => {
+    if (typeof entry === 'number' && Number.isFinite(entry)) {
+      tokens.add(String(entry))
+      return
+    }
+    if (typeof entry === 'string') {
+      entry.match(/\b\d+(?:\.\d+)?\b/g)?.forEach((token) => tokens.add(token))
+      return
+    }
+    if (Array.isArray(entry)) {
+      entry.forEach(visit)
+      return
+    }
+    if (entry && typeof entry === 'object') Object.values(entry).forEach(visit)
+  }
+  visit(value)
+  return tokens
+}
+
+function collectAssessmentPromptText(value: unknown): string[] {
+  const text: string[] = []
+  const promptKeys = new Set(['prompt', 'question', 'statement', 'label'])
+  const visit = (entry: unknown, key?: string) => {
+    if (typeof entry === 'string') {
+      if (key && promptKeys.has(key)) text.push(entry)
+      return
+    }
+    if (Array.isArray(entry)) {
+      entry.forEach((item) => visit(item))
+      return
+    }
+    if (!entry || typeof entry !== 'object') return
+    Object.entries(entry).forEach(([entryKey, child]) => visit(child, entryKey))
+  }
+  visit(value)
+  return text
+}
+
 export function validateContentBundle(input: ContentBundleInput): ContentRegistry {
   const issues: ContentIssue[] = []
   const rejectClueReferencesOutsideCases = (value: unknown, file: string, path = '') => {
@@ -944,6 +984,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   cases.forEach((caseDocument, caseIndex) => {
     const file = input.caseFiles[caseIndex]?.file ?? `case:${caseDocument.id}`
     const clueIds = new Set(caseDocument.clues.map(({ id }) => id))
+    const clueById = new Map(caseDocument.clues.map((clue) => [clue.id, clue]))
     const clueCategoryIds = new Set(appConfig.caseLab?.clueCategories.map(({ id }) => id) ?? [])
     const anatomyMap = anatomyMapById.get(caseDocument.anatomyMapId)
     const findingIds = new Set<string>()
@@ -967,6 +1008,21 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         message: `Case organ system "${caseDocument.organSystem}" must resolve through caseLab.organSystems.`,
         severity: 'error',
       })
+    }
+    if (caseDocument.timing) {
+      const estimatedSeconds = caseDocument.estimatedMinutes * 60
+      if (
+        estimatedSeconds < caseDocument.timing.caseTargetSeconds ||
+        estimatedSeconds > caseDocument.timing.caseMaxSeconds
+      ) {
+        issues.push({
+          file,
+          path: 'estimatedMinutes',
+          message:
+            'Case estimatedMinutes must fall between timing.caseTargetSeconds and timing.caseMaxSeconds.',
+          severity: 'error',
+        })
+      }
     }
     if (caseDocument.patient.imageAssetId) {
       requireAsset(caseDocument.patient.imageAssetId, file, 'patient.imageAssetId', 'image')
@@ -1160,6 +1216,38 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
             (parsedStep.type === 'image_hotspot' && parsedStep.content.mode === 'assess'))
         ) {
           scoredStepIds.add(step.id)
+          if (!step.clueIds?.length) {
+            issues.push({
+              file,
+              path: `${path}.clueIds`,
+              message: `Scored case task "${step.id}" must declare its decisive clueIds.`,
+              severity: 'error',
+            })
+          }
+          if (learnerVisibleCaseIds.has(caseDocument.id)) {
+            const clueTokens = new Set<string>()
+            step.clueIds?.forEach((clueId) => {
+              const clue = clueById.get(clueId)
+              if (!clue) return
+              collectNumericTokens(clue.primitive.content).forEach((token) => clueTokens.add(token))
+            })
+            const leakedTokens = new Set<string>()
+            collectAssessmentPromptText(step.content).forEach((text) => {
+              collectNumericTokens(text).forEach((token) => {
+                if (clueTokens.has(token)) leakedTokens.add(token)
+              })
+            })
+            if (leakedTokens.size > 0) {
+              issues.push({
+                file,
+                path: `${path}.content`,
+                message: `Learner-visible task repeats numeric clue value(s) ${[
+                  ...leakedTokens,
+                ].join(', ')} in its prompt or options.`,
+                severity: 'error',
+              })
+            }
+          }
         }
         if (parsedStep?.type === 'anatomy_explore' || parsedStep?.type === 'anatomy_locate') {
           const anatomyStep = parsedStep as AnatomyExplorePrimitive | AnatomyLocatePrimitive
@@ -1495,7 +1583,8 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   for (const pathway of appConfig.pathways) {
     const nodeIds = new Set(pathway.nodes.map(({ id }) => id))
     pathway.nodes.forEach((node, index) => {
-      const refs = node.type === 'challenge' ? challengeIds : lessonIds
+      const refs =
+        node.type === 'challenge' ? challengeIds : node.type === 'case' ? caseIds : lessonIds
       requireRef(
         refs,
         node.refId,

@@ -33,6 +33,7 @@ export const caseFindingSchema = z.strictObject({
   id: idSchema,
   label: nonEmptyStringSchema,
   description: nonEmptyStringSchema,
+  significance: nonEmptyStringSchema.optional(),
   kind: caseFindingKindSchema,
   anchor: caseFindingAnchorSchema,
   severity: z.number().positive().max(1),
@@ -86,7 +87,14 @@ export const caseStageSchema = z.strictObject({
   kind: caseStageKindSchema,
   component: caseStageComponentSchema,
   title: nonEmptyStringSchema,
+  purpose: nonEmptyStringSchema,
   intro: nonEmptyStringSchema.optional(),
+  update: z
+    .strictObject({
+      timeLabel: nonEmptyStringSchema,
+      narrative: nonEmptyStringSchema,
+    })
+    .optional(),
   clueIds: z.array(idSchema).default([]),
   steps: z.array(caseStepSchema).min(1),
 })
@@ -117,11 +125,16 @@ export const caseTimingSchema = z
   })
 
 export const caseDocumentSchema = z.strictObject({
-  schemaVersion: z.literal('0.1'),
+  schemaVersion: z.literal('0.2'),
   caseVersion: versionSchema,
   id: idSchema,
   title: nonEmptyStringSchema,
   summary: nonEmptyStringSchema,
+  mission: z.strictObject({
+    role: nonEmptyStringSchema,
+    objective: nonEmptyStringSchema,
+    deliverables: z.array(nonEmptyStringSchema).min(2).max(4),
+  }),
   tier: caseTierSchema,
   organSystem: idSchema,
   estimatedMinutes: z.number().int().positive(),

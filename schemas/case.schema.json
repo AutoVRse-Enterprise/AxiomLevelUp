@@ -4,7 +4,7 @@
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "const": "0.1"
+      "const": "0.2"
     },
     "caseVersion": {
       "type": "string",
@@ -22,6 +22,34 @@
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "mission": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deliverables": {
+          "minItems": 2,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "role",
+        "objective",
+        "deliverables"
+      ],
+      "additionalProperties": false
     },
     "tier": {
       "type": "string",
@@ -172,6 +200,10 @@
             "minLength": 1
           },
           "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "significance": {
             "type": "string",
             "minLength": 1
           },
@@ -721,9 +753,31 @@
             "type": "string",
             "minLength": 1
           },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
           "intro": {
             "type": "string",
             "minLength": 1
+          },
+          "update": {
+            "type": "object",
+            "properties": {
+              "timeLabel": {
+                "type": "string",
+                "minLength": 1
+              },
+              "narrative": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "timeLabel",
+              "narrative"
+            ],
+            "additionalProperties": false
           },
           "clueIds": {
             "default": [],
@@ -1093,6 +1147,7 @@
           "kind",
           "component",
           "title",
+          "purpose",
           "clueIds",
           "steps"
         ],
@@ -1371,6 +1426,7 @@
     "id",
     "title",
     "summary",
+    "mission",
     "tier",
     "organSystem",
     "estimatedMinutes",

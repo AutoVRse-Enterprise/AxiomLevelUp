@@ -1,9 +1,19 @@
 {
-  "schemaVersion": "0.1",
-  "caseVersion": "2.0",
+  "schemaVersion": "0.2",
+  "caseVersion": "3.0",
   "id": "exacerbation-advanced",
   "title": "Respiratory Case Review",
   "summary": "Review spatial, clinical and physiological evidence in a synthetic respiratory presentation. Training simulation—not clinical guidance.",
+  "mission": {
+    "role": "You are the trainee reviewing a rapidly deteriorating respiratory presentation.",
+    "objective": "Reconstruct the affected airway location, track the deterioration and decide what the evidence requires.",
+    "deliverables": [
+      "Commit to the location of the dominant finding",
+      "Update the differential as evidence arrives",
+      "Cite the evidence supporting the conclusion",
+      "Identify the immediate consequence"
+    ]
+  },
   "tier": "advanced",
   "organSystem": "respiratory",
   "estimatedMinutes": 6,
@@ -29,6 +39,7 @@
       "id": "exac-diffuse-wall-change",
       "label": "Diffuse wall thickening with mild narrowing",
       "description": "The airway wall appears diffusely thickened, with mild reduction in the visible lumen.",
+      "significance": "This supports a widespread airway process but does not explain the acute trajectory alone.",
       "kind": "wall_thickening",
       "anchor": {
         "type": "waypoint",
@@ -43,6 +54,7 @@
       "id": "exac-posterior-basal-plug",
       "label": "Dominant posterior basal mucus plug",
       "description": "A dominant mucus plug substantially occludes the posterior basal segmental lumen.",
+      "significance": "This is the dominant spatial finding to localise; it supports obstruction but is not the sole basis for the conclusion.",
       "kind": "lumen_occlusion",
       "anchor": {
         "type": "waypoint",
@@ -222,7 +234,12 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
+      "purpose": "Reconstruct where the dominant obstruction sits before interpreting its clinical importance.",
       "intro": "Trace the airway, inspect the dominant finding, then localise it without an overlay.",
+      "update": {
+        "timeLabel": "Presentation",
+        "narrative": "Breathlessness has worsened rapidly after several days of coryzal symptoms."
+      },
       "clueIds": ["exac-airway-reference", "exac-pathology-reference"],
       "steps": [
         {
@@ -298,7 +315,12 @@
       "kind": "observe",
       "component": "diagnosis",
       "title": "Observe",
+      "purpose": "Identify the observations that establish the direction and severity of change.",
       "intro": "Select the observations that indicate marked deterioration.",
+      "update": {
+        "timeLabel": "Six hours later",
+        "narrative": "Reliever benefit is brief, speech is limited and objective respiratory observations are worsening."
+      },
       "clueIds": ["exac-history", "exac-flow", "exac-gas"],
       "steps": [
         {
@@ -310,9 +332,9 @@
             "prompt": "Which findings support marked respiratory deterioration? Select all that apply.",
             "options": [
               { "id": "speech-limited", "label": "Difficulty completing sentences" },
-              { "id": "falling-flow", "label": "Peak expiratory flow falling to 170 L/min" },
-              { "id": "hypoxaemia", "label": "Oxygen saturation of 91% on room air and falling" },
-              { "id": "co2-rising", "label": "PaCO₂ rising from 4.1 to 5.8 kPa during ongoing distress" },
+              { "id": "falling-flow", "label": "Serial expiratory flow has fallen substantially" },
+              { "id": "hypoxaemia", "label": "Oxygen saturation is low and continuing to fall" },
+              { "id": "co2-rising", "label": "Carbon dioxide has risen during ongoing distress" },
               { "id": "prior-nocturnal-cough", "label": "Previous nocturnal cough by itself" },
               { "id": "coryzal-symptoms", "label": "Coryzal symptoms by themselves" }
             ],
@@ -339,7 +361,12 @@
       "kind": "interpret",
       "component": "diagnosis",
       "title": "Interpret",
+      "purpose": "Explain what the changing physiology means when read with the whole trajectory.",
       "intro": "Explain the carbon-dioxide trend in the context of the other observations.",
+      "update": {
+        "timeLabel": "Current physiology",
+        "narrative": "Falling flow and oxygenation now accompany a rising carbon-dioxide trend."
+      },
       "clueIds": ["exac-flow", "exac-gas"],
       "steps": [
         {
@@ -382,7 +409,12 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Diagnose",
+      "purpose": "Cite the decisive evidence, commit to the leading explanation and identify its consequence.",
       "intro": "Synthesize the pattern, then identify its immediate consequence.",
+      "update": {
+        "timeLabel": "Decision point",
+        "narrative": "The complete history, serial physiology and spatial finding are available for synthesis."
+      },
       "clueIds": ["exac-history", "exac-flow", "exac-gas", "exac-pathology-reference"],
       "steps": [
         {

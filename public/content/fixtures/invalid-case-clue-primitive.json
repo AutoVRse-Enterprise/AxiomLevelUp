@@ -1,9 +1,14 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "caseVersion": "1.0",
   "id": "invalid-case-clue-primitive",
   "title": "Invalid clue primitive",
   "summary": "A clue incorrectly uses an assessment primitive.",
+  "mission": {
+    "role": "Fixture learner",
+    "objective": "Exercise clue primitive validation.",
+    "deliverables": ["Review the clue", "Observe the validation issue"]
+  },
   "tier": "foundation",
   "organSystem": "generic",
   "estimatedMinutes": 2,
@@ -50,8 +55,23 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Diagnose",
+      "purpose": "Exercise the clue-content boundary.",
       "clueIds": ["clue-question"],
-      "steps": []
+      "steps": [
+        {
+          "id": "fixture-summary",
+          "type": "rich_text",
+          "clueIds": ["clue-question"],
+          "conceptIds": ["thoracic-imaging"],
+          "content": {
+            "heading": "Fixture",
+            "body": "This valid stage step keeps the clue primitive as the intended schema failure."
+          },
+          "assets": [],
+          "completion": { "mode": "viewed" },
+          "feedback": {}
+        }
+      ]
     }
   ],
   "expertBenchmark": {

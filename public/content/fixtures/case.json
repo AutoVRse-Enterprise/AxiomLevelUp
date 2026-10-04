@@ -1,9 +1,14 @@
 {
-  "schemaVersion": "0.1",
+  "schemaVersion": "0.2",
   "caseVersion": "1.0",
   "id": "case-contract-fixture",
   "title": "Contract fixture",
   "summary": "A generic case used to verify the content contract.",
+  "mission": {
+    "role": "Fixture learner",
+    "objective": "Verify the configured case contract.",
+    "deliverables": ["Inspect the target", "Commit to the configured conclusion"]
+  },
   "tier": "foundation",
   "organSystem": "generic",
   "estimatedMinutes": 4,
@@ -73,6 +78,7 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
+      "purpose": "Verify the orient-stage contract.",
       "clueIds": ["clue-context"],
       "steps": [
         {
@@ -101,11 +107,13 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Conclude",
+      "purpose": "Verify the conclusion-stage contract.",
       "clueIds": [],
       "steps": [
         {
           "id": "select-conclusion",
           "type": "true_false",
+          "clueIds": ["clue-context"],
           "conceptIds": ["thoracic-imaging"],
           "content": {
             "statement": "The configured evidence supports the conclusion.",

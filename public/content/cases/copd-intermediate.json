@@ -1,9 +1,19 @@
 {
-  "schemaVersion": "0.1",
-  "caseVersion": "2.0",
+  "schemaVersion": "0.2",
+  "caseVersion": "3.0",
   "id": "copd-intermediate",
   "title": "Persistent Airflow Review",
   "summary": "Integrate exposure, structural and physiological evidence while comparing several plausible respiratory and cardiac hypotheses. Training simulation—not clinical guidance.",
+  "mission": {
+    "role": "You are the trainee reviewing progressive respiratory symptoms.",
+    "objective": "Weigh exposure, structure and physiology to identify the most coherent explanation.",
+    "deliverables": [
+      "Localise the structural focus",
+      "Distinguish structural from functional evidence",
+      "Compare the leading alternatives",
+      "Commit to the best-supported conclusion"
+    ]
+  },
   "tier": "intermediate",
   "organSystem": "respiratory",
   "estimatedMinutes": 7,
@@ -29,6 +39,7 @@
       "id": "intermediate-upper-wall-change",
       "label": "Upper-airway wall change",
       "description": "Illustrative wall thickening follows an upper-lobe airway branch.",
+      "significance": "This adds spatial context for an airway process but is not independently diagnostic.",
       "kind": "wall_thickening",
       "anchor": {
         "type": "waypoint",
@@ -43,6 +54,7 @@
       "id": "intermediate-upper-region",
       "label": "Illustrative upper-zone region",
       "description": "A translucent upper-zone region marks the illustrative structural focus.",
+      "significance": "This links the structural clue to the lobe-and-segment localisation.",
       "kind": "region",
       "anchor": {
         "type": "structure",
@@ -235,7 +247,12 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
+      "purpose": "Connect the opening structural clue to a precise anatomical location.",
       "intro": "Use the opening structural clue, then inspect and localise the illustrated upper-zone change.",
+      "update": {
+        "timeLabel": "Initial review",
+        "narrative": "A progressive low-variability symptom history and long inhalational exposure are recorded."
+      },
       "clueIds": ["intermediate-emphysema", "intermediate-anatomy"],
       "steps": [
         {
@@ -309,7 +326,12 @@
       "kind": "observe",
       "component": "diagnosis",
       "title": "Observe",
+      "purpose": "Identify which history and physiology findings carry the greatest diagnostic weight.",
       "intro": "Identify the strongest evidence while retaining plausible competing hypotheses.",
+      "update": {
+        "timeLabel": "After assessment",
+        "narrative": "Spirometry and the expiratory sound are available for comparison with the history."
+      },
       "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-sound"],
       "steps": [
         {
@@ -366,7 +388,12 @@
       "kind": "interpret",
       "component": "diagnosis",
       "title": "Interpret",
+      "purpose": "Test the leading alternatives against the combined evidence without absolute exclusions.",
       "intro": "Compare the leading alternatives without treating absent features as absolute exclusions.",
+      "update": {
+        "timeLabel": "Context review",
+        "narrative": "Structural, functional and cardiac-context observations are now available together."
+      },
       "clueIds": ["intermediate-history", "intermediate-spirometry", "intermediate-cardiac-context", "intermediate-sound"],
       "steps": [
         {
@@ -412,7 +439,12 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Conclude",
+      "purpose": "Commit to the explanation that is coherent across exposure, physiology and structure.",
       "intro": "Choose the hypothesis that best explains the full evidence set.",
+      "update": {
+        "timeLabel": "Synthesis",
+        "narrative": "The full patient record is ready for a final evidence-weighted conclusion."
+      },
       "clueIds": ["intermediate-history", "intermediate-emphysema", "intermediate-spirometry", "intermediate-cardiac-context"],
       "steps": [
         {

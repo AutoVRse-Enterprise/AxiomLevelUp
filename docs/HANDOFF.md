@@ -2,9 +2,9 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 and P13-T01 are complete; P13-T02 Case schema
-0.2 is in progress. Phase 9 remains active for physical Android and iOS gates P9-M01 through
-P9-M03.
+Phase 13 client demo readiness is active. P13-T00 through P13-T02 are complete; P13-T03 briefing,
+onboarding and continuous stages is next. Phase 9 remains active for physical Android and iOS
+gates P9-M01 through P9-M03.
 
 ## Done
 
@@ -40,6 +40,9 @@ P9-M03.
   unavailable/contradictory completion rows, internal comparison copy and production dev routes.
 - Weekly progress now supports `cases_completed`; the configured sprint, pathway case node and
   Scientific Imaging duration match runtime behavior.
+- Case schema 0.2 now requires a mission and stage purpose, supports patient updates and finding
+  significance, and validates duration, decisive clue references and numeric answer leakage.
+- All four cases and fixtures are migrated; generated JSON Schema and authoring docs are current.
 
 ## Verification
 
@@ -74,14 +77,14 @@ P9-M03.
 
 ## In progress
 
-- P13-T02 schema/content work is active.
-- P13-T01 passes typecheck, content validation and 110 focused tests.
+- P13-T03 player/learner-state work is next.
+- P13-T02 passes typecheck, zero-warning content validation and 68 focused tests.
 
 ## Next three steps
 
-1. Finish and export the Case 0.2 mission/narrative/evidence contract.
-2. Replace blocking stages and add the guided first-run experience in P13-T03.
-3. Build the unified desktop/mobile CaseWorkspace in P13-T04.
+1. Replace blocking stages and add the guided first-run experience in P13-T03.
+2. Build the unified desktop/mobile CaseWorkspace in P13-T04.
+3. Put clue cost/relevance and stage-scoped notes into that workspace in P13-T05.
 
 ## Blockers/questions for the user
 

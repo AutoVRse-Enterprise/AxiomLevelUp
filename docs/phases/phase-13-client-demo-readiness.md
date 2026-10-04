@@ -51,7 +51,7 @@ Phase 13 closes on usability evidence, not automation alone.
     case nodes to Case Lab.
   - Correct the Scientific Imaging duration.
 
-- [ ] **P13-T02 — Case schema 0.2**
+- [x] **P13-T02 — Case schema 0.2** — completed 2026-10-04
   - Add mission, stage purpose/update and finding significance fields.
   - Require decisive clue references for scored steps.
   - Validate estimated duration and reject numeric clue-to-answer leakage.

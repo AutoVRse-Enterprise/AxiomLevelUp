@@ -1,9 +1,18 @@
 {
-  "schemaVersion": "0.1",
-  "caseVersion": "2.0",
+  "schemaVersion": "0.2",
+  "caseVersion": "3.0",
   "id": "asthma-foundation",
   "title": "Variable Airflow Review",
   "summary": "Review a trigger-linked respiratory pattern using anatomy, observations and bronchodilator-response evidence. Training simulation—not clinical guidance.",
+  "mission": {
+    "role": "You are the trainee reviewing a new respiratory presentation.",
+    "objective": "Decide which hypothesis best explains a variable trigger-linked airflow pattern.",
+    "deliverables": [
+      "Localise the relevant airway structure",
+      "Identify the evidence that changes your differential",
+      "Commit to the best-supported conclusion"
+    ]
+  },
   "tier": "foundation",
   "organSystem": "respiratory",
   "estimatedMinutes": 6,
@@ -28,6 +37,7 @@
       "id": "foundation-diffuse-wall-change",
       "label": "Diffuse airway-wall change",
       "description": "A diffuse illustrative wall-thickening pattern is visible along the central airway.",
+      "significance": "This supports an airway process but cannot determine the diagnosis by itself.",
       "kind": "wall_thickening",
       "anchor": {
         "type": "waypoint",
@@ -42,6 +52,7 @@
       "id": "foundation-upper-region",
       "label": "Illustrative upper-lobe region",
       "description": "A translucent region identifies the illustrative area used for spatial orientation.",
+      "significance": "This is a spatial landmark for the localisation task, not diagnostic evidence.",
       "kind": "region",
       "anchor": {
         "type": "structure",
@@ -208,7 +219,12 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
+      "purpose": "Build the spatial frame needed to interpret where the airway process is occurring.",
       "intro": "Inspect the marked lobe and the illustrated airway findings before localising the relevant structure.",
+      "update": {
+        "timeLabel": "Initial review",
+        "narrative": "The patient reports episodic symptoms linked to exercise and pollen exposure."
+      },
       "clueIds": ["foundation-anatomy"],
       "steps": [
         {
@@ -282,7 +298,12 @@
       "kind": "observe",
       "component": "diagnosis",
       "title": "Observe",
+      "purpose": "Separate observations that define the pattern from findings that only support it.",
       "intro": "Select the observations that directly support a variable airflow pattern.",
+      "update": {
+        "timeLabel": "After initial assessment",
+        "narrative": "The expiratory sound is reviewed alongside the symptom pattern."
+      },
       "clueIds": ["foundation-history", "foundation-wheeze", "foundation-spirometry"],
       "steps": [
         {
@@ -316,7 +337,12 @@
       "kind": "interpret",
       "component": "diagnosis",
       "title": "Interpret",
+      "purpose": "Connect measured airflow change with the supporting inflammatory context.",
       "intro": "Separate functional evidence from supporting inflammatory context.",
+      "update": {
+        "timeLabel": "After bronchodilator",
+        "narrative": "Repeat spirometry shows improved airflow; inflammatory markers add context."
+      },
       "clueIds": ["foundation-spirometry", "foundation-biomarkers"],
       "steps": [
         {
@@ -365,7 +391,12 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Conclude",
+      "purpose": "Commit to the hypothesis that best integrates the time course and measured response.",
       "intro": "Choose the hypothesis that best integrates the repeated pattern and measured airflow change.",
+      "update": {
+        "timeLabel": "Synthesis",
+        "narrative": "All reviewed history, physiology and spatial evidence is now available."
+      },
       "clueIds": ["foundation-history", "foundation-wheeze", "foundation-spirometry", "foundation-biomarkers"],
       "steps": [
         {

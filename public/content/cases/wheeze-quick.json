@@ -1,9 +1,18 @@
 {
-  "schemaVersion": "0.1",
-  "caseVersion": "2.0",
+  "schemaVersion": "0.2",
+  "caseVersion": "3.0",
   "id": "wheeze-quick",
   "title": "Daily Respiratory Review",
   "summary": "Inspect one airway finding, identify the relevant structure and interpret a short trigger-linked pattern. Training simulation—not clinical guidance.",
+  "mission": {
+    "role": "You are the trainee completing a short daily respiratory review.",
+    "objective": "Connect one spatial finding with a trigger-linked, reversible symptom pattern.",
+    "deliverables": [
+      "Inspect the airway finding",
+      "Identify the relevant structure",
+      "Commit to the best-supported pattern"
+    ]
+  },
   "tier": "foundation",
   "organSystem": "respiratory",
   "estimatedMinutes": 3,
@@ -27,6 +36,7 @@
       "id": "quick-diffuse-wall-change",
       "label": "Diffuse airway-wall change",
       "description": "A short illustrative airway segment shows diffuse wall thickening.",
+      "significance": "This supports airway involvement but must be weighed with history and measured flow.",
       "kind": "wall_thickening",
       "anchor": {
         "type": "waypoint",
@@ -143,7 +153,12 @@
       "kind": "orient",
       "component": "anatomy",
       "title": "Orient",
+      "purpose": "Connect the spatial finding to the airway structure involved in the pattern.",
       "intro": "Inspect the marked lobe and diffuse airway-wall finding before identifying the relevant structure.",
+      "update": {
+        "timeLabel": "During exercise",
+        "narrative": "Wheeze develops during a cold-weather run and the patient stops to recover."
+      },
       "clueIds": ["quick-history", "quick-wheeze"],
       "steps": [
         {
@@ -192,7 +207,12 @@
       "kind": "diagnose",
       "component": "diagnosis",
       "title": "Conclude",
+      "purpose": "Use the trigger pattern and measured response to commit to a proportionate conclusion.",
       "intro": "Integrate the trigger pattern and measured flow change.",
+      "update": {
+        "timeLabel": "After reliever",
+        "narrative": "Symptoms settle and measured expiratory flow improves."
+      },
       "clueIds": ["quick-history", "quick-wheeze", "quick-flow"],
       "steps": [
         {

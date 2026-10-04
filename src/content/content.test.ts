@@ -320,8 +320,65 @@ describe('content schemas', () => {
   it('accepts the case document and anatomy-map fixture contracts', () => {
     const parsedCase = caseDocumentSchema.parse(caseFixture)
     expect(parsedCase.id).toBe('case-contract-fixture')
+    expect(parsedCase.schemaVersion).toBe('0.2')
+    expect(parsedCase.mission.deliverables).toHaveLength(2)
     expect(parsedCase.findings?.map(({ kind }) => kind)).toEqual(['lumen_occlusion', 'region'])
     expect(anatomyMapSchema.parse(anatomyMapFixture).id).toBe('fixture-anatomy')
+  })
+
+  it('keeps configured duration between the case target and maximum', () => {
+    const invalidDuration = structuredClone(caseFixture)
+    invalidDuration.estimatedMinutes = 1
+
+    expect(() => validateContentBundle(withCaseFixture(invalidDuration))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'estimatedMinutes',
+            message: expect.stringContaining('must fall between'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires decisive clue references on every scored case task', () => {
+    const missingClueRefs = structuredClone(caseFixture) as {
+      stages: Array<{ steps: Array<{ clueIds?: string[] }> }>
+    }
+    delete missingClueRefs.stages[0]!.steps[0]!.clueIds
+
+    expect(() => validateContentBundle(withCaseFixture(missingClueRefs))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'stages.0.steps.0.clueIds',
+            message: expect.stringContaining('decisive clueIds'),
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('rejects numeric clue values repeated in learner-visible prompts or options', () => {
+    const leakedAnswer = structuredClone(caseFixture) as {
+      clues: Array<{ primitive: { content: { body?: string } } }>
+      stages: Array<{ steps: Array<{ content: { prompt?: string } }> }>
+    }
+    leakedAnswer.clues[0]!.primitive.content.body = 'The configured value is 42 units.'
+    leakedAnswer.stages[0]!.steps[0]!.content.prompt =
+      'Which location has the configured value of 42 units?'
+
+    expect(() => validateContentBundle(withCaseFixture(leakedAnswer))).toThrow(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'stages.0.steps.0.content',
+            message: expect.stringContaining('numeric clue value(s) 42'),
+          }),
+        ]),
+      }),
+    )
   })
 
   it('accepts an optional authored differential with at least two hypotheses', () => {

@@ -2931,3 +2931,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   warnings. TypeScript and all 110 focused tests pass. Invalid UTF-8 and malformed SVG fixtures are
   rejected.
 - **Follow-ups:** Implement and export the Case 0.2 contract in P13-T02.
+
+### [2026-10-04 21:40] P13-T02 - Add the Case 0.2 mission and narrative contract
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Upgraded the strict case schema to 0.2 with mission, stage purpose/update and finding
+  significance; added duration, scored-evidence and numeric answer-leak semantic rules; migrated
+  all four cases and fixtures; removed advanced-task numeric leakage; exported JSON Schema and
+  recorded ADR-096.
+- **Files changed:** Case schema/loader/tests; four case documents and three fixtures;
+  `schemas/case.schema.json`; `docs/CONTENT_SCHEMA.md`; `docs/DECISIONS.md`; phase QA/governance
+  docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; `npm run validate:content`;
+  focused Vitest (2 files / 68 tests); IDE diagnostics.
+- **Result/verification:** TypeScript passes. Content validates 5 courses, 13 lessons, 4 Case 0.2
+  documents and one anatomy map with zero warnings. The duration, decisive-clue and numeric-leak
+  tests pass.
+- **Follow-ups:** Render the mission and patient updates through the continuous-stage experience in
+  P13-T03.

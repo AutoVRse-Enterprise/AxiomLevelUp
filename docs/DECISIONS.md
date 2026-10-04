@@ -1732,3 +1732,29 @@ will change together rather than receive isolated presentation patches. New sche
 versions must retain legacy records. Automated tests remain necessary but cannot close the phase
 without human usability results. A presenter-led technical build may become ready before
 unsupervised use, but both verdicts must be stated separately.
+
+## ADR-096: Case 0.2 makes mission and evidence dependencies explicit
+
+**Status:** Accepted
+
+**Context:** Case 0.1 described a patient, stages and clues but did not state the learner's role,
+objective or expected outputs. Stage intros could describe activity without explaining its
+purpose, patient change had no structured timeline, and finding descriptions could not separate
+what was visible from why it mattered. Scored tasks could also repeat exact clue values while clue
+review remained optional.
+
+**Decision:** Require Case schema `0.2` documents to define `mission.role`, `mission.objective` and
+two-to-four `mission.deliverables`. Every stage defines `purpose` and may define a structured
+patient `update` with time label and narrative. Findings may define learner-facing `significance`.
+
+Semantic validation requires the advertised duration in seconds to fall between the authored case
+target and maximum, and every scored task to reference at least one decisive clue. Learner-visible
+cases fail validation when an ASCII numeric token from a decisive clue is repeated in the task
+stem or option labels. The lint deliberately targets exact numeric leakage rather than attempting
+clinical-language inference.
+
+**Consequences:** Briefing, stage banners, timeline, clue relevance and finding feedback can render
+from one validated source. Authors must keep durations and evidence dependencies coherent.
+Legitimate numeric recall questions must be redesigned to ask for interpretation or must use
+evidence that is intentionally visible in-flow; the validator does not assess semantic or clinical
+correctness.

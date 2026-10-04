@@ -30,8 +30,8 @@ Two audit corrections were applied at baseline:
 | H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Open; simulated preview only |
 | H02 | Segmented rankings absent | P13-T13 | Open; simulated preview only |
 | H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Open |
-| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Open |
-| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Open |
+| H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Partial: numeric answer-leak lint active |
+| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Partial: mission and patient-update contract landed |
 | H06 | Benchmark purpose is unclear | P13-T10 | Open |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
@@ -51,7 +51,7 @@ Two audit corrections were applied at baseline:
 | M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
 | M04 | Results and comparisons are dense | P13-T10 | Open |
 | M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Open |
-| M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Open |
+| M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Partial: findings now explain significance |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
 | M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |
 | M09 | Core mobile routes underperform Home | P13-T14, P13-T16 | Open |
@@ -65,19 +65,19 @@ Two audit corrections were applied at baseline:
 | --- | --- | --- | --- |
 | U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Open |
 | U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Open |
-| U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Open |
+| U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Partial: all cases define role, objective and deliverables |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Open |
 | U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Open |
 | U06 | 3D interaction contract is not taught | P13-T03, P13-T07 | Open |
 | U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Open |
 | U08 | Clue economy is not an informed choice | P13-T05 | Open |
-| U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Open |
+| U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Partial: every scored step declares decisive clues |
 | U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Open |
 | U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Open |
 | U12 | Notes reveal information prematurely | P13-T05 | Open |
-| U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Open |
+| U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Partial: exact numeric clue leakage is rejected |
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Open |
-| U15 | Time expectations conflict | P13-T02, P13-T09 | Open |
+| U15 | Time expectations conflict | P13-T02, P13-T09 | Partial: estimated duration is validated against targets |
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Open |
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Open |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Open |
