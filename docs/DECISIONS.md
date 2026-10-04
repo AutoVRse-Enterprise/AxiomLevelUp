@@ -1697,3 +1697,38 @@ state contains a pending celebration.
 unvalidated content reaches UI or learner state. Worker startup adds a small module request and
 structured-clone cost, but the asset and content remain available offline. Optional celebrations
 may appear after their lazy chunk resolves, while their persisted queue prevents loss.
+
+## ADR-095: Phase 13 is an evidence-led guided Case Lab redesign
+
+**Status:** Accepted
+
+**Context:** Phase 12 proved the configured runtime, four respiratory cases, spatial primitives,
+evidence notes, scoring and expert comparison. A fresh trainee-doctor walkthrough nevertheless
+completed the advanced case with 100% Anatomy and Diagnosis after reviewing only one of five clues,
+then showed every differential hypothesis as `Not rated`. The player also exposes stages, tasks,
+levels, clues, notes, penalties and timing before teaching how they form one reasoning loop.
+
+The next client audience is IT and engineering stakeholders evaluating concept and technical
+feasibility. Clinical accuracy, medical approval and regulatory release are not the acceptance
+question for this phase.
+
+**Decision:** Open Phase 13 around a single explicit loop:
+
+`mission → spatial reconstruction → evidence gathering → differential checkpoint → interpretation
+→ evidence citation and conclusion → prioritized debrief`.
+
+Every Case Lab screen must answer what the learner is doing, why it matters and what action comes
+next. The current task, relevant evidence and primary action stay visible together. Scored
+decisions depend on reviewed evidence rather than restating it in answer choices. Optional systems
+must gain a visible in-flow purpose or be removed.
+
+Phase 13 also owns the flagship unknown-point mechanic, remaining functional demo defects,
+client-safe demo profiles, bridge-free browser evidence and moderated unaided usability. Real
+multiplayer/backends, real KOL identity, clinical/anatomical/legal approval, AI reasoning and a
+cross-specialty pack remain outside the phase.
+
+**Consequences:** Case documents, player chrome, evidence state, primitives, results and navigation
+will change together rather than receive isolated presentation patches. New schema and state
+versions must retain legacy records. Automated tests remain necessary but cannot close the phase
+without human usability results. A presenter-led technical build may become ready before
+unsupervised use, but both verdicts must be stated separately.

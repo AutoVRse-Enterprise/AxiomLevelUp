@@ -2897,3 +2897,19 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Follow-ups:** Redesign the case around one explicit mission, keep task/evidence/action in one
   workspace, make evidence and differential behavior causally relevant, and repeat a
   bridge-disabled human walkthrough before a self-guided trainee demonstration.
+
+### [2026-10-04 21:28] P13-T00 - Baseline and rescope Phase 13
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Committed the post-Phase-12 trainee UX audit baseline, opened Phase 13, recorded the
+  guided Case Lab principles in ADR-095 and mapped every active audit finding to a Phase 13 task.
+  Corrected the durable audit by removing false H13 (42 screenshots do exist) and narrowing H08 to
+  the single 95/85-minute Scientific Imaging mismatch.
+- **Files changed:** `docs/phases/phase-13-client-demo-readiness.md`, `docs/ROADMAP.md`,
+  `docs/DECISIONS.md`, `docs/qa/phase-13-ux-findings.md`, `docs/ACTIVITY_LOG.md`,
+  `docs/HANDOFF.md`, and the external client-demo readiness Canvas.
+- **Commands run:** Repository baseline/diff review; Canvas diagnostics; IDE diagnostics;
+  `git diff --check`.
+- **Result/verification:** Phase 13 is active with 17 tasks, an explicit human-usability exit gate
+  and no clinical-accuracy scope. Audit baseline committed as `ec8f8ae`.
+- **Follow-ups:** Execute P13-T01 immediate functional fixes.

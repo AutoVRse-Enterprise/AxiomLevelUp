@@ -14,6 +14,7 @@
 | 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only        |
 | 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                |
 | 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
+| 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates       |
 
 ## Sequencing note
 
@@ -91,3 +92,9 @@ with a unified runbook and audience-specific verdict.
 This is technical app completion, not external release approval. Phase 9 remains active for
 physical Android/iOS gates or approved waivers, and the clinical, anatomy/pathology and client/legal
 claim ledgers remain unapproved. Unsupervised/external use is therefore still No-go.
+
+Phase 13 was opened after an end-to-end trainee-doctor UX audit found that the technically complete
+Case Lab did not communicate one coherent reasoning loop. It makes mission, evidence, differential,
+spatial reconstruction, commitment and debrief causally connected; implements the unknown-point
+concept; closes remaining functional demo defects; and requires unaided human usability evidence.
+Clinical accuracy and medical/regulatory review are intentionally outside this phase.

@@ -2,10 +2,8 @@
 
 ## Current phase/task
 
-Phase 12 is complete through P12-T12. All assigned implementation and technical QA gates are
-closed. A post-closeout product audit has now been reframed for a conceptual IT demo: clinical
-accuracy and medical/regulatory review are out of scope, while the trainee-doctor Case Lab
-experience is the primary concern. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 baseline/rescope is complete and P13-T01
+immediate functional fixes is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through P9-M03.
 
 ## Done
@@ -34,6 +32,10 @@ P9-M01 through P9-M03.
 - Confirmed the central UX contradiction: the advanced case can earn 100% Anatomy and 100%
   Diagnosis after reviewing only 1/5 clues, while expert comparison reports every differential
   hypothesis as `Not rated`.
+- Committed the audit baseline as `ec8f8ae`.
+- Created the Phase 13 plan, roadmap entry, ADR-095 and finding-to-task register.
+- Corrected audit H13 (the 42 screenshots exist) and narrowed H08 to the Scientific Imaging
+  95/85-minute mismatch.
 
 ## Verification
 
@@ -68,19 +70,14 @@ P9-M01 through P9-M03.
 
 ## In progress
 
-- No Phase 12 implementation remains.
-- The UX audit is complete; no product redesign was implemented in this review task.
-- Phase 12 implementation and closeout remain committed through `98d0d51`; the audit documentation
-  changes are uncommitted.
+- P13-T01 is next; no runtime Phase 13 changes have landed yet.
+- The external Canvas correction is complete and clean.
 
 ## Next three steps
 
-1. Reframe Case Lab around one explicit mission and a continuous
-   brief → gather evidence → update differential → localise → commit → debrief loop.
-2. Make clues and differential updates causally relevant to scored decisions, expose clue cost at
-   the decision point and keep task/evidence/action visible together on desktop and mobile.
-3. After UX changes, run an unaided bridge-disabled trainee walkthrough; then complete or waive
-   P9-M01 through P9-M03 for production follow-up.
+1. Complete P13-T01 functional fixes and focused tests.
+2. Implement the case 0.2 mission/narrative/evidence contract in P13-T02.
+3. Replace blocking stages and add the guided first-run experience in P13-T03.
 
 ## Blockers/questions for the user
 
@@ -96,9 +93,10 @@ P9-M01 through P9-M03.
 ## Environment notes
 
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
-- Branch: `master`; Phase 12 closeout commit `98d0d51`
-  (`docs(P12-T12): close demo readiness phase`).
-- Worktree: clean except for the user's untracked `docs/reference docs/`, which remains untouched.
+- Branch: `master`; audit baseline commit `ec8f8ae`
+  (`docs(P12-AUD): record trainee UX audit`).
+- Worktree contains the active P13-T00 docs and the user's untouched untracked
+  `docs/reference docs/`.
 - Node/npm/Playwright: 24.19.0 / 11.17.0 / 1.63.0
 - Browser cache override:
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`
