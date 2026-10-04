@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router'
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { CaseLabCard } from '@/components/learning/CaseLabCard'
+import { LearningSurfaceGuide } from '@/components/learning/LearningSurfaceGuide'
 import { CourseCard, SectionHeader } from '@/components/learning'
 import { Card, ProgressBar } from '@/components/ui'
 import { cn } from '@/lib/cn'
@@ -134,6 +135,10 @@ export function LearnPage() {
         </p>
       </header>
 
+      {appConfig.caseLab ? (
+        <LearningSurfaceGuide definitions={appConfig.caseLab.surfaceDefinitions} />
+      ) : null}
+
       {activePathway && pathwayView ? (
         <Card className="overflow-hidden bg-gradient-to-br from-brand-900 to-brand-700 text-white">
           <Route aria-hidden="true" className="text-brand-200" size={30} />
@@ -160,7 +165,12 @@ export function LearnPage() {
       {caseCards.length ? (
         <section aria-label={appConfig.caseLab?.title ?? 'Case Lab'}>
           <SectionHeader
-            description={`${caseCards.length} ${caseCards.length === 1 ? 'case' : 'cases'} · all tiers open`}
+            action={
+              <Link className="text-small font-semibold text-brand-700" to="/learn/cases">
+                View Case Lab
+              </Link>
+            }
+            description={appConfig.caseLab?.surfaceDefinitions.caseLab}
             title={appConfig.caseLab?.title ?? 'Case Lab'}
           />
           <div className="mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">

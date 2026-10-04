@@ -51,6 +51,9 @@ const ChallengePlayerPage = lazy(() =>
 const CaseIntroPage = lazy(() =>
   import('@/routes/cases/CaseIntroPage').then((module) => ({ default: module.CaseIntroPage })),
 )
+const CaseLabPage = lazy(() =>
+  import('@/routes/cases/CaseLabPage').then((module) => ({ default: module.CaseLabPage })),
+)
 const CasePlayerPage = lazy(() =>
   import('@/routes/cases/CasePlayerPage').then((module) => ({ default: module.CasePlayerPage })),
 )
@@ -87,6 +90,7 @@ export function createAppRoutes(enableDevTools = devToolsEnabled): RouteObject[]
       children: [
         { index: true, element: <HomePage />, handle: { title: 'Home' } },
         { path: 'learn', element: lazyPage(<LearnPage />), handle: { title: 'Learn' } },
+        { path: 'learn/cases', element: lazyPage(<CaseLabPage />), handle: { title: 'Case Lab' } },
         {
           path: 'learn/pathways/:pathwayId',
           element: lazyPage(<PathwayPage />),

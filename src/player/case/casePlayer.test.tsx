@@ -394,7 +394,7 @@ describe('case player integration', () => {
     expect(screen.getByLabelText('Case time remaining: 5:00')).toBeInTheDocument()
 
     fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
-    expect(walkthrough).toHaveTextContent('Evidence')
+    expect(walkthrough).toHaveTextContent('Clues')
     fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
     expect(walkthrough).toHaveTextContent('Case notes')
     fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
@@ -415,9 +415,9 @@ describe('case player integration', () => {
     expect(screen.getByLabelText('Case time remaining: 4:58')).toBeInTheDocument()
 
     const mobileWorkspace = within(screen.getByRole('tablist', { name: 'Case workspace' }))
-    fireEvent.click(mobileWorkspace.getByRole('tab', { name: 'Evidence' }))
+    fireEvent.click(mobileWorkspace.getByRole('tab', { name: 'Clues' }))
     expect(screen.queryByRole('dialog', { name: 'Clue board' })).not.toBeInTheDocument()
-    fireEvent.click(mobileWorkspace.getByRole('tab', { name: 'Notes' }))
+    fireEvent.click(mobileWorkspace.getByRole('tab', { name: 'Case notes' }))
     expect(screen.queryByRole('dialog', { name: 'Case notes' })).not.toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(2_000))
     expect(useActivitySessionStore.getState().session?.progress['identify-location']).toMatchObject(
@@ -510,8 +510,8 @@ describe('case player integration', () => {
       differential: { 'supported-hypothesis': 'likely' },
     })
     await user.click(
-      within(screen.getByRole('tablist', { name: 'Evidence workspace' })).getByRole('tab', {
-        name: 'Notes',
+      within(screen.getByRole('tablist', { name: 'Case support sections' })).getByRole('tab', {
+        name: 'Case notes',
       }),
     )
     expect(screen.getByText('Target structure')).toBeVisible()
@@ -569,8 +569,8 @@ describe('case player integration', () => {
     )
 
     await user.click(
-      within(screen.getByRole('tablist', { name: 'Evidence workspace' })).getByRole('tab', {
-        name: 'Notes',
+      within(screen.getByRole('tablist', { name: 'Case support sections' })).getByRole('tab', {
+        name: 'Case notes',
       }),
     )
     expect(screen.getByText('Entry waypoint')).toBeVisible()
@@ -605,8 +605,8 @@ describe('case player integration', () => {
 
     await user.click(screen.getByRole('button', { name: 'Context' }))
     expect(
-      within(screen.getByRole('tablist', { name: 'Evidence workspace' })).getByRole('tab', {
-        name: 'Evidence',
+      within(screen.getByRole('tablist', { name: 'Case support sections' })).getByRole('tab', {
+        name: 'Clues',
       }),
     ).toHaveAttribute('aria-selected', 'true')
     expect(events.filter(({ event }) => event === 'case_clue_opened')).toHaveLength(1)
@@ -681,7 +681,7 @@ describe('case player integration', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
     expect(
-      within(screen.getByRole('tabpanel', { name: 'Evidence' })).getAllByRole('heading', {
+      within(screen.getByRole('tabpanel', { name: 'Clues' })).getAllByRole('heading', {
         name: 'Context',
       }),
     ).not.toHaveLength(0)
@@ -708,11 +708,11 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('button', { name: 'Start' }))
     await user.click(
       within(screen.getByRole('tablist', { name: 'Case workspace' })).getByRole('tab', {
-        name: 'Evidence',
+        name: 'Clues',
       }),
     )
 
-    expect(screen.getByRole('tabpanel', { name: 'Evidence' })).toBeInTheDocument()
+    expect(screen.getByRole('tabpanel', { name: 'Clues' })).toBeInTheDocument()
     expect(useActivitySessionStore.getState().session?.caseProgress?.openedClueIds ?? []).toEqual([])
     expect(useActivitySessionStore.getState().session?.caseProgress?.clueOpenContexts ?? {}).toEqual(
       {},
@@ -737,7 +737,7 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('button', { name: 'Reopen clue: Context' }))
 
     expect(
-      within(screen.getByRole('tabpanel', { name: 'Evidence' })).getAllByRole('heading', {
+      within(screen.getByRole('tabpanel', { name: 'Clues' })).getAllByRole('heading', {
         name: 'Context',
       }),
     ).not.toHaveLength(0)

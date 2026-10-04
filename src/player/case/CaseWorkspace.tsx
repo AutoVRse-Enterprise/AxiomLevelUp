@@ -21,8 +21,8 @@ const segments: Array<{
   icon: typeof FileQuestion
 }> = [
   { id: 'task', label: 'Task', icon: FileQuestion },
-  { id: 'evidence', label: 'Evidence', icon: Lightbulb },
-  { id: 'notes', label: 'Notes', icon: NotebookTabs },
+  { id: 'evidence', label: 'Clues', icon: Lightbulb },
+  { id: 'notes', label: 'Case notes', icon: NotebookTabs },
 ]
 
 const desktopSegments = segments.slice(1) as Array<
@@ -87,12 +87,12 @@ export function CaseWorkspace({
             segment === 'task' && 'hidden',
             'min-w-0 md:sticky md:top-[calc(5rem+env(safe-area-inset-top))] md:block md:max-h-[calc(100dvh-6rem)] md:overflow-y-auto md:overscroll-contain',
           )}
-          aria-label="Case evidence workspace"
+          aria-label="Case support workspace"
         >
           <div
             className="mb-3 hidden grid-cols-2 rounded-lg bg-neutral-100 p-1 md:grid"
             role="tablist"
-            aria-label="Evidence workspace"
+            aria-label="Case support sections"
           >
             {desktopSegments.map(({ id, label }) => (
               <button
@@ -117,7 +117,7 @@ export function CaseWorkspace({
           <section
             id="case-workspace-evidence"
             role="tabpanel"
-            aria-label="Evidence"
+            aria-label="Clues"
             className={cn(
               segment !== 'evidence' && 'hidden',
               desktopPanel === 'evidence' ? 'md:block' : 'md:hidden',
@@ -129,7 +129,7 @@ export function CaseWorkspace({
           <section
             id="case-workspace-notes"
             role="tabpanel"
-            aria-label="Notes"
+            aria-label="Case notes"
             className={cn(
               segment !== 'notes' && 'hidden',
               desktopPanel === 'notes' ? 'md:block' : 'md:hidden',

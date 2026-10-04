@@ -1835,3 +1835,28 @@ vary while remaining stable across refresh and resume. Authors must provide neut
 complete answer mappings for each candidate. Automated tests can select a known candidate without
 making deterministic seed controls part of production behavior. Neutral labels intentionally trade
 anatomical specificity for pre-commit concealment and require moderated usability validation.
+
+## ADR-100: Case Lab has a recommendation-led entry point and fixed learner glossary
+
+**Status:** Accepted
+
+**Context:** Home promoted one configured advanced case even for a new learner, Learn presented
+every case without progression cues, and “View all cases” did not lead to a dedicated case
+catalogue. The product also alternated between Evidence and Clues, Notes and Case notes, Findings
+and Spatial findings, and Diagnose and Conclude, making the learning model harder to infer.
+
+**Decision:** Add a `recommended` featured-case mode that selects the first incomplete non-daily
+case in Foundation, Intermediate, Advanced order, retaining the configured feature as fallback.
+Create `/learn/cases` as the canonical Case Lab hub with a tier ladder, Start here and Recommended
+next cues, and a separate daily case section. Configure and display concise definitions for
+Pathway, Course, Case Lab and Daily challenge on Learn and Challenge.
+
+Use the learner-facing glossary “Clues”, “Spatial findings”, “Case notes” and “Conclude” throughout
+the Case Lab. Keep internal schema identifiers such as the `diagnose` stage kind unchanged for
+compatibility. Extend route-level copy checks to include the hub and reject deprecated standalone
+labels.
+
+**Consequences:** Fresh learners enter at Foundation while experienced learners advance to the
+first unfinished tier. Product surfaces have explicit, stable meanings and one destination for all
+cases. Existing deep links remain valid, and content authors can revise surface explanations
+without changing React components.

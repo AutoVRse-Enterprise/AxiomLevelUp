@@ -29,18 +29,18 @@ test('P12-T10: CasePlayer, results and comparison support 200% text', async ({ p
   await page.getByRole('button', { name: /^Clues/ }).click()
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer Clues at 200% text')
   const close = page.getByRole('button', { name: 'Close' })
-  const notesTab = page.getByRole('tab', { name: 'Notes' })
+  const notesTab = page.getByRole('tab', { name: 'Case notes' })
   if (await notesTab.isVisible()) {
     await notesTab.click()
   } else {
     await close.click()
-    await page.getByRole('button', { name: 'Notes', exact: true }).click()
+    await page.getByRole('button', { name: 'Case notes', exact: true }).click()
   }
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer Notes at 200% text')
   if (await close.isVisible()) await close.click()
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
-  await page.getByText('Inspect findings').click()
+  await page.getByText('Inspect spatial findings').click()
   await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
   await expectReachable(page.getByRole('button', { name: 'Continue', exact: true }))
 
@@ -64,7 +64,7 @@ test('P12-T10: keyboard-only learner path reaches case completion', async ({ pag
 
   await keyboardActivate(page, page.getByText('Choose from list'))
   await keyboardActivate(page, page.getByRole('button', { name: 'Left upper lobe', exact: true }))
-  await keyboardActivate(page, page.getByText('Inspect findings'))
+  await keyboardActivate(page, page.getByText('Inspect spatial findings'))
   await keyboardActivate(
     page,
     page.getByRole('button', { name: 'Diffuse airway-wall change', exact: true }),

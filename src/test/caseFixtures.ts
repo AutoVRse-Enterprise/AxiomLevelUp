@@ -20,8 +20,15 @@ export function makeCaseRegistry(): ContentRegistry {
     caseLab: {
       title: 'Case Lab',
       featuredCaseId: fixtureCase.id,
+      featuredCaseMode: 'configured',
       caseIds: [fixtureCase.id],
       dailyQuickCaseId: fixtureCase.id,
+      surfaceDefinitions: {
+        pathway: 'A guided learning sequence.',
+        course: 'A structured set of lessons.',
+        caseLab: 'A patient scenario for applied reasoning.',
+        dailyChallenge: 'A short daily case.',
+      },
       howItWorks: [
         { id: 'first_attempt', title: 'First answer', description: 'Your first answer is scored.' },
         { id: 'optional_clues', title: 'Clues', description: 'Optional clues can cost points.' },

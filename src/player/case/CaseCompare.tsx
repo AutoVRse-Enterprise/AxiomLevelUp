@@ -268,7 +268,7 @@ export function CaseCompare({
           aria-labelledby="evidence-heading"
         >
           <h2 className="text-heading font-bold text-neutral-950" id="evidence-heading">
-            Evidence that mattered
+            Clues and spatial findings that mattered
           </h2>
           <ul className="mt-4 space-y-3">
             {weightedEvidence.map(({ evidence, index, label, reviewed }) => (

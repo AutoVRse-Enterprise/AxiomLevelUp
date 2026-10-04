@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { SectionHeader } from '@/components/learning'
+import { LearningSurfaceGuide } from '@/components/learning/LearningSurfaceGuide'
 import { Card, Chip, ProgressBar } from '@/components/ui'
 import { formatEstimatedMinutes, formatXp } from '@/engines/cases/formatters'
 import { resolveWeeklyChallengeDestination } from '@/engines/learning/weeklyChallengeDestination'
@@ -43,8 +44,18 @@ export function ChallengePage() {
         </p>
       </header>
 
+      {appConfig.caseLab ? (
+        <LearningSurfaceGuide definitions={appConfig.caseLab.surfaceDefinitions} />
+      ) : null}
+
       <section aria-label="Daily challenges">
-        <SectionHeader description="A short focused activity for today." title="Daily challenge" />
+        <SectionHeader
+          description={
+            appConfig.caseLab?.surfaceDefinitions.dailyChallenge ??
+            'A short focused activity for today.'
+          }
+          title="Daily challenge"
+        />
         <div className="mt-4 grid gap-5 lg:grid-cols-2">
           {daily.map((challenge) => {
             const progress = challengeProgress[challenge.id]

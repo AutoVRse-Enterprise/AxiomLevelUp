@@ -183,8 +183,15 @@
   "caseLab": {
     "title": "Respiratory Case Lab",
     "featuredCaseId": "exacerbation-advanced",
+    "featuredCaseMode": "recommended",
     "caseIds": ["asthma-foundation", "copd-intermediate", "exacerbation-advanced"],
     "dailyQuickCaseId": "wheeze-quick",
+    "surfaceDefinitions": {
+      "pathway": "A guided sequence that connects courses and cases toward a broader capability.",
+      "course": "A structured set of lessons for building knowledge and practical skills.",
+      "caseLab": "A patient scenario where you gather clues, inspect spatial findings and commit your reasoning.",
+      "dailyChallenge": "A short daily case that keeps evidence-based decisions in practice."
+    },
     "howItWorks": [
       {
         "id": "first_attempt",

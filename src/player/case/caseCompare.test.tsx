@@ -71,7 +71,9 @@ describe('case comparison', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'How the model answer approached it' })).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Evidence that mattered' })).toBeVisible()
+    expect(
+      screen.getByRole('heading', { name: 'Clues and spatial findings that mattered' }),
+    ).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Differential evolution' })).toBeVisible()
     expect(screen.getAllByText('Orient: possible')).toHaveLength(2)
     expect(screen.getByText('Model answer: leading')).toBeVisible()

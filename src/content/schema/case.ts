@@ -224,8 +224,22 @@ export const caseLabConfigSchema = z
   .strictObject({
     title: nonEmptyStringSchema,
     featuredCaseId: idSchema,
+    featuredCaseMode: z.enum(['configured', 'recommended']).default('configured'),
     caseIds: z.array(idSchema).min(1),
     dailyQuickCaseId: idSchema,
+    surfaceDefinitions: z
+      .strictObject({
+        pathway: nonEmptyStringSchema,
+        course: nonEmptyStringSchema,
+        caseLab: nonEmptyStringSchema,
+        dailyChallenge: nonEmptyStringSchema,
+      })
+      .default({
+        pathway: 'A guided sequence toward a broader capability.',
+        course: 'A structured set of lessons.',
+        caseLab: 'A patient scenario for applied reasoning.',
+        dailyChallenge: 'A short daily practice activity.',
+      }),
     howItWorks: z
       .array(caseHowItWorksStepSchema)
       .length(4)

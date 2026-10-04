@@ -133,7 +133,7 @@ export function CaseNotes({
 
       {inspectedFindings.length ? (
         <section className="mt-5">
-          <h3 className="font-semibold text-neutral-950">Findings</h3>
+          <h3 className="font-semibold text-neutral-950">Spatial findings</h3>
           <ul className="mt-2 space-y-2">
             {inspectedFindings.map((finding) => {
               return (

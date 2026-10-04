@@ -64,7 +64,7 @@ Two audit corrections were applied at baseline:
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
 | U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Closed: mission, walkthrough, workspace and required reasoning loop landed |
-| U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Open |
+| U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Partial: recommendation now starts at the first incomplete tier; fresh profile remains |
 | U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Closed: mission and operating rules render before launch |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
 | U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Partial: task and evidence now share one workspace |
@@ -82,8 +82,8 @@ Two audit corrections were applied at baseline:
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Closed: deterministic takeaway and recommended-next action lead the result |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Open |
-| U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Partial: pathway case destination fixed; IA copy remains |
-| U21 | Product terminology changes too often | P13-T11 | Open |
+| U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Closed: destinations are fixed and configured surface definitions explain each format |
+| U21 | Product terminology changes too often | P13-T11 | Closed: Case Lab uses Clues, Spatial findings, Case notes and Conclude consistently |
 
 ## Closure protocol
 

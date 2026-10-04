@@ -173,16 +173,16 @@ test.describe('P12-T10 anatomy and session resilience', () => {
     await page.goto('/learn/cases/asthma-foundation/play')
     await page.getByText('Choose from list').click()
     await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
-    await page.getByText('Inspect findings').click()
+    await page.getByText('Inspect spatial findings').click()
     await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
 
     await page.getByRole('button', { name: /^Clues/ }).click()
-    const notesTab = page.getByRole('tab', { name: 'Notes' })
+    const notesTab = page.getByRole('tab', { name: 'Case notes' })
     if (await notesTab.isVisible()) {
       await notesTab.click()
     } else {
       await page.getByRole('button', { name: 'Close' }).click()
-      await page.getByRole('button', { name: 'Notes', exact: true }).click()
+      await page.getByRole('button', { name: 'Case notes', exact: true }).click()
     }
     const finding = page.locator('li').filter({ hasText: 'Illustrative upper-lobe region' })
     await finding.getByRole('button', { name: 'Pin finding' }).click()
@@ -203,7 +203,7 @@ test.describe('P12-T10 anatomy and session resilience', () => {
       await notesTab.click()
     } else {
       await page.getByRole('button', { name: 'Close' }).click()
-      await page.getByRole('button', { name: 'Notes', exact: true }).click()
+      await page.getByRole('button', { name: 'Case notes', exact: true }).click()
     }
     await expect(
       page

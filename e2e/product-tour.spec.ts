@@ -180,7 +180,7 @@ async function completeDailyChallenge(page: Page, testInfo: TestInfo) {
 
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Left upper lobe', exact: true }).click()
-  await page.getByText('Inspect findings').click()
+  await page.getByText('Inspect spatial findings').click()
   await page.getByRole('button', { name: 'Diffuse airway-wall change', exact: true }).click()
   await continueCurrentStep(page)
   await page.getByRole('radio', { name: 'Conducting airway', exact: true }).check()

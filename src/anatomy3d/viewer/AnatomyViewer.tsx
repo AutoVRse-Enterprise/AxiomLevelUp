@@ -535,7 +535,7 @@ export function AnatomyViewer({
           {findings.length ? (
             <details className="rounded-lg border border-clinical-700 bg-clinical-900">
               <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-                Inspect findings
+                Inspect spatial findings
               </summary>
               <ul className="grid gap-2 border-t border-clinical-700 p-3 sm:grid-cols-2">
                 {findings.map((finding) => (

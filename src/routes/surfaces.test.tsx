@@ -18,6 +18,7 @@ import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
 import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures'
 
 import { ChallengePage } from './challenge/ChallengePage'
+import { CaseLabPage } from './cases/CaseLabPage'
 import { HomePage } from './home/HomePage'
 import { LeaderboardPage } from './leaderboard/LeaderboardPage'
 import { CoursePage } from './learn/CoursePage'
@@ -148,6 +149,29 @@ describe('application surfaces', () => {
     expect(screen.getByText('Generic')).toBeVisible()
     expect(screen.getByText('Daily')).toBeVisible()
     expect(screen.getByText('4 min')).toBeVisible()
+  })
+
+  it('features the first incomplete Case Lab tier on Home', () => {
+    useLearnerStore.setState({ caseProgress: {}, caseAttempts: {} })
+    renderSurface(<HomePage />, '/')
+
+    expect(screen.getByRole('link', { name: /Variable Airflow Review/ })).toBeVisible()
+    expect(screen.getByRole('link', { name: 'View all cases' })).toHaveAttribute(
+      'href',
+      '/learn/cases',
+    )
+  })
+
+  it('renders the Case Lab tier ladder and configured learning-format definitions', () => {
+    useLearnerStore.getState().replaceWithSeed(freshSeed)
+    renderSurface(<CaseLabPage />, '/learn/cases', '/learn/cases')
+
+    expect(screen.getByRole('heading', { name: 'Foundation' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Intermediate' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Advanced' })).toBeVisible()
+    expect(screen.getByText('Start here')).toBeVisible()
+    expect(screen.getByText('Recommended next')).toBeVisible()
+    expect(screen.getByText('Choose the right learning format')).toBeVisible()
   })
 
   it('labels a daily case as a case instead of questions', () => {

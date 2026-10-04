@@ -64,6 +64,7 @@ const machineLabels = [
 const learnerRoutes = [
   '/',
   '/learn',
+  '/learn/cases',
   ...appConfig.pathways.map(({ id }) => `/learn/pathways/${id}`),
   ...courses.flatMap((course) => [
     `/learn/courses/${course.id}`,
@@ -105,11 +106,16 @@ test('stable learner routes do not expose implementation labels or content IDs',
     const placeholderCopy = ['coming soon', 'not playable yet', 'placeholder'].filter((value) =>
       visibleText.toLowerCase().includes(value),
     )
-    if (leakedIds.length || placeholderCopy.length) {
+    const deprecatedLabels = visibleText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => ['Diagnose', 'Findings', 'Notes', 'Inspect findings'].includes(line))
+    if (leakedIds.length || placeholderCopy.length || deprecatedLabels.length) {
       failures.push(
         `${route}: ${[
           ...leakedIds.map((value) => `raw "${value}"`),
           ...placeholderCopy.map((value) => `copy "${value}"`),
+          ...deprecatedLabels.map((value) => `deprecated label "${value}"`),
         ].join(', ')}`,
       )
     }

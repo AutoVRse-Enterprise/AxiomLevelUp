@@ -68,7 +68,7 @@ async function chooseFromList(page: Page, label: string) {
 }
 
 async function inspectFinding(page: Page, label: string) {
-  const summary = page.getByText('Inspect findings')
+  const summary = page.getByText('Inspect spatial findings')
   const details = summary.locator('xpath=..')
   if ((await details.getAttribute('open')) === null) await summary.click()
   await page.getByRole('button', { name: label, exact: true }).click()

@@ -103,7 +103,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Collapse score details and reduce duplication with comparison.
   - Reframe the benchmark as a Model answer and show differential evolution.
 
-- [ ] **P13-T11 — Navigation and terminology**
+- [x] **P13-T11 — Navigation and terminology** — completed 2026-10-04
   - Recommend the first incomplete tier.
   - Add `/learn/cases` with a tier ladder and route “View all cases” there.
   - Explain Pathway, Course, Case Lab and Daily challenge.

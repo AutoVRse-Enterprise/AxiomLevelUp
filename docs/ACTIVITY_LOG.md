@@ -3079,3 +3079,20 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   selector and player tests pass. Takeaway priority is unreviewed decisive evidence, then the first
   missed scored task, then the first Model answer path highlight.
 - **Follow-ups:** Use the recommendation selector on Home and build the Case Lab hub in P13-T11.
+
+### [2026-10-04 23:25] P13-T11 - Make Case Lab navigation self-explanatory
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Switched Home to the first incomplete non-daily case, added the `/learn/cases` tier
+  ladder with Start here and Recommended next cues, routed all-case navigation to it, and added
+  configured definitions for Pathway, Course, Case Lab and Daily challenge. Standardized Case Lab
+  labels to Clues, Spatial findings, Case notes and Conclude; recorded ADR-100.
+- **Files changed:** App-config and schema; Home, Learn, Challenge, Case Lab hub and learning-surface
+  guide; case workspace, walkthrough, notes and anatomy viewer copy; selectors, route/E2E tests,
+  generated schema and Phase 13 governance docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; `npm run validate:content`;
+  focused Vitest (5 files / 90 tests); `npm run lint`; IDE diagnostics.
+- **Result/verification:** Configuration, TypeScript, lint and focused tests pass. Home defaults to
+  Foundation for a fresh learner, all cases have a dedicated tiered route and deprecated
+  standalone Case Lab labels are covered by the learner-copy sweep.
+- **Follow-ups:** Add client-safe fresh and experienced demo profiles in P13-T12.

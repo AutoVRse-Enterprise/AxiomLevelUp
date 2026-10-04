@@ -449,7 +449,7 @@
       "id": "exac-diagnose",
       "kind": "diagnose",
       "component": "diagnosis",
-      "title": "Diagnose",
+      "title": "Conclude",
       "purpose": "Cite the decisive evidence, commit to the leading explanation and identify its consequence.",
       "intro": "Synthesize the pattern, then identify its immediate consequence.",
       "update": {

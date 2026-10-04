@@ -265,7 +265,9 @@ describe('Case Lab routes', () => {
     renderCaseRoute(`/learn/cases/${fixtureCase.id}/attempts/${teachingAttempt.attemptId}`)
 
     await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
-    expect(screen.getByRole('heading', { name: 'Evidence that mattered' })).toBeVisible()
+    expect(
+      screen.getByRole('heading', { name: 'Clues and spatial findings that mattered' }),
+    ).toBeVisible()
     expect(screen.getByText('Reviewed')).toBeVisible()
   })
 

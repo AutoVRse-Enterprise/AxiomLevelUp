@@ -10,12 +10,12 @@ const walkthroughSteps = [
     description: 'Start with the task prompt. It tells you what to inspect or decide right now.',
   },
   {
-    title: 'Evidence',
+    title: 'Clues',
     description: 'Open relevant clues and review them before you commit to an answer.',
   },
   {
     title: 'Case notes',
-    description: 'Pin useful evidence and update your working hypotheses as the case develops.',
+    description: 'Pin useful clues or spatial findings and update your working hypotheses.',
   },
   {
     title: 'Primary action',

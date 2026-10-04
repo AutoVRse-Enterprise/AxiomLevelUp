@@ -125,9 +125,9 @@ async function completeExplore(page: Page, caseDoc: CaseDocumentFixture, step: C
     }
   }
   for (const findingId of step.content.requiredFindingIds ?? []) {
-    const details = page.getByText('Inspect findings').locator('xpath=..')
+    const details = page.getByText('Inspect spatial findings').locator('xpath=..')
     if ((await details.getAttribute('open')) === null)
-      await page.getByText('Inspect findings').click()
+      await page.getByText('Inspect spatial findings').click()
     const finding = caseDoc.findings?.find(({ id }) => id === findingId)
     await page.getByRole('button', { name: finding?.label ?? findingId, exact: true }).click()
   }

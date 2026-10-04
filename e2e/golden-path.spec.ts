@@ -125,7 +125,7 @@ async function projectedStructurePoint(page: Page, structureId: string) {
 async function completeFoundationExploration(page: Page) {
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
-  await page.getByText('Inspect findings').click()
+  await page.getByText('Inspect spatial findings').click()
   await page.getByRole('button', { name: 'Illustrative upper-lobe region' }).click()
   await page.getByRole('button', { name: 'Continue' }).click()
 }

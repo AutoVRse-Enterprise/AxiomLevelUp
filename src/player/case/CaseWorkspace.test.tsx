@@ -32,14 +32,14 @@ describe('CaseWorkspace', () => {
     const mobileTabs = within(screen.getByRole('tablist', { name: 'Case workspace' }))
 
     expect(mobileTabs.getByRole('tab', { name: 'Task' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('complementary', { name: 'Case evidence workspace' })).toBeInTheDocument()
+    expect(screen.getByRole('complementary', { name: 'Case support workspace' })).toBeInTheDocument()
 
-    await user.click(mobileTabs.getByRole('tab', { name: 'Evidence' }))
-    expect(mobileTabs.getByRole('tab', { name: 'Evidence' })).toHaveAttribute(
+    await user.click(mobileTabs.getByRole('tab', { name: 'Clues' }))
+    expect(mobileTabs.getByRole('tab', { name: 'Clues' })).toHaveAttribute(
       'aria-selected',
       'true',
     )
-    expect(screen.getByRole('tabpanel', { name: 'Evidence' })).toHaveTextContent('Current evidence')
+    expect(screen.getByRole('tabpanel', { name: 'Clues' })).toHaveTextContent('Current evidence')
     expect(screen.getByRole('status')).toHaveTextContent('Two evidence items are now available.')
   })
 
@@ -48,8 +48,8 @@ describe('CaseWorkspace', () => {
     const view = render(workspace())
     const mobileTabs = within(screen.getByRole('tablist', { name: 'Case workspace' }))
 
-    await user.click(mobileTabs.getByRole('tab', { name: 'Notes' }))
-    expect(mobileTabs.getByRole('tab', { name: 'Notes' })).toHaveAttribute(
+    await user.click(mobileTabs.getByRole('tab', { name: 'Case notes' }))
+    expect(mobileTabs.getByRole('tab', { name: 'Case notes' })).toHaveAttribute(
       'aria-selected',
       'true',
     )

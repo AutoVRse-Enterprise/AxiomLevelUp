@@ -1174,6 +1174,14 @@
           "minLength": 1,
           "pattern": "^[a-z0-9][a-z0-9_-]*$"
         },
+        "featuredCaseMode": {
+          "default": "configured",
+          "type": "string",
+          "enum": [
+            "configured",
+            "recommended"
+          ]
+        },
         "caseIds": {
           "minItems": 1,
           "type": "array",
@@ -1187,6 +1195,40 @@
           "type": "string",
           "minLength": 1,
           "pattern": "^[a-z0-9][a-z0-9_-]*$"
+        },
+        "surfaceDefinitions": {
+          "default": {
+            "pathway": "A guided sequence toward a broader capability.",
+            "course": "A structured set of lessons.",
+            "caseLab": "A patient scenario for applied reasoning.",
+            "dailyChallenge": "A short daily practice activity."
+          },
+          "type": "object",
+          "properties": {
+            "pathway": {
+              "type": "string",
+              "minLength": 1
+            },
+            "course": {
+              "type": "string",
+              "minLength": 1
+            },
+            "caseLab": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyChallenge": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "pathway",
+            "course",
+            "caseLab",
+            "dailyChallenge"
+          ],
+          "additionalProperties": false
         },
         "howItWorks": {
           "minItems": 4,
@@ -1524,8 +1566,10 @@
       "required": [
         "title",
         "featuredCaseId",
+        "featuredCaseMode",
         "caseIds",
         "dailyQuickCaseId",
+        "surfaceDefinitions",
         "howItWorks",
         "organSystems",
         "clueCategories",

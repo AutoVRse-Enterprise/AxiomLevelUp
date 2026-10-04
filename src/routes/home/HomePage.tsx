@@ -27,6 +27,7 @@ import {
   selectLeaderboardView,
   selectLevelProgress,
   selectPathwayView,
+  selectRecommendedCase,
   selectRevisionRecommendations,
   selectWeeklyActivity,
 } from '@/state/selectors'
@@ -47,7 +48,11 @@ export function HomePage() {
   const stats = useLearnerStore((state) => state.stats)
   const gamification = useLearnerStore((state) => state.gamification)
   const summary = selectContinueLearning({ lessonProgress }, catalogCourses, lessonById, courseById)
-  const featuredCase = selectFeaturedCase({ caseProgress, caseAttempts }, registry)
+  const featuredCase =
+    appConfig.caseLab?.featuredCaseMode === 'recommended'
+      ? (selectRecommendedCase({ caseProgress, caseAttempts }, registry) ??
+        selectFeaturedCase({ caseProgress, caseAttempts }, registry))
+      : selectFeaturedCase({ caseProgress, caseAttempts }, registry)
   const imageUrl = useAssetUrl(summary?.course.imageAssetId)
   const dailyChallenge = appConfig.challenges.find(({ type }) => type === 'daily')
   const currentDate = today()
@@ -142,7 +147,7 @@ export function HomePage() {
         <section aria-label={appConfig.caseLab?.title ?? 'Case Lab'}>
           <SectionHeader
             action={
-              <Link className="text-small font-semibold text-brand-700" to="/learn">
+              <Link className="text-small font-semibold text-brand-700" to="/learn/cases">
                 View all cases
               </Link>
             }
