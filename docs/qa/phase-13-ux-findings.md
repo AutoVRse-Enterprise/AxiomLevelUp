@@ -31,7 +31,7 @@ Two audit corrections were applied at baseline:
 | H02 | Segmented rankings absent | P13-T13 | Open; simulated preview only |
 | H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: unknown-point localisation and cited findings are scored; bridge-free browser proof remains |
 | H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
-| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Partial: mission, updates and evidence citation now connect artifacts |
+| H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Closed: mission, progressive patient timeline and cited evidence connect the case |
 | H06 | Benchmark purpose is unclear | P13-T10 | Open |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
@@ -76,9 +76,9 @@ Two audit corrections were applied at baseline:
 | U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Partial: required checkpoints remove missing ratings; comparison framing remains |
 | U12 | Notes reveal information prematurely | P13-T05 | Closed: only unlocked clues and inspected findings appear |
 | U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Closed: numeric leakage is rejected and cases require hypothesis weighing plus citation |
-| U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Partial: stage updates are announced inline |
-| U15 | Time expectations conflict | P13-T02, P13-T09 | Partial: estimated duration is validated against targets |
-| U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Partial: briefing explains the first-attempt rule |
+| U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Closed: stage updates appear in a progressive patient timeline |
+| U15 | Time expectations conflict | P13-T02, P13-T09 | Closed: duration is validated and each tier explains its timing mode |
+| U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Closed: briefing and an inline pre-submission notice explain the rule |
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Open |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Open |

@@ -19,6 +19,7 @@ interface StepFrameProps {
   footer?: ReactNode
   timer?: ReactNode
   chromeHeader?: ReactNode
+  chromeTaskNotice?: ReactNode
   chromeAside?: ReactNode
   chromeNotes?: ReactNode
   evidenceAnnouncement?: string
@@ -36,6 +37,7 @@ export function StepFrame({
   footer,
   timer,
   chromeHeader,
+  chromeTaskNotice,
   chromeAside,
   chromeNotes,
   evidenceAnnouncement,
@@ -111,6 +113,7 @@ export function StepFrame({
           {chromeAside && chromeNotes ? (
             <CaseWorkspace
               task={task}
+              taskNotice={chromeTaskNotice}
               evidence={chromeAside}
               notes={chromeNotes}
               evidenceAnnouncement={evidenceAnnouncement}

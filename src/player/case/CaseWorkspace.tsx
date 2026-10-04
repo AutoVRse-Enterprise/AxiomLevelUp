@@ -7,6 +7,7 @@ export type WorkspaceSegment = 'task' | 'evidence' | 'notes'
 
 interface CaseWorkspaceProps {
   task: ReactNode
+  taskNotice?: ReactNode
   evidence: ReactNode
   notes: ReactNode
   evidenceAnnouncement?: string
@@ -30,6 +31,7 @@ const desktopSegments = segments.slice(1) as Array<
 
 export function CaseWorkspace({
   task,
+  taskNotice,
   evidence,
   notes,
   evidenceAnnouncement,
@@ -76,6 +78,7 @@ export function CaseWorkspace({
           className={cn(segment !== 'task' && 'hidden', 'min-w-0 md:block')}
           data-case-task=""
         >
+          {taskNotice}
           {task}
         </main>
 

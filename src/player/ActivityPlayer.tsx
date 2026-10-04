@@ -86,6 +86,7 @@ export interface ActivityPlayerProps {
   clueContext?: ActivityPlayerClueContext
   renderChrome?: (context: ActivityPlayerChromeContext) => {
     header?: ReactNode
+    taskNotice?: ReactNode
     aside?: ReactNode
     notes?: ReactNode
     evidenceAnnouncement?: string
@@ -509,6 +510,7 @@ export function ActivityPlayer({
         }
         layout={step.layout}
         chromeHeader={chrome?.header}
+        chromeTaskNotice={chrome?.taskNotice}
         chromeAside={chrome?.aside}
         chromeNotes={chrome?.notes}
         evidenceAnnouncement={chrome?.evidenceAnnouncement}

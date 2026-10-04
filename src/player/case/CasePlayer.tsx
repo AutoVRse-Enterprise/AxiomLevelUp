@@ -1,4 +1,4 @@
-import { Clock3 } from 'lucide-react'
+import { Clock3, Info } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { AnatomyFindingProvider } from '@/anatomy3d/viewer/findingContext'
@@ -40,6 +40,7 @@ import {
 } from '@/player/ActivityPlayer'
 import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseNotes } from '@/player/case/CaseNotes'
+import { PatientTimeline } from '@/player/case/PatientTimeline'
 import { CaseResults } from '@/player/case/CaseResults'
 import { CaseWalkthrough } from '@/player/case/CaseWalkthrough'
 import type { WorkspaceSegment } from '@/player/case/CaseWorkspace'
@@ -209,21 +210,31 @@ function CaseClock({
     }
   }, [mode, paused])
 
+  if (mode === 'none') {
+    return (
+      <Chip tone="neutral">
+        <Clock3 aria-hidden="true" size={15} />
+        Untimed practice
+      </Chip>
+    )
+  }
+
   const visibleMs = mode === 'countdown' ? (snapshot.remainingMs ?? 0) : snapshot.elapsedMs
-  const label =
+  const label = mode === 'countdown' ? 'Case time remaining' : 'Case elapsed time'
+  const explanation =
     mode === 'countdown'
-      ? 'Case time remaining'
-      : mode === 'none'
-        ? 'Case elapsed time; speed is not scored'
-        : 'Case elapsed time'
+      ? 'Clue review counts; you can continue after zero.'
+      : 'Clue review counts; pace contributes to your score.'
   return (
-    <Chip tone={snapshot.expired ? 'warning' : 'neutral'}>
-      <Clock3 aria-hidden="true" size={15} />
-      {mode === 'none' ? <span>Speed not scored ·</span> : null}
-      <span role="timer" aria-label={`${label}: ${formatClock(visibleMs)}`}>
-        {formatClock(visibleMs)}
-      </span>
-    </Chip>
+    <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
+      <Chip tone={snapshot.expired ? 'warning' : 'neutral'}>
+        <Clock3 aria-hidden="true" size={15} />
+        <span role="timer" aria-label={`${label}: ${formatClock(visibleMs)}`}>
+          {formatClock(visibleMs)}
+        </span>
+      </Chip>
+      <span className="max-w-64 text-right text-caption text-neutral-600">{explanation}</span>
+    </div>
   )
 }
 
@@ -436,7 +447,6 @@ export function CasePlayer({
   const [walkthroughOpen, setWalkthroughOpen] = useState(false)
   const [workspaceSegment, setWorkspaceSegment] = useState<WorkspaceSegment>('task')
   const entryClueAfterWalkthrough = useRef(false)
-  const [cluePresenterBlocking, setCluePresenterBlocking] = useState(false)
   const entryHandled = useRef(false)
   const openedEventSent = useRef(false)
   const completedStageIds = useRef(new Set<string>())
@@ -572,7 +582,6 @@ export function CasePlayer({
         caseProgressRef.current = reset
         setCaseProgress(reset)
         setCluePresentation({ selectedClueId: null, presenterOpen: false })
-        setCluePresenterBlocking(false)
         setWalkthroughOpen(false)
         setWorkspaceSegment('task')
         setOptionalClueConfirmationAcknowledged(false)
@@ -640,7 +649,6 @@ export function CasePlayer({
 
   const showWalkthrough = useCallback(() => {
     setCluePresentation({ selectedClueId: null, presenterOpen: false })
-    setCluePresenterBlocking(false)
     setWalkthroughOpen(true)
   }, [])
 
@@ -740,7 +748,6 @@ export function CasePlayer({
     completedAttemptRef.current = null
     completedStageIds.current.clear()
     setCluePresentation({ selectedClueId: null, presenterOpen: false })
-    setCluePresenterBlocking(false)
     setWalkthroughOpen(false)
     setWorkspaceSegment('task')
     setOptionalClueConfirmationAcknowledged(false)
@@ -793,7 +800,7 @@ export function CasePlayer({
 
   const caseLab = config.caseLab
   if (!caseLab) throw new Error('CasePlayer requires appConfig.caseLab.')
-  const pauseTiming = walkthroughOpen || cluePresenterBlocking
+  const pauseTiming = walkthroughOpen
 
   return (
     <AnatomyFindingProvider findingsByStepId={plan.findingsByStepId}>
@@ -854,7 +861,6 @@ export function CasePlayer({
             }
             if (from?.stageId !== to?.stageId) {
               setCluePresentation({ selectedClueId: null, presenterOpen: false })
-              setCluePresenterBlocking(false)
             }
           }}
           renderChrome={({ stepIndex, step, session }) => {
@@ -910,7 +916,6 @@ export function CasePlayer({
               onOptionalClueConfirmation: () => setOptionalClueConfirmationAcknowledged(true),
               onPresenterOpenChange: (presenterOpen: boolean) =>
                 setCluePresentation((current) => ({ ...current, presenterOpen })),
-              onBlockingChange: setCluePresenterBlocking,
             }
             return {
               header: (
@@ -933,9 +938,26 @@ export function CasePlayer({
                       />
                     }
                   />
+                  <PatientTimeline caseDoc={caseDoc} currentStageIndex={stageIndex} />
                   <StageBanner stage={stage} />
                 </div>
               ),
+              taskNotice:
+                step.scored &&
+                !plan.steps.some(
+                  ({ primitive, scored }) =>
+                    scored && (session.progress[primitive.id]?.attempts ?? 0) > 0,
+                ) ? (
+                  <div
+                    className="mb-3 flex gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-small text-brand-950"
+                    role="note"
+                  >
+                    <Info aria-hidden="true" className="mt-0.5 shrink-0" size={17} />
+                    <p>
+                      <strong>Your first answer is scored;</strong> retries are for learning.
+                    </p>
+                  </div>
+                ) : null,
               aside: <ClueBoard {...commonClueProps} variant="panel" />,
               notes: (
                 <CaseNotes

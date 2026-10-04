@@ -92,7 +92,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Store the attempt seed in session v6 and validate every candidate.
   - Use the mechanic in the advanced case and record ADR-099.
 
-- [ ] **P13-T09 — Narrative, timing and commitment**
+- [x] **P13-T09 — Narrative, timing and commitment** — completed 2026-10-04
   - Add the evolving patient timeline to the workspace.
   - Replace the Foundation clock with “Untimed practice”; explain other timing modes.
   - Disclose first-attempt commitment before the first scored answer.

@@ -174,7 +174,11 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('button', { name: 'Start' }))
     expect(screen.getByRole('heading', { name: 'Orient' })).toHaveFocus()
     expect(screen.getByText('Verify the orient-stage contract.')).toBeVisible()
-    expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time; speed is not scored/)
+    expect(screen.getByText('Untimed practice')).toBeVisible()
+    expect(screen.queryByRole('timer')).not.toBeInTheDocument()
+    expect(screen.getByRole('note')).toHaveTextContent(
+      'Your first answer is scored; retries are for learning.',
+    )
     expect(screen.queryByText(/Task \d+ of \d+/)).not.toBeInTheDocument()
     expect(screen.queryByText('Basic')).not.toBeInTheDocument()
     expect(screen.queryByRole('progressbar', { name: 'Activity progress' })).not.toBeInTheDocument()
@@ -190,6 +194,7 @@ describe('case player integration', () => {
 
     await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
+    expect(screen.queryByRole('note')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     expect(screen.getByRole('heading', { name: 'Conclude' })).toHaveFocus()
     expect(screen.getByText('Verify the conclusion-stage contract.')).toBeVisible()

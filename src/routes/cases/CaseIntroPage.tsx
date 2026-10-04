@@ -30,9 +30,9 @@ function caseRuleDetail(
   if (id === 'timing') {
     if (preset.timing === 'none') return `${preset.label}: untimed practice; speed is not scored.`
     if (preset.timing === 'stopwatch') {
-      return `${preset.label}: a stopwatch tracks pace for the speed part of your score.`
+      return `${preset.label}: a stopwatch tracks pace for the speed part of your score; time spent reviewing clues counts.`
     }
-    return `${preset.label}: a countdown tracks pace, but you can continue when it reaches zero.`
+    return `${preset.label}: a countdown includes time spent reviewing clues, but you can continue when it reaches zero.`
   }
   if (id === 'hints') {
     return preset.hints === 'full'

@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T08 are complete; P13-T09
-narrative, timing and commitment is next. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 through P13-T09 are complete; P13-T10
+results and debrief redesign is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through
 P9-M03.
 
@@ -65,6 +65,9 @@ P9-M03.
 - The advanced case now starts from a seeded unknown airway point, uses neutral branch labels,
   conceals anatomical names until commitment and derives localisation answers from the selected
   entry. Session v6 preserves the seed across resume and E2E builds support a fixed query seed.
+- The case workspace now carries a progressive patient timeline. Foundation is visibly untimed;
+  stopwatch and countdown tiers explain that clue review counts. The first scored task warns about
+  first-attempt scoring before submission.
 
 ## Verification
 
@@ -104,16 +107,18 @@ P9-M03.
   and content validation pass.
 - P13-T08 focused plan/viewer/case-flow suite: **3 files / 28 tests passed**; TypeScript, content
   validation and patch checks pass.
+- P13-T09 focused player/timeline/workspace/route suite: **4 files / 25 tests passed**; TypeScript
+  and IDE diagnostics pass.
 
 ## In progress
 
-- P13-T09 narrative, timing and commitment is next.
+- P13-T10 results and debrief redesign is next.
 
 ## Next three steps
 
-1. Add patient timeline, timing semantics and first-attempt notice in P13-T09.
-2. Redesign results and comparison in P13-T10.
-3. Add the Case Lab hub, recommendation selector and glossary in P13-T11.
+1. Redesign results and comparison in P13-T10.
+2. Add the Case Lab hub, recommendation selector and glossary in P13-T11.
+3. Add fresh and experienced demo profiles with presenter controls in P13-T12.
 
 ## Blockers/questions for the user
 

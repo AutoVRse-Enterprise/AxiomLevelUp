@@ -3048,3 +3048,18 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   case-flow tests pass, including deterministic selection and seed persistence.
 - **Follow-ups:** Add the patient timeline, tier-specific timing semantics and first-attempt
   commitment notice in P13-T09.
+
+### [2026-10-04 23:06] P13-T09 - Connect narrative, timing and commitment
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a collapsible patient strip that progressively reveals authored timeline
+  updates; changed Foundation to a static “Untimed practice” indicator; explained stopwatch and
+  countdown scoring, including clue-review time; and placed a one-time first-answer scoring notice
+  immediately above the first scored task.
+- **Files changed:** `PatientTimeline`, `CasePlayer`, `CaseWorkspace`, `StepFrame`,
+  `ActivityPlayer`, case intro timing copy and focused tests; Phase 13 tracking docs.
+- **Commands run:** `npm run typecheck`; focused Vitest (4 files / 25 tests); IDE diagnostics.
+- **Result/verification:** TypeScript and focused tests pass with no diagnostics. Foundation has no
+  ticking timer, later tiers explain their clock, future patient updates remain concealed, and the
+  commitment notice disappears after the first scored submission.
+- **Follow-ups:** Redesign the result and model-answer debrief in P13-T10.
