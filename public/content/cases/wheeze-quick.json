@@ -327,6 +327,7 @@
     "caseMaxSeconds": 300
   },
   "expertBenchmark": {
+    "kind": "model_answer",
     "name": "Authored respiratory-educator benchmark",
     "durationSeconds": 135,
     "openedClueIds": ["quick-history", "quick-wheeze", "quick-flow"],

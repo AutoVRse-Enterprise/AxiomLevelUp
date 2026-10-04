@@ -33,7 +33,9 @@ anchor or `waypoint`, `toWaypoint` and position `t` along one directed edge. Sta
 unique and follow `orient`,
 `observe`, `interpret`, `diagnose` order; a short case may omit stages without changing that
 order. Semantic validation resolves case, anatomy-map, finding, clue, benchmark-step, concept and
-asset references. Expert benchmarks may add per-step rationale keyed by a valid case primitive ID.
+asset references. Every expert benchmark declares `kind: "model_answer"` so learner-facing
+comparison presents it as one authored reasoning route rather than a universal expert verdict.
+Model answers may add per-step rationale keyed by a valid case primitive ID.
 Primitive and finding IDs are unique in their respective case scopes.
 
 Clues accept only the registered content primitive types and cannot carry timers, XP, rewards or

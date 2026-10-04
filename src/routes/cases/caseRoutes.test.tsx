@@ -219,7 +219,7 @@ describe('Case Lab routes', () => {
     expect(await screen.findByRole('heading', { name: 'Orient' })).toBeVisible()
   })
 
-  it('renders saved results and switches to expert comparison', async () => {
+  it('renders saved results and switches to the model answer', async () => {
     const user = userEvent.setup()
     useLearnerStore.setState({
       caseProgress: {
@@ -234,21 +234,24 @@ describe('Case Lab routes', () => {
     renderCaseRoute(`/learn/cases/${fixtureCase.id}/attempts/${savedAttempt.attemptId}`)
 
     expect(screen.getByText('88/100')).toBeVisible()
+    await user.click(screen.getByText('Score details'))
     expect(screen.getByText(/unavailable for this legacy attempt/i)).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
-    expect(screen.getByText('Attempt comparison')).toBeVisible()
-    expect(screen.getByRole('heading', { name: /Configured expert/ })).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+    expect(screen.getAllByText('Model answer').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'You versus the model answer' })).toBeVisible()
   })
 
-  it('renders persisted v6 speed components and actual awarded XP without reconstruction', () => {
+  it('renders persisted v6 speed components and actual awarded XP without reconstruction', async () => {
+    const user = userEvent.setup()
     useLearnerStore.setState({
       caseAttempts: { [fixtureCase.id]: [truthfulAttempt] },
     })
     renderCaseRoute(`/learn/cases/${fixtureCase.id}/attempts/${truthfulAttempt.attemptId}`)
 
-    const details = screen.getByRole('heading', { name: 'Score details' }).parentElement!
+    const details = screen.getByText('Score details').closest('details')!
+    await user.click(screen.getByText('Score details'))
     expect(within(details).getByText('20%')).toBeVisible()
-    expect(within(details).getByText('80%')).toBeVisible()
+    expect(within(details).getAllByText('80%')).toHaveLength(2)
     expect(within(details).getByText('−2 points')).toBeVisible()
     expect(screen.getByText('30 XP awarded')).toBeVisible()
     expect(screen.getByText('3:00')).toBeVisible()
@@ -261,8 +264,7 @@ describe('Case Lab routes', () => {
     })
     renderCaseRoute(`/learn/cases/${fixtureCase.id}/attempts/${teachingAttempt.attemptId}`)
 
-    expect(screen.getByText('Reviewed')).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'See expert comparison' }))
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
     expect(screen.getByRole('heading', { name: 'Evidence that mattered' })).toBeVisible()
     expect(screen.getByText('Reviewed')).toBeVisible()
   })

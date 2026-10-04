@@ -560,6 +560,7 @@
     "caseMaxSeconds": 480
   },
   "expertBenchmark": {
+    "kind": "model_answer",
     "name": "Authored respiratory-educator benchmark",
     "durationSeconds": 282,
     "openedClueIds": ["exac-history", "exac-flow", "exac-gas", "exac-airway-reference"],

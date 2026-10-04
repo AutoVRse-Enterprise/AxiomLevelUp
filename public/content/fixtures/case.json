@@ -133,6 +133,7 @@
     "caseMaxSeconds": 300
   },
   "expertBenchmark": {
+    "kind": "model_answer",
     "name": "Configured expert",
     "durationSeconds": 90,
     "openedClueIds": ["clue-context"],

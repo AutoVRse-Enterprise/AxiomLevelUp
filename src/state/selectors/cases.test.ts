@@ -6,6 +6,7 @@ import {
   selectCaseLabCards,
   selectCaseResults,
   selectFeaturedCase,
+  selectRecommendedCase,
 } from '@/state/selectors'
 import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
 import { makeValidContentBundle } from '@/test/contentFixtures'
@@ -88,6 +89,20 @@ describe('Case Lab selectors', () => {
 
     expect(cards.map(({ caseId }) => caseId)).toEqual([fixtureCase.id, quickCase.id])
     expect(cards.map(({ daily }) => daily)).toEqual([false, true])
+    expect(
+      selectRecommendedCase({ caseProgress: {}, caseAttempts: {} }, registryWithQuickCase)?.caseId,
+    ).toBe(fixtureCase.id)
+    expect(
+      selectRecommendedCase(
+        {
+          caseProgress: {
+            [fixtureCase.id]: { completions: 1, bestTotal: 80, lastCompletedAt: null },
+          },
+          caseAttempts: {},
+        },
+        registryWithQuickCase,
+      ),
+    ).toBeNull()
   })
 
   it('returns empty views when Case Lab content is not configured', () => {

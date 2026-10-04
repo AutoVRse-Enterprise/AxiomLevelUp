@@ -1205,6 +1205,10 @@
     "expertBenchmark": {
       "type": "object",
       "properties": {
+        "kind": {
+          "type": "string",
+          "const": "model_answer"
+        },
         "name": {
           "type": "string",
           "minLength": 1
@@ -1371,6 +1375,7 @@
         }
       },
       "required": [
+        "kind",
         "name",
         "durationSeconds",
         "openedClueIds",

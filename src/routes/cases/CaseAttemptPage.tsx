@@ -6,7 +6,7 @@ import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseResults } from '@/player/case/CaseResults'
 import { presentCaseAttemptRecord } from '@/player/case/types'
 import { useLearnerStore } from '@/state/learnerStore'
-import { selectCaseCompare, selectCaseResults } from '@/state/selectors'
+import { selectCaseCompare, selectCaseResults, selectRecommendedCase } from '@/state/selectors'
 
 export function CaseAttemptPage() {
   const { caseId, attemptId } = useParams()
@@ -14,6 +14,7 @@ export function CaseAttemptPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const registry = useContent()
   const caseAttempts = useLearnerStore((state) => state.caseAttempts)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
   const selected = attemptId ? selectCaseResults({ caseAttempts }, attemptId) : null
   const comparison =
     caseId && attemptId ? selectCaseCompare({ caseAttempts }, caseId, attemptId) : null
@@ -34,6 +35,14 @@ export function CaseAttemptPage() {
   const result = presentCaseAttemptRecord(caseId, attempt)
   const introPath = `/learn/cases/${caseId}`
   const playPath = `${introPath}/play`
+  const recommendedCase = selectRecommendedCase({ caseAttempts, caseProgress }, registry)
+  const recommendedNext =
+    recommendedCase && recommendedCase.caseId !== caseId
+      ? {
+          label: `Start ${recommendedCase.tierLabel}`,
+          onSelect: () => navigate(`/learn/cases/${recommendedCase.caseId}`),
+        }
+      : undefined
 
   return searchParams.get('view') === 'compare' ? (
     <CaseCompare
@@ -54,6 +63,7 @@ export function CaseAttemptPage() {
       clues={caseDoc.clues}
       clueReview={caseLab.clueReview}
       result={result}
+      recommendedNext={recommendedNext}
       starThresholds={registry.appConfig.gamification.stars}
       onCompare={(evidence) =>
         setSearchParams(evidence ? { view: 'compare', evidence } : { view: 'compare' })

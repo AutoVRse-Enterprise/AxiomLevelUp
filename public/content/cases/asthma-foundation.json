@@ -492,6 +492,7 @@
     "caseMaxSeconds": 600
   },
   "expertBenchmark": {
+    "kind": "model_answer",
     "name": "Authored respiratory-educator benchmark",
     "durationSeconds": 300,
     "openedClueIds": [

@@ -32,7 +32,7 @@ Two audit corrections were applied at baseline:
 | H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: unknown-point localisation and cited findings are scored; bridge-free browser proof remains |
 | H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Closed: mission, progressive patient timeline and cited evidence connect the case |
-| H06 | Benchmark purpose is unclear | P13-T10 | Open |
+| H06 | Benchmark purpose is unclear | P13-T10 | Closed: comparison is framed as one authored Model answer |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
 | H09 | Cross-organ reuse is not demonstrated | P13-T16 | Approved scope deferral; position honestly |
@@ -49,7 +49,7 @@ Two audit corrections were applied at baseline:
 | --- | --- | --- | --- |
 | M01 | Repeated stage gates interrupt the narrative | P13-T03 | Closed: inline StageBanner replaces modal gates |
 | M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
-| M04 | Results and comparisons are dense | P13-T10 | Open |
+| M04 | Results and comparisons are dense | P13-T10 | Closed: results prioritize one outcome, takeaway and next action; score detail is collapsed |
 | M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Closed in implementation: adjacent controls, neutral navigation, arrival and significance feedback landed; usability retest remains in P13-T15 |
 | M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Closed: full cases require authored clue and inspected-finding citation |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
@@ -73,14 +73,14 @@ Two audit corrections were applied at baseline:
 | U08 | Clue economy is not an informed choice | P13-T05 | Closed: cost/status are visible before opening |
 | U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Closed: diagnosis includes a scored reviewed-evidence citation |
 | U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Closed: scoped evidence feeds citation and differential checkpoints persist |
-| U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Partial: required checkpoints remove missing ratings; comparison framing remains |
+| U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Closed: required checkpoints and differential-evolution comparison replace the empty snapshot |
 | U12 | Notes reveal information prematurely | P13-T05 | Closed: only unlocked clues and inspected findings appear |
 | U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Closed: numeric leakage is rejected and cases require hypothesis weighing plus citation |
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Closed: stage updates appear in a progressive patient timeline |
 | U15 | Time expectations conflict | P13-T02, P13-T09 | Closed: duration is validated and each tier explains its timing mode |
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Closed: briefing and an inline pre-submission notice explain the rule |
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
-| U18 | Debrief is comprehensive but not directive | P13-T10 | Open |
+| U18 | Debrief is comprehensive but not directive | P13-T10 | Closed: deterministic takeaway and recommended-next action lead the result |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Open |
 | U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Partial: pathway case destination fixed; IA copy remains |
 | U21 | Product terminology changes too often | P13-T11 | Open |

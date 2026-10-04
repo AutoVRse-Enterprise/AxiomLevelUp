@@ -160,6 +160,7 @@ export const caseDocumentSchema = z.strictObject({
   stages: z.array(caseStageSchema).min(1).max(4),
   timing: caseTimingSchema.optional(),
   expertBenchmark: z.strictObject({
+    kind: z.literal('model_answer'),
     name: nonEmptyStringSchema,
     durationSeconds: z.number().int().positive(),
     openedClueIds: z.array(idSchema),

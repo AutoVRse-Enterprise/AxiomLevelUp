@@ -75,6 +75,7 @@
     }
   ],
   "expertBenchmark": {
+    "kind": "model_answer",
     "name": "Expert",
     "durationSeconds": 60,
     "openedClueIds": ["clue-question"],

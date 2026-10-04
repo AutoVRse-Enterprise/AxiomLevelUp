@@ -8,12 +8,22 @@ import { CaseCompare } from '@/player/case/CaseCompare'
 import type { CaseResultPresentation } from '@/player/case/types'
 import { makeCaseRegistry } from '@/test/caseFixtures'
 
-const caseDoc = caseDocumentSchema.parse(fixtureCaseJson)
+const caseDoc = caseDocumentSchema.parse({
+  ...structuredClone(fixtureCaseJson),
+  differential: [
+    { id: 'supported', label: 'Supported hypothesis' },
+    { id: 'alternative', label: 'Alternative hypothesis' },
+  ],
+  expertBenchmark: {
+    ...fixtureCaseJson.expertBenchmark,
+    responses: { ...fixtureCaseJson.expertBenchmark.responses, differential: 'supported' },
+  },
+})
 const caseLab = makeCaseRegistry().appConfig.caseLab!
 const result: CaseResultPresentation = {
   caseId: caseDoc.id,
   attemptId: 'attempt-1',
-  resultVersion: 7,
+  resultVersion: 8,
   breakdown: {
     anatomy: 1,
     diagnosis: 1,
@@ -32,7 +42,10 @@ const result: CaseResultPresentation = {
   ],
   reviewedClueIds: ['clue-context'],
   evidence: { pinned: [{ kind: 'clue', id: 'clue-context' }] },
-  differential: {},
+  differential: { supported: 'likely', alternative: 'unlikely' },
+  differentialCheckpoints: {
+    'identify-location': { supported: 'possible', alternative: 'possible' },
+  },
   timeoutCreditApplied: false,
   completedAt: '2026-10-03T00:00:00.000Z',
 }
@@ -57,9 +70,11 @@ describe('case comparison', () => {
       />,
     )
 
-    expect(screen.getByRole('heading', { name: 'How the expert approached it' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'How the model answer approached it' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Evidence that mattered' })).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Diagnostic reasoning' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Differential evolution' })).toBeVisible()
+    expect(screen.getAllByText('Orient: possible')).toHaveLength(2)
+    expect(screen.getByText('Model answer: leading')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Step-by-step comparison' })).toBeVisible()
     expect(screen.getByText('Reviewed')).toBeVisible()
     expect(document.activeElement).toBe(document.getElementById('expert-evidence-0'))

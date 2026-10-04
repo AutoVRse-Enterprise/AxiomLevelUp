@@ -3063,3 +3063,19 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   ticking timer, later tiers explain their clock, future patient updates remain concealed, and the
   commitment notice disappears after the first scored submission.
 - **Follow-ups:** Redesign the result and model-answer debrief in P13-T10.
+
+### [2026-10-04 23:15] P13-T10 - Prioritize the Case Lab debrief
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Rebuilt results around one outcome, one deterministic takeaway and one recommended
+  action; collapsed supporting score detail; renamed and explicitly framed the authored benchmark
+  as a Model answer; and added checkpoint-by-checkpoint differential evolution. Added the
+  first-incomplete-tier selector used by result recommendations.
+- **Files changed:** Case benchmark schema and all case/fixture documents; results, comparison and
+  saved-attempt route; selectors and focused tests; generated case schema and Phase 13 docs.
+- **Commands run:** `npm run schema:export`; `npm run typecheck`; focused Vitest (5 files / 33
+  tests); IDE diagnostics.
+- **Result/verification:** Schema export and TypeScript pass. Focused result, comparison, route,
+  selector and player tests pass. Takeaway priority is unreviewed decisive evidence, then the first
+  missed scored task, then the first Model answer path highlight.
+- **Follow-ups:** Use the recommendation selector on Home and build the Case Lab hub in P13-T11.

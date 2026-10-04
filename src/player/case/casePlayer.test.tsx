@@ -207,6 +207,7 @@ describe('case player integration', () => {
     expect(await screen.findByText('Case complete')).toBeVisible()
     expect(screen.getByText('100/100')).toBeVisible()
     expect(screen.getByLabelText('3 of 3 stars')).toBeVisible()
+    await user.click(screen.getByText('Score details'))
     expect(screen.getAllByText('50% weight · 50 points')).toHaveLength(2)
     expect(screen.getByText('−0 points')).toBeVisible()
     expect(screen.getByText(/first submitted response/i)).toBeVisible()
@@ -252,9 +253,9 @@ describe('case player integration', () => {
       ]),
     )
 
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
-    expect(screen.getByText('Attempt comparison')).toBeVisible()
-    expect(screen.getByRole('heading', { name: /Configured expert/ })).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+    expect(screen.getAllByText('Model answer').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'You versus the model answer' })).toBeVisible()
     expect(
       screen.getByText('The configured evidence localizes the target structure.'),
     ).toBeVisible()
@@ -355,7 +356,7 @@ describe('case player integration', () => {
       ]),
     )
 
-    await user.click(screen.getByRole('button', { name: 'Compare' }))
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
     expect(screen.getByText('Which configured location is highlighted?')).toBeVisible()
     expect(screen.getByText('The configured evidence supports the conclusion.')).toBeVisible()
     expect(screen.queryByText('explore-airway')).not.toBeInTheDocument()

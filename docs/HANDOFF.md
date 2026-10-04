@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T09 are complete; P13-T10
-results and debrief redesign is next. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 through P13-T10 are complete; P13-T11
+navigation and terminology is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through
 P9-M03.
 
@@ -68,6 +68,9 @@ P9-M03.
 - The case workspace now carries a progressive patient timeline. Foundation is visibly untimed;
   stopwatch and countdown tiers explain that clue review counts. The first scored task warns about
   first-attempt scoring before submission.
+- Case results now lead with one outcome, deterministic prioritized takeaway and recommended next
+  action, while score detail is collapsed. Comparison is explicitly a Model answer and shows each
+  recorded differential checkpoint.
 
 ## Verification
 
@@ -109,16 +112,18 @@ P9-M03.
   validation and patch checks pass.
 - P13-T09 focused player/timeline/workspace/route suite: **4 files / 25 tests passed**; TypeScript
   and IDE diagnostics pass.
+- P13-T10 focused results/comparison/route/selector suite: **5 files / 33 tests passed**;
+  TypeScript and generated Case schema pass.
 
 ## In progress
 
-- P13-T10 results and debrief redesign is next.
+- P13-T11 navigation and terminology is next.
 
 ## Next three steps
 
-1. Redesign results and comparison in P13-T10.
-2. Add the Case Lab hub, recommendation selector and glossary in P13-T11.
-3. Add fresh and experienced demo profiles with presenter controls in P13-T12.
+1. Add the Case Lab hub, recommendation selector and glossary in P13-T11.
+2. Add fresh and experienced demo profiles with presenter controls in P13-T12.
+3. Add or explicitly defer the simulated challenge and leaderboard previews in P13-T13.
 
 ## Blockers/questions for the user
 

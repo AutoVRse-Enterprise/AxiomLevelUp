@@ -97,13 +97,12 @@ describe('case results', () => {
     expect(screen.getByText('Badge: First Case Solved')).toBeVisible()
   })
 
-  it('shows key-evidence status from reviewed clues rather than opened clues', () => {
+  it('prioritizes unreviewed decisive evidence as the single key takeaway', () => {
     const view = renderResults([])
     expect(screen.getByText('Basic')).toBeVisible()
     expect(screen.getByText('Generic')).toBeVisible()
-    expect(screen.getByRole('heading', { name: 'Key evidence' })).toBeVisible()
-    expect(screen.getByText('Context')).toBeVisible()
-    expect(screen.getByText('Not reviewed')).toBeVisible()
+    expect(screen.getByText('Key takeaway')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Review Context' })).toBeVisible()
 
     view.rerender(
       <ContentContext.Provider value={registry}>
@@ -120,14 +119,14 @@ describe('case results', () => {
         />
       </ContentContext.Provider>,
     )
-    expect(screen.getByText('Reviewed')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Review the configured context' })).toBeVisible()
   })
 
   it('opens clue evidence in an accessible read-only remediation sheet', async () => {
     const user = userEvent.setup()
     renderResults([])
 
-    await user.click(screen.getByRole('button', { name: 'Review' }))
+    await user.click(screen.getByRole('button', { name: 'Review this evidence' }))
 
     const dialog = screen.getByRole('dialog', { name: 'Context' })
     expect(dialog).toHaveTextContent('Read-only remediation')
@@ -157,7 +156,7 @@ describe('case results', () => {
         <CaseResults
           caseDoc={caseWithFindingEvidence}
           caseLab={registry.appConfig.caseLab!}
-          result={result([])}
+          result={result(['clue-context'])}
           clues={caseWithFindingEvidence.clues}
           clueReview={clueReview}
           starThresholds={{ one: 0, two: 75, three: 90 }}
@@ -168,13 +167,13 @@ describe('case results', () => {
       </ContentContext.Provider>,
     )
 
-    await user.click(screen.getAllByRole('button', { name: 'Review' })[1]!)
+    await user.click(screen.getByRole('button', { name: 'Review this evidence' }))
     expect(screen.getByRole('dialog', { name: 'Configured lumen finding' })).toHaveTextContent(
       'A deterministic generic lumen overlay.',
     )
   })
 
-  it('links each evidence card to its comparison row anchor', async () => {
+  it('offers model-answer comparison as the secondary action', async () => {
     const user = userEvent.setup()
     const onCompare = vi.fn()
     render(
@@ -193,12 +192,44 @@ describe('case results', () => {
       </ContentContext.Provider>,
     )
 
-    await user.click(screen.getByRole('button', { name: 'See expert comparison' }))
-    expect(onCompare).toHaveBeenCalledWith('expert-evidence-0')
+    await user.click(screen.getByRole('button', { name: 'Compare with model answer' }))
+    expect(onCompare).toHaveBeenCalledWith()
+  })
 
-    await user.click(
-      screen.getByRole('button', { name: 'Which configured location is highlighted?' }),
+  it('prioritizes a missed scored task after evidence is reviewed and offers the next case', async () => {
+    const user = userEvent.setup()
+    const onSelect = vi.fn()
+    render(
+      <ContentContext.Provider value={registry}>
+        <CaseResults
+          caseDoc={caseDoc}
+          caseLab={registry.appConfig.caseLab!}
+          result={{
+            ...result(['clue-context']),
+            stepResults: [
+              {
+                primitiveId: 'identify-location',
+                firstAttemptScore: 0,
+                timedOut: false,
+                response: 'other',
+              },
+            ],
+          }}
+          clues={caseDoc.clues}
+          clueReview={clueReview}
+          starThresholds={{ one: 0, two: 75, three: 90 }}
+          recommendedNext={{ label: 'Start Intermediate', onSelect }}
+          onCompare={vi.fn()}
+          onContinue={vi.fn()}
+          onReplay={vi.fn()}
+        />
+      </ContentContext.Provider>,
     )
-    expect(onCompare).toHaveBeenCalledWith('expert-step-0')
+
+    expect(
+      screen.getByRole('heading', { name: 'Which configured location is highlighted?' }),
+    ).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Start Intermediate' }))
+    expect(onSelect).toHaveBeenCalledOnce()
   })
 })

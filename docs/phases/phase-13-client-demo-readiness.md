@@ -98,7 +98,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Disclose first-attempt commitment before the first scored answer.
   - Align advertised and configured duration.
 
-- [ ] **P13-T10 — Results and debrief redesign**
+- [x] **P13-T10 — Results and debrief redesign** — completed 2026-10-04
   - Show one outcome, one prioritized takeaway and one recommended next action.
   - Collapse score details and reduce duplication with comparison.
   - Reframe the benchmark as a Model answer and show differential evolution.

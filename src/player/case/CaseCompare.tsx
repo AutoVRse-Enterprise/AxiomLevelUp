@@ -116,6 +116,14 @@ export function CaseCompare({
   const expertDifferentialId = caseDoc.differential?.find(({ id }) =>
     Object.values(caseDoc.expertBenchmark.responses).some((response) => response === id),
   )?.id
+  const differentialCheckpoints = Object.entries(result.differentialCheckpoints ?? {}).map(
+    ([stepId, ratings], index) => ({
+      label:
+        caseDoc.stages.find(({ steps }) => steps.some(({ id }) => id === stepId))?.title ??
+        `Checkpoint ${index + 1}`,
+      ratings,
+    }),
+  )
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-8 sm:py-12">
@@ -126,8 +134,12 @@ export function CaseCompare({
       >
         Back to results
       </Button>
-      <p className="mt-5 text-small font-semibold text-brand-700">Attempt comparison</p>
+      <p className="mt-5 text-small font-semibold text-brand-700">Model answer</p>
       <h1 className="mt-2 text-display font-bold text-neutral-950">{caseDoc.title}</h1>
+      <p className="mt-3 max-w-2xl text-neutral-700">
+        This is one authored reasoning route for comparison, not the only valid way to approach the
+        case.
+      </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Chip>{formatCaseTier(caseLab, caseDoc.tier)}</Chip>
         <Chip>{formatCaseOrganSystem(caseLab, caseDoc.organSystem)}</Chip>
@@ -136,8 +148,11 @@ export function CaseCompare({
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
         <Card>
           <h2 className="text-heading font-bold text-neutral-950">
-            You versus {caseDoc.expertBenchmark.name}
+            You versus the model answer
           </h2>
+          <p className="mt-2 text-small text-neutral-600">
+            Prepared as {caseDoc.expertBenchmark.name}.
+          </p>
           <dl className="mt-5 space-y-4">
             {[
               ['Anatomy', result.breakdown.anatomy, caseDoc.expertBenchmark.breakdown.anatomy],
@@ -160,7 +175,7 @@ export function CaseCompare({
                     : percentage(learner as number)}
                 </dd>
                 <dd className="text-right text-small">
-                  <span className="block text-neutral-500">Expert</span>
+                  <span className="block text-neutral-500">Model answer</span>
                   {label === 'Speed' ? speedValue(expert as number) : percentage(expert as number)}
                 </dd>
               </div>
@@ -228,7 +243,7 @@ export function CaseCompare({
       <Card className="mt-5">
         <section aria-labelledby="expert-path-heading">
           <h2 className="text-heading font-bold text-neutral-950" id="expert-path-heading">
-            How the expert approached it
+            How the model answer approached it
           </h2>
           <ol className="mt-4 space-y-3">
             {caseDoc.expertBenchmark.path.map(({ label, detail }, index) => (
@@ -291,20 +306,29 @@ export function CaseCompare({
           aria-labelledby="reasoning-heading"
         >
           <h2 className="text-heading font-bold text-neutral-950" id="reasoning-heading">
-            Diagnostic reasoning
+            Differential evolution
           </h2>
           {caseDoc.differential?.length ? (
             <ul className="mt-4 space-y-2">
               {caseDoc.differential.map((hypothesis) => (
                 <li
-                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-neutral-50 p-3"
+                  className="rounded-lg bg-neutral-50 p-3"
                   key={hypothesis.id}
                 >
-                  <span className="font-semibold text-neutral-900">{hypothesis.label}</span>
-                  <span className="text-small text-neutral-700">
-                    You: {result.differential?.[hypothesis.id] ?? 'Not rated'}
-                    {expertDifferentialId === hypothesis.id ? ' · Expert benchmark' : ''}
-                  </span>
+                  <p className="font-semibold text-neutral-900">{hypothesis.label}</p>
+                  <div className="mt-2 flex flex-wrap gap-2 text-small text-neutral-700">
+                    {differentialCheckpoints.map(({ label, ratings }) => (
+                      <Chip key={`${hypothesis.id}:${label}`}>
+                        {label}: {ratings[hypothesis.id] ?? 'Not rated'}
+                      </Chip>
+                    ))}
+                    {!differentialCheckpoints.length ? (
+                      <Chip>You: {result.differential?.[hypothesis.id] ?? 'Not rated'}</Chip>
+                    ) : null}
+                    <Chip tone={expertDifferentialId === hypothesis.id ? 'brand' : 'neutral'}>
+                      Model answer: {expertDifferentialId === hypothesis.id ? 'leading' : 'alternative'}
+                    </Chip>
+                  </div>
                 </li>
               ))}
             </ul>

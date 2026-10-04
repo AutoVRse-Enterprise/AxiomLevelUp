@@ -294,6 +294,23 @@ export function selectFeaturedCase(
   return selectCaseLabCards(state, registry).find(({ caseId }) => caseId === featuredCaseId) ?? null
 }
 
+const caseTierOrder: Record<CaseDocument['tier'], number> = {
+  foundation: 0,
+  intermediate: 1,
+  advanced: 2,
+}
+
+export function selectRecommendedCase(
+  state: CaseLabState,
+  registry: CaseLabRegistry,
+): CaseLabCardView | null {
+  return (
+    selectCaseLabCards(state, registry)
+      .filter(({ daily, attempts }) => !daily && attempts === 0)
+      .sort((a, b) => caseTierOrder[a.tier] - caseTierOrder[b.tier])[0] ?? null
+  )
+}
+
 export function selectCaseResults(
   state: Pick<LearnerStore, 'caseAttempts'>,
   attemptId: string,
