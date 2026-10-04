@@ -1,3 +1,4 @@
+import advancedSeedData from '../../public/content/seeds/advanced.json'
 import freshSeedData from '../../public/content/seeds/fresh.json'
 import { act, cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -311,6 +312,7 @@ describe('application surfaces', () => {
     const user = userEvent.setup()
     renderSurface(<LeaderboardPage />, '/leaderboard', '/leaderboard')
 
+    expect(screen.getByRole('heading', { name: 'Sample cohort' })).toBeVisible()
     const weekly = screen.getByRole('tab', { name: 'Weekly' })
     weekly.focus()
     await user.keyboard('{ArrowRight}')
@@ -338,5 +340,28 @@ describe('application surfaces', () => {
       'src',
       '/brand/autovrse-logo.svg',
     )
+  })
+
+  it('switches and resets configured demo profiles from Profile', async () => {
+    const user = userEvent.setup()
+    useLearnerStore.getState().replaceWithSeed(freshSeed)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        new Response(JSON.stringify(advancedSeedData), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      ),
+    )
+    renderSurface(<ProfilePage />, '/profile', '/profile')
+
+    await user.click(screen.getByRole('button', { name: 'Switch to Experienced learner' }))
+
+    expect(await screen.findByText('Maya Chen')).toBeVisible()
+    expect(screen.getByText('Respiratory medicine trainee')).toBeVisible()
+    expect(
+      screen.getByText('Experienced learner loaded.', { selector: '[role="status"]' }),
+    ).toBeVisible()
   })
 })

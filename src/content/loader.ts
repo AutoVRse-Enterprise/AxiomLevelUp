@@ -1880,6 +1880,47 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     })
   }
 
+  if (appConfig.demo?.enabled) {
+    if (manifest.defaultSeed !== appConfig.demo.defaultProfile) {
+      issues.push({
+        file: input.appConfigFile,
+        path: 'demo.defaultProfile',
+        message: 'The enabled demo default profile must match manifest.defaultSeed.',
+        severity: 'error',
+      })
+    }
+    const profileIds = new Set<string>()
+    const seedProfiles = new Set<string>()
+    appConfig.demo.profiles.forEach((profile, index) => {
+      if (profileIds.has(profile.id)) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `demo.profiles.${index}.id`,
+          message: `Duplicate demo profile id "${profile.id}".`,
+          severity: 'error',
+        })
+      }
+      if (seedProfiles.has(profile.seedProfile)) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `demo.profiles.${index}.seedProfile`,
+          message: `Duplicate demo seed profile "${profile.seedProfile}".`,
+          severity: 'error',
+        })
+      }
+      profileIds.add(profile.id)
+      seedProfiles.add(profile.seedProfile)
+      if (!manifest.seeds[profile.seedProfile]) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `demo.profiles.${index}.seedProfile`,
+          message: `Unknown demo seed profile "${profile.seedProfile}".`,
+          severity: 'error',
+        })
+      }
+    })
+  }
+
   appConfig.challenges.forEach((challenge, index) => {
     if (challenge.progressRule) {
       validateCriterion(

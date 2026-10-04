@@ -19,6 +19,6 @@
     "advanced": "seeds/advanced.json",
     "fresh": "seeds/fresh.json"
   },
-  "defaultSeed": "advanced",
+  "defaultSeed": "fresh",
   "assetManifest": "assets.json"
 }

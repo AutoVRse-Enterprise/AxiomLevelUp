@@ -1860,3 +1860,27 @@ labels.
 first unfinished tier. Product surfaces have explicit, stable meanings and one destination for all
 cases. Existing deep links remain valid, and content authors can revise surface explanations
 without changing React components.
+
+## ADR-101: Demo identity and progress are explicit, replaceable configuration
+
+**Status:** Accepted
+
+**Context:** The previous client build opened as Maya Chen with substantial history and an
+industry role, so first-time onboarding and the Foundation recommendation were hidden. Seeded
+leaderboard peers could also be mistaken for live users. Presenters needed a reliable way to
+demonstrate both a first-use journey and an established learner without clearing browser storage.
+
+**Decision:** Add an optional `demo` app-config block that declares enabled presenter profiles,
+their labels and seed mappings. The enabled default must match `manifest.defaultSeed`, every
+profile ID and seed mapping must be unique, and each seed must exist in the manifest. Use the
+zero-history Fresh trainee seed as the client-build default and retain Maya Chen as an Experienced
+learner with the role “Respiratory medicine trainee.”
+
+When demo mode is enabled, Profile exposes explicit switch and reset controls that replace local
+learner state through the existing validated seed path. Label the configured ranking scope
+“Sample cohort” so seeded identities are not presented as live data.
+
+**Consequences:** A client session naturally starts with onboarding and a Foundation Case Lab
+recommendation, while presenters can restore either deterministic demonstration state without
+developer tools. Switching or resetting intentionally replaces all local learner progress on that
+device. Demo controls remain absent when the configuration is disabled.

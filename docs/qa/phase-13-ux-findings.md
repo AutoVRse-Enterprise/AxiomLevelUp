@@ -33,7 +33,7 @@ Two audit corrections were applied at baseline:
 | H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Closed: mission, progressive patient timeline and cited evidence connect the case |
 | H06 | Benchmark purpose is unclear | P13-T10 | Closed: comparison is framed as one authored Model answer |
-| H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
+| H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Partial: ranking scope is “Sample cohort”; simulated-preview labels remain in P13-T13 |
 | H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
 | H09 | Cross-organ reuse is not demonstrated | P13-T16 | Approved scope deferral; position honestly |
 | H11 | DICOM toolbar is hard to operate at 375 px | P13-T01 | Closed: tool and preset groups wrap |
@@ -64,7 +64,7 @@ Two audit corrections were applied at baseline:
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
 | U01 | No coherent learner mental model | P13-T03, P13-T04, P13-T06 | Closed: mission, walkthrough, workspace and required reasoning loop landed |
-| U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Partial: recommendation now starts at the first incomplete tier; fresh profile remains |
+| U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Closed: the client build defaults to a fresh trainee and recommends Foundation |
 | U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Closed: mission and operating rules render before launch |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
 | U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Partial: task and evidence now share one workspace |
@@ -81,7 +81,7 @@ Two audit corrections were applied at baseline:
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Closed: briefing and an inline pre-submission notice explain the rule |
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Closed: deterministic takeaway and recommended-next action lead the result |
-| U19 | Seeded identity/history obscures first use | P13-T12 | Open |
+| U19 | Seeded identity/history obscures first use | P13-T12 | Closed: fresh history is the default and Profile can explicitly switch or reset demo state |
 | U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Closed: destinations are fixed and configured surface definitions explain each format |
 | U21 | Product terminology changes too often | P13-T11 | Closed: Case Lab uses Clues, Spatial findings, Case notes and Conclude consistently |
 

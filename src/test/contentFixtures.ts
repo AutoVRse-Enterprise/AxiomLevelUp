@@ -12,6 +12,7 @@ import safetyAssessment from '../../public/content/courses/safety-assessment.jso
 import scientificImaging from '../../public/content/courses/scientific-imaging.json'
 import manifest from '../../public/content/manifest.json'
 import advancedSeed from '../../public/content/seeds/advanced.json'
+import freshSeed from '../../public/content/seeds/fresh.json'
 
 import type { ContentBundleInput } from '@/content/loader'
 import { primitiveBaseSchema } from '@/content/schema'
@@ -173,6 +174,7 @@ export const contentResponses = new Map<string, unknown>([
   ['/content/assets.json', assets],
   ['/content/anatomy/lung-map.json', lungMap],
   ['/content/seeds/advanced.json', advancedSeed],
+  ['/content/seeds/fresh.json', freshSeed],
   ...courseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
   ...caseDocuments.map(([file, data]) => [`/content/${file}`, data] as const),
 ])

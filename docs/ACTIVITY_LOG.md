@@ -3096,3 +3096,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   Foundation for a fresh learner, all cases have a dedicated tiered route and deprecated
   standalone Case Lab labels are covered by the learner-copy sweep.
 - **Follow-ups:** Add client-safe fresh and experienced demo profiles in P13-T12.
+
+### [2026-10-04 23:34] P13-T12 - Add deterministic client demo profiles
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Made the zero-history Alex Morgan trainee seed the client-build default; retained
+  Maya Chen as an experienced respiratory medicine trainee; added validated demo-profile
+  configuration and Profile presenter controls for switching and resetting local state; and
+  relabelled the seeded leaderboard as “Sample cohort.” Recorded ADR-101.
+- **Files changed:** App config, manifest and learner seeds; content schema, semantic loader and
+  generated app-config schema; Profile route, route/content fixtures and tests; Phase 13
+  governance docs.
+- **Commands run:** Focused Vitest (18 tests); `npm run typecheck`; `npm run lint`;
+  `npm run validate:content`; IDE diagnostics.
+- **Result/verification:** All focused tests, TypeScript and lint pass. Content validates 5
+  courses, 13 lessons, 4 cases and one anatomy map with zero warnings. Enabled demo configuration
+  now guarantees a real manifest seed and the default first-use experience starts at Foundation.
+- **Follow-ups:** Add or explicitly defer the simulated challenge and segmented leaderboard
+  previews in P13-T13.

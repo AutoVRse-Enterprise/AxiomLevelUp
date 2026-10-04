@@ -4,6 +4,24 @@
     "name": "Autovrse LevelUp",
     "cohortName": "R&D Learning Cohort"
   },
+  "demo": {
+    "enabled": true,
+    "defaultProfile": "fresh",
+    "profiles": [
+      {
+        "id": "fresh-trainee",
+        "label": "Fresh trainee",
+        "description": "No prior activity; onboarding and Foundation recommendations are visible.",
+        "seedProfile": "fresh"
+      },
+      {
+        "id": "experienced-learner",
+        "label": "Experienced learner",
+        "description": "Completed history, progress and advanced Case Lab context are visible.",
+        "seedProfile": "advanced"
+      }
+    ]
+  },
   "product": {
     "weekStartsOn": 1,
     "revision": {
@@ -388,7 +406,7 @@
     }
   ],
   "leaderboard": {
-    "scope": "R&D Learning Cohort",
+    "scope": "Sample cohort",
     "period": "weekly",
     "entries": [
       { "id": "ananya-r", "name": "Ananya R.", "weeklyXp": 1480, "monthlyXp": 5220, "totalXp": 12480, "isCurrentLearner": false, "previousRank": 1 },

@@ -7,6 +7,7 @@ import {
   Trophy,
   Vibrate,
 } from 'lucide-react'
+import { useState } from 'react'
 
 import { useContent } from '@/app/contentContext'
 import { EmptyState } from '@/components/feedback/EmptyState'
@@ -20,7 +21,8 @@ import {
 } from '@/components/learning'
 import { getBadgeIcon } from '@/components/learning/badgeIconRegistry'
 import { OfflineStorageManager } from '@/components/offline/OfflineStorageManager'
-import { Card, ProgressBar } from '@/components/ui'
+import { Button, Card, ProgressBar } from '@/components/ui'
+import { learnerSeedSchema } from '@/content/schema'
 import { hapticsSupported } from '@/effects/haptics'
 import { today } from '@/lib/clock'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -44,6 +46,10 @@ export function ProfilePage() {
   const registry = useContent()
   const { appConfig } = registry
   const learner = useLearnerStore((state) => state.learner)
+  const seedProfile = useLearnerStore((state) => state.seedProfile)
+  const replaceWithSeed = useLearnerStore((state) => state.replaceWithSeed)
+  const [demoStatus, setDemoStatus] = useState('')
+  const [loadingProfile, setLoadingProfile] = useState<string | null>(null)
   const xp = useLearnerStore((state) => state.xp)
   const streak = useLearnerStore((state) => state.streak)
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
@@ -71,6 +77,25 @@ export function ProfilePage() {
   const masteryViews = appConfig.concepts
     .map((concept) => ({ ...concept, score: mastery[concept.id]?.score ?? 0 }))
     .sort((a, b) => b.score - a.score)
+  const demo = appConfig.demo?.enabled ? appConfig.demo : null
+
+  const applyDemoProfile = async (profileId: string) => {
+    const profile = demo?.profiles.find(({ id }) => id === profileId)
+    if (!profile) return
+    setLoadingProfile(profile.id)
+    setDemoStatus('')
+    try {
+      const seedPath = registry.manifest.seeds[profile.seedProfile]
+      const response = await fetch(`/content/${seedPath}`)
+      if (!response.ok) throw new Error(`Seed request failed with ${response.status}.`)
+      replaceWithSeed(learnerSeedSchema.parse(await response.json()))
+      setDemoStatus(`${profile.label} loaded.`)
+    } catch {
+      setDemoStatus('Could not load that demo profile. Try again while online.')
+    } finally {
+      setLoadingProfile(null)
+    }
+  }
 
   return (
     <div className="space-y-9">
@@ -109,6 +134,53 @@ export function ProfilePage() {
           </p>
         </div>
       </Card>
+
+      {demo ? (
+        <section aria-label="Demo controls">
+          <SectionHeader
+            description="Presenter tools replace local progress on this device."
+            title="Switch demo profile"
+          />
+          <Card className="mt-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {demo.profiles.map((profile) => {
+                const active = profile.seedProfile === seedProfile
+                return (
+                  <div className="rounded-lg border border-neutral-200 p-4" key={profile.id}>
+                    <p className="font-bold text-neutral-950">{profile.label}</p>
+                    <p className="mt-1 text-small text-neutral-600">{profile.description}</p>
+                    <Button
+                      className="mt-3"
+                      disabled={loadingProfile !== null || active}
+                      size="sm"
+                      variant={active ? 'secondary' : 'primary'}
+                      onClick={() => void applyDemoProfile(profile.id)}
+                    >
+                      {active ? 'Current profile' : `Switch to ${profile.label}`}
+                    </Button>
+                  </div>
+                )
+              })}
+            </div>
+            <Button
+              className="mt-4"
+              disabled={loadingProfile !== null}
+              variant="secondary"
+              onClick={() => {
+                const activeProfile = demo.profiles.find(
+                  ({ seedProfile: profileSeed }) => profileSeed === seedProfile,
+                )
+                if (activeProfile) void applyDemoProfile(activeProfile.id)
+              }}
+            >
+              Reset demo
+            </Button>
+            <p aria-live="polite" className="mt-3 text-small text-neutral-600" role="status">
+              {demoStatus}
+            </p>
+          </Card>
+        </section>
+      ) : null}
 
       <section aria-label="Learner statistics">
         <SectionHeader title="Your stats" />

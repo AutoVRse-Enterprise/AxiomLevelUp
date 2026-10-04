@@ -6,7 +6,7 @@
   "learner": {
     "id": "new-learner",
     "name": "Alex Morgan",
-    "role": "R&D Learner"
+    "role": "Trainee doctor"
   },
   "xp": { "total": 0, "weekly": 0 },
   "streak": { "currentDays": 0, "lastQualifyingDate": null },

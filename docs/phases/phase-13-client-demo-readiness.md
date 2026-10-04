@@ -110,7 +110,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Standardize learner terminology and extend the copy sweep.
   - Record ADR-100.
 
-- [ ] **P13-T12 — Demo profiles**
+- [x] **P13-T12 — Demo profiles** — completed 2026-10-04
   - Make a fresh trainee profile the client-build default.
   - Retain Maya as an experienced learner with a training-aligned role.
   - Add demo-only profile switching/reset and label the leaderboard “Sample cohort.”

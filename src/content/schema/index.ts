@@ -256,6 +256,22 @@ export const appConfigSchema = z.object({
     name: z.string().min(1),
     cohortName: z.string().min(1),
   }),
+  demo: z
+    .strictObject({
+      enabled: z.boolean(),
+      defaultProfile: z.enum(['fresh', 'advanced']),
+      profiles: z
+        .array(
+          z.strictObject({
+            id: idSchema,
+            label: z.string().trim().min(1),
+            description: z.string().trim().min(1),
+            seedProfile: z.enum(['fresh', 'advanced']),
+          }),
+        )
+        .min(2),
+    })
+    .optional(),
   product: z.object({
     weekStartsOn: z.number().int().min(0).max(6).default(1),
     revision: z.object({
