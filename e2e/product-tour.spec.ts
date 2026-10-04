@@ -177,7 +177,6 @@ async function completeDailyChallenge(page: Page, testInfo: TestInfo) {
   })
   await expect(page.getByRole('heading', { name: 'Daily Respiratory Review' })).toBeVisible()
   await page.getByRole('button', { name: 'Start', exact: true }).click()
-  await page.getByRole('button', { name: 'Begin stage' }).click()
 
   await page.getByText('Choose from list').click()
   await page.getByRole('button', { name: 'Left upper lobe', exact: true }).click()
@@ -188,7 +187,6 @@ async function completeDailyChallenge(page: Page, testInfo: TestInfo) {
   await page.getByRole('button', { name: 'Check answer' }).click()
   await continueCurrentStep(page)
 
-  await page.getByRole('button', { name: 'Begin stage' }).click()
   await continueCurrentStep(page)
   await page
     .getByRole('button', { name: 'Variable airflow obstruction compatible with asthma' })

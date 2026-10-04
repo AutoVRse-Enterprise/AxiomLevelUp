@@ -14,7 +14,9 @@ export interface CaseStageBoundary {
   kind: CaseStage['kind']
   component: CaseStage['component']
   title: string
+  purpose: string
   intro?: string
+  update?: CaseStage['update']
   clueIds: string[]
   startIndex: number
   endIndex: number
@@ -66,7 +68,9 @@ export function buildCasePlan(caseDoc: CaseDocument, config: AppConfig): CasePla
       kind: stage.kind,
       component: stage.component,
       title: stage.title,
+      purpose: stage.purpose,
       ...(stage.intro ? { intro: stage.intro } : {}),
+      ...(stage.update ? { update: { ...stage.update } } : {}),
       clueIds: [...stage.clueIds],
       startIndex,
       endIndex: nextIndex,

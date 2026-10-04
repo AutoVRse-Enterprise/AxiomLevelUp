@@ -14,6 +14,12 @@ function config(): AppConfig {
       featuredCaseId: 'case-contract-fixture',
       caseIds: ['case-contract-fixture'],
       dailyQuickCaseId: 'case-contract-fixture',
+      howItWorks: [
+        { id: 'first_attempt', title: 'First answer', description: 'Your first answer is scored.' },
+        { id: 'optional_clues', title: 'Clues', description: 'Optional clues can cost points.' },
+        { id: 'timing', title: 'Timing', description: 'Timing depends on the tier.' },
+        { id: 'hints', title: 'Hints', description: 'Hint support depends on the tier.' },
+      ],
       organSystems: { generic: 'Generic' },
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
       clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },

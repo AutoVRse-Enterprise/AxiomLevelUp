@@ -185,6 +185,28 @@
     "featuredCaseId": "exacerbation-advanced",
     "caseIds": ["asthma-foundation", "copd-intermediate", "exacerbation-advanced"],
     "dailyQuickCaseId": "wheeze-quick",
+    "howItWorks": [
+      {
+        "id": "first_attempt",
+        "title": "Commit your first answer",
+        "description": "Your first submitted answer sets your score. A retry can help you learn, but it does not raise that score."
+      },
+      {
+        "id": "optional_clues",
+        "title": "Choose evidence deliberately",
+        "description": "Recommended evidence is free. Opening optional evidence before you answer can reduce your final score."
+      },
+      {
+        "id": "timing",
+        "title": "Use the clock as a guide",
+        "description": "Timing changes with the case tier and never stops you from finishing the case."
+      },
+      {
+        "id": "hints",
+        "title": "Ask for support",
+        "description": "Hints are available during the case, with less guidance in advanced cases."
+      }
+    ],
     "organSystems": {
       "respiratory": "Respiratory"
     },

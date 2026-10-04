@@ -225,11 +225,9 @@ describe('player routes', () => {
       }),
     )
 
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     await user.click(await screen.findByRole('radio', { name: 'True' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))

@@ -93,7 +93,7 @@ describe('learner store persistence', () => {
     expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
   })
 
-  it.each([3, 4])('migrates learner state v%i to empty v7 case state', (stateVersion) => {
+  it.each([3, 4])('migrates learner state v%i to empty v8 case state', (stateVersion) => {
     const legacy = structuredClone(freshSeed) as unknown as Record<string, unknown>
     legacy.stateVersion = stateVersion
     delete legacy.caseProgress
@@ -108,7 +108,7 @@ describe('learner store persistence', () => {
 
     const migrated = migrateLearnerState(legacy)
 
-    expect(migrated.stateVersion).toBe(7)
+    expect(migrated.stateVersion).toBe(8)
     expect(migrated.caseProgress).toEqual({})
     expect(migrated.caseAttempts).toEqual({})
     expect(migrated.gamification.caseRewards).toEqual({})
@@ -119,6 +119,15 @@ describe('learner store persistence', () => {
       advanced: 0,
     })
     expect(migrated.stats.casesCompleted).toBe(0)
+    expect(migrated.caseLab.walkthroughSeen).toBe(false)
+  })
+
+  it('migrates v7 learners with the Case Lab walkthrough unseen', () => {
+    const legacy = structuredClone(advancedSeed) as unknown as Record<string, unknown>
+    legacy.stateVersion = 7
+    delete legacy.caseLab
+
+    expect(migrateLearnerState(legacy).caseLab).toEqual({ walkthroughSeen: false })
   })
 
   it('marks v5 attempts as legacy without inventing unavailable result details', () => {
@@ -147,7 +156,7 @@ describe('learner store persistence', () => {
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['asthma-foundation']![0]!
 
-    expect(migrated.stateVersion).toBe(7)
+    expect(migrated.stateVersion).toBe(8)
     expect(attempt.resultVersion).toBe(5)
     expect(attempt).not.toHaveProperty('perStepSpeed')
     expect(attempt).not.toHaveProperty('caseSpeed')
@@ -172,10 +181,18 @@ describe('learner store persistence', () => {
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['exacerbation-advanced']![0]!
 
-    expect(migrated.stateVersion).toBe(7)
+    expect(migrated.stateVersion).toBe(8)
     expect(attempt.resultVersion).toBe(6)
     expect(attempt).not.toHaveProperty('speedModel')
     expect(attempt).not.toHaveProperty('reviewedClueIds')
     expect(attempt).not.toHaveProperty('timeoutCreditApplied')
+  })
+
+  it('stores the Case Lab walkthrough preference in learner data', () => {
+    expect(useLearnerStore.getState().caseLab.walkthroughSeen).toBe(false)
+
+    useLearnerStore.getState().markCaseLabWalkthroughSeen()
+
+    expect(learnerDataSnapshot(useLearnerStore.getState()).caseLab.walkthroughSeen).toBe(true)
   })
 })

@@ -862,6 +862,9 @@ export const learnerSeedSchema = z.object({
   onboarding: z.object({
     viewed: z.boolean(),
   }),
+  caseLab: z.object({
+    walkthroughSeen: z.boolean(),
+  }),
 })
 
 const dicomSeriesMetadataSchema = z.strictObject({

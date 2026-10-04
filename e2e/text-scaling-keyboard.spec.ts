@@ -23,7 +23,6 @@ test('P12-T10: CasePlayer, results and comparison support 200% text', async ({ p
   await page.goto('/learn/cases/asthma-foundation')
   await applyTwoHundredPercentText(page)
   await page.getByRole('link', { name: 'Start case' }).click()
-  await page.getByRole('button', { name: 'Begin stage' }).click()
   await expect(page.locator('[data-anatomy-viewer]')).toBeVisible()
   await expectNoDocumentHorizontalOverflow(page, 'CasePlayer viewer at 200% text')
 
@@ -62,7 +61,6 @@ test('P12-T10: keyboard-only learner path reaches case completion', async ({ pag
   await expect(page.getByRole('link', { name: 'Start case' })).toBeVisible()
   await expectVisibleKeyboardFocus(page)
   await keyboardActivate(page, page.getByRole('link', { name: 'Start case' }))
-  await keyboardActivate(page, page.getByRole('button', { name: 'Begin stage' }))
 
   await keyboardActivate(page, page.getByText('Choose from list'))
   await keyboardActivate(page, page.getByRole('button', { name: 'Left upper lobe', exact: true }))
@@ -76,7 +74,6 @@ test('P12-T10: keyboard-only learner path reaches case completion', async ({ pag
   await keyboardActivate(page, page.getByRole('radio', { name: 'Conducting airway' }), 'Space')
   await keyboardActivate(page, page.getByRole('button', { name: 'Check answer' }))
   await keyboardActivate(page, page.getByRole('button', { name: 'Continue', exact: true }))
-  await keyboardActivate(page, page.getByRole('button', { name: 'Begin stage' }))
 
   await keyboardActivate(page, page.getByRole('button', { name: 'Continue', exact: true }))
   await keyboardActivate(

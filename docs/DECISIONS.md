@@ -1758,3 +1758,27 @@ from one validated source. Authors must keep durations and evidence dependencies
 Legitimate numeric recall questions must be redesigned to ask for interpretation or must use
 evidence that is intentionally visible in-flow; the validator does not assess semantic or clinical
 correctness.
+
+## ADR-097: Case stages are continuous and onboarding is learner-scoped
+
+**Status:** Accepted
+
+**Context:** Case 0.1 placed a blocking dialog before every stage and required a “Begin stage”
+action that did not represent a learner decision. The header simultaneously counted stage, task and
+tier, while clues and notes were introduced without teaching their role. The resulting flow felt
+like disconnected screens and the case clock could continue behind instructional overlays.
+
+**Decision:** Render stage changes as inline `StageBanner` regions sourced from Case 0.2 purpose
+and patient-update fields. Announce the changed stage and move focus to its heading without
+requiring acknowledgement. The header shows one stage-progress model and a persistent
+“How this works” action.
+
+Introduce a four-step coach walkthrough for Task, Evidence, Case notes and Primary action. It opens
+automatically once per learner, can be replayed, pauses all active case timing and persists
+`caseLab.walkthroughSeen` in learner state v8. Existing v7 and older learners migrate with the
+walkthrough unseen; the experienced demo seed opts out and the fresh seed sees it naturally.
+
+**Consequences:** Stage boundaries preserve narrative and event tracking without interaction-only
+gates. Focus ownership moves from the generic hidden task heading to the visible stage banner when
+case chrome is present. Opening any blocking clue or walkthrough pauses both case and per-task
+timing, and resuming does not add hidden elapsed time.

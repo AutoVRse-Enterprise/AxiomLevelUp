@@ -340,9 +340,8 @@ async function answerStep(
 async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: ContentRegistry) {
   const manualStart = screen.queryByRole('button', { name: /^(Start|Resume)$/ })
   if (manualStart) await user.click(manualStart)
-  await user.click(await screen.findByRole('button', { name: 'Begin stage' }))
 
-  for (const [stageIndex, stage] of caseDoc.stages.entries()) {
+  for (const stage of caseDoc.stages) {
     for (const step of stage.steps) {
       await answerStep(
         user,
@@ -351,9 +350,6 @@ async function completeCase(user: TestUser, caseDoc: CaseDocument, registry: Con
         registry,
       )
       await user.click(await screen.findByRole('button', { name: 'Continue' }))
-    }
-    if (stageIndex < caseDoc.stages.length - 1) {
-      await user.click(await screen.findByRole('button', { name: 'Begin stage' }))
     }
   }
 
@@ -604,11 +600,9 @@ describe('configured Case Lab flows', () => {
   }, 15_000)
 
   it('has no detectable WCAG A/AA violations in the active unavailable-3D case state', async () => {
-    const user = userEvent.setup()
     const { container } = renderCaseRoute('/learn/cases/asthma-foundation/play', registry)
-    await user.click(await screen.findByRole('button', { name: 'Begin stage' }))
 
-    expect(screen.getByRole('status')).toHaveTextContent('3D anatomy unavailable')
+    expect(screen.getByText('3D anatomy unavailable; use the equivalent structure list.')).toBeVisible()
     expect((await axe.run(container, axeOptions)).violations).toEqual([])
   })
 })

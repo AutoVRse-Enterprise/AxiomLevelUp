@@ -17,6 +17,7 @@ interface ClueBoardProps {
   selectedClueId: string | null
   presenterOpen: boolean
   labelEssentialClues: boolean
+  relevantClueIds?: readonly string[]
   optionalClueCost: number
   clueReview: CaseLabConfig['clueReview']
   variant: 'mobile' | 'desktop'
@@ -115,14 +116,16 @@ function Board({
   openedClueIds,
   reviewedClueIds,
   selectedClueId,
-  labelEssentialClues,
+  relevantClueIds = [],
   optionalClueCost,
   clueReview,
   onPresentClue,
   onReviewClue,
   presenterOpen,
-}: Omit<ClueBoardProps, 'variant'>) {
+}: Omit<ClueBoardProps, 'variant' | 'labelEssentialClues'>) {
   const selected = clues.find(({ id }) => id === selectedClueId)
+  const [optionalClueConfirmed, setOptionalClueConfirmed] = useState(false)
+  const [pendingOptionalClueId, setPendingOptionalClueId] = useState<string | null>(null)
   const grouped = clues.reduce((groups, clue) => {
     const current = groups.get(clue.category) ?? []
     current.push(clue)
@@ -136,10 +139,36 @@ function Board({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-heading font-bold text-neutral-950">Clue board</h2>
         <Chip>
-          Case: {reviewedCount}/{caseClueCount} reviewed
+          {reviewedCount} of {caseClueCount} reviewed
         </Chip>
       </div>
-      <p className="mt-2 text-small text-neutral-600">Available this stage: {availableClueCount}</p>
+      <p className="mt-2 text-small text-neutral-600">{availableClueCount} available now</p>
+      {pendingOptionalClueId ? (
+        <div className="mt-4 rounded-lg border border-warning-300 bg-warning-50 p-3">
+          <p className="text-small font-semibold text-warning-950">
+            Open this optional clue for −{optionalClueCost} points?
+          </p>
+          <p className="mt-1 text-caption text-warning-900">
+            This confirmation appears once. Later optional clues open immediately.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                const clueId = pendingOptionalClueId
+                setOptionalClueConfirmed(true)
+                setPendingOptionalClueId(null)
+                onPresentClue(clueId)
+              }}
+            >
+              Open clue
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => setPendingOptionalClueId(null)}>
+              Keep current evidence
+            </Button>
+          </div>
+        </div>
+      ) : null}
       <div className="mt-4 space-y-5">
         {[...grouped].map(([category, categoryClues]) => (
           <section key={category}>
@@ -150,24 +179,41 @@ function Board({
               {categoryClues.map((clue) => {
                 const opened = openedClueIds.includes(clue.id)
                 const reviewed = reviewedClueIds.includes(clue.id)
-                const state = reviewed ? 'Reviewed' : opened ? 'Opened' : 'Unopened'
-                const availabilityLabel = clue.essential
-                  ? 'Recommended'
-                  : optionalClueCost > 0
-                    ? `Optional · −${optionalClueCost} points`
-                    : 'Optional'
+                const state = reviewed ? 'Reviewed' : 'New'
+                const cost = clue.essential || optionalClueCost === 0 ? 'Free' : `−${optionalClueCost} pts`
+                const relevant = relevantClueIds.includes(clue.id)
                 return (
                   <li key={clue.id}>
                     <button
                       className="w-full rounded-lg border border-neutral-200 p-3 text-left transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2"
                       type="button"
                       aria-current={selectedClueId === clue.id ? 'true' : undefined}
-                      onClick={() => onPresentClue(clue.id)}
+                      onClick={() => {
+                        if (
+                          !clue.essential &&
+                          !opened &&
+                          optionalClueCost > 0 &&
+                          !optionalClueConfirmed
+                        ) {
+                          setPendingOptionalClueId(clue.id)
+                          return
+                        }
+                        onPresentClue(clue.id)
+                      }}
                     >
                       <span className="block font-semibold text-neutral-900">{clue.title}</span>
-                      <span className="mt-1 block text-caption text-neutral-600">
-                        {state}
-                        {labelEssentialClues ? ` · ${availabilityLabel}` : ''}
+                      <span className="mt-1 flex flex-wrap gap-1.5 text-caption text-neutral-600">
+                        <span>{state}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{cost}</span>
+                        {relevant ? (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span className="font-semibold text-brand-800">
+                              Relevant to this question
+                            </span>
+                          </>
+                        ) : null}
                       </span>
                     </button>
                   </li>
@@ -217,8 +263,21 @@ export function ClueBoard(props: ClueBoardProps) {
   const { onBlockingChange, variant } = props
   const mobileOpen = variant === 'mobile' && mobileViewport && props.presenterOpen
   const reviewedCount = props.reviewedClueIds.length
-  const status = `Case: ${reviewedCount}/${props.caseClueCount} reviewed`
+  const status = `${reviewedCount} of ${props.caseClueCount} reviewed`
   const [activeTab, setActiveTab] = useState<'clues' | 'notes'>('clues')
+  const previousClueIds = useRef(new Set(props.clues.map(({ id }) => id)))
+  const [newEvidenceAnnouncement, setNewEvidenceAnnouncement] = useState('')
+
+  useEffect(() => {
+    const nextIds = new Set(props.clues.map(({ id }) => id))
+    const newCount = [...nextIds].filter((id) => !previousClueIds.current.has(id)).length
+    previousClueIds.current = nextIds
+    if (newCount > 0) {
+      setNewEvidenceAnnouncement(
+        `${newCount} new evidence ${newCount === 1 ? 'item is' : 'items are'} available.`,
+      )
+    }
+  }, [props.clues])
 
   const openClues = useCallback(
     (clueId: string) => {
@@ -264,6 +323,9 @@ export function ClueBoard(props: ClueBoardProps) {
     if (mobileViewport) return null
     return (
       <>
+        <p className="sr-only" role="status" aria-live="polite">
+          {newEvidenceAnnouncement}
+        </p>
         {!props.presenterOpen ? (
           <button
             aria-controls="case-clue-rail"
@@ -307,6 +369,9 @@ export function ClueBoard(props: ClueBoardProps) {
       className="fixed inset-x-0 bottom-0 z-nav border-t border-neutral-200 bg-white/95 px-4 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-overlay backdrop-blur-lg md:hidden"
       data-case-clue-actions=""
     >
+      <p className="sr-only" role="status" aria-live="polite">
+        {newEvidenceAnnouncement}
+      </p>
       <div className={`grid gap-2 ${props.renderNotes ? 'grid-cols-2' : 'grid-cols-1'}`}>
         <Button
           className="w-full"

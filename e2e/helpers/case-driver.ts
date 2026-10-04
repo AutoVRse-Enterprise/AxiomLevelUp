@@ -251,9 +251,8 @@ export async function runCaseThroughEveryState(
   await page.getByRole('link', { name: 'Start case' }).click()
 
   for (const stage of caseDoc.stages) {
-    await expect(page.getByRole('button', { name: 'Begin stage' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: stage.title })).toBeVisible()
     await checkState(`${caseDoc.id}:stage-${stage.id}`)
-    await page.getByRole('button', { name: 'Begin stage' }).click()
     const clueClose = page.getByRole('button', { name: 'Close' })
     if (await clueClose.isVisible()) {
       await checkState(`${caseDoc.id}:entry-clue`)

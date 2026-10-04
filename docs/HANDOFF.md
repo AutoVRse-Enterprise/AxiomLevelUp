@@ -2,9 +2,9 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T02 are complete; P13-T03 briefing,
-onboarding and continuous stages is next. Phase 9 remains active for physical Android and iOS
-gates P9-M01 through P9-M03.
+Phase 13 client demo readiness is active. P13-T00 through P13-T03 are complete; P13-T04 unified
+CaseWorkspace is next. Phase 9 remains active for physical Android and iOS gates P9-M01 through
+P9-M03.
 
 ## Done
 
@@ -43,6 +43,12 @@ gates P9-M01 through P9-M03.
 - Case schema 0.2 now requires a mission and stage purpose, supports patient updates and finding
   significance, and validates duration, decisive clue references and numeric answer leakage.
 - All four cases and fixtures are migrated; generated JSON Schema and authoring docs are current.
+- Case intro pages now establish the learner role, objective, deliverables and four operating
+  rules before launch.
+- Learner state v8 records the first-run Case Lab walkthrough. The walkthrough can be replayed and
+  pauses both case and task timing.
+- Blocking stage dialogs are removed. Inline, focus-managed stage banners introduce each purpose
+  and patient update, and the case header exposes one four-stage progress model.
 
 ## Verification
 
@@ -74,22 +80,24 @@ gates P9-M01 through P9-M03.
 - Fresh product-audit preview ran at `http://127.0.0.1:4192`.
 - Canvas TypeScript diagnostics and IDE lint diagnostics pass with no errors.
 - No full application check was rerun because the audit changed no runtime source or content.
+- P13-T03 full unit suite: **71 files / 481 tests passed**.
+- P13-T03 ESLint: passed with zero warnings.
 
 ## In progress
 
-- P13-T03 player/learner-state work is next.
-- P13-T02 passes typecheck, zero-warning content validation and 68 focused tests.
+- P13-T04 workspace implementation is next.
+- P13-T03 is committed locally after full unit and lint verification.
 
 ## Next three steps
 
-1. Replace blocking stages and add the guided first-run experience in P13-T03.
-2. Build the unified desktop/mobile CaseWorkspace in P13-T04.
-3. Put clue cost/relevance and stage-scoped notes into that workspace in P13-T05.
+1. Build the unified desktop/mobile CaseWorkspace in P13-T04.
+2. Finish clue relevance and stage-scoped notes in P13-T05.
+3. Add evidence-selection and differential checkpoints in P13-T06.
 
 ## Blockers/questions for the user
 
-- Self-guided trainee use is blocked by an unclear case mission, an untaught interaction model and
-  evidence/differential systems that are optional to the scored path.
+- Self-guided trainee use still needs one unified workspace and scored evidence/differential
+  checkpoints; mission and interaction onboarding are now explicit.
 - The Home surface promotes the advanced case before introducing Case Lab, and the relationship
   among Pathway, Course, Case Lab and Challenge is not explained.
 - Physical-device approval requires Android/iOS hardware or an approved device service, a
@@ -102,7 +110,7 @@ gates P9-M01 through P9-M03.
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
 - Branch: `master`; audit baseline commit `ec8f8ae`
   (`docs(P12-AUD): record trainee UX audit`).
-- Worktree contains the active P13-T00 docs and the user's untouched untracked
+- Worktree contains the active Phase 13 implementation and the user's untouched untracked
   `docs/reference docs/`.
 - Node/npm/Playwright: 24.19.0 / 11.17.0 / 1.63.0
 - Browser cache override:

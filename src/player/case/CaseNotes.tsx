@@ -14,7 +14,9 @@ type Confidence = CaseProgress['differential'][string]
 interface CaseNotesProps {
   caseDoc: CaseDocument
   progress: CaseProgress
+  availableClueIds?: readonly string[]
   inspectedFindingIds: ReadonlySet<string>
+  caseComplete?: boolean
   currentLocationLabel: string | null
   onOpenClue: (clueId: string) => void
   onPinChange: (item: CaseEvidenceItem, pinned: boolean) => void
@@ -54,12 +56,19 @@ function PinButton({
 export function CaseNotes({
   caseDoc,
   progress,
+  availableClueIds,
   inspectedFindingIds,
+  caseComplete = false,
   currentLocationLabel,
   onOpenClue,
   onPinChange,
   onHypothesisChange,
 }: CaseNotesProps) {
+  const availableClues = availableClueIds
+    ? caseDoc.clues.filter(({ id }) => availableClueIds.includes(id))
+    : caseDoc.clues
+  const inspectedFindings = caseDoc.findings?.filter(({ id }) => inspectedFindingIds.has(id)) ?? []
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -67,7 +76,7 @@ export function CaseNotes({
         <Chip>{progress.evidence.pinned.length} pinned</Chip>
       </div>
       <p className="mt-2 text-small text-neutral-600">
-        Reflect on reviewed evidence. Notes do not affect your score.
+        Organize the evidence that has become available so far.
       </p>
 
       <section className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
@@ -83,7 +92,7 @@ export function CaseNotes({
       <section className="mt-5">
         <h3 className="font-semibold text-neutral-950">Clues</h3>
         <ul className="mt-2 space-y-2">
-          {caseDoc.clues.map((clue) => {
+          {availableClues.map((clue) => {
             const reviewed = progress.reviewedClueIds.includes(clue.id)
             const pinned = isCaseEvidencePinned(progress.evidence.pinned, {
               kind: 'clue',
@@ -122,12 +131,11 @@ export function CaseNotes({
         </ul>
       </section>
 
-      {caseDoc.findings?.length ? (
+      {inspectedFindings.length ? (
         <section className="mt-5">
           <h3 className="font-semibold text-neutral-950">Findings</h3>
           <ul className="mt-2 space-y-2">
-            {caseDoc.findings.map((finding) => {
-              const inspected = inspectedFindingIds.has(finding.id)
+            {inspectedFindings.map((finding) => {
               return (
                 <li
                   key={finding.id}
@@ -136,9 +144,7 @@ export function CaseNotes({
                   <div className="min-w-0">
                     <p className="font-semibold text-neutral-900">{finding.label}</p>
                     <p className="mt-1 text-small text-neutral-700">{finding.description}</p>
-                    <p className="mt-1 text-caption text-neutral-600">
-                      {inspected ? 'Inspected' : 'Not inspected'}
-                    </p>
+                    <p className="mt-1 text-caption text-neutral-600">Inspected</p>
                   </div>
                   <PinButton
                     item={{ kind: 'finding', id: finding.id }}
@@ -163,7 +169,7 @@ export function CaseNotes({
             {caseDoc.differential.map((hypothesis) => (
               <fieldset key={hypothesis.id} className="rounded-lg border border-neutral-200 p-3">
                 <legend className="px-1 font-semibold text-neutral-900">{hypothesis.label}</legend>
-                {hypothesis.description ? (
+                {caseComplete && hypothesis.description ? (
                   <p className="mb-3 text-small text-neutral-600">{hypothesis.description}</p>
                 ) : null}
                 <div className="grid grid-cols-3 gap-1" role="group">

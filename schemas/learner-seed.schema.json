@@ -1575,6 +1575,18 @@
         "viewed"
       ],
       "additionalProperties": false
+    },
+    "caseLab": {
+      "type": "object",
+      "properties": {
+        "walkthroughSeen": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "walkthroughSeen"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -1594,7 +1606,8 @@
     "mastery",
     "gamification",
     "stats",
-    "onboarding"
+    "onboarding",
+    "caseLab"
   ],
   "additionalProperties": false
 }

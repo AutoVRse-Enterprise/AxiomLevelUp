@@ -23,7 +23,6 @@ async function startCase(page: Page, casePath = goldenCasePath) {
   await page.goto(casePath)
   await page.getByRole('link', { name: 'Start case' }).click()
   await expect(page.getByRole('button', { name: 'Start', exact: true })).toHaveCount(0)
-  await page.getByRole('button', { name: 'Begin stage' }).click()
 }
 
 async function expectPointerHitTarget(locator: Locator) {
@@ -193,9 +192,7 @@ test('P11-T09: starts once and keeps primary case controls hit-testable', async 
 
   await expect(page).toHaveURL(`${goldenCasePath}/play`)
   await expect(page.getByRole('button', { name: 'Start', exact: true })).toHaveCount(0)
-  const beginStage = page.getByRole('button', { name: 'Begin stage' })
-  await expectPointerHitTarget(beginStage)
-  await beginStage.click()
+  await expectPointerHitTarget(page.getByRole('button', { name: 'Replay how this case works' }))
 
   await expectPointerHitTarget(page.locator('[data-anatomy-viewer] canvas'))
   await expectPointerHitTarget(page.getByRole('button', { name: 'Carina' }))
@@ -303,7 +300,6 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
-  await page.getByRole('button', { name: 'Begin stage' }).click()
   for (const label of [
     'Difficulty completing sentences',
     'Peak expiratory flow falling to 170 L/min',
@@ -316,7 +312,6 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
-  await page.getByRole('button', { name: 'Begin stage' }).click()
   await page
     .getByRole('radio', {
       name: 'It may indicate that ventilation is failing to keep pace with the work of breathing',
@@ -326,7 +321,6 @@ test('P11-T11: completes the five-minute golden path', async ({ page }, testInfo
   await presenterPause(page)
   await page.getByRole('button', { name: 'Continue' }).click()
 
-  await page.getByRole('button', { name: 'Begin stage' }).click()
   await page
     .getByRole('radio', {
       name: 'Severe asthma exacerbation with deteriorating ventilatory reserve',

@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 7
+export const LEARNER_STATE_VERSION = 8
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -18,6 +18,7 @@ interface LearnerStore extends LearnerData {
   replaceWithSeed: (seed: LearnerSeed) => void
   applyEventState: (data: LearnerData) => void
   resetCaseAttempts: () => void
+  markCaseLabWalkthroughSeen: () => void
   setStorageError: (message: string | null) => void
 }
 
@@ -74,6 +75,7 @@ const emptyData: LearnerData = {
     correctAnswers: 0,
   },
   onboarding: { viewed: false },
+  caseLab: { walkthroughSeen: false },
 }
 
 function dataFromSeed(seed: LearnerSeed): LearnerData {
@@ -145,6 +147,9 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
       ...state.stats,
       casesCompleted: state.stats?.casesCompleted ?? 0,
     },
+    caseLab: {
+      walkthroughSeen: state.caseLab?.walkthroughSeen ?? false,
+    },
   }
 }
 
@@ -167,6 +172,8 @@ export const useLearnerStore = create<LearnerStore>()(
         }
         set({ caseProgress: {}, caseAttempts: {} })
       },
+      markCaseLabWalkthroughSeen: () =>
+        set((state) => ({ caseLab: { ...state.caseLab, walkthroughSeen: true } })),
       setStorageError: (storageError) => set({ storageError }),
     }),
     {
@@ -204,6 +211,7 @@ export function learnerDataSnapshot(state: LearnerStore): LearnerData {
     gamification: state.gamification,
     stats: state.stats,
     onboarding: state.onboarding,
+    caseLab: state.caseLab,
   }
 }
 

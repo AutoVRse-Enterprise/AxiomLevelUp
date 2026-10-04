@@ -57,7 +57,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Validate estimated duration and reject numeric clue-to-answer leakage.
   - Migrate all four cases, export schemas and record ADR-096.
 
-- [ ] **P13-T03 — Briefing, onboarding and continuous stages**
+- [x] **P13-T03 — Briefing, onboarding and continuous stages** — completed 2026-10-04
   - Add a mission card and configured explanation of the case loop/rules.
   - Add a replayable first-run Case Lab walkthrough in learner state v8.
   - Remove blocking stage dialogs; replace them with an inline accessible StageBanner.

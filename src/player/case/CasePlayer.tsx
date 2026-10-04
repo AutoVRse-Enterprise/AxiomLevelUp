@@ -1,9 +1,8 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import { Clock3 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { AnatomyFindingProvider } from '@/anatomy3d/viewer/findingContext'
-import { Button, Chip } from '@/components/ui'
+import { Chip } from '@/components/ui'
 import type { AnatomyMap, AppConfig, CaseDocument } from '@/content/schema'
 import {
   createCaseClock,
@@ -32,7 +31,6 @@ import {
   buildCasePlan,
   stageForStep,
   type CasePlan,
-  type CaseStageBoundary,
 } from '@/engines/cases/plan'
 import { normalizeCaseResponse } from '@/engines/cases/responses'
 import { calculateCaseScore } from '@/engines/cases/scoring'
@@ -47,7 +45,9 @@ import {
 import { CaseCompare } from '@/player/case/CaseCompare'
 import { CaseNotes } from '@/player/case/CaseNotes'
 import { CaseResults } from '@/player/case/CaseResults'
+import { CaseWalkthrough } from '@/player/case/CaseWalkthrough'
 import { ClueBoard } from '@/player/case/ClueBoard'
+import { StageBanner } from '@/player/case/StageBanner'
 import { StageHeader } from '@/player/case/StageHeader'
 import {
   presentLiveCaseResult,
@@ -167,23 +167,32 @@ function CaseClock({
         })
       }
     }
+    let interval: number | null = null
+    const stop = () => {
+      if (interval !== null) window.clearInterval(interval)
+      interval = null
+    }
+    const pause = () => {
+      stop()
+      sync(Date.now(), true)
+    }
     const resume = () => {
-      if (paused) return
+      if (paused || document.hidden || interval !== null) return
       clockRef.current = resumeCaseClock(clockRef.current, Date.now())
       setSnapshot(selectCaseClock(clockRef.current, Date.now()))
+      interval = window.setInterval(() => sync(Date.now()), 250)
     }
     const onVisibility = () => {
-      if (document.hidden) sync(Date.now(), true)
+      if (document.hidden) pause()
       else resume()
     }
 
-    if (paused) sync(Date.now(), true)
+    if (paused || document.hidden) pause()
     else resume()
     document.addEventListener('visibilitychange', onVisibility)
-    const interval = paused ? null : window.setInterval(() => sync(Date.now()), 250)
     return () => {
-      if (interval !== null) window.clearInterval(interval)
       document.removeEventListener('visibilitychange', onVisibility)
+      stop()
       sync(Date.now(), true)
     }
   }, [mode, paused])
@@ -203,52 +212,6 @@ function CaseClock({
         {formatClock(visibleMs)}
       </span>
     </Chip>
-  )
-}
-
-function StageTransition({
-  stage,
-  stageIndex,
-  stageCount,
-  hasDifferential,
-  onContinue,
-}: {
-  stage: CaseStageBoundary
-  stageIndex: number
-  stageCount: number
-  hasDifferential: boolean
-  onContinue: () => void
-}) {
-  return (
-    <Dialog.Root open>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/60" />
-        <Dialog.Content
-          className="fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[calc(100%_-_2.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl bg-white p-7 shadow-overlay outline-none"
-          onEscapeKeyDown={(event) => event.preventDefault()}
-          onPointerDownOutside={(event) => event.preventDefault()}
-        >
-          <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
-            Stage {stageIndex + 1} of {stageCount}
-          </p>
-          <Dialog.Title className="mt-2 text-display font-bold text-neutral-950">
-            {stage.title}
-          </Dialog.Title>
-          {stage.intro ? (
-            <Dialog.Description className="mt-4 text-neutral-700">{stage.intro}</Dialog.Description>
-          ) : null}
-          {hasDifferential ? (
-            <p className="mt-4 rounded-lg bg-brand-50 p-3 text-small text-brand-950">
-              Review or update Case notes as the evidence changes. This reflection is optional and
-              does not block the next stage.
-            </p>
-          ) : null}
-          <Button className="mt-7" onClick={onContinue}>
-            Begin stage
-          </Button>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
   )
 }
 
@@ -433,7 +396,10 @@ export function CasePlayer({
     selectedClueId: string | null
     presenterOpen: boolean
   }>({ selectedClueId: null, presenterOpen: false })
-  const [pendingStage, setPendingStage] = useState<CaseStageBoundary | null>(null)
+  const walkthroughSeen = useLearnerStore((state) => state.caseLab.walkthroughSeen)
+  const markWalkthroughSeen = useLearnerStore((state) => state.markCaseLabWalkthroughSeen)
+  const [walkthroughOpen, setWalkthroughOpen] = useState(false)
+  const entryClueAfterWalkthrough = useRef(false)
   const [cluePresenterBlocking, setCluePresenterBlocking] = useState(false)
   const entryHandled = useRef(false)
   const openedEventSent = useRef(false)
@@ -522,7 +488,8 @@ export function CasePlayer({
         setCaseProgress(reset)
         setCluePresentation({ selectedClueId: null, presenterOpen: false })
         setCluePresenterBlocking(false)
-        setPendingStage(null)
+        setWalkthroughOpen(false)
+        entryClueAfterWalkthrough.current = false
         entryHandled.current = false
       }),
     [plan.activity.id],
@@ -572,6 +539,21 @@ export function CasePlayer({
     entryHandled.current = true
     presentClue(entry.clueId, 'entry')
   }, [caseDoc.entry, presentClue])
+
+  const closeWalkthrough = useCallback(() => {
+    setWalkthroughOpen(false)
+    markWalkthroughSeen()
+    if (entryClueAfterWalkthrough.current) {
+      entryClueAfterWalkthrough.current = false
+      presentEntryClue()
+    }
+  }, [markWalkthroughSeen, presentEntryClue])
+
+  const showWalkthrough = useCallback(() => {
+    setCluePresentation({ selectedClueId: null, presenterOpen: false })
+    setCluePresenterBlocking(false)
+    setWalkthroughOpen(true)
+  }, [])
 
   const markClueReviewed = useCallback(
     (clueId: string, method: CaseClueReviewMethod) => {
@@ -670,7 +652,8 @@ export function CasePlayer({
     completedStageIds.current.clear()
     setCluePresentation({ selectedClueId: null, presenterOpen: false })
     setCluePresenterBlocking(false)
-    setPendingStage(null)
+    setWalkthroughOpen(false)
+    entryClueAfterWalkthrough.current = false
     persistProgress(normalizeCaseProgress())
   }, [persistProgress])
 
@@ -718,7 +701,7 @@ export function CasePlayer({
 
   const caseLab = config.caseLab
   if (!caseLab) throw new Error('CasePlayer requires appConfig.caseLab.')
-  const pauseTiming = pendingStage !== null || cluePresenterBlocking
+  const pauseTiming = walkthroughOpen || cluePresenterBlocking
 
   return (
     <AnatomyFindingProvider findingsByStepId={plan.findingsByStepId}>
@@ -737,13 +720,16 @@ export function CasePlayer({
         }}
         onStarted={(resumed) => {
           if (!resumed) {
-            const firstStage = plan.stageBoundaries[0] ?? null
-            setPendingStage(firstStage)
-            if (!firstStage) presentEntryClue()
             attemptNumberRef.current += 1
           } else {
             entryHandled.current = true
             if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
+          }
+          if (!walkthroughSeen) {
+            entryClueAfterWalkthrough.current = !resumed && caseDoc.entry.mode === 'clue_first'
+            setWalkthroughOpen(true)
+          } else if (!resumed) {
+            presentEntryClue()
           }
           emitEvent({
             event: 'case_started',
@@ -773,7 +759,6 @@ export function CasePlayer({
           if (from?.stageId !== to?.stageId) {
             setCluePresentation({ selectedClueId: null, presenterOpen: false })
             setCluePresenterBlocking(false)
-            if (to) setPendingStage(to)
           }
         }}
         renderChrome={({ stepIndex, session }) => {
@@ -824,12 +809,11 @@ export function CasePlayer({
           }
           return {
             header: (
-              <>
+              <div className="space-y-3">
                 <StageHeader
                   stages={plan.stageBoundaries}
                   currentStage={stage}
-                  currentStepIndex={stepIndex}
-                  tierLabel={plan.tierPreset.label}
+                  onShowWalkthrough={showWalkthrough}
                   clock={
                     <CaseClock
                       mode={plan.tierPreset.timing}
@@ -844,8 +828,9 @@ export function CasePlayer({
                     />
                   }
                 />
+                <StageBanner stage={stage} />
                 <ClueBoard {...commonClueProps} variant="mobile" />
-              </>
+              </div>
             ),
             aside: <ClueBoard {...commonClueProps} variant="desktop" />,
           }
@@ -862,21 +847,7 @@ export function CasePlayer({
           />
         )}
       />
-      {pendingStage ? (
-        <StageTransition
-          stage={pendingStage}
-          stageIndex={plan.stageBoundaries.findIndex(
-            ({ stageId }) => stageId === pendingStage.stageId,
-          )}
-          stageCount={plan.stageBoundaries.length}
-          hasDifferential={Boolean(caseDoc.differential?.length)}
-          onContinue={() => {
-            const isFirstStage = pendingStage.stageId === plan.stageBoundaries[0]?.stageId
-            setPendingStage(null)
-            if (isFirstStage) presentEntryClue()
-          }}
-        />
-      ) : null}
+      <CaseWalkthrough open={walkthroughOpen} onClose={closeWalkthrough} />
     </AnatomyFindingProvider>
   )
 }

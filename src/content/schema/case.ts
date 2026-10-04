@@ -208,12 +208,24 @@ const caseTierPresetSchema = z.strictObject({
   labelEssentialClues: z.boolean(),
 })
 
+const caseHowItWorksStepSchema = z.strictObject({
+  id: z.enum(['first_attempt', 'optional_clues', 'timing', 'hints']),
+  title: nonEmptyStringSchema,
+  description: nonEmptyStringSchema,
+})
+
 export const caseLabConfigSchema = z
   .strictObject({
     title: nonEmptyStringSchema,
     featuredCaseId: idSchema,
     caseIds: z.array(idSchema).min(1),
     dailyQuickCaseId: idSchema,
+    howItWorks: z
+      .array(caseHowItWorksStepSchema)
+      .length(4)
+      .refine((steps) => new Set(steps.map(({ id }) => id)).size === steps.length, {
+        message: 'How this case works steps must have unique IDs',
+      }),
     organSystems: z.record(idSchema, nonEmptyStringSchema),
     clueCategories: z
       .array(

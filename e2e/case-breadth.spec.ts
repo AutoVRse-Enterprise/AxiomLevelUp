@@ -112,7 +112,6 @@ async function completeBreadthCase(page: Page, testInfo: TestInfo, caseDoc: Case
   await page.getByRole('link', { name: 'Start case' }).click()
 
   for (const [stageIndex, stage] of caseDoc.stages.entries()) {
-    await page.getByRole('button', { name: 'Begin stage' }).click()
     if (stageIndex === 0 && caseDoc.entry.mode === 'clue_first') {
       await expect(
         page.getByText('Distal air-space architecture', { exact: true }).first(),

@@ -22,6 +22,7 @@ import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { clearEventSubscribersForTests, emitEvent, subscribeToEvents } from '@/events/bus'
 import type { LearnerEvent } from '@/events/types'
 import { CasePlayer, type CasePlayerProps } from '@/player/case/CasePlayer'
+import { useLearnerStore } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
 vi.mock('@/anatomy3d/viewer/AnatomyViewer', () => ({
@@ -50,6 +51,12 @@ function caseConfig(timing: 'none' | 'stopwatch' | 'countdown' = 'stopwatch'): A
       featuredCaseId: 'case-contract-fixture',
       caseIds: ['case-contract-fixture'],
       dailyQuickCaseId: 'case-contract-fixture',
+      howItWorks: [
+        { id: 'first_attempt', title: 'First answer', description: 'Your first answer is scored.' },
+        { id: 'optional_clues', title: 'Clues', description: 'Optional clues can cost points.' },
+        { id: 'timing', title: 'Timing', description: 'Timing depends on the tier.' },
+        { id: 'hints', title: 'Hints', description: 'Hint support depends on the tier.' },
+      ],
       organSystems: { generic: 'Generic' },
       clueCategories: [{ id: 'evidence', label: 'Evidence' }],
       clueReview: { minVisibleMs: 1_200, mediaProgressThreshold: 0.8 },
@@ -145,6 +152,7 @@ describe('case player integration', () => {
     setMobileViewport(false)
     clearEventSubscribersForTests()
     useActivitySessionStore.getState().clear()
+    useLearnerStore.setState({ caseLab: { walkthroughSeen: true } })
     await useActivitySessionStore.persist.clearStorage()
   })
 
@@ -164,13 +172,13 @@ describe('case player integration', () => {
     renderCase(caseDoc, config, { onComplete, onClueOpened })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    const firstStageDialog = screen.getByRole('dialog', { name: 'Orient' })
-    expect(firstStageDialog).toBeVisible()
-    await user.click(within(firstStageDialog).getByRole('button', { name: 'Begin stage' }))
+    expect(screen.getByRole('heading', { name: 'Orient' })).toHaveFocus()
+    expect(screen.getByText('Verify the orient-stage contract.')).toBeVisible()
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time; speed is not scored/)
-    expect(screen.getByText('Task 1 of 1')).toBeVisible()
+    expect(screen.queryByText(/Task \d+ of \d+/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Basic')).not.toBeInTheDocument()
     expect(screen.queryByRole('progressbar', { name: 'Activity progress' })).not.toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /Open clue board.*Case: 0\/1 reviewed/ }))
+    await user.click(screen.getByRole('button', { name: /Open clue board.*0 of 1 reviewed/ }))
     await user.click(screen.getByRole('button', { name: /Context/ }))
     expect(onClueOpened).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -184,8 +192,8 @@ describe('case player integration', () => {
     await user.click(await screen.findByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
-    expect(screen.getByRole('dialog')).toHaveTextContent('Conclude')
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
+    expect(screen.getByRole('heading', { name: 'Conclude' })).toHaveFocus()
+    expect(screen.getByText('Verify the conclusion-stage contract.')).toBeVisible()
     expect(screen.queryByText('Context')).not.toBeInTheDocument()
 
     await user.click(await screen.findByRole('radio', { name: 'True' }))
@@ -294,7 +302,6 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('stopwatch'), { onComplete })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     expect(screen.getAllByRole('timer')).toHaveLength(1)
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time/)
     await user.click(await screen.findByRole('button', { name: 'Explore anatomy' }))
@@ -306,7 +313,6 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
 
     await user.click(await screen.findByRole('radio', { name: 'True' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
@@ -351,16 +357,16 @@ describe('case player integration', () => {
     expect(screen.queryByText('explore-airway')).not.toBeInTheDocument()
   })
 
-  it('shows the first stage intro and pauses both clocks for blocking dialogs', async () => {
+  it('walks a first-time learner through the case and pauses both clocks while overlays are open', async () => {
     vi.useFakeTimers()
     setMobileViewport(true)
+    useLearnerStore.setState({ caseLab: { walkthroughSeen: false } })
     const caseDoc = caseDocumentSchema.parse({
       ...structuredClone(fixtureCaseJson),
       stages: fixtureCaseJson.stages.map((stage, index) =>
         index === 0
           ? {
               ...stage,
-              intro: 'Review the stage goal before starting.',
               steps: stage.steps.map((step) => ({
                 ...step,
                 timer: { durationSeconds: 3, mode: 'countdown' },
@@ -373,9 +379,8 @@ describe('case player integration', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Start' }))
     await act(async () => Promise.resolve())
-    const stageDialog = screen.getByRole('dialog', { name: 'Orient' })
-    expect(stageDialog).toHaveTextContent('Review the stage goal before starting.')
-    expect(within(stageDialog).getByRole('button', { name: 'Begin stage' })).toHaveFocus()
+    const walkthrough = screen.getByRole('dialog', { name: 'How this case works' })
+    expect(walkthrough).toHaveTextContent('Task')
     expect(screen.getByRole('timer', { name: 'Time remaining: 0:03' })).toBeVisible()
     expect(screen.getByLabelText('Case time remaining: 5:00')).toBeInTheDocument()
 
@@ -383,23 +388,35 @@ describe('case player integration', () => {
     expect(screen.getByRole('timer', { name: 'Time remaining: 0:03' })).toBeVisible()
     expect(screen.getByLabelText('Case time remaining: 5:00')).toBeInTheDocument()
 
-    fireEvent.click(within(stageDialog).getByRole('button', { name: 'Begin stage' }))
+    fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
+    expect(walkthrough).toHaveTextContent('Evidence')
+    fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
+    expect(walkthrough).toHaveTextContent('Case notes')
+    fireEvent.click(within(walkthrough).getByRole('button', { name: /Next/ }))
+    expect(walkthrough).toHaveTextContent('Primary action')
+    fireEvent.click(within(walkthrough).getByRole('button', { name: 'Start case' }))
+    expect(useLearnerStore.getState().caseLab.walkthroughSeen).toBe(true)
     await act(() => vi.advanceTimersByTimeAsync(1_000))
     expect(screen.getByRole('timer', { name: 'Time remaining: 0:02' })).toBeVisible()
     expect(screen.getByLabelText('Case time remaining: 4:59')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: /Clues.*Case: 0\/1 reviewed/ }))
-    await act(async () => Promise.resolve())
-    expect(screen.getByRole('dialog', { name: 'Clue board' })).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Replay how this case works' }))
     await act(() => vi.advanceTimersByTimeAsync(5_000))
     expect(screen.getByRole('timer', { name: 'Time remaining: 0:02' })).toBeVisible()
     expect(screen.getByLabelText('Case time remaining: 4:59')).toBeInTheDocument()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Skip' }))
     await act(() => vi.advanceTimersByTimeAsync(1_000))
     expect(screen.getByRole('timer', { name: 'Time remaining: 0:01' })).toBeVisible()
     expect(screen.getByLabelText('Case time remaining: 4:58')).toBeInTheDocument()
 
+    fireEvent.click(screen.getByRole('button', { name: /Clues.*0 of 1 reviewed/ }))
+    await act(async () => Promise.resolve())
+    expect(screen.getByRole('dialog', { name: 'Clue board' })).toBeVisible()
+    await act(() => vi.advanceTimersByTimeAsync(5_000))
+    expect(screen.getByRole('timer', { name: 'Time remaining: 0:01' })).toBeVisible()
+    expect(screen.getByLabelText('Case time remaining: 4:58')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     fireEvent.click(screen.getByRole('button', { name: 'Notes' }))
     await act(async () => Promise.resolve())
     expect(screen.getByRole('dialog', { name: 'Case notes' })).toBeVisible()
@@ -426,7 +443,6 @@ describe('case player integration', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Start' }))
     await act(async () => Promise.resolve())
-    fireEvent.click(screen.getByRole('button', { name: 'Begin stage' }))
     await act(() => vi.advanceTimersByTimeAsync(5_000))
 
     expect(screen.getByRole('timer', { name: 'Case time remaining: 0:00' })).toBeVisible()
@@ -487,7 +503,7 @@ describe('case player integration', () => {
     expect(screen.queryByRole('dialog', { name: 'Conclude' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Conclude' })).toBeVisible()
     expect(
-      screen.getByRole('button', { name: /Open clue board.*Case: 1\/1 reviewed/ }),
+      screen.getByRole('button', { name: /Open clue board.*1 of 1 reviewed/ }),
     ).toBeVisible()
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time: 0:0[5-6]/)
     expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
@@ -539,10 +555,7 @@ describe('case player integration', () => {
     renderCase(caseDoc, config)
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    expect(screen.getByRole('dialog', { name: 'Orient' })).toHaveTextContent(
-      'Review or update Case notes',
-    )
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
+    expect(screen.getByRole('heading', { name: 'Orient' })).toHaveFocus()
 
     emitEvent({
       event: 'anatomy_waypoint_reached',
@@ -553,7 +566,7 @@ describe('case player integration', () => {
       waypointId: 'entry-waypoint',
     })
     await user.click(screen.getByRole('button', { name: /Open clue board/ }))
-    await user.click(screen.getByRole('button', { name: /Context.*Unopened/ }))
+    await user.click(screen.getByRole('button', { name: /Context.*New/ }))
     await waitFor(() =>
       expect(useActivitySessionStore.getState().session?.caseProgress?.reviewedClueIds).toEqual([
         'clue-context',
@@ -564,7 +577,7 @@ describe('case player integration', () => {
     expect(screen.getByText('Entry waypoint')).toBeVisible()
     expect(screen.queryByText('entry-waypoint')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Pin clue' })).toBeEnabled()
-    expect(screen.getAllByRole('button', { name: 'Pin finding' })[0]).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Pin finding' })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Pin clue' }))
     const supportedHypothesis = screen.getByText('Supported hypothesis').closest('fieldset')!
@@ -604,14 +617,13 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('none'))
 
     fireEvent.click(screen.getByRole('button', { name: 'Start' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Begin stage' }))
     fireEvent.click(
       screen.getByRole('button', { name: /Open clue board.*Available this stage: 1/ }),
     )
-    fireEvent.click(screen.getByRole('button', { name: /Context.*Unopened/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Context.*New/ }))
 
-    expect(screen.getByText('Case: 0/1 reviewed')).toBeVisible()
-    expect(screen.getByText('Available this stage: 1')).toBeVisible()
+    expect(screen.getByText('0 of 1 reviewed')).toBeVisible()
+    expect(screen.getByText('1 available now')).toBeVisible()
     expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
       openedClueIds: ['clue-context'],
       reviewedClueIds: [],
@@ -633,10 +645,10 @@ describe('case player integration', () => {
         stageId: 'stage-orient',
       }),
     ])
-    expect(screen.getByText('Case: 1/1 reviewed')).toBeVisible()
+    expect(screen.getByText('1 of 1 reviewed')).toBeVisible()
 
     fireEvent.click(screen.getByRole('button', { name: 'Close clues' }))
-    fireEvent.click(screen.getByRole('button', { name: /Open clue board.*Case: 1\/1 reviewed/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Open clue board.*1 of 1 reviewed/ }))
     fireEvent.click(screen.getByRole('button', { name: /Context.*Reviewed/ }))
     await act(() => vi.advanceTimersByTimeAsync(1_200))
     expect(events.filter(({ event }) => event === 'case_clue_reviewed')).toHaveLength(1)
@@ -645,15 +657,14 @@ describe('case player integration', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Target structure' }))
     fireEvent.click(screen.getByRole('button', { name: 'Check answer' }))
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Begin stage' }))
     expect(
       screen.getByRole('button', {
-        name: /Open clue board.*Case: 1\/1 reviewed.*Available this stage: 0/,
+        name: /Open clue board.*1 of 1 reviewed.*Available this stage: 0/,
       }),
     ).toBeVisible()
   })
 
-  it('hides clue importance labels for the advanced tier', () => {
+  it('shows optional clue cost in the advanced tier', () => {
     const caseDoc = caseDocumentSchema.parse({
       ...structuredClone(fixtureCaseJson),
       tier: 'advanced',
@@ -662,11 +673,9 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('countdown'))
 
     fireEvent.click(screen.getByRole('button', { name: 'Start' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Begin stage' }))
     fireEvent.click(screen.getByRole('button', { name: /Open clue board/ }))
 
-    expect(screen.getByRole('button', { name: /Context.*Unopened/ })).toBeVisible()
-    expect(screen.queryByText(/Optional|Recommended/)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Context.*New.*−2 pts/ })).toBeVisible()
   })
 
   it('visibly presents configured clue-first evidence on mobile and records it once', async () => {
@@ -680,8 +689,6 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('none'), { onClueOpened })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    expect(screen.getByRole('dialog', { name: 'Orient' })).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     expect(screen.getByRole('dialog', { name: 'Context' })).toBeVisible()
     await waitFor(() =>
       expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
@@ -693,10 +700,10 @@ describe('case player integration', () => {
     )
     expect(onClueOpened).toHaveBeenCalledTimes(1)
     await user.click(screen.getByRole('button', { name: 'Close' }))
-    await user.click(screen.getByRole('button', { name: /Clues.*Case: 0\/1 reviewed/ }))
+    await user.click(screen.getByRole('button', { name: /Clues.*0 of 1 reviewed/ }))
     await user.click(
       within(screen.getByRole('dialog', { name: 'Context' })).getByRole('button', {
-        name: /Context.*Opened/,
+        name: /Context.*New/,
       }),
     )
     expect(onClueOpened).toHaveBeenCalledTimes(1)
@@ -710,8 +717,7 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('none'), { onClueOpened })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
-    await user.click(screen.getByRole('button', { name: /Clues.*Case: 0\/1 reviewed/ }))
+    await user.click(screen.getByRole('button', { name: /Clues.*0 of 1 reviewed/ }))
 
     expect(screen.getByRole('dialog', { name: 'Clue board' })).toBeVisible()
     expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
@@ -733,7 +739,6 @@ describe('case player integration', () => {
     renderCase(caseDoc, caseConfig('none'), { onClueOpened, onComplete })
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     await user.click(screen.getByRole('radio', { name: 'Other structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Reopen clue: Context' }))
@@ -755,7 +760,6 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('radio', { name: 'Target structure' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
     await user.click(screen.getByRole('radio', { name: 'True' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
     await user.click(screen.getByRole('button', { name: 'Continue' }))

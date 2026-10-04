@@ -2,9 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  Clock3,
   History,
-  Lightbulb,
   RefreshCw,
   Stethoscope,
 } from 'lucide-react'
@@ -26,11 +24,30 @@ import { prefetchVersionedModel, versionedModelUrl } from '@/pwa/modelCache'
 import { useLearnerStore } from '@/state/learnerStore'
 import { selectCaseLabCards } from '@/state/selectors'
 
-const timingLabels = {
-  none: 'No timer',
-  stopwatch: 'Stopwatch · speed bonus only',
-  countdown: 'Countdown · play continues when time expires',
-} as const
+function caseRuleDetail(
+  id: 'first_attempt' | 'optional_clues' | 'timing' | 'hints',
+  caseLab: NonNullable<ReturnType<typeof useContent>['appConfig']['caseLab']>,
+  tier: 'foundation' | 'intermediate' | 'advanced',
+) {
+  const preset = caseLab.tiers[tier]
+  if (id === 'optional_clues') {
+    const { cap, perOptionalClue } = caseLab.scoring.cluePenalty
+    return `Each optional clue costs ${perOptionalClue} points, up to ${cap} points total.`
+  }
+  if (id === 'timing') {
+    if (preset.timing === 'none') return `${preset.label}: untimed practice; speed is not scored.`
+    if (preset.timing === 'stopwatch') {
+      return `${preset.label}: a stopwatch tracks pace for the speed part of your score.`
+    }
+    return `${preset.label}: a countdown tracks pace, but you can continue when it reaches zero.`
+  }
+  if (id === 'hints') {
+    return preset.hints === 'full'
+      ? `${preset.label}: full hints are available.`
+      : `${preset.label}: hints are available with reduced guidance.`
+  }
+  return null
+}
 
 function FeaturedModelPreflight({ modelUrl }: { modelUrl: string }) {
   const [attempt, setAttempt] = useState(0)
@@ -156,6 +173,27 @@ export function CaseIntroPage() {
         <p className="mt-3 max-w-3xl text-neutral-600">{caseDoc.summary}</p>
       </header>
 
+      <section aria-labelledby="case-how-it-works">
+        <h2 className="text-heading font-bold" id="case-how-it-works">
+          How this case works
+        </h2>
+        <ol className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {registry.appConfig.caseLab.howItWorks.map((step, index) => {
+            const detail = caseRuleDetail(step.id, registry.appConfig.caseLab!, caseDoc.tier)
+            return (
+              <li className="rounded-xl border border-brand-100 bg-brand-50 p-4" key={step.id}>
+                <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
+                  Step {index + 1}
+                </p>
+                <h3 className="mt-1 font-bold text-neutral-950">{step.title}</h3>
+                <p className="mt-2 text-small text-neutral-700">{step.description}</p>
+                {detail ? <p className="mt-2 text-small font-semibold text-brand-900">{detail}</p> : null}
+              </li>
+            )
+          })}
+        </ol>
+      </section>
+
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="overflow-hidden p-0 sm:p-0">
           {patientImage ? (
@@ -192,36 +230,24 @@ export function CaseIntroPage() {
 
         <div className="space-y-5">
           <Card>
-            <h2 className="text-heading font-bold">Case rules</h2>
-            <dl className="mt-4 space-y-4 text-small">
-              <div className="grid grid-cols-[auto_1fr] gap-x-3">
-                <dt className="contents font-semibold">
-                  <Clock3 aria-hidden="true" className="mt-0.5 shrink-0 text-brand-700" size={18} />
-                  <span>Timing</span>
-                </dt>
-                <dd className="col-start-2 text-neutral-600">{timingLabels[caseView.timing]}</dd>
-              </div>
-              <div className="grid grid-cols-[auto_1fr] gap-x-3">
-                <dt className="contents font-semibold">
-                  <Lightbulb
+            <p className="text-caption font-bold tracking-wide text-brand-700 uppercase">
+              Your mission
+            </p>
+            <h2 className="mt-2 text-heading font-bold">{caseDoc.mission.objective}</h2>
+            <p className="mt-3 text-small text-neutral-700">{caseDoc.mission.role}</p>
+            <h3 className="mt-5 font-bold text-neutral-950">What you will deliver</h3>
+            <ul className="mt-3 space-y-2 text-small text-neutral-700">
+              {caseDoc.mission.deliverables.map((deliverable) => (
+                <li className="flex gap-2" key={deliverable}>
+                  <CheckCircle2
                     aria-hidden="true"
                     className="mt-0.5 shrink-0 text-brand-700"
-                    size={18}
+                    size={17}
                   />
-                  <span>Hints</span>
-                </dt>
-                <dd className="col-start-2 text-neutral-600">
-                  {caseView.hints === 'full' ? 'Hints are available' : 'Reduced hints'}
-                </dd>
-              </div>
-              <div>
-                <dt className="font-semibold">Optional clues</dt>
-                <dd className="text-neutral-600">
-                  −{registry.appConfig.caseLab.scoring.cluePenalty.perOptionalClue} points each, up
-                  to {registry.appConfig.caseLab.scoring.cluePenalty.cap} points
-                </dd>
-              </div>
-            </dl>
+                  <span>{deliverable}</span>
+                </li>
+              ))}
+            </ul>
           </Card>
 
           <Card>

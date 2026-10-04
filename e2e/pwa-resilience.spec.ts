@@ -78,7 +78,6 @@ test.describe('P12-T09 offline case package', () => {
 
     await page.goto('/learn/cases/asthma-foundation')
     await page.getByRole('link', { name: 'Start case' }).click()
-    await page.getByRole('button', { name: 'Begin stage' }).click()
 
     await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible()
     await expect
@@ -113,7 +112,6 @@ test.describe('P12-T10 anatomy and session resilience', () => {
 
   test('recovers after a WebGL context loss when the extension is available', async ({ page }) => {
     await page.goto('/learn/cases/asthma-foundation/play')
-    await page.getByRole('button', { name: 'Begin stage' }).click()
     await expect(page.locator('[data-anatomy-viewer] canvas')).toBeVisible()
     const supported = await page.evaluate(
       () =>
@@ -154,7 +152,6 @@ test.describe('P12-T10 anatomy and session resilience', () => {
     })
 
     await page.goto('/learn/cases/asthma-foundation/play')
-    await page.getByRole('button', { name: 'Begin stage' }).click()
     await expect(page.getByText('3D anatomy unavailable')).toBeVisible()
     await page.getByRole('button', { name: 'Retry' }).click()
 
@@ -174,7 +171,6 @@ test.describe('P12-T10 anatomy and session resilience', () => {
 
   test('resumes the same stage and pinned evidence after navigation', async ({ page }) => {
     await page.goto('/learn/cases/asthma-foundation/play')
-    await page.getByRole('button', { name: 'Begin stage' }).click()
     await page.getByText('Choose from list').click()
     await page.getByRole('button', { name: 'Right upper lobe', exact: true }).click()
     await page.getByText('Inspect findings').click()
@@ -201,8 +197,7 @@ test.describe('P12-T10 anatomy and session resilience', () => {
 
     await page.goto('/learn')
     await page.goto('/learn/cases/asthma-foundation/play')
-    await expect(page.getByText('Stage 1 of 4')).toBeVisible()
-    await expect(page.getByText('Task 2 of 2')).toBeVisible()
+    await expect(page.getByRole('listitem', { name: 'Orient: current' })).toBeVisible()
     await page.getByRole('button', { name: /^Clues/ }).click()
     if (await notesTab.isVisible()) {
       await notesTab.click()

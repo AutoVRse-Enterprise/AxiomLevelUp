@@ -32,8 +32,8 @@ export function StepFrame({
   const headingRef = useRef<HTMLHeadingElement>(null)
 
   useEffect(() => {
-    headingRef.current?.focus()
-  }, [title])
+    if (!chromeHeader) headingRef.current?.focus()
+  }, [chromeHeader, title])
 
   return (
     <div

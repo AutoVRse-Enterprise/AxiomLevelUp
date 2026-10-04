@@ -1188,6 +1188,39 @@
           "minLength": 1,
           "pattern": "^[a-z0-9][a-z0-9_-]*$"
         },
+        "howItWorks": {
+          "minItems": 4,
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "enum": [
+                  "first_attempt",
+                  "optional_clues",
+                  "timing",
+                  "hints"
+                ]
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "description"
+            ],
+            "additionalProperties": false
+          }
+        },
         "organSystems": {
           "type": "object",
           "propertyNames": {
@@ -1493,6 +1526,7 @@
         "featuredCaseId",
         "caseIds",
         "dailyQuickCaseId",
+        "howItWorks",
         "organSystems",
         "clueCategories",
         "clueReview",

@@ -100,7 +100,7 @@ describe('Case Lab routes', () => {
     vi.unstubAllGlobals()
   })
 
-  it('renders configured patient, tier rules and progress on case intro', () => {
+  it('renders the configured mission, case rules and progress on case intro', () => {
     useLearnerStore.setState({
       caseProgress: {
         [fixtureCase.id]: {
@@ -116,7 +116,13 @@ describe('Case Lab routes', () => {
 
     expect(screen.getByRole('heading', { name: fixtureCase.title })).toBeVisible()
     expect(screen.getByText(fixtureCase.patient.presentingComplaint)).toBeVisible()
-    expect(screen.getByText('No timer')).toBeVisible()
+    expect(screen.getByText(fixtureCase.mission.objective)).toBeVisible()
+    expect(screen.getByText(fixtureCase.mission.role)).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'How this case works' })).toBeVisible()
+    expect(screen.getByText('Your first answer is scored.')).toBeVisible()
+    expect(screen.getByText('Each optional clue costs 2 points, up to 10 points total.')).toBeVisible()
+    expect(screen.getByText('Basic: untimed practice; speed is not scored.')).toBeVisible()
+    expect(screen.getByText('Basic: full hints are available.')).toBeVisible()
     expect(screen.getByRole('link', { name: /Start case/ })).toBeVisible()
     expect(screen.getByRole('button', { name: /Download for offline/ })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Attempt history' })).toBeVisible()
@@ -169,13 +175,12 @@ describe('Case Lab routes', () => {
     renderCaseRoute(`/learn/cases/${fixtureCase.id}`)
 
     await user.click(screen.getByRole('link', { name: 'Start case' }))
-    const stageDialog = await screen.findByRole('dialog', { name: 'Orient' })
     expect(screen.queryByRole('button', { name: 'Start' })).not.toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Begin stage' }))
-    expect(stageDialog).not.toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Orient' })).toHaveFocus()
     expect(screen.getByRole('button', { name: 'Exit activity' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Replay how this case works' })).toBeVisible()
     expect(screen.queryByRole('progressbar', { name: 'Activity progress' })).not.toBeInTheDocument()
-    expect(screen.getByText('Task 1 of 1')).toBeVisible()
+    expect(screen.queryByText(/Task \d+ of \d+/)).not.toBeInTheDocument()
   })
 
   it('blocks an undownloaded case route while offline', () => {
@@ -209,7 +214,7 @@ describe('Case Lab routes', () => {
     })
 
     renderCaseRoute(`/learn/cases/${fixtureCase.id}/play`, registryWithFeaturedModel)
-    expect(await screen.findByRole('dialog', { name: 'Orient' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Orient' })).toBeVisible()
   })
 
   it('renders saved results and switches to expert comparison', async () => {

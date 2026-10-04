@@ -2949,3 +2949,19 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   tests pass.
 - **Follow-ups:** Render the mission and patient updates through the continuous-stage experience in
   P13-T03.
+
+### [2026-10-04 21:55] P13-T03 - Guide the learner through a continuous case
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Rendered mission and operating-rule briefings; added the learner-scoped four-step
+  coach walkthrough and replay affordance; migrated learner state to v8; replaced blocking stage
+  dialogs with focus-managed inline banners; simplified stage progress; and paused timing behind
+  instructional overlays.
+- **Files changed:** Case intro/player/chrome/walkthrough components and tests; learner store,
+  fixtures and E2E helpers; app configuration/schema; Case 0.2 documents; content/governance docs.
+- **Commands run:** `npm run test` (71 files / 481 tests); `npm run lint`; IDE diagnostics.
+- **Result/verification:** Full unit suite and lint pass. Stage changes no longer require a
+  learner acknowledgement, and the walkthrough appears once for fresh learner state and can be
+  replayed from the case header.
+- **Follow-ups:** Build the unified task/evidence/notes workspace and shared primary-action slot in
+  P13-T04.
