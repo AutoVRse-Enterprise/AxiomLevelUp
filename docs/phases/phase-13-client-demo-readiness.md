@@ -1,6 +1,6 @@
 # Phase 13: Client demo readiness
 
-**Status:** Active — P13-T00 started 2026-10-04
+**Status:** Active — implementation and automation complete; external validation blocked
 
 ## Goal
 
@@ -121,21 +121,23 @@ Phase 13 closes on usability evidence, not automation alone.
   - Add country, specialty and institution filters over seeded leaderboard data.
   - This is the first task to defer if schedule or quality is at risk.
 
-- [ ] **P13-T14 — Automated and visual regression coverage**
+- [x] **P13-T14 — Automated and visual regression coverage** — completed 2026-10-05
   - Update component, route and E2E tests for the new flow.
   - Add direct tests for ClueBoard, CaseNotes and StageBanner.
   - Add a bridge-free advanced case spec and viewport action/prompt assertions.
   - Add approximately eight desktop golden-screen visual baselines.
   - Pass `npm run check` and serial Playwright; record ADR-102.
 
-- [ ] **P13-T15 — Moderated usability validation**
+- [ ] **P13-T15 — Moderated usability validation** — blocked: five qualifying human sessions have
+  not been scheduled or supplied
   - Publish a protocol and run five unaided sessions: at least three clinicians/trainees and two IT
     proxies.
   - Require 4/5 mission comprehension, 4/5 unaided Foundation and Advanced completion, first 3D
     action within 20 seconds, 80% decisive-evidence review and SUS ≥ 70.
   - Fix and retest failures; publish results.
 
-- [ ] **P13-T16 — Delivery and closeout**
+- [ ] **P13-T16 — Delivery and closeout** — blocked: no HTTPS deployment target, production DICOM
+  origin, physical devices or approved desktop-only waiver is available
   - Deploy one exact HTTPS candidate and complete host/service-worker/DICOM preflight.
   - Run Android and iPhone smoke tests or record a desktop-only waiver.
   - Publish a 10-minute presenter script, hands-on handout and readiness verdict.

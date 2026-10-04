@@ -24,9 +24,11 @@ as separate JSON Schema files.
 fetches and parses every listed document, then exposes ordered `cases` and `anatomyMaps`
 collections plus `caseById` and `anatomyMapById` registries.
 
-A case document contains patient context, a tier, an anatomy-map entry mode, optional configured
-findings, a content-only clue catalogue, ordered stages of reusable primitives, timing targets, an
-expert benchmark and a debrief. A finding has a stable ID, learner-facing label and description,
+A case document contains patient context, a learner-facing mission, a tier, an anatomy-map entry
+mode, optional configured findings, a content-only clue catalogue, ordered stages of reusable
+primitives, timing targets, an expert benchmark and a debrief. Each stage carries a purpose and may
+add a patient-timeline update. A finding has a stable ID, learner-facing label, description and
+learning significance,
 one of four organ-agnostic kinds (`lumen_narrowing`, `lumen_occlusion`,
 `wall_thickening`, `region`), normalized severity, clue references and either a `structure`
 anchor or `waypoint`, `toWaypoint` and position `t` along one directed edge. Stage kinds are
@@ -49,6 +51,12 @@ structure below the first level has a parent on a prior level. Waypoints declare
 target, outgoing waypoint IDs and an optional positive radius used by procedural lumen rendering.
 Anatomy primitive start views select overview, marker, waypoint or endoscopic mode, while
 `navigation` selects `orbit`, `flythrough` or `both`.
+
+Case entry additionally supports `unknown_waypoint`. Its candidate waypoint IDs are validated
+against the anatomy map, one candidate is selected from the persisted attempt seed, and
+`neutralLabels: true` hides location-bearing branch labels until the learner commits. An
+`anatomy_locate` step may use `answerFrom: "entry"`; semantic validation confirms that every
+candidate resolves to a valid answer for every configured level.
 
 Semantic validation enforces unique level, structure and waypoint IDs, model-asset typing, parent
 and level references, prepared mesh-name references, resolved waypoint edges, acyclic waypoint
@@ -80,9 +88,21 @@ nearest mesh parent as context.
 
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
 manifest contains a case. It configures the featured and daily case IDs, ordered case catalogue,
-clue-category labels, all three tier presets, normalized component and speed-blend weights, timing
-defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
-and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
+surface definitions, first-run operating rules, clue-category labels, all three tier presets,
+normalized component and speed-blend weights, timing defaults, the first-attempt minimum score for
+time-only step-speed eligibility, clue penalties, XP and attempt-history limit. Every configured
+case ID and clue category used by a case must resolve.
+
+`case_differential` records a rating for every configured hypothesis at an authored checkpoint.
+`case_evidence_select` requires the learner to cite a bounded set of previously reviewed clues or
+inspected spatial findings. Decisive clue references are validated against scored steps, and the
+diagnosis component cannot receive full credit when its required decisive evidence was not
+reviewed.
+
+The app-config `demo` block declares the default seed and the profile choices exposed to presenters.
+Recorded-opponent challenge data and segmented leaderboard attributes are configuration only and
+must be displayed with their `simulated` status. These records do not imply live multiplayer or
+server-backed ranking.
 
 ## Primitive registry
 

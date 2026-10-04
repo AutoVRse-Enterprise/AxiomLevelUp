@@ -16,7 +16,7 @@ read-only ContentRegistry -----> routes -----> activity plan
         |                                review/completion/evaluation)
         |                                        |
         |                                        v
-        +----> pure view selectors <----- activity/case player + session v5
+        +----> pure view selectors <----- activity/case player + session v6
                         ^                  /                   \
                         |                 v                     v
           learner state + clock   lazy primitive UI      typed event bus
@@ -30,7 +30,7 @@ read-only ContentRegistry -----> routes -----> activity plan
                                                                       +-----------+-----------+
                                                                                   |
                                                                                   v
-                                                                          learner store v7
+                                                                          learner store v8
 ```
 
 ## Boundaries
@@ -39,7 +39,7 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/app`: providers, startup and routing.
 - `src/routes`, `src/layouts`, `src/components`: presentation and user intent.
 - `src/events`: framework-independent event taxonomy and transport.
-- `src/engines/learning`: pure activity planning, session v5, completion, scoring and event
+- `src/engines/learning`: pure activity planning, session v6, completion, scoring and event
   reduction.
 - `src/engines/gamification`: pure XP, stars, levels, calendar, challenge and achievement rules.
 - `src/engines/mastery`: pure deterministic concept-score updates and bounded history.
@@ -83,7 +83,7 @@ startup contract; environments without Worker support retain the direct asynchro
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning
-progress, case progress, gamification and mastery, commits one learner-state v7 snapshot and
+progress, case progress, gamification and mastery, commits one learner-state v8 snapshot and
 publishes informational reward events. The event-history subscriber records a bounded audit trail.
 Output events are not reduced again. Persisted reward ledgers make lesson, case, perfect, daily and
 badge awards idempotent.
@@ -132,18 +132,19 @@ and lifetime aggregates. Navigation away from an active session is blocked until
 confirms the saved exit.
 
 A case document compiles to a flattened `case` activity plan with stage boundaries and resolved
-case-scoped findings. `CasePlayer` uses ActivityPlayer extension points for stage chrome, atomic clue
-presentation, focus-trapped boundary transitions, active timing and completion. Session v5 persists
-opened clues with first-open context, independently reviewed clue IDs, local evidence/differential
-state, step and case elapsed time and clock expiry. Blocking stage and phone clue/notes dialogs pause
-both question and case clocks; countdown expiry does not truncate actual elapsed duration. Primitive
+case-scoped findings. `CasePlayer` uses ActivityPlayer extension points for inline stage banners,
+the shared Task/Clues/Case notes workspace, atomic clue presentation, active timing and completion.
+Session v6 persists opened clues with first-open context, independently reviewed clue IDs, stage
+differential checkpoints, cited evidence, the seeded unknown-waypoint entry, local notes, step and
+case elapsed time and clock expiry. Clue review and the first-run walkthrough pause both question
+and case clocks; countdown expiry does not truncate actual elapsed duration. Primitive
 definitions own timeout-credit policy: `anatomy_locate` evaluates committed levels on expiry while
 retaining timed-out state and zero step speed. Only resolved scored steps enter attempt timing,
 component/speed denominators, persisted step results and comparison.
 
 The pure case scorer combines first-attempt anatomy and diagnosis scores with independent time-only
 step and case speed, then applies only eligible pre-response optional-clue cost. Step speed includes
-only first attempts meeting the configured score threshold. Learner-state result-v7 attempts persist
+only first attempts meeting the configured score threshold. Learner-state result-v8 attempts persist
 effective weights, speed eligibility and counts, both speed components, timing/timeout-credit
 semantics, normalized responses, reviewed clues, local evidence/differential state, actual duration
 and the XP awarded by the central pipeline. Legacy result-v5/v6 attempts remain readable without
@@ -230,11 +231,12 @@ finding references, the latest anatomy waypoint or structure and authored differ
 Finding inspection is derived from persisted primitive interaction keys; location display resolves
 the active case's anatomy-map labels and never falls back to raw IDs.
 
-The existing Case Lab right rail hosts Clues and Notes tabs on desktop without pausing either clock.
-At mobile widths the bottom bar exposes separate Clues and Notes actions into the same
-safe-area-aware sheet, and either sheet pauses case and step timing. Pin and hypothesis transitions
-emit typed learner events but remain reflective and unscored. Completion copies the session-v5
-workspace into result-v7 without reconstructing unavailable legacy evidence.
+The Case Lab workspace keeps the active task beside Clues and Case notes on desktop and uses
+Task/Clues/Case notes segments at mobile widths. A case-only action outlet keeps the current
+submission or progression action visible without letting primitives mutate case state. Pin and
+hypothesis transitions emit typed learner events; authored differential checkpoints and reviewed
+evidence citations are scored through reusable primitives. Completion copies the session-v6
+workspace into result-v8 without reconstructing unavailable legacy evidence.
 
 ## Case teaching and debrief
 
@@ -258,7 +260,7 @@ remain `offlineRequired: false` but may explicitly opt into package downloads. P
 derivation walks course images and lesson primitives or a case's anatomy model, patient image,
 clue primitives and stage primitives. It deduplicates exact asset IDs, hashes and sizes, versions
 model URLs with the validated hash and produces package fingerprints and total bytes. Download
-records are kind-aware, device-scoped IndexedDB state separate from learner state v7.
+records are kind-aware, device-scoped IndexedDB state separate from learner state v8.
 
 The foreground download manager checks estimated quota, requests persistent storage, expands and
 validates DICOM manifests, fetches with bounded concurrency and verifies every file before placing it
@@ -297,10 +299,14 @@ Case Lab adds a second configuration-only integration fixture: automated flows c
 configured case plus a loader-added fixture. Its production-preview Playwright boundary completes
 the foundation, intermediate, advanced and daily quick cases on desktop and 375 px touch emulation,
 including canvas picking, marker retention, procedural segment selection, reversible branch travel,
-configured finding inspection, evidence/debrief/comparison and the complete six-task golden path.
+configured finding inspection, evidence/debrief/comparison and the complete guided reasoning loop.
+The Phase 13 acceptance path separately completes the Advanced case through accessible controls
+without the projection bridge or known coordinates, checks prompt/action co-visibility at both
+target viewports, and compares eight desktop states with committed visual baselines.
 The same boundary runs the product tour through Home, pathway, lesson/DICOM, Imaging Lab,
 completion, Daily Challenge, all Leaderboard periods and Profile. The test-only projection bridge
-is build-gated by `VITE_E2E`; normal production builds omit it.
+is build-gated by `VITE_E2E`; normal production builds omit it, and the bridge-free acceptance path
+does not read it.
 
 The browser QA boundary also injects axe-core across stable learner routes and every configured
 Case Lab state, applies deterministic 200% root text resizing, and exercises keyboard-only

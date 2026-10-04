@@ -3131,3 +3131,53 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   completion opens the head-to-head comparison, all three ranking filters operate over configured
   fields, and the focused suites pass.
 - **Follow-ups:** Expand browser, viewport and visual-regression coverage in P13-T14.
+
+### [2026-10-05 02:22] P13-T14 - Prove the guided Case Lab regression boundary
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Updated unit and browser coverage for the continuous Case Lab flow; added direct
+  ClueBoard, CaseNotes and StageBanner tests; added a visible-control Advanced-case path that does
+  not use the anatomy bridge or known coordinates; asserted prompt/action co-visibility at both
+  target viewports; and committed eight desktop visual baselines. Fixed mobile text overflow and
+  anchored the case action above bottom navigation after the viewport checks exposed a tall-step
+  failure. Recorded ADR-102.
+- **Files changed:** Case/player/route tests; Playwright case driver and affected suites; Phase 13
+  browser spec and snapshots; responsive shell, PWA host and action-slot styles; architecture,
+  findings and decision docs.
+- **Commands run:** Focused touch-phone golden path; `npm run check`; serial
+  `npx playwright test --workers=1`; `git diff --check`; IDE diagnostics.
+- **Result/verification:** `npm run check` passes: TypeScript, lint, 73 Vitest files / 500 tests,
+  content validation, production build and bundle budgets. Serial Playwright passes with 53
+  passed, three intentional project skips and zero failures in 9.8 minutes. Both Phase 13
+  acceptance paths and all eight desktop image assertions pass.
+- **Follow-ups:** Run the five human sessions in P13-T15 against a frozen candidate.
+
+### [2026-10-05 02:24] P13-T15 - Prepare moderated usability validation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Published the moderator protocol, role mix, observation fields, standard SUS
+  questionnaire, thresholds, severity model and participant-safe results record. Ran one internal
+  moderator dry run only; it is explicitly excluded from participant outcomes.
+- **Files changed:** `docs/qa/phase-13-usability-protocol.md`;
+  `docs/qa/phase-13-usability-results.md`.
+- **Commands run:** Documentation review against the Phase 13 acceptance criteria.
+- **Result/verification:** The protocol and results template are ready. P13-T15 remains blocked:
+  zero of five qualifying human sessions have run, so no usability threshold can be claimed.
+- **Follow-ups:** Schedule at least three clinicians/trainees and two IT proxies, record P01–P05,
+  then fix and retest any failed threshold.
+
+### [2026-10-05 02:25] P13-T16 - Prepare delivery package and record external blockers
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Rewrote the client-demo runbook with a freeze/preflight sequence, ten-minute
+  presenter script, attendee handout, recovery steps and device boundary. Published a no-go
+  external-readiness verdict and updated product, architecture, schema, roadmap and handoff
+  records without representing emulation as physical-device evidence.
+- **Files changed:** Phase 13 runbook and readiness verdict; `PRD.md`; `docs/ARCHITECTURE.md`;
+  `docs/CONTENT_SCHEMA.md`; `docs/ROADMAP.md`; Phase 13 tracking and handoff docs.
+- **Commands run:** Documentation and evidence review.
+- **Result/verification:** The local engineering candidate passes, but P13-T16 remains blocked.
+  No HTTPS application/DICOM origins, Android device, iPhone or approved desktop-only waiver were
+  provided. The external client-demo verdict remains No-go.
+- **Follow-ups:** Deploy one frozen build and run hosted preflight; then run both physical-device
+  scripts or obtain an authorized desktop-only-demo waiver.

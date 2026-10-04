@@ -2875,6 +2875,21 @@ This status does not confer clinical, anatomy/pathology, client/legal or physica
 Unsupervised/external use remains No-go until those reviews and Phase 9 device gates pass or receive
 authorized waivers.
 
+## Phase 13: Client demo readiness
+
+**Status: Implementation complete; external evidence pending (2026-10-04).**
+
+Case Lab now presents one guided reasoning loop: mission briefing, continuous patient timeline,
+spatial reconstruction, deliberate clue review, differential checkpoints, evidence citation,
+conclusion, prioritized takeaway and Model answer comparison. The Advanced case uses a persisted
+seeded unknown waypoint with neutral navigation labels. Fresh and experienced demo profiles,
+explicitly simulated concept previews and the canonical Case Lab hub support presenter-led and
+hands-on use.
+
+The engineering candidate is not an external-demo approval. Five qualifying human usability
+sessions, one exact hosted HTTPS preflight and either physical Android/iPhone evidence or an
+approved desktop-only waiver remain mandatory.
+
 ---
 
 # 84. One change I would make to the implementation sequence

@@ -2,10 +2,10 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T11 are complete; P13-T12 demo
-profiles is next. Phase 9 remains active for physical Android and iOS gates
-P9-M01 through
-P9-M03.
+Phase 13 implementation and automated coverage (P13-T00 through P13-T14) are complete. P13-T15 is
+blocked on five qualifying human sessions. P13-T16 is blocked on an HTTPS deployment target and
+DICOM origin plus physical Android/iPhone access or an approved desktop-only-demo waiver. The
+external client-demo verdict is No-go until those evidence gates close.
 
 ## Done
 
@@ -74,6 +74,12 @@ P9-M03.
 - Home recommends the first incomplete tier and `/learn/cases` provides the canonical tier ladder.
   Learn and Challenge explain the four learning surfaces from configuration, and Case Lab copy now
   consistently uses Clues, Spatial findings, Case notes and Conclude.
+- Demo configuration defaults to the fresh Alex Morgan trainee and provides presenter controls to
+  switch/reset the experienced Maya Chen profile. Challenge and leaderboard extensions are clearly
+  labeled simulated.
+- The Advanced case has a bridge-free visible-control browser path, prompt/action viewport checks
+  at 1440 × 900 and 375 × 812, and eight committed desktop visual baselines.
+- The usability protocol/results record and delivery runbook/readiness verdict are published.
 
 ## Verification
 
@@ -119,31 +125,36 @@ P9-M03.
   TypeScript and generated Case schema pass.
 - P13-T11 focused surface/workspace/player/content suite: **5 files / 90 tests passed**;
   TypeScript, lint and content validation pass.
+- P13-T14 `npm run check`: passed with **73 files / 500 tests**, zero content warnings, a
+  successful production build and passing bundle budgets.
+- P13-T14 final serial Playwright: **53 passed, 3 intentional project skips, 0 failures in 9.8
+  minutes**. Desktop and touch-phone bridge-free routes pass; all eight desktop golden-image
+  assertions pass.
 
 ## In progress
 
-- P13-T12 demo profiles is next.
+- P13-T15 is awaiting five unaided participant sessions.
+- P13-T16 is awaiting hosted and physical-device evidence or an approved desktop-only waiver.
 
 ## Next three steps
 
-1. Add fresh and experienced demo profiles with presenter controls in P13-T12.
-2. Add or explicitly defer the simulated challenge and leaderboard previews in P13-T13.
-3. Expand automated and visual regression coverage in P13-T14.
+1. Freeze and deploy one exact candidate over HTTPS with the production DICOM origin.
+2. Run P01–P05 using `docs/qa/phase-13-usability-protocol.md` and address any failed threshold.
+3. Run Android Chrome and iPhone Safari smoke scripts, or obtain an authorized desktop-only-demo
+   waiver, then reissue the readiness verdict.
 
 ## Blockers/questions for the user
 
-- The Home surface promotes the advanced case before introducing Case Lab, and the relationship
-  among Pathway, Course, Case Lab and Challenge is not explained.
-- Physical-device approval requires Android/iOS hardware or an approved device service, a
-  production HTTPS URL and a CORS-capable DICOM host.
-- A presenter-led IT capability demo is conditionally viable after the immediate functional issues
-  are fixed; the current trainee journey is not self-explanatory.
+- Five qualifying participants have not been supplied or scheduled; the usability thresholds are
+  unmeasured.
+- No HTTPS application target or production CORS-capable DICOM origin is configured.
+- No Android device, iPhone or authorized desktop-only-demo waiver is available.
 
 ## Environment notes
 
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
-- Branch: `master`; audit baseline commit `ec8f8ae`
-  (`docs(P12-AUD): record trainee UX audit`).
+- Branch: `master`; Phase 13 commits are present through P13-T13, with P13-T14 and external-gate
+  documentation prepared in the working tree.
 - Worktree contains the active Phase 13 implementation and the user's untouched untracked
   `docs/reference docs/`.
 - Node/npm/Playwright: 24.19.0 / 11.17.0 / 1.63.0
@@ -183,3 +194,6 @@ P9-M03.
   `src/anatomy3d/three`.
 - Existing Vite warnings cover Cornerstone codec browser externalization, the large lazy imaging
   chunk and Rolldown `inlineDynamicImports` deprecation; all checks and budgets pass.
+- The mobile case action is fixed above bottom navigation and the case frame reserves matching
+  space; this replaced sticky positioning because tall 375 × 812 steps could scroll the action
+  below the prompt viewport.

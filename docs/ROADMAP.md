@@ -98,3 +98,8 @@ Case Lab did not communicate one coherent reasoning loop. It makes mission, evid
 spatial reconstruction, commitment and debrief causally connected; implements the unknown-point
 concept; closes remaining functional demo defects; and requires unaided human usability evidence.
 Clinical accuracy and medical/regulatory review are intentionally outside this phase.
+
+Phase 13 implementation and automated regression coverage are complete. The phase remains active
+until five qualifying human sessions pass the usability thresholds, an exact candidate is deployed
+and preflighted over HTTPS, and physical Android/iPhone checks pass or a desktop-only waiver is
+approved.

@@ -1884,3 +1884,33 @@ learner state through the existing validated seed path. Label the configured ran
 recommendation, while presenters can restore either deterministic demonstration state without
 developer tools. Switching or resetting intentionally replaces all local learner progress on that
 device. Demo controls remain absent when the configuration is disabled.
+
+## ADR-102: Case Lab regression proof separates visible-control behavior from deterministic images
+
+**Status:** Accepted
+
+**Context:** Earlier browser coverage proved WebGL state through an E2E-only anatomy bridge and
+saved evidence screenshots without image assertions. That was useful for renderer diagnostics but
+could not prove that a learner could finish the unknown-point case through the controls they can
+actually see. The Phase 13 workspace also needs prompt/action viewport checks and stable visual
+regression coverage without making every browser path dependent on pixel comparisons.
+
+**Decision:** Keep bridge-based tests for renderer internals, context loss and canvas hit testing,
+but add a separate advanced-case route that never reads `__anatomyTest`, never clicks known canvas
+coordinates and completes through accessible buttons, radios, checkboxes and configured clue
+controls. The shared Case Lab driver now understands differential checkpoints, evidence review and
+citation, the continuous stage flow and current Model answer copy. At each step it verifies that
+the task prompt and a primary interaction can share the current viewport at both 1440 × 900 and
+375 × 812.
+
+Retain direct component tests for `ClueBoard`, `CaseNotes` and `StageBanner`. Add eight
+`toHaveScreenshot` assertions for the desktop guided route: briefing, spatial reconstruction,
+finding feedback, localisation, differential, evidence citation, prioritized result and Model
+answer. Use the E2E-only case seed solely for deterministic golden images; the bridge-free
+completion runs without that override. Phone remains behavior- and viewport-tested rather than
+duplicating the desktop pixel baselines.
+
+**Consequences:** A green suite distinguishes learner-operable navigation from renderer
+instrumentation, and committed images now detect unintended layout changes on the client-demo
+route. Baseline updates must be deliberate and reviewed. The desktop images are platform-specific;
+phone confidence comes from semantic and viewport assertions, not pixel identity.

@@ -29,7 +29,7 @@ Two audit corrections were applied at baseline:
 | --- | --- | --- | --- |
 | H01 | Multiplayer, duels and KOL challenges absent | P13-T13 | Closed for phase scope: an explicitly simulated prerecorded-opponent challenge demonstrates the concept without implying live multiplayer |
 | H02 | Segmented rankings absent | P13-T13 | Closed: seeded country, specialty and institution filters are available |
-| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Partial: unknown-point localisation and cited findings are scored; bridge-free browser proof remains |
+| H03 | 3D discovery bypassable and not scored | P13-T06, P13-T08, P13-T14 | Closed: unknown-point localisation and cited findings are scored; the bridge-free browser path completes through visible controls |
 | H04 | Navigation prompts leak the answer | P13-T02, P13-T06, P13-T07, P13-T08 | Closed: neutral labels conceal location and numeric leakage is rejected |
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Closed: mission, progressive patient timeline and cited evidence connect the case |
 | H06 | Benchmark purpose is unclear | P13-T10 | Closed: comparison is framed as one authored Model answer |
@@ -38,10 +38,10 @@ Two audit corrections were applied at baseline:
 | H09 | Cross-organ reuse is not demonstrated | P13-T16 | Approved scope deferral; position honestly |
 | H11 | DICOM toolbar is hard to operate at 375 px | P13-T01 | Closed: tool and preset groups wrap |
 | H12 | Reward outcome messaging is contradictory | P13-T01 | Closed: unavailable rows are omitted |
-| H14 | Automation knows target coordinates/answers | P13-T14 | Open |
+| H14 | Automation knows target coordinates/answers | P13-T14 | Closed: the Phase 13 acceptance path does not read the anatomy bridge or use coordinates |
 | H15 | Offline evidence is narrower than the claim | P13-T16 | Open |
 | H17 | Development controls ship on public routes | P13-T01 | Closed: `/dev*` is environment-gated |
-| H18 | Rehearsal is automation rather than human evidence | P13-T14, P13-T15 | Open |
+| H18 | Rehearsal is automation rather than human evidence | P13-T14, P13-T15 | Open: automation is isolated from the five required human sessions, which have not run |
 
 ## Medium findings
 
@@ -54,10 +54,10 @@ Two audit corrections were applied at baseline:
 | M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Closed: full cases require authored clue and inspected-finding citation |
 | M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
 | M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |
-| M09 | Core mobile routes underperform Home | P13-T14, P13-T16 | Open |
-| M10 | Screenshots lack regression assertions | P13-T14 | Open |
+| M09 | Core mobile routes underperform Home | P13-T14, P13-T16 | Partial: phone viewport and accessibility automation pass; physical-device evidence or waiver remains |
+| M10 | Screenshots lack regression assertions | P13-T14 | Closed: eight desktop golden-route states use Playwright screenshot assertions |
 | M11 | Lesson DICOM gate rewards controls rather than interpretation | P13-T16 | Approved deferral unless added to the hero route |
-| M12 | Device scripts and evidence wording drift | P13-T14, P13-T16 | Open |
+| M12 | Device scripts and evidence wording drift | P13-T14, P13-T16 | Partial: the Phase 13 runbook matches the guided flow; hosted and physical-device records remain |
 
 ## Trainee UX findings
 
@@ -67,8 +67,8 @@ Two audit corrections were applied at baseline:
 | U02 | Default entry assumes prior experience | P13-T11, P13-T12 | Closed: the client build defaults to a fresh trainee and recommends Foundation |
 | U03 | Briefing describes content, not mission | P13-T02, P13-T03 | Closed: mission and operating rules render before launch |
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
-| U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Partial: task and evidence now share one workspace |
-| U06 | 3D interaction contract is not taught | P13-T03, P13-T07 | Partial: replayable walkthrough establishes workspace |
+| U05 | Anatomy controls are separated from task | P13-T04, P13-T07, P13-T14 | Closed in automated coverage: task, evidence and primary action share one responsive workspace |
+| U06 | 3D interaction contract is not taught | P13-T03, P13-T07, P13-T15 | Partial: replayable walkthrough and interaction hint are implemented; human comprehension remains unmeasured |
 | U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Closed: evidence is in-flow and relevance-labelled |
 | U08 | Clue economy is not an informed choice | P13-T05 | Closed: cost/status are visible before opening |
 | U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Closed: diagnosis includes a scored reviewed-evidence citation |
