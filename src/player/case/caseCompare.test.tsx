@@ -65,5 +65,9 @@ describe('case comparison', () => {
     expect(document.activeElement).toBe(document.getElementById('expert-evidence-0'))
     expect(screen.queryByText('clue-context')).not.toBeInTheDocument()
     expect(screen.queryByText('identify-location')).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Complete this case again to compare your next result.', { exact: false }),
+    ).toBeVisible()
+    expect(screen.queryByText(/case state pipeline/i)).not.toBeInTheDocument()
   })
 })

@@ -8,7 +8,7 @@
   </defs>
   <text x="70" y="88" fill="#fff" font-family="sans-serif" font-size="30" font-weight="700">Window width controls contrast</text>
   <rect x="70" y="145" width="660" height="72" rx="18" fill="url(#wide)"/>
-  <text x="70" y="257" fill="#b2eddf" font-family="sans-serif" font-size="22">Wide range · lung</text>
+  <text x="70" y="257" fill="#b2eddf" font-family="sans-serif" font-size="22">Wide range &#183; lung</text>
   <rect x="70" y="295" width="660" height="72" rx="18" fill="url(#narrow)"/>
-  <text x="70" y="407" fill="#b2eddf" font-family="sans-serif" font-size="22">Narrow range · soft tissue</text>
+  <text x="70" y="407" fill="#b2eddf" font-family="sans-serif" font-size="22">Narrow range &#183; soft tissue</text>
 </svg>

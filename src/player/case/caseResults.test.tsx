@@ -59,8 +59,9 @@ describe('case results', () => {
     const view = renderResults([])
     expect(screen.getByLabelText('3 of 3 stars')).toBeVisible()
     expect(screen.getByText('XP unavailable')).toBeVisible()
-    expect(screen.getByText('Mastery unavailable')).toBeVisible()
-    expect(screen.getByText('Badge outcome unavailable')).toBeVisible()
+    expect(screen.queryByText('Mastery unavailable')).not.toBeInTheDocument()
+    expect(screen.queryByText('Badge outcome unavailable')).not.toBeInTheDocument()
+    expect(screen.queryByText('No badge unlocked')).not.toBeInTheDocument()
 
     view.rerender(
       <ContentContext.Provider value={registry}>

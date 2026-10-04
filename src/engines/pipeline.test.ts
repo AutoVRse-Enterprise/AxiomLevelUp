@@ -323,6 +323,60 @@ describe('learner event pipeline', () => {
     ])
   })
 
+  it('advances a cases-completed weekly challenge from first case completions', () => {
+    const base = registryWithCase()
+    const weeklyId = 'weekly-imaging-sprint'
+    const caseRegistry = {
+      ...base,
+      appConfig: {
+        ...base.appConfig,
+        challenges: base.appConfig.challenges.map((challenge) =>
+          challenge.id === weeklyId
+            ? {
+                ...challenge,
+                target: 1,
+                progressRule: {
+                  type: 'cases_completed' as const,
+                  count: 1,
+                  tiers: ['foundation' as const],
+                },
+              }
+            : challenge,
+        ),
+      },
+    }
+
+    const first = reduceLearnerEvent(
+      freshState(),
+      event(caseCompletion('weekly-case-1')),
+      caseRegistry,
+    )
+    expect(first.state.challenges[weeklyId]).toEqual({
+      completed: true,
+      progress: 1,
+      bestScore: null,
+    })
+    expect(first.state.gamification.challengePeriods[weeklyId]).toMatchObject({
+      periodProgress: 1,
+      lastCompletedPeriod: '2026-09-28',
+    })
+    expect(first.state.gamification.counters.challengeCompletions[weeklyId]).toBe(1)
+    expect(first.followUps).toContainEqual({
+      event: 'xp_awarded',
+      amount: 100,
+      reason: 'challenge_complete',
+      sourceId: weeklyId,
+    })
+
+    const replay = reduceLearnerEvent(
+      first.state,
+      event(caseCompletion('weekly-case-2')),
+      caseRegistry,
+    )
+    expect(replay.state.challenges[weeklyId]?.progress).toBe(1)
+    expect(replay.state.gamification.counters.challengeCompletions[weeklyId]).toBe(1)
+  })
+
   it('derives and unlocks configured case badges from attempt facts', () => {
     const badges: AppConfig['badges'] = [
       {

@@ -129,7 +129,41 @@ function criterionMatchesLesson(
   return !criterion.difficulties || criterion.difficulties.includes(lesson.difficulty)
 }
 
-function progressWeeklyChallenges(
+function recordWeeklyChallengeProgress(
+  state: LearnerData,
+  challenge: AppConfig['challenges'][number],
+  weekStart: string,
+  followUps: LearnerEventDraft[],
+) {
+  const progressRule = challenge.progressRule
+  if (!progressRule || !('count' in progressRule)) return
+  const period = state.gamification.challengePeriods[challenge.id] ?? {
+    progressPeriod: weekStart,
+    lastCompletedPeriod: null,
+    periodProgress: 0,
+  }
+  if (period.progressPeriod !== weekStart) {
+    period.progressPeriod = weekStart
+    period.periodProgress = 0
+  }
+  if (period.lastCompletedPeriod === weekStart) return
+  period.periodProgress += 1
+  state.gamification.challengePeriods[challenge.id] = period
+  state.challenges[challenge.id] = {
+    completed: period.periodProgress >= progressRule.count,
+    progress: period.periodProgress,
+    bestScore: state.challenges[challenge.id]?.bestScore ?? null,
+  }
+  if (period.periodProgress >= progressRule.count) {
+    period.lastCompletedPeriod = weekStart
+    state.gamification.counters.challengeCompletions[challenge.id] =
+      (state.gamification.counters.challengeCompletions[challenge.id] ?? 0) + 1
+    state.stats.challengesCompleted += 1
+    awardXp(state, challenge.rewardXp, 'challenge_complete', challenge.id, followUps)
+  }
+}
+
+function progressWeeklyLessonChallenges(
   state: LearnerData,
   previous: LearnerData,
   lessonId: string,
@@ -140,35 +174,33 @@ function progressWeeklyChallenges(
   if (previous.lessonProgress[lessonId]?.status === 'completed') return
   for (const challenge of registry.appConfig.challenges) {
     if (
-      challenge.type !== 'weekly' ||
-      challenge.progressRule?.type !== 'lessons_completed' ||
-      !criterionMatchesLesson(challenge.progressRule, lessonId, registry)
+      challenge.type === 'weekly' &&
+      challenge.progressRule?.type === 'lessons_completed' &&
+      criterionMatchesLesson(challenge.progressRule, lessonId, registry)
     ) {
-      continue
+      recordWeeklyChallengeProgress(state, challenge, weekStart, followUps)
     }
-    const period = state.gamification.challengePeriods[challenge.id] ?? {
-      progressPeriod: weekStart,
-      lastCompletedPeriod: null,
-      periodProgress: 0,
-    }
-    if (period.progressPeriod !== weekStart) {
-      period.progressPeriod = weekStart
-      period.periodProgress = 0
-    }
-    if (period.lastCompletedPeriod === weekStart) continue
-    period.periodProgress += 1
-    state.gamification.challengePeriods[challenge.id] = period
-    state.challenges[challenge.id] = {
-      completed: period.periodProgress >= challenge.progressRule.count,
-      progress: period.periodProgress,
-      bestScore: state.challenges[challenge.id]?.bestScore ?? null,
-    }
-    if (period.periodProgress >= challenge.progressRule.count) {
-      period.lastCompletedPeriod = weekStart
-      state.gamification.counters.challengeCompletions[challenge.id] =
-        (state.gamification.counters.challengeCompletions[challenge.id] ?? 0) + 1
-      state.stats.challengesCompleted += 1
-      awardXp(state, challenge.rewardXp, 'challenge_complete', challenge.id, followUps)
+  }
+}
+
+function progressWeeklyCaseChallenges(
+  state: LearnerData,
+  previous: LearnerData,
+  caseId: string,
+  weekStart: string,
+  registry: ContentRegistry,
+  followUps: LearnerEventDraft[],
+) {
+  if ((previous.caseProgress[caseId]?.completions ?? 0) > 0) return
+  const caseDocument = registry.caseById.get(caseId)
+  if (!caseDocument) return
+  for (const challenge of registry.appConfig.challenges) {
+    if (
+      challenge.type === 'weekly' &&
+      challenge.progressRule?.type === 'cases_completed' &&
+      (!challenge.progressRule.tiers || challenge.progressRule.tiers.includes(caseDocument.tier))
+    ) {
+      recordWeeklyChallengeProgress(state, challenge, weekStart, followUps)
     }
   }
 }
@@ -424,7 +456,14 @@ export function applyGamificationEvent(
       }
       state.gamification.lessonRewards[event.lessonId] = reward
       applyQualifyingActivity(state, date, weekStart, event.lessonId, config, followUps)
-      progressWeeklyChallenges(state, previous, event.lessonId, weekStart, registry, followUps)
+      progressWeeklyLessonChallenges(
+        state,
+        previous,
+        event.lessonId,
+        weekStart,
+        registry,
+        followUps,
+      )
       break
     }
     case 'case_completed': {
@@ -450,6 +489,7 @@ export function applyGamificationEvent(
       reward.rewardedAttemptIds.push(event.attemptId)
       state.gamification.caseRewards[event.caseId] = reward
       applyQualifyingActivity(state, date, weekStart, event.caseId, config, followUps)
+      progressWeeklyCaseChallenges(state, previous, event.caseId, weekStart, registry, followUps)
       break
     }
     case 'challenge_completed': {

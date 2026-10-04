@@ -301,7 +301,7 @@
         { "id": "node-intro", "type": "lesson", "refId": "imaging-orientation", "optional": false },
         { "id": "node-core", "type": "lesson", "refId": "ct-windowing", "optional": false },
         { "id": "node-current", "type": "lesson", "refId": "thoracic-ct", "optional": false },
-        { "id": "node-case", "type": "case", "refId": "imaging-case-practice", "optional": true },
+        { "id": "node-case", "type": "case", "refId": "asthma-foundation", "optional": true },
         { "id": "node-lab", "type": "practice", "refId": "dicom-lab", "optional": true },
         { "id": "node-challenge", "type": "challenge", "refId": "weekly-imaging-sprint", "optional": false }
       ],
@@ -345,12 +345,16 @@
       "id": "weekly-imaging-sprint",
       "type": "weekly",
       "title": "Scientific Imaging Sprint",
-      "description": "Complete three advanced imaging cases.",
+      "description": "Complete three Case Lab cases.",
       "estimatedMinutes": 20,
       "rewardXp": 100,
       "itemCount": 3,
       "target": 3,
-      "progressRule": { "type": "lessons_completed", "count": 3, "difficulties": ["advanced"] },
+      "progressRule": {
+        "type": "cases_completed",
+        "count": 3,
+        "tiers": ["foundation", "intermediate", "advanced"]
+      },
       "items": []
     }
   ],

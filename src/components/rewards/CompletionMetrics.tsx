@@ -34,18 +34,18 @@ export function CompletionMetrics({
           ? 'XP unavailable'
           : `${awardedXp.toLocaleString()} XP awarded`}
       </Chip>
-      <Chip>
-        <Brain aria-hidden="true" className="mr-1" size={14} />
-        {masteryDelta === undefined ? 'Mastery unavailable' : formatMastery(masteryDelta)}
-      </Chip>
-      <Chip>
-        <Medal aria-hidden="true" className="mr-1" size={14} />
-        {badgeLabels === undefined
-          ? 'Badge outcome unavailable'
-          : badgeLabels.length
-            ? `Badge: ${badgeLabels.join(', ')}`
-            : 'No badge unlocked'}
-      </Chip>
+      {masteryDelta === undefined ? null : (
+        <Chip>
+          <Brain aria-hidden="true" className="mr-1" size={14} />
+          {formatMastery(masteryDelta)}
+        </Chip>
+      )}
+      {badgeLabels?.length ? (
+        <Chip>
+          <Medal aria-hidden="true" className="mr-1" size={14} />
+          Badge: {badgeLabels.join(', ')}
+        </Chip>
+      ) : null}
     </div>
   )
 }

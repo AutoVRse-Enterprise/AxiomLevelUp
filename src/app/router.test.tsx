@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { createMemoryRouter, RouterProvider } from 'react-router'
+import { createMemoryRouter, matchRoutes, RouterProvider } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
@@ -8,7 +8,7 @@ import { AppShell } from '@/layouts/AppShell'
 import { ImmersiveLayout } from '@/layouts/ImmersiveLayout'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
-import { router as appRouter } from './router'
+import { createAppRoutes, router as appRouter } from './router'
 
 const registry = validateContentBundle(makeValidContentBundle())
 
@@ -30,13 +30,35 @@ function renderRouter(path: string, immersive = false) {
 }
 
 describe('router layouts', () => {
-  it('registers the gallery and real lesson routes', () => {
-    const paths = appRouter.routes.flatMap(
-      (route) => route.children?.map(({ path }) => path).filter(Boolean) ?? [],
-    )
+  function registeredPaths(routes: readonly { children?: readonly { path?: string }[] }[]) {
+    return routes.flatMap((route) => route.children?.map(({ path }) => path).filter(Boolean) ?? [])
+  }
+
+  it('registers development routes during development and retains learner routes', () => {
+    const paths = registeredPaths(appRouter.routes)
 
     expect(paths).toContain('dev/primitives')
     expect(paths).toContain('learn/courses/:courseId/lessons/:lessonId')
+  })
+
+  it('omits every development route when developer tools are disabled', () => {
+    const routes = createAppRoutes(false)
+    const paths = registeredPaths(routes)
+
+    expect(paths).not.toContain('dev')
+    expect(paths).not.toContain('dev/primitives')
+    expect(paths).not.toContain('dev/tokens')
+    expect(paths).toContain('*')
+    expect(paths).toContain('learn/courses/:courseId/lessons/:lessonId')
+    expect(matchRoutes(routes, '/dev')?.at(-1)?.route.path).toBe('*')
+  })
+
+  it('registers every development route when explicitly enabled', () => {
+    const routes = createAppRoutes(true)
+    const paths = registeredPaths(routes)
+
+    expect(paths).toEqual(expect.arrayContaining(['dev', 'dev/primitives', 'dev/tokens']))
+    expect(matchRoutes(routes, '/dev')?.at(-1)?.route.path).toBe('dev')
   })
 
   it.each(['/', '/learn', '/challenge', '/leaderboard', '/profile'])(

@@ -43,7 +43,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Add this phase, roadmap entry, ADR-095 and the Phase 13 finding register.
   - Correct H13 (the 42 screenshots exist) and narrow H08 to the actual 95/85-minute mismatch.
 
-- [ ] **P13-T01 — Immediate functional fixes**
+- [x] **P13-T01 — Immediate functional fixes** — completed 2026-10-04
   - Repair the two invalidly encoded SVG assets and add SVG encoding/XML validation.
   - Make DICOM tools usable at 375 px and shorten the educational badge.
   - Remove unavailable reward rows and contradictory badge messaging.

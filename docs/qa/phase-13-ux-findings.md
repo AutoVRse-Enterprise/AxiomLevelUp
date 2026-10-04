@@ -21,7 +21,7 @@ Two audit corrections were applied at baseline:
 | B02 | Unknown-point mechanic missing | P13-T08 | Open |
 | B04 | Physical Android/iOS gates open | P13-T16 | Open; pass or record desktop-only waiver |
 | B05 | Production delivery preflight incomplete | P13-T16 | Open |
-| B06 | Two SVG lesson images fail to decode | P13-T01 | Open |
+| B06 | Two SVG lesson images fail to decode | P13-T01 | Closed: UTF-8 assets plus XML validator |
 
 ## High findings
 
@@ -34,13 +34,13 @@ Two audit corrections were applied at baseline:
 | H05 | Case artifacts do not behave as one patient record | P13-T02, P13-T06, P13-T09 | Open |
 | H06 | Benchmark purpose is unclear | P13-T10 | Open |
 | H07 | Seeded leaderboard can appear live | P13-T12, P13-T13 | Open |
-| H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Open |
+| H08 | Scientific Imaging duration is 95 vs 85 minutes | P13-T01 | Closed: catalogue now reports 85 minutes |
 | H09 | Cross-organ reuse is not demonstrated | P13-T16 | Approved scope deferral; position honestly |
-| H11 | DICOM toolbar is hard to operate at 375 px | P13-T01 | Open |
-| H12 | Reward outcome messaging is contradictory | P13-T01 | Open |
+| H11 | DICOM toolbar is hard to operate at 375 px | P13-T01 | Closed: tool and preset groups wrap |
+| H12 | Reward outcome messaging is contradictory | P13-T01 | Closed: unavailable rows are omitted |
 | H14 | Automation knows target coordinates/answers | P13-T14 | Open |
 | H15 | Offline evidence is narrower than the claim | P13-T16 | Open |
-| H17 | Development controls ship on public routes | P13-T01 | Open |
+| H17 | Development controls ship on public routes | P13-T01 | Closed: `/dev*` is environment-gated |
 | H18 | Rehearsal is automation rather than human evidence | P13-T14, P13-T15 | Open |
 
 ## Medium findings
@@ -48,12 +48,12 @@ Two audit corrections were applied at baseline:
 | ID | Summary | Owner | Disposition |
 | --- | --- | --- | --- |
 | M01 | Repeated stage gates interrupt the narrative | P13-T03 | Open |
-| M02 | Internal implementation wording leaks | P13-T01 | Open |
+| M02 | Internal implementation wording leaks | P13-T01 | Closed: first-attempt comparison uses learner copy |
 | M04 | Results and comparisons are dense | P13-T10 | Open |
 | M05 | 3D scene gives weak spatial decision cues | P13-T07, P13-T08 | Open |
 | M06 | No case demonstrates the full evidence mix | P13-T02, P13-T06 | Open |
-| M07 | Weekly challenge copy and rule disagree | P13-T01 | Open |
-| M08 | Pathway case node opens a lesson | P13-T01 | Open |
+| M07 | Weekly challenge copy and rule disagree | P13-T01 | Closed: three-case rule is event-driven |
+| M08 | Pathway case node opens a lesson | P13-T01 | Closed: case node resolves to Case Lab |
 | M09 | Core mobile routes underperform Home | P13-T14, P13-T16 | Open |
 | M10 | Screenshots lack regression assertions | P13-T14 | Open |
 | M11 | Lesson DICOM gate rewards controls rather than interpretation | P13-T16 | Approved deferral unless added to the hero route |
@@ -82,7 +82,7 @@ Two audit corrections were applied at baseline:
 | U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Open |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Open |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Open |
-| U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Open |
+| U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Partial: pathway case destination fixed; IA copy remains |
 | U21 | Product terminology changes too often | P13-T11 | Open |
 
 ## Closure protocol

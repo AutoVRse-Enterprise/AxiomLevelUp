@@ -2,9 +2,9 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 baseline/rescope is complete and P13-T01
-immediate functional fixes is next. Phase 9 remains active for physical Android and iOS gates
-P9-M01 through P9-M03.
+Phase 13 client demo readiness is active. P13-T00 and P13-T01 are complete; P13-T02 Case schema
+0.2 is in progress. Phase 9 remains active for physical Android and iOS gates P9-M01 through
+P9-M03.
 
 ## Done
 
@@ -36,6 +36,10 @@ P9-M01 through P9-M03.
 - Created the Phase 13 plan, roadmap entry, ADR-095 and finding-to-task register.
 - Corrected audit H13 (the 42 screenshots exist) and narrowed H08 to the Scientific Imaging
   95/85-minute mismatch.
+- Closed immediate functional defects: invalid SVG encoding, mobile DICOM control wrapping,
+  unavailable/contradictory completion rows, internal comparison copy and production dev routes.
+- Weekly progress now supports `cases_completed`; the configured sprint, pathway case node and
+  Scientific Imaging duration match runtime behavior.
 
 ## Verification
 
@@ -70,14 +74,14 @@ P9-M01 through P9-M03.
 
 ## In progress
 
-- P13-T01 is next; no runtime Phase 13 changes have landed yet.
-- The external Canvas correction is complete and clean.
+- P13-T02 schema/content work is active.
+- P13-T01 passes typecheck, content validation and 110 focused tests.
 
 ## Next three steps
 
-1. Complete P13-T01 functional fixes and focused tests.
-2. Implement the case 0.2 mission/narrative/evidence contract in P13-T02.
-3. Replace blocking stages and add the guided first-run experience in P13-T03.
+1. Finish and export the Case 0.2 mission/narrative/evidence contract.
+2. Replace blocking stages and add the guided first-run experience in P13-T03.
+3. Build the unified desktop/mobile CaseWorkspace in P13-T04.
 
 ## Blockers/questions for the user
 

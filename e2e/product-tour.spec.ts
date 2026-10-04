@@ -155,7 +155,7 @@ async function completeDicomLab(page: Page, testInfo: TestInfo) {
   await expect(outcomes).toContainText('XP awarded')
   await expect(outcomes).toContainText('stars')
   await expect(outcomes).toContainText('mastery')
-  await expect(outcomes).toContainText('No badge unlocked')
+  await expect(outcomes).not.toContainText('No badge unlocked')
   await presenterPause(page)
   await capturePhase12Evidence(page, testInfo, 'tour-dicom-complete')
   console.log(`[phase-12-tour] ${testInfo.project.name} DICOM lab complete`)

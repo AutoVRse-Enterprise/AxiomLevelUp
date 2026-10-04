@@ -34,7 +34,7 @@ const filters: Array<{ id: Filter; label: string }> = [
 export function LearnPage() {
   const registry = useContent()
   const { online } = useConnectivity()
-  const { appConfig, catalogCourses, courseById, lessonById, assetById } = registry
+  const { appConfig, catalogCourses, courseById, lessonById, caseById, assetById } = registry
   const [searchParams, setSearchParams] = useSearchParams()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
@@ -109,6 +109,7 @@ export function LearnPage() {
           xp,
           weeklyGoal,
           lessonProgress,
+          caseProgress,
           challenges,
           badges,
           mastery,
@@ -117,6 +118,7 @@ export function LearnPage() {
         },
         activePathway,
         lessonById,
+        caseById,
         appConfig.challenges,
         today(),
         appConfig.product.weekStartsOn,

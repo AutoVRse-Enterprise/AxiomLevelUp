@@ -6,7 +6,7 @@
   "description": "Build a repeatable method for inspecting and interpreting medical images.",
   "imageAssetId": "course-imaging-cover",
   "category": "Medical Imaging",
-  "estimatedMinutes": 95,
+  "estimatedMinutes": 85,
   "difficulty": "intermediate",
   "authors": ["Axiom Learning Science"],
   "conceptIds": ["thoracic-imaging", "image-windowing"],

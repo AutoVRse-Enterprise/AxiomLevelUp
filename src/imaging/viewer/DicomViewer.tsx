@@ -182,7 +182,7 @@ export function DicomViewer({
     >
       <header className="flex items-start justify-between gap-3 border-b border-clinical-700 p-3 sm:p-4">
         <div className="min-w-0">
-          <Chip>DICOM · Educational use only</Chip>
+          <Chip>DICOM · Educational use</Chip>
           <p className="mt-2 text-small text-neutral-200">{prompt}</p>
         </div>
         <div className="flex shrink-0 gap-2">
@@ -211,36 +211,36 @@ export function DicomViewer({
             'dicom-viewport relative h-[55dvh] min-h-80 w-full touch-none bg-black outline-none',
             immersive && 'min-h-0 flex-1',
           )}
-        onContextMenu={(event) => event.preventDefault()}
-        onKeyDown={(event) => {
-          if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
-            event.preventDefault()
-            void controller?.setSlice(state.slice + 1)
-          } else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
-            event.preventDefault()
-            void controller?.setSlice(state.slice - 1)
-          }
-        }}
-        onPointerDown={(event) => {
-          pointerStart.current = { x: event.clientX, y: event.clientY }
-        }}
-        onPointerUp={(event) => {
-          const start = pointerStart.current
-          pointerStart.current = null
-          if (!pointSelection || !start) return
-          if (
-            Math.hypot(event.clientX - start.x, event.clientY - start.y) > config.tapMaxMovementPx
-          ) {
-            return
-          }
-          const point = controller?.clientPointToImage(event.clientX, event.clientY)
-          if (point) onPointSelected?.(state.slice, point)
-        }}
-        ref={setElement}
-        aria-valuemax={Math.max(1, state.total)}
-        aria-valuemin={1}
-        aria-valuenow={state.slice}
-        role="slider"
+          onContextMenu={(event) => event.preventDefault()}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+              event.preventDefault()
+              void controller?.setSlice(state.slice + 1)
+            } else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+              event.preventDefault()
+              void controller?.setSlice(state.slice - 1)
+            }
+          }}
+          onPointerDown={(event) => {
+            pointerStart.current = { x: event.clientX, y: event.clientY }
+          }}
+          onPointerUp={(event) => {
+            const start = pointerStart.current
+            pointerStart.current = null
+            if (!pointSelection || !start) return
+            if (
+              Math.hypot(event.clientX - start.x, event.clientY - start.y) > config.tapMaxMovementPx
+            ) {
+              return
+            }
+            const point = controller?.clientPointToImage(event.clientX, event.clientY)
+            if (point) onPointSelected?.(state.slice, point)
+          }}
+          ref={setElement}
+          aria-valuemax={Math.max(1, state.total)}
+          aria-valuemin={1}
+          aria-valuenow={state.slice}
+          role="slider"
           tabIndex={0}
         >
           <AnnotationOverlay
@@ -297,7 +297,7 @@ export function DicomViewer({
       </div>
 
       <div className="space-y-3 border-t border-clinical-700 p-3 sm:p-4">
-        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Viewer tools">
+        <div aria-label="Viewer tools" className="flex flex-wrap gap-2" role="group">
           {tools.map((tool) => {
             const { label, icon: Icon } = toolDetails[tool]
             return (
@@ -323,7 +323,7 @@ export function DicomViewer({
           </Button>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Window presets">
+        <div aria-label="Window presets" className="flex flex-wrap gap-2" role="group">
           {presets.map((preset) => (
             <Button
               aria-pressed={state.presetId === preset.id}

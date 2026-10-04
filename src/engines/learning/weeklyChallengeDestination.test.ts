@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { AppConfig } from '@/content/schema'
 import { resolveWeeklyChallengeDestination } from '@/engines/learning/weeklyChallengeDestination'
 import { learnerDataSnapshot, useLearnerStore } from '@/state/learnerStore'
-import { makeCaseRegistry } from '@/test/caseFixtures'
+import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
 
 const registry = makeCaseRegistry()
 
@@ -86,6 +86,58 @@ describe('weekly challenge destination resolver', () => {
         registry,
       ),
     ).toEqual({ to: '/learn', context: 'Choose a learning activity' })
+  })
+
+  it('routes case criteria to the next incomplete catalogue case', () => {
+    const secondCase = {
+      ...fixtureCase,
+      id: 'second-case',
+      title: 'Second Case',
+      tier: 'intermediate' as const,
+    }
+    const caseRegistry = {
+      ...registry,
+      appConfig: {
+        ...registry.appConfig,
+        caseLab: registry.appConfig.caseLab
+          ? {
+              ...registry.appConfig.caseLab,
+              caseIds: [fixtureCase.id, secondCase.id],
+            }
+          : undefined,
+      },
+      cases: [fixtureCase, secondCase],
+      caseById: new Map([
+        [fixtureCase.id, fixtureCase],
+        [secondCase.id, secondCase],
+      ]),
+    }
+    const state = advancedState()
+    state.caseProgress[fixtureCase.id] = {
+      completions: 1,
+      bestTotal: 90,
+      lastCompletedAt: '2026-10-01T00:00:00.000Z',
+    }
+    const challenge = weeklyChallenge({
+      type: 'cases_completed',
+      count: 2,
+      tiers: ['foundation', 'intermediate'],
+    })
+
+    expect(resolveWeeklyChallengeDestination(challenge, state, caseRegistry)).toEqual({
+      to: '/learn/cases/second-case',
+      context: 'Next: Second Case',
+    })
+
+    state.caseProgress[secondCase.id] = {
+      completions: 1,
+      bestTotal: 85,
+      lastCompletedAt: '2026-10-02T00:00:00.000Z',
+    }
+    expect(resolveWeeklyChallengeDestination(challenge, state, caseRegistry)).toEqual({
+      to: '/learn',
+      context: 'Choose a learning activity',
+    })
   })
 
   it('uses honest collection routes when a criterion has no specific activity', () => {

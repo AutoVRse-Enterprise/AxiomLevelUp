@@ -33,7 +33,7 @@ import {
 
 export function HomePage() {
   const registry = useContent()
-  const { appConfig, catalogCourses, lessonById, courseById } = registry
+  const { appConfig, catalogCourses, lessonById, courseById, caseById } = registry
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const streak = useLearnerStore((state) => state.streak)
@@ -74,6 +74,7 @@ export function HomePage() {
           xp,
           weeklyGoal,
           lessonProgress,
+          caseProgress,
           challenges,
           badges,
           mastery,
@@ -82,6 +83,7 @@ export function HomePage() {
         },
         activePathway,
         lessonById,
+        caseById,
         appConfig.challenges,
         currentDate,
         appConfig.product.weekStartsOn,

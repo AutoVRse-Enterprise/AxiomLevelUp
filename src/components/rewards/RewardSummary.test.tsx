@@ -39,6 +39,32 @@ describe('reward presentation', () => {
     expect(screen.getByText(/4 day streak/)).toBeVisible()
   })
 
+  it('does not claim that no badge was unlocked when the activity result has no badge ids', () => {
+    render(
+      <ContentContext.Provider value={registry}>
+        <RewardSummary
+          result={{
+            activityKind: 'lesson',
+            activityId: 'lesson-one',
+            xpEarned: 100,
+            stars: 2,
+            masteryDelta: {},
+            rankBefore: 8,
+            rankAfter: 8,
+            badgesUnlocked: [],
+            levelFrom: 2,
+            levelTo: 2,
+            streak: 4,
+            revision: false,
+          }}
+        />
+      </ContentContext.Provider>,
+    )
+
+    expect(screen.queryByText('No badge unlocked')).not.toBeInTheDocument()
+    expect(screen.getByText('No mastery change')).toBeVisible()
+  })
+
   it('announces awarded question XP with answer feedback', () => {
     render(
       <FeedbackPanel

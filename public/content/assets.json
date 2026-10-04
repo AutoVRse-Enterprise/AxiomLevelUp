@@ -54,24 +54,24 @@
       "path": "/assets/images/windowing-diagram.svg",
       "type": "image",
       "offlineRequired": true,
-      "sizeBytes": 1155,
+      "sizeBytes": 1165,
       "mimeType": "image/svg+xml",
       "width": 800,
       "height": 480,
       "offlineAvailable": true,
-      "sha256": "84d04d3db4432ae13746b16b2cdc01b349708752a0146c42b54b8eae16ffbf24"
+      "sha256": "a5e52af35654aefe2ef2dacb877a794c4fe65273c9b8269423379a95655c95ee"
     },
     {
       "assetId": "thorax-diagram",
       "path": "/assets/images/thorax-diagram.svg",
       "type": "image",
       "offlineRequired": true,
-      "sizeBytes": 938,
+      "sizeBytes": 943,
       "mimeType": "image/svg+xml",
       "width": 800,
       "height": 800,
       "offlineAvailable": true,
-      "sha256": "b34369d94c30bcd92750ea15c04e949dfd44e1daea8ff2ace92071f874ae94bf"
+      "sha256": "ba8d3a8ae685bfa759ccffdcf24a6b15d65f14b8968e60bffb68c207e99ce364"
     },
     {
       "assetId": "showcase-cell-map",

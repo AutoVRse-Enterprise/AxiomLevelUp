@@ -19,6 +19,7 @@ type LearnerState = Pick<
   | 'xp'
   | 'weeklyGoal'
   | 'lessonProgress'
+  | 'caseProgress'
   | 'challenges'
   | 'badges'
   | 'mastery'
@@ -420,6 +421,7 @@ export function selectPathwayView(
   state: LearnerState,
   pathway: AppConfig['pathways'][number],
   lessonById: ReadonlyMap<string, Lesson>,
+  caseById: ReadonlyMap<string, CaseDocument>,
   challenges: AppConfig['challenges'],
   currentDate?: string,
   weekStartsOn = 1,
@@ -435,8 +437,29 @@ export function selectPathwayView(
     depth.set(id, value)
     return value
   }
+  const nodeCompleted = (node: (typeof pathway.nodes)[number]) => {
+    if (node.type === 'case') {
+      return (state.caseProgress[node.refId]?.completions ?? 0) > 0
+    }
+    if (node.type === 'challenge') {
+      const challenge = challenges.find(({ id }) => id === node.refId)
+      if (!challenge) return false
+      const period = state.gamification.challengePeriods[node.refId]
+      return currentDate
+        ? period?.lastCompletedPeriod === periodKey(challenge.type, currentDate, weekStartsOn)
+        : Boolean(state.challenges[node.refId]?.completed)
+    }
+    return state.lessonProgress[node.refId]?.status === 'completed'
+  }
+  const incompleteParents = (nodeId: string) =>
+    (incoming.get(nodeId) ?? []).filter((parentId) => {
+      const parent = pathway.nodes.find(({ id }) => id === parentId)
+      return !parent || !nodeCompleted(parent)
+    })
   const nodeViews = pathway.nodes.map((node) => {
-    const lesson = node.type === 'challenge' ? undefined : lessonById.get(node.refId)
+    const lesson =
+      node.type === 'challenge' || node.type === 'case' ? undefined : lessonById.get(node.refId)
+    const caseDocument = node.type === 'case' ? caseById.get(node.refId) : undefined
     const challenge =
       node.type === 'challenge' ? challenges.find(({ id }) => id === node.refId) : undefined
     let status: LearningStatus = 'available'
@@ -445,6 +468,14 @@ export function selectPathwayView(
       const result = selectLessonAvailability(state, lesson, lessonById)
       status = result.status
       unmetPrerequisites = result.unmetPrerequisites
+    } else if (caseDocument) {
+      unmetPrerequisites = incompleteParents(node.id)
+      status =
+        (state.caseProgress[caseDocument.id]?.completions ?? 0) > 0
+          ? 'completed'
+          : unmetPrerequisites.length
+            ? 'locked'
+            : 'available'
     } else if (challenge) {
       const progress = state.challenges[challenge.id]
       const period = state.gamification.challengePeriods[challenge.id]
@@ -453,18 +484,12 @@ export function selectPathwayView(
         period?.lastCompletedPeriod === periodKey(challenge.type, currentDate, weekStartsOn)
       if (completedThisPeriod || (!currentDate && progress?.completed)) status = 'completed'
       else {
-        const incompleteParents = (incoming.get(node.id) ?? []).filter((parentId) => {
-          const parent = pathway.nodes.find(({ id }) => id === parentId)
-          if (!parent) return true
-          if (parent.type === 'challenge') return !state.challenges[parent.refId]?.completed
-          return state.lessonProgress[parent.refId]?.status !== 'completed'
-        })
-        status = incompleteParents.length
+        unmetPrerequisites = incompleteParents(node.id)
+        status = unmetPrerequisites.length
           ? 'locked'
           : progress?.progress
             ? 'in_progress'
             : 'available'
-        unmetPrerequisites = incompleteParents
       }
     } else {
       status = 'locked'
@@ -474,9 +499,11 @@ export function selectPathwayView(
       ...node,
       depth: getDepth(node.id),
       lesson,
+      caseDocument,
       challenge,
-      title: lesson?.title ?? challenge?.title ?? node.refId,
-      estimatedMinutes: lesson?.estimatedMinutes ?? challenge?.estimatedMinutes,
+      title: lesson?.title ?? caseDocument?.title ?? challenge?.title ?? node.refId,
+      estimatedMinutes:
+        lesson?.estimatedMinutes ?? caseDocument?.estimatedMinutes ?? challenge?.estimatedMinutes,
       status,
       unmetPrerequisites,
       unlocks: pathway.edges.filter(({ from }) => from === node.id).map(({ to }) => to),

@@ -99,13 +99,16 @@ function criterionDestination(
         lesson.primitives.some(({ reward }) => reward?.id === criterion.rewardId),
       )
     case 'cases_completed': {
-      const candidate =
-        registry.cases.find(
+      const catalogueCaseIds =
+        registry.appConfig.caseLab?.caseIds ?? registry.cases.map(({ id }) => id)
+      const candidate = catalogueCaseIds
+        .map((caseId) => registry.caseById.get(caseId))
+        .find(
           (caseDoc) =>
+            caseDoc !== undefined &&
             (!criterion.tiers || criterion.tiers.includes(caseDoc.tier)) &&
             (state.caseProgress[caseDoc.id]?.completions ?? 0) === 0,
-        ) ??
-        registry.cases.find((caseDoc) => !criterion.tiers || criterion.tiers.includes(caseDoc.tier))
+        )
       return candidate
         ? { to: `/learn/cases/${candidate.id}`, context: `Next: ${candidate.title}` }
         : null

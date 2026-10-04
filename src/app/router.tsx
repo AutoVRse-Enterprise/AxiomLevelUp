@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, type RouteObject } from 'react-router'
 import { lazy, Suspense, type ReactNode } from 'react'
 
 import { RouteErrorPage } from '@/components/feedback/RouteErrorPage'
@@ -77,77 +77,87 @@ function lazyPage(page: ReactNode) {
   )
 }
 
-export const router = createBrowserRouter([
-  {
-    element: <AppShell />,
-    errorElement: <RouteErrorPage />,
-    children: [
-      { index: true, element: <HomePage />, handle: { title: 'Home' } },
-      { path: 'learn', element: lazyPage(<LearnPage />), handle: { title: 'Learn' } },
-      {
-        path: 'learn/pathways/:pathwayId',
-        element: lazyPage(<PathwayPage />),
-        handle: { title: 'Pathway' },
-      },
-      {
-        path: 'learn/courses/:courseId',
-        element: lazyPage(<CoursePage />),
-        handle: { title: 'Course' },
-      },
-      {
-        path: 'learn/cases/:caseId',
-        element: lazyPage(<CaseIntroPage />),
-        handle: { title: 'Case Lab' },
-      },
-      {
-        path: 'learn/cases/:caseId/attempts/:attemptId',
-        element: lazyPage(<CaseAttemptPage />),
-        handle: { title: 'Case results' },
-      },
-      {
-        path: 'challenge',
-        element: lazyPage(<ChallengePage />),
-        handle: { title: 'Challenges' },
-      },
-      {
-        path: 'leaderboard',
-        element: lazyPage(<LeaderboardPage />),
-        handle: { title: 'Leaderboard' },
-      },
-      { path: 'profile', element: lazyPage(<ProfilePage />), handle: { title: 'Profile' } },
-      { path: 'dev', element: lazyPage(<DevPage />), handle: { title: 'Development' } },
-      {
-        path: 'dev/primitives',
-        element: lazyPage(<PrimitiveGalleryPage />),
-        handle: { title: 'Primitive gallery' },
-      },
-      {
-        path: 'dev/tokens',
-        element: lazyPage(<TokenPreviewPage />),
-        handle: { title: 'Design tokens' },
-      },
-      { path: '*', element: lazyPage(<NotFoundPage />), handle: { title: 'Not found' } },
-    ],
-  },
-  {
-    element: <ImmersiveLayout />,
-    errorElement: <RouteErrorPage />,
-    children: [
-      {
-        path: 'learn/courses/:courseId/lessons/:lessonId',
-        element: lazyPage(<LessonPlayerPage />),
-        handle: { title: 'Lesson' },
-      },
-      {
-        path: 'challenge/:challengeId/play',
-        element: lazyPage(<ChallengePlayerPage />),
-        handle: { title: 'Challenge' },
-      },
-      {
-        path: 'learn/cases/:caseId/play',
-        element: lazyPage(<CasePlayerPage />),
-        handle: { title: 'Case Lab' },
-      },
-    ],
-  },
-])
+const devToolsEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true'
+
+export function createAppRoutes(enableDevTools = devToolsEnabled): RouteObject[] {
+  return [
+    {
+      element: <AppShell />,
+      errorElement: <RouteErrorPage />,
+      children: [
+        { index: true, element: <HomePage />, handle: { title: 'Home' } },
+        { path: 'learn', element: lazyPage(<LearnPage />), handle: { title: 'Learn' } },
+        {
+          path: 'learn/pathways/:pathwayId',
+          element: lazyPage(<PathwayPage />),
+          handle: { title: 'Pathway' },
+        },
+        {
+          path: 'learn/courses/:courseId',
+          element: lazyPage(<CoursePage />),
+          handle: { title: 'Course' },
+        },
+        {
+          path: 'learn/cases/:caseId',
+          element: lazyPage(<CaseIntroPage />),
+          handle: { title: 'Case Lab' },
+        },
+        {
+          path: 'learn/cases/:caseId/attempts/:attemptId',
+          element: lazyPage(<CaseAttemptPage />),
+          handle: { title: 'Case results' },
+        },
+        {
+          path: 'challenge',
+          element: lazyPage(<ChallengePage />),
+          handle: { title: 'Challenges' },
+        },
+        {
+          path: 'leaderboard',
+          element: lazyPage(<LeaderboardPage />),
+          handle: { title: 'Leaderboard' },
+        },
+        { path: 'profile', element: lazyPage(<ProfilePage />), handle: { title: 'Profile' } },
+        ...(enableDevTools
+          ? [
+              { path: 'dev', element: lazyPage(<DevPage />), handle: { title: 'Development' } },
+              {
+                path: 'dev/primitives',
+                element: lazyPage(<PrimitiveGalleryPage />),
+                handle: { title: 'Primitive gallery' },
+              },
+              {
+                path: 'dev/tokens',
+                element: lazyPage(<TokenPreviewPage />),
+                handle: { title: 'Design tokens' },
+              },
+            ]
+          : []),
+        { path: '*', element: lazyPage(<NotFoundPage />), handle: { title: 'Not found' } },
+      ],
+    },
+    {
+      element: <ImmersiveLayout />,
+      errorElement: <RouteErrorPage />,
+      children: [
+        {
+          path: 'learn/courses/:courseId/lessons/:lessonId',
+          element: lazyPage(<LessonPlayerPage />),
+          handle: { title: 'Lesson' },
+        },
+        {
+          path: 'challenge/:challengeId/play',
+          element: lazyPage(<ChallengePlayerPage />),
+          handle: { title: 'Challenge' },
+        },
+        {
+          path: 'learn/cases/:caseId/play',
+          element: lazyPage(<CasePlayerPage />),
+          handle: { title: 'Case Lab' },
+        },
+      ],
+    },
+  ]
+}
+
+export const router = createBrowserRouter(createAppRoutes())

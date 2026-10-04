@@ -3,11 +3,17 @@ import clinicalResearchData from '../../public/content/courses/clinical-research
 import dataInterpretationData from '../../public/content/courses/data-interpretation.json'
 import safetyAssessmentData from '../../public/content/courses/safety-assessment.json'
 import scientificImagingData from '../../public/content/courses/scientific-imaging.json'
+import asthmaFoundationData from '../../public/content/cases/asthma-foundation.json'
 import advancedSeedData from '../../public/content/seeds/advanced.json'
 import freshSeedData from '../../public/content/seeds/fresh.json'
 import { describe, expect, it } from 'vitest'
 
-import { appConfigSchema, courseSchema, learnerSeedSchema } from '@/content/schema'
+import {
+  appConfigSchema,
+  caseDocumentSchema,
+  courseSchema,
+  learnerSeedSchema,
+} from '@/content/schema'
 import {
   selectCourseCompletion,
   selectCourseSummary,
@@ -38,6 +44,8 @@ const lessonById = new Map(
   courses.flatMap((item) => item.lessons.map((lesson) => [lesson.id, lesson])),
 )
 const courseById = new Map(courses.map((item) => [item.id, item]))
+const cases = [caseDocumentSchema.parse(asthmaFoundationData)]
+const caseById = new Map(cases.map((item) => [item.id, item]))
 
 describe('derived learner selectors', () => {
   it('derives level from configuration thresholds without relying on input order', () => {
@@ -110,11 +118,19 @@ describe('derived learner selectors', () => {
       learner,
       appConfig.pathways[0]!,
       lessonById,
+      caseById,
       appConfig.challenges,
     )
 
     expect(pathway.layers.map((layer) => layer.length)).toEqual([1, 1, 1, 2, 1])
     expect(pathway.currentNode?.refId).toBe('thoracic-ct')
+    expect(pathway.nodes.find(({ id }) => id === 'node-case')).toEqual(
+      expect.objectContaining({
+        refId: 'asthma-foundation',
+        title: 'Variable Airflow Review',
+        status: 'completed',
+      }),
+    )
   })
 
   it('derives weekly activity across a calendar boundary', () => {

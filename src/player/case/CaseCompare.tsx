@@ -218,8 +218,8 @@ export function CaseCompare({
             </ol>
           ) : (
             <p className="mt-5 rounded-lg bg-neutral-100 p-4 text-small text-neutral-700">
-              This is your first recorded attempt. Future attempt history is supplied by the case
-              state pipeline.
+              This is your first recorded attempt. Complete this case again to compare your next
+              result.
             </p>
           )}
         </Card>

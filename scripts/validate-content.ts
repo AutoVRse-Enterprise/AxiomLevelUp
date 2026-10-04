@@ -12,6 +12,7 @@ import {
 } from '../src/content/loader.ts'
 import { contentManifestSchema } from '../src/content/schema/index.ts'
 import { formulaPrimitiveSchema } from '../src/content/schema/primitives/formula.ts'
+import { validateSvgBytes } from './assets/validate-svg.ts'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const contentRoot = resolve(root, 'public/content')
@@ -96,6 +97,20 @@ async function main() {
             message: `Asset "${asset.assetId}" SHA-256 does not match its local file.`,
             severity: 'error' as const,
           })
+        }
+        if (
+          asset.type === 'image' &&
+          (asset.mimeType === 'image/svg+xml' || asset.path.toLowerCase().endsWith('.svg'))
+        ) {
+          const validation = validateSvgBytes(bytes)
+          if (!validation.valid) {
+            issues.push({
+              file: input.assetManifestFile,
+              path: `assets.${assetIndex}.path`,
+              message: `Asset "${asset.assetId}" failed SVG validation: ${validation.message}`,
+              severity: 'error' as const,
+            })
+          }
         }
         return issues
       } catch (error) {

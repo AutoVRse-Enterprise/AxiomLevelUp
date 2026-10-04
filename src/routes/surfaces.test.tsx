@@ -15,7 +15,7 @@ import {
 } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
 import { fixtureCase, makeCaseRegistry } from '@/test/caseFixtures'
-import { makeValidContentBundle } from '@/test/contentFixtures'
+import { contentResponses, makeValidContentBundle } from '@/test/contentFixtures'
 
 import { ChallengePage } from './challenge/ChallengePage'
 import { HomePage } from './home/HomePage'
@@ -25,7 +25,23 @@ import { LearnPage } from './learn/LearnPage'
 import { PathwayPage } from './learn/PathwayPage'
 import { ProfilePage } from './profile/ProfilePage'
 
-const advancedRegistry = validateContentBundle(makeValidContentBundle())
+function makeCatalogueRegistry() {
+  const bundle = makeValidContentBundle()
+  bundle.manifest = structuredClone(contentResponses.get('/content/manifest.json'))
+  bundle.appConfig = structuredClone(contentResponses.get('/content/app-config.json'))
+  bundle.caseFiles = [
+    'asthma-foundation',
+    'copd-intermediate',
+    'exacerbation-advanced',
+    'wheeze-quick',
+  ].map((caseId) => ({
+    file: `cases/${caseId}.json`,
+    data: structuredClone(contentResponses.get(`/content/cases/${caseId}.json`)),
+  }))
+  return validateContentBundle(bundle)
+}
+
+const advancedRegistry = makeCatalogueRegistry()
 const freshSeed = learnerSeedSchema.parse(freshSeedData)
 
 function makeQuickCaseRegistry() {
@@ -147,12 +163,14 @@ describe('application surfaces', () => {
   })
 
   it('links a weekly challenge to its next eligible qualifying activity', () => {
-    renderSurface(<ChallengePage />, '/challenge', '/challenge')
+    const caseRegistry = makeCaseRegistry()
+    useLearnerStore.getState().replaceWithSeed(freshSeed)
+    renderSurface(<ChallengePage />, '/challenge', '/challenge', caseRegistry)
 
     expect(
       screen.getByRole('link', { name: 'Continue Scientific Imaging Sprint' }),
-    ).toHaveAttribute('href', '/learn/courses/data-interpretation/lessons/dose-response-curves')
-    expect(screen.getByText('Next: Dose-response Curves')).toBeVisible()
+    ).toHaveAttribute('href', `/learn/cases/${fixtureCase.id}`)
+    expect(screen.getByText(`Next: ${fixtureCase.title}`)).toBeVisible()
   })
 
   it('keeps internal courses off Home, Learn and Pathway surfaces', () => {
@@ -176,6 +194,32 @@ describe('application surfaces', () => {
         name: /Runtime Primitive Showcase|Primitive Showcase/u,
       }),
     ).not.toBeInTheDocument()
+  })
+
+  it('links case pathway nodes to Case Lab', () => {
+    const caseRegistry = makeCaseRegistry()
+    useLearnerStore.getState().replaceWithSeed({
+      ...caseRegistry.seed,
+      caseProgress: {
+        ...caseRegistry.seed.caseProgress,
+        [fixtureCase.id]: {
+          completions: 1,
+          bestTotal: 90,
+          lastCompletedAt: '2026-10-01T00:00:00.000Z',
+        },
+      },
+    })
+    renderSurface(
+      <PathwayPage />,
+      '/learn/pathways/translational-science',
+      '/learn/pathways/:pathwayId',
+      caseRegistry,
+    )
+
+    expect(screen.getByText(fixtureCase.title).closest('a')).toHaveAttribute(
+      'href',
+      `/learn/cases/${fixtureCase.id}`,
+    )
   })
 
   it('shows locked lesson reasons without making locked lessons links', () => {

@@ -2913,3 +2913,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Result/verification:** Phase 13 is active with 17 tasks, an explicit human-usability exit gate
   and no clinical-accuracy scope. Audit baseline committed as `ec8f8ae`.
 - **Follow-ups:** Execute P13-T01 immediate functional fixes.
+
+### [2026-10-04 21:37] P13-T01 - Close immediate functional demo defects
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Re-encoded the broken lesson SVGs and added fatal UTF-8 plus namespace-aware XML
+  validation; made the DICOM tool/preset groups wrap; removed unavailable and contradictory reward
+  rows; replaced internal comparison copy; environment-gated `/dev*`; converted the weekly sprint
+  to three Case Lab completions; made pathway case nodes resolve to real cases; and corrected the
+  Scientific Imaging duration.
+- **Files changed:** SVG assets and manifest; content/app configuration; validation scripts;
+  DICOM, reward, compare, router, gamification, challenge-destination and pathway runtime files;
+  focused unit/E2E tests.
+- **Commands run:** `npm run assets:hash`; `npm run validate:content`; `npm run typecheck`;
+  focused Vitest run (9 files / 110 tests); IDE diagnostics.
+- **Result/verification:** Content validation reports 5 courses, 13 lessons, 4 cases and zero
+  warnings. TypeScript and all 110 focused tests pass. Invalid UTF-8 and malformed SVG fixtures are
+  rejected.
+- **Follow-ups:** Implement and export the Case 0.2 contract in P13-T02.

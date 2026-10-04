@@ -38,8 +38,18 @@ export function makeValidContentBundle(): ContentBundleInput {
   const fixtureAppConfig = structuredClone(appConfig) as unknown as {
     caseLab?: unknown
     challenges: Array<Record<string, unknown>>
+    pathways: Array<{
+      nodes: Array<{ id: string; type: string; refId: string }>
+    }>
   }
   delete fixtureAppConfig.caseLab
+  fixtureAppConfig.pathways.forEach((pathway) => {
+    pathway.nodes.forEach((node) => {
+      if (node.type !== 'case') return
+      node.type = 'lesson'
+      node.refId = 'imaging-case-practice'
+    })
+  })
   fixtureAppConfig.challenges[0] = {
     id: 'daily-imaging-interpretation',
     type: 'daily',

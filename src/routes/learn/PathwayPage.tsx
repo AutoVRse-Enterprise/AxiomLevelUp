@@ -61,11 +61,12 @@ function PathwayNodeTransition({
 
 export function PathwayPage() {
   const { pathwayId } = useParams()
-  const { appConfig, catalogCourses, lessonById } = useContent()
+  const { appConfig, catalogCourses, lessonById, caseById } = useContent()
   const learner = useLearnerStore((state) => state.learner)
   const xp = useLearnerStore((state) => state.xp)
   const weeklyGoal = useLearnerStore((state) => state.weeklyGoal)
   const lessonProgress = useLearnerStore((state) => state.lessonProgress)
+  const caseProgress = useLearnerStore((state) => state.caseProgress)
   const challenges = useLearnerStore((state) => state.challenges)
   const badges = useLearnerStore((state) => state.badges)
   const mastery = useLearnerStore((state) => state.mastery)
@@ -93,9 +94,21 @@ export function PathwayPage() {
   }
 
   const view = selectPathwayView(
-    { learner, xp, weeklyGoal, lessonProgress, challenges, badges, mastery, stats, gamification },
+    {
+      learner,
+      xp,
+      weeklyGoal,
+      lessonProgress,
+      caseProgress,
+      challenges,
+      badges,
+      mastery,
+      stats,
+      gamification,
+    },
     pathway,
     lessonById,
+    caseById,
     appConfig.challenges,
     today(),
     appConfig.product.weekStartsOn,
@@ -104,6 +117,7 @@ export function PathwayPage() {
 
   const destinationFor = (node: (typeof view.nodes)[number]) => {
     if (node.type === 'challenge') return '/challenge'
+    if (node.type === 'case') return `/learn/cases/${node.refId}`
     const course = catalogCourses.find(({ lessons }) => lessons.some(({ id }) => id === node.refId))
     return course ? `/learn/courses/${course.id}/lessons/${node.refId}` : '/learn'
   }

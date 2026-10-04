@@ -11,6 +11,12 @@ export function makeCaseRegistry(): ContentRegistry {
   const base = validateContentBundle(makeValidContentBundle())
   const appConfig = appConfigSchema.parse({
     ...structuredClone(base.appConfig),
+    pathways: base.appConfig.pathways.map((pathway) => ({
+      ...pathway,
+      nodes: pathway.nodes.map((node) =>
+        node.id === 'node-case' ? { ...node, type: 'case' as const, refId: fixtureCase.id } : node,
+      ),
+    })),
     caseLab: {
       title: 'Case Lab',
       featuredCaseId: fixtureCase.id,
