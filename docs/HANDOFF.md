@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 13 client demo readiness is active. P13-T00 through P13-T04 are complete; P13-T05 clue
-economy and evidence scoping is next. Phase 9 remains active for physical Android and iOS gates
+Phase 13 client demo readiness is active. P13-T00 through P13-T05 are complete; P13-T06 scored
+reasoning checkpoints is next. Phase 9 remains active for physical Android and iOS gates
 P9-M01 through
 P9-M03.
 
@@ -54,6 +54,8 @@ P9-M03.
   segments; fixed clue rails and mobile evidence sheets are no longer part of the active route.
 - Shared sticky action slots keep assessment and continuation actions reachable above mobile safe
   areas without covering the task.
+- Clues disclose status, exact cost and question relevance before opening. Optional-clue
+  confirmation is once per run, and notes include only unlocked evidence and inspected findings.
 
 ## Verification
 
@@ -90,14 +92,14 @@ P9-M03.
 
 ## In progress
 
-- P13-T05 evidence semantics are next.
-- P13-T04 passes TypeScript, lint and focused workspace/player/primitive tests.
+- P13-T06 reasoning primitive and migration work is next.
+- P13-T05 passes TypeScript, lint and focused player/clue/notes tests.
 
 ## Next three steps
 
-1. Finish clue relevance and current/earlier-stage note scoping in P13-T05.
-2. Add evidence-selection and differential checkpoints in P13-T06.
-3. Improve anatomy task framing and finding feedback in P13-T07.
+1. Add evidence-selection and differential checkpoints in P13-T06.
+2. Improve anatomy task framing and finding feedback in P13-T07.
+3. Implement unknown-waypoint case entry in P13-T08.
 
 ## Blockers/questions for the user
 

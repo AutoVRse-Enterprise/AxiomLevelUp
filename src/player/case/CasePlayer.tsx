@@ -388,6 +388,12 @@ export function CasePlayer({
   const [caseProgress, setCaseProgress] = useState<CaseProgress>(
     normalizeCaseProgress(initialSession.caseProgress),
   )
+  const [optionalClueConfirmationAcknowledged, setOptionalClueConfirmationAcknowledged] =
+    useState(() =>
+      (initialSession.caseProgress?.openedClueIds ?? []).some(
+        (clueId) => plan.clueMap.get(clueId)?.essential === false,
+      ),
+    )
   const caseProgressRef = useRef(caseProgress)
   const [cluePresentation, setCluePresentation] = useState<{
     selectedClueId: string | null
@@ -488,6 +494,7 @@ export function CasePlayer({
         setCluePresenterBlocking(false)
         setWalkthroughOpen(false)
         setWorkspaceSegment('task')
+        setOptionalClueConfirmationAcknowledged(false)
         entryClueAfterWalkthrough.current = false
         entryHandled.current = false
       }),
@@ -655,6 +662,7 @@ export function CasePlayer({
     setCluePresenterBlocking(false)
     setWalkthroughOpen(false)
     setWorkspaceSegment('task')
+    setOptionalClueConfirmationAcknowledged(false)
     entryClueAfterWalkthrough.current = false
     persistProgress(normalizeCaseProgress())
   }, [persistProgress])
@@ -770,13 +778,25 @@ export function CasePlayer({
             const clue = plan.clueMap.get(id)
             return clue ? [clue] : []
           })
+          const stageIndex = plan.stageBoundaries.findIndex(({ stageId }) => stageId === stage.stageId)
+          const availableClueIds = [
+            ...new Set(
+              plan.stageBoundaries
+                .slice(0, stageIndex + 1)
+                .flatMap(({ clueIds }) => clueIds),
+            ),
+          ]
+          const availableClues = availableClueIds.flatMap((id) => {
+            const clue = plan.clueMap.get(id)
+            return clue ? [clue] : []
+          })
           const selected = cluePresentation.selectedClueId
             ? plan.clueMap.get(cluePresentation.selectedClueId)
             : undefined
           const visibleClues =
-            selected && !stageClues.some(({ id }) => id === selected.id)
-              ? [...stageClues, selected]
-              : stageClues
+            selected && !availableClues.some(({ id }) => id === selected.id)
+              ? [...availableClues, selected]
+              : availableClues
           const commonClueProps = {
             clues: visibleClues,
             caseClueCount: caseDoc.clues.length,
@@ -789,10 +809,12 @@ export function CasePlayer({
             labelEssentialClues: plan.tierPreset.labelEssentialClues,
             relevantClueIds: step.primitive.clueIds,
             optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
+            optionalClueConfirmationAcknowledged,
             clueReview: caseLab.clueReview,
             onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
             onOpenNoteClue: (clueId: string) => presentClue(clueId, 'remediation'),
             onReviewClue: markClueReviewed,
+            onOptionalClueConfirmation: () => setOptionalClueConfirmationAcknowledged(true),
             onPresenterOpenChange: (presenterOpen: boolean) =>
               setCluePresentation((current) => ({ ...current, presenterOpen })),
             onBlockingChange: setCluePresenterBlocking,
@@ -826,7 +848,7 @@ export function CasePlayer({
               <CaseNotes
                 caseDoc={caseDoc}
                 progress={caseProgress}
-                availableClueIds={stage.clueIds}
+                availableClueIds={availableClueIds}
                 inspectedFindingIds={selectInspectedFindingIds(session)}
                 currentLocationLabel={resolveCaseLocationLabel(
                   anatomyMap,

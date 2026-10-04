@@ -69,12 +69,12 @@ Two audit corrections were applied at baseline:
 | U04 | Stage/task/level progress models compete | P13-T03, P13-T04 | Closed: one stage-progress model |
 | U05 | Anatomy controls are separated from task | P13-T04, P13-T07 | Partial: task and evidence now share one workspace |
 | U06 | 3D interaction contract is not taught | P13-T03, P13-T07 | Partial: replayable walkthrough establishes workspace |
-| U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Partial: evidence is in-flow beside each task |
-| U08 | Clue economy is not an informed choice | P13-T05 | Open |
+| U07 | Clues are hidden from dependent questions | P13-T04, P13-T05 | Closed: evidence is in-flow and relevance-labelled |
+| U08 | Clue economy is not an informed choice | P13-T05 | Closed: cost/status are visible before opening |
 | U09 | Scored questions bypass evidence gathering | P13-T02, P13-T06 | Partial: every scored step declares decisive clues |
-| U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Open |
+| U10 | Notes and differential have no clear payoff | P13-T05, P13-T06 | Partial: notes are scoped and pinning is explicit |
 | U11 | Correct diagnosis can still be `Not rated` | P13-T06, P13-T10 | Open |
-| U12 | Notes reveal information prematurely | P13-T05 | Open |
+| U12 | Notes reveal information prematurely | P13-T05 | Closed: only unlocked clues and inspected findings appear |
 | U13 | Answer construction removes ambiguity | P13-T02, P13-T06 | Partial: exact numeric clue leakage is rejected |
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Partial: stage updates are announced inline |
 | U15 | Time expectations conflict | P13-T02, P13-T09 | Partial: estimated duration is validated against targets |

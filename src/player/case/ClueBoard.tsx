@@ -19,11 +19,13 @@ interface ClueBoardProps {
   labelEssentialClues: boolean
   relevantClueIds?: readonly string[]
   optionalClueCost: number
+  optionalClueConfirmationAcknowledged?: boolean
   clueReview: CaseLabConfig['clueReview']
   variant: 'mobile' | 'desktop' | 'panel'
   onPresentClue: (clueId: string) => void
   onOpenNoteClue?: (clueId: string) => void
   onReviewClue: (clueId: string, method: CaseClueReviewMethod) => void
+  onOptionalClueConfirmation?: () => void
   onPresenterOpenChange: (open: boolean) => void
   onBlockingChange?: (blocking: boolean) => void
   renderNotes?: (openClue: (clueId: string) => void) => ReactNode
@@ -118,13 +120,14 @@ function Board({
   selectedClueId,
   relevantClueIds = [],
   optionalClueCost,
+  optionalClueConfirmationAcknowledged = false,
   clueReview,
   onPresentClue,
   onReviewClue,
+  onOptionalClueConfirmation,
   presenterOpen,
 }: Omit<ClueBoardProps, 'variant' | 'labelEssentialClues'>) {
   const selected = clues.find(({ id }) => id === selectedClueId)
-  const [optionalClueConfirmed, setOptionalClueConfirmed] = useState(false)
   const [pendingOptionalClueId, setPendingOptionalClueId] = useState<string | null>(null)
   const grouped = clues.reduce((groups, clue) => {
     const current = groups.get(clue.category) ?? []
@@ -139,10 +142,9 @@ function Board({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-heading font-bold text-neutral-950">Clue board</h2>
         <Chip>
-          {reviewedCount} of {caseClueCount} reviewed
+          {reviewedCount} of {caseClueCount} reviewed · {availableClueCount} available this stage
         </Chip>
       </div>
-      <p className="mt-2 text-small text-neutral-600">{availableClueCount} available now</p>
       {pendingOptionalClueId ? (
         <div className="mt-4 rounded-lg border border-warning-300 bg-warning-50 p-3">
           <p className="text-small font-semibold text-warning-950">
@@ -156,7 +158,7 @@ function Board({
               size="sm"
               onClick={() => {
                 const clueId = pendingOptionalClueId
-                setOptionalClueConfirmed(true)
+                onOptionalClueConfirmation?.()
                 setPendingOptionalClueId(null)
                 onPresentClue(clueId)
               }}
@@ -193,7 +195,7 @@ function Board({
                           !clue.essential &&
                           !opened &&
                           optionalClueCost > 0 &&
-                          !optionalClueConfirmed
+                          !optionalClueConfirmationAcknowledged
                         ) {
                           setPendingOptionalClueId(clue.id)
                           return

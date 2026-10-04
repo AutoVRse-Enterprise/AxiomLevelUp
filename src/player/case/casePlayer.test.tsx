@@ -193,7 +193,7 @@ describe('case player integration', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     expect(screen.getByRole('heading', { name: 'Conclude' })).toHaveFocus()
     expect(screen.getByText('Verify the conclusion-stage contract.')).toBeVisible()
-    expect(screen.queryByText('Context')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Context')).not.toHaveLength(0)
 
     await user.click(await screen.findByRole('radio', { name: 'True' }))
     await user.click(screen.getByRole('button', { name: 'Check answer' }))
@@ -490,7 +490,7 @@ describe('case player integration', () => {
 
     expect(screen.queryByRole('dialog', { name: 'Conclude' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Conclude' })).toBeVisible()
-    expect(screen.getByText('1 of 1 reviewed')).toBeVisible()
+    expect(screen.getByText('1 of 1 reviewed · 1 available this stage')).toBeVisible()
     expect(screen.getByRole('timer')).toHaveAccessibleName(/Case elapsed time: 0:0[5-6]/)
     expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
       openedClueIds: ['clue-context'],
@@ -615,8 +615,7 @@ describe('case player integration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Start' }))
     fireEvent.click(screen.getByRole('button', { name: /Context.*New/ }))
 
-    expect(screen.getByText('0 of 1 reviewed')).toBeVisible()
-    expect(screen.getByText('1 available now')).toBeVisible()
+    expect(screen.getByText('0 of 1 reviewed · 1 available this stage')).toBeVisible()
     expect(useActivitySessionStore.getState().session?.caseProgress).toMatchObject({
       openedClueIds: ['clue-context'],
       reviewedClueIds: [],
@@ -638,7 +637,7 @@ describe('case player integration', () => {
         stageId: 'stage-orient',
       }),
     ])
-    expect(screen.getByText('1 of 1 reviewed')).toBeVisible()
+    expect(screen.getByText('1 of 1 reviewed · 1 available this stage')).toBeVisible()
 
     fireEvent.click(screen.getByRole('button', { name: /Context.*Reviewed/ }))
     await act(() => vi.advanceTimersByTimeAsync(1_200))
@@ -647,7 +646,7 @@ describe('case player integration', () => {
     fireEvent.click(screen.getByRole('radio', { name: 'Target structure' }))
     fireEvent.click(screen.getByRole('button', { name: 'Check answer' }))
     fireEvent.click(screen.getByRole('button', { name: 'Continue' }))
-    expect(screen.getByText('0 available now')).toBeVisible()
+    expect(screen.getByText('1 of 1 reviewed · 0 available this stage')).toBeVisible()
   })
 
   it('shows optional clue cost in the advanced tier', () => {

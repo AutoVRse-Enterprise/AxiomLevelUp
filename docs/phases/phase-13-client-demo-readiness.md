@@ -69,7 +69,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Add a case-only StepActionSlot for a sticky primary action.
   - Keep the task prompt and action visible at 1440 × 900 and 375 × 812.
 
-- [ ] **P13-T05 — Clue economy and scoped notes**
+- [x] **P13-T05 — Clue economy and scoped notes** — completed 2026-10-04
   - Show clue cost, status and current-question relevance at the decision point.
   - Confirm the first optional clue and simplify progress language.
   - Show only unlocked clues, inspected findings and appropriate hypothesis detail in Case notes.

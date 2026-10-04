@@ -2982,3 +2982,18 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   scrollable in document flow, while mobile task, evidence and notes share one non-modal workspace.
 - **Follow-ups:** Complete current/earlier-stage evidence scoping and clue decision semantics in
   P13-T05.
+
+### [2026-10-04 22:11] P13-T05 - Make clue decisions explicit
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pre-open clue status, exact cost and current-question relevance; made the
+  optional-clue confirmation occur once per case run; collapsed clue progress into one clear
+  reviewed/available count; and limited notes to clues unlocked in the current or prior stages and
+  findings the learner inspected. Hypothesis explanations remain hidden until completion.
+- **Files changed:** `CasePlayer`, `ClueBoard`, `CaseNotes` and focused tests; Phase 13 tracking
+  docs.
+- **Commands run:** `npm run typecheck`; focused Vitest (3 files / 17 tests); `npm run lint`.
+- **Result/verification:** TypeScript and lint pass. Focused tests pass after aligning the
+  progressive evidence expectation with current-and-earlier-stage visibility.
+- **Follow-ups:** Make evidence selection and differential revision required scored checkpoints in
+  P13-T06.
