@@ -155,8 +155,8 @@ remains No-go.
 ## Environment notes
 
 - Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`
-- Branch: `master`; latest Phase 13 commits are `1e8fc8e` (P13-T14 regression proof), `917e27f`
-  (P13-T15 study materials) and `437ff4c` (P13-T16 delivery-gate documentation).
+- Branch: `master`; core Phase 13 closure commits include `1e8fc8e` (P13-T14 regression proof),
+  `917e27f` (P13-T15 study materials) and `437ff4c` (P13-T16 delivery-gate documentation).
 - Worktree contains the active Phase 13 implementation and the user's untouched untracked
   `docs/reference docs/`.
 - Node/npm/Playwright: 24.19.0 / 11.17.0 / 1.63.0

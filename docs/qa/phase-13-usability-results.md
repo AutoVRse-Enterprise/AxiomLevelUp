@@ -1,7 +1,7 @@
 # Phase 13 usability results
 
 **Status:** Blocked — moderated participant sessions have not been run; the user confirmed on
-2026-10-05 that this gate should remain blocked  
+2026-10-05 that this gate should remain blocked
 **Protocol:** `docs/qa/phase-13-usability-protocol.md`  
 **Required sample:** Three clinicians or trainee doctors and two IT proxies
 
