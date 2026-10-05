@@ -4,8 +4,9 @@
 
 Phase 13 implementation and automated coverage (P13-T00 through P13-T14) are complete. P13-T15 is
 blocked on five qualifying human sessions. P13-T16 is blocked on an HTTPS deployment target and
-DICOM origin plus physical Android/iPhone access or an approved desktop-only-demo waiver. The
-external client-demo verdict is No-go until those evidence gates close.
+DICOM origin plus physical Android/iPhone access. On 2026-10-05 the user chose to leave all three
+gates blocked and did not authorize a desktop-only-demo waiver. The external client-demo verdict
+remains No-go.
 
 ## Done
 
@@ -148,7 +149,8 @@ external client-demo verdict is No-go until those evidence gates close.
 - Five qualifying participants have not been supplied or scheduled; the usability thresholds are
   unmeasured.
 - No HTTPS application target or production CORS-capable DICOM origin is configured.
-- No Android device, iPhone or authorized desktop-only-demo waiver is available.
+- No Android device or iPhone is available; the user declined a desktop-only-demo waiver on
+  2026-10-05.
 
 ## Environment notes
 

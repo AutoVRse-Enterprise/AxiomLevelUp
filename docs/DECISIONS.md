@@ -1914,3 +1914,21 @@ duplicating the desktop pixel baselines.
 instrumentation, and committed images now detect unintended layout changes on the client-demo
 route. Baseline updates must be deliberate and reviewed. The desktop images are platform-specific;
 phone confidence comes from semantic and viewport assertions, not pixel identity.
+
+## ADR-103: External demo approval remains evidence-gated
+
+**Status:** Accepted
+
+**Context:** Phase 13 implementation and local automation pass, but no qualifying human usability
+sessions, HTTPS deployment target, production DICOM origin, Android device or iPhone were
+available. A desktop-only-demo waiver was offered as the explicit alternative to physical-device
+approval.
+
+**Decision:** On 2026-10-05 the user chose to leave all three external gates blocked and did not
+authorize a desktop-only-demo waiver. Keep P13-T15 and P13-T16 open, retain the external
+client-demo No-go verdict and describe local automation only as engineering evidence.
+
+**Consequences:** The local guided Case Lab can be rehearsed within its documented limitations,
+but it must not be represented as passing unaided usability, hosted delivery, service-worker/CORS
+preflight or physical-device validation. Phase 13 closes only after new evidence or an explicit
+future waiver decision.

@@ -129,7 +129,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Pass `npm run check` and serial Playwright; record ADR-102.
 
 - [ ] **P13-T15 — Moderated usability validation** — blocked: five qualifying human sessions have
-  not been scheduled or supplied
+  not been scheduled or supplied; user confirmed on 2026-10-05 that this remains blocked
   - Publish a protocol and run five unaided sessions: at least three clinicians/trainees and two IT
     proxies.
   - Require 4/5 mission comprehension, 4/5 unaided Foundation and Advanced completion, first 3D
@@ -137,7 +137,8 @@ Phase 13 closes on usability evidence, not automation alone.
   - Fix and retest failures; publish results.
 
 - [ ] **P13-T16 — Delivery and closeout** — blocked: no HTTPS deployment target, production DICOM
-  origin, physical devices or approved desktop-only waiver is available
+  origin or physical devices are available; user declined to authorize a desktop-only waiver on
+  2026-10-05
   - Deploy one exact HTTPS candidate and complete host/service-worker/DICOM preflight.
   - Run Android and iPhone smoke tests or record a desktop-only waiver.
   - Publish a 10-minute presenter script, hands-on handout and readiness verdict.

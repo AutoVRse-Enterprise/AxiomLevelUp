@@ -4,6 +4,9 @@
 **Local engineering candidate:** Pass  
 **Supervised local desktop rehearsal:** Go within the limitations below
 
+On 2026-10-05 the user explicitly chose to leave the human-session, hosted-candidate and
+physical-device gates blocked and did not authorize a desktop-only-demo waiver.
+
 ## What is ready
 
 - The guided Case Lab implementation is configuration-driven and covers briefing, continuous

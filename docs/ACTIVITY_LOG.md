@@ -3181,3 +3181,17 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   provided. The external client-demo verdict remains No-go.
 - **Follow-ups:** Deploy one frozen build and run hosted preflight; then run both physical-device
   scripts or obtain an authorized desktop-only-demo waiver.
+
+### [2026-10-05 10:12] P13-T15/P13-T16 - Confirm external gates remain blocked
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Presented the three outstanding evidence decisions. The user chose to leave the five
+  human sessions, hosted HTTPS/DICOM preflight and physical-device validation blocked and did not
+  authorize a desktop-only-demo waiver. Recorded ADR-103 and retained the No-go verdict.
+- **Files changed:** Phase 13 phase, usability results, readiness verdict, decisions, handoff and
+  activity log.
+- **Commands run:** User questionnaire; documentation consistency review.
+- **Result/verification:** P13-T00 through P13-T14 remain complete. P13-T15 and P13-T16 remain open
+  by explicit user decision; no external readiness claim or fabricated evidence was added.
+- **Follow-ups:** Reopen the applicable gate only when participants, hosting details, device
+  evidence or a future waiver decision are available.
