@@ -1932,3 +1932,23 @@ client-demo No-go verdict and describe local automation only as engineering evid
 but it must not be represented as passing unaided usability, hosted delivery, service-worker/CORS
 preflight or physical-device validation. Phase 13 closes only after new evidence or an explicit
 future waiver decision.
+
+## ADR-104: The repository root README is the human entry point
+
+**Status:** Accepted
+
+**Context:** The original PRD records product intent across many delivery phases, while
+architecture, schema, phase and QA documents each assume a specialized reader. After thirteen
+phases, a new reviewer had no single current explanation of what the application does, how to run
+it, which experience to test first or which claims remain unapproved.
+
+**Decision:** Use `README.md` as the canonical human-first product and testing guide. Preserve the
+PRD as the product-intent record, add a dated implementation snapshot to it, and link specialized
+documents from the README instead of duplicating their full contracts. Keep implementation status
+and approval boundaries explicit: local engineering pass is distinct from human usability,
+hosted-delivery and physical-device approval.
+
+**Consequences:** New reviewers can understand and exercise the product before reading source code.
+Maintainers must update the README when learner surfaces, setup commands, primary walkthrough,
+verification results or approval boundaries materially change. Architecture and schema documents
+remain authoritative for technical contracts; QA verdicts remain authoritative for readiness.

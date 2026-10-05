@@ -51,10 +51,10 @@ remains No-go.
   pauses both case and task timing.
 - Blocking stage dialogs are removed. Inline, focus-managed stage banners introduce each purpose
   and patient update, and the case header exposes one four-stage progress model.
-- Active cases now use an in-flow two-column desktop workspace and Task/Evidence/Notes mobile
+- Active cases now use an in-flow two-column desktop workspace and Task/Clues/Case notes mobile
   segments; fixed clue rails and mobile evidence sheets are no longer part of the active route.
-- Shared sticky action slots keep assessment and continuation actions reachable above mobile safe
-  areas without covering the task.
+- Shared case action slots keep assessment and continuation actions reachable; mobile actions are
+  viewport-anchored above bottom navigation with reserved task spacing.
 - Clues disclose status, exact cost and question relevance before opening. Optional-clue
   confirmation is once per run, and notes include only unlocked evidence and inspected findings.
 - Full cases now require differential ratings after Observe and Interpret and a scored
@@ -81,6 +81,8 @@ remains No-go.
 - The Advanced case has a bridge-free visible-control browser path, prompt/action viewport checks
   at 1440 × 900 and 375 × 812, and eight committed desktop visual baselines.
 - The usability protocol/results record and delivery runbook/readiness verdict are published.
+- Added `README.md` as the human-first explanation of the product, local setup, manual walkthrough,
+  automated checks, readiness limits and deeper-document map.
 
 ## Verification
 
@@ -135,7 +137,7 @@ remains No-go.
 ## In progress
 
 - P13-T15 is awaiting five unaided participant sessions.
-- P13-T16 is awaiting hosted and physical-device evidence or an approved desktop-only waiver.
+- P13-T16 is awaiting hosted and physical-device evidence; no desktop-only waiver is approved.
 
 ## Next three steps
 
@@ -163,6 +165,8 @@ remains No-go.
 - Browser cache override:
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`
 - Browser targets: desktop Chromium 1440 × 900 and touch-phone Chromium 375 × 812.
+- No project development, preview or test processes were left running after the 2026-10-05
+  documentation handoff.
 - Original Phase 12 preview: `http://127.0.0.1:4181`, strict port, `VITE_E2E=true`.
 - Fresh product-audit preview: `http://127.0.0.1:4192`.
 - Full gate command: `npm run check`
@@ -182,11 +186,10 @@ remains No-go.
 - Achievement dialogs can cover result actions and must be dismissed before continuing.
 - Full-path anatomy uses real branch controls and a projected canvas finding. List alternatives are
   valid accessibility paths but do not prove canvas picking.
-- On desktop, the main anatomy controls sit below the tall 3D viewport. On phone, Clues and Notes
-  also sit after the viewport; the clue bottom sheet initially shows its headers before the clue
-  card and removes the task from view.
-- Case notes are described as optional and non-scoring, but the comparison uses their confidence
-  ratings; skipping them can produce `You: Not rated` after a correct diagnosis.
+- Desktop anatomy controls sit beside the viewport. Phone anatomy is capped at 45svh and uses the
+  Task/Clues/Case notes segments; switching segments intentionally replaces the visible panel.
+- Case notes remain optional and non-scoring. Differential ratings are collected by required
+  Observe and Interpret checkpoints and are persisted for Model answer comparison.
 - Browser tests refresh screenshot evidence. Restore unintended evidence churn after verification;
   the committed Phase 11 and Phase 12 evidence sets are the retained closeout artifacts.
 - Playwright uses SwiftShader. It proves the WebGL contract, not hardware GPU performance.

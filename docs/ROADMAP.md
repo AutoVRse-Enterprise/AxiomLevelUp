@@ -1,5 +1,8 @@
 # Delivery roadmap
 
+For a human-readable description of the current application and a practical test walkthrough,
+start with `README.md`.
+
 | Phase | Scope                          | Status   | Exit signal                                                                              |
 | ----- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------- |
 | 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
@@ -103,3 +106,8 @@ Phase 13 implementation and automated regression coverage are complete. The phas
 until five qualifying human sessions pass the usability thresholds, an exact candidate is deployed
 and preflighted over HTTPS, and physical Android/iPhone checks pass or a desktop-only waiver is
 approved.
+
+The final local Phase 13 gate covers 73 Vitest files / 500 tests and 53 passing Playwright tests
+with three intentional project skips across desktop and touch-phone Chromium. On 2026-10-05 the
+user chose to leave the human, hosted and physical-device gates blocked and did not authorize a
+desktop-only waiver; the external-demo verdict therefore remains No-go.

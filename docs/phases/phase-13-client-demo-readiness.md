@@ -2,6 +2,9 @@
 
 **Status:** Active — implementation and automation complete; external validation blocked
 
+`README.md` is the human-first description of the implemented application and the recommended
+manual/automated test path. This phase file remains the detailed delivery checklist.
+
 ## Goal
 
 Turn the technically complete runtime into a self-explanatory guided Case Lab that an IT stakeholder
@@ -64,7 +67,7 @@ Phase 13 closes on usability evidence, not automation alone.
   - Simplify stage chrome and record ADR-097.
 
 - [x] **P13-T04 — Unified case workspace** — completed 2026-10-04
-  - Add a two-column desktop workspace and Task/Evidence/Notes mobile workspace.
+  - Add a two-column desktop workspace and Task/Clues/Case notes mobile workspace.
   - Replace the fixed edge rail with an in-flow evidence panel.
   - Add a case-only StepActionSlot for a sticky primary action.
   - Keep the task prompt and action visible at 1440 × 900 and 375 × 812.

@@ -3,12 +3,13 @@
 ## Read order
 
 1. `AGENTS.md`
-2. `docs/HANDOFF.md`
-3. The current phase file under `docs/phases/`
-4. The latest entries in `docs/ACTIVITY_LOG.md`
-5. `docs/DECISIONS.md`
-6. `PRD.md` when product intent or acceptance criteria are unclear
-7. `docs/qa/` 
+2. `README.md`
+3. `docs/HANDOFF.md`
+4. The current phase file under `docs/phases/`
+5. The latest entries in `docs/ACTIVITY_LOG.md`
+6. `docs/DECISIONS.md`
+7. `PRD.md` when product intent or acceptance criteria are unclear
+8. `docs/qa/`
 
 ## Architectural rules
 

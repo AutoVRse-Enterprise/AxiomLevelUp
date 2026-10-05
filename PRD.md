@@ -10,10 +10,12 @@ Below is the PRD I would hand to the team.
 
 ## Gamified medical and scientific learning runtime
 
-**Working name:** Learning Runtime  
+**Working name:** Axiom Level Up
+
 **Product area:** Axiom / Brain downstream learning experiences  
 **Version:** Demo Runtime v0.1  
-**Status:** Build-ready draft  
+**Status:** Implemented local engineering candidate; external validation pending
+
 **Primary audience for this version:** Pharmaceutical and medical R&D learners  
 **Initial prospect context:** Sanofi  
 **Platform:** Mobile-first responsive Progressive Web App  
@@ -21,6 +23,39 @@ Below is the PRD I would hand to the team.
 **Backend:** None for this phase  
 **Authentication:** None for this phase  
 **Axiom integration:** Explicitly out of scope for this phase
+
+## Current implementation snapshot — 2026-10-05
+
+This PRD preserves the original product thesis and delivery intent. The implementation has since
+progressed through Phase 13. `README.md` is the human-first product and testing guide; this section
+records the principal differences between the starting brief and the current application.
+
+The runtime now loads and validates five courses, thirteen lessons, four respiratory Case Lab
+cases, one anatomy map, two deterministic demo profiles and a versioned asset manifest. Its 29
+strict primitive contracts cover ordinary content, assessments, scenarios, four educational DICOM
+modes, 3D anatomy exploration/localisation and Case Lab differential/evidence checkpoints.
+
+The learner-facing product now includes:
+
+- Home, Learn, pathway, course, Case Lab, Challenge, Leaderboard and Profile surfaces;
+- a resumable lesson/challenge player and a dedicated staged Case Lab player;
+- persistent local XP, levels, stars, streaks, mastery, badges, challenge progress and attempts;
+- verified offline course/case packages and install/update presentation;
+- lazy Cornerstone DICOM and Three.js anatomy runtimes;
+- Foundation, Intermediate, Advanced and daily Case Lab experiences;
+- a guided case loop from mission briefing through spatial reconstruction, evidence review,
+  differential updates, evidence citation, conclusion and prioritized debrief;
+- fresh and experienced presenter profiles; and
+- explicitly simulated recorded-opponent and segmented sample-leaderboard previews.
+
+The architecture remains static, local-first and configuration-driven. There is still no backend,
+authentication, live multiplayer, organization service, production analytics, LMS/PACS integration
+or Axiom generation pipeline.
+
+Local engineering verification passes through P13-T14. This is not external-demo approval:
+qualifying human usability sessions, one frozen HTTPS/DICOM deployment preflight and physical
+Android/iPhone evidence or an approved desktop-only waiver remain outstanding. The current
+external verdict is No-go.
 
 ---
 
@@ -2877,7 +2912,8 @@ authorized waivers.
 
 ## Phase 13: Client demo readiness
 
-**Status: Implementation complete; external evidence pending (2026-10-04).**
+**Status: Implementation and local automation complete; external validation blocked
+(2026-10-05).**
 
 Case Lab now presents one guided reasoning loop: mission briefing, continuous patient timeline,
 spatial reconstruction, deliberate clue review, differential checkpoints, evidence citation,
@@ -2888,7 +2924,8 @@ hands-on use.
 
 The engineering candidate is not an external-demo approval. Five qualifying human usability
 sessions, one exact hosted HTTPS preflight and either physical Android/iPhone evidence or an
-approved desktop-only waiver remain mandatory.
+approved desktop-only waiver remain mandatory. On 2026-10-05 the user chose to leave all three
+gates blocked and did not approve the waiver.
 
 ---
 

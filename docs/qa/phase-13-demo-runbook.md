@@ -4,6 +4,9 @@ This runbook supersedes the Phase 12 runbook for the guided Case Lab demonstrati
 synthetic training simulations. The demonstration is about product flow and technical capability,
 not clinical guidance or validated anatomy.
 
+First-time readers should begin with `README.md` for the product overview, local setup and
+human-readable smoke test. This runbook is the stricter presenter and deployment procedure.
+
 ## Freeze one exact candidate
 
 1. Record the commit, UTC build time, application URL, DICOM URL and visible build ID.

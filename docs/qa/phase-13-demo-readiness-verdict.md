@@ -21,6 +21,8 @@ physical-device gates blocked and did not authorize a desktop-only-demo waiver.
   failures.
 - A presenter script, attendee handout and recovery steps are available in
   `docs/qa/phase-13-demo-runbook.md`.
+- `README.md` gives a first-time reviewer the current product scope, local setup, representative
+  human test and route into the deeper engineering and QA documents.
 
 ## Gates that are not satisfied
 

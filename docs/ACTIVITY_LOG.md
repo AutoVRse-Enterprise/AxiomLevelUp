@@ -3195,3 +3195,25 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   by explicit user decision; no external readiness claim or fabricated evidence was added.
 - **Follow-ups:** Reopen the applicable gate only when participants, hosting details, device
   evidence or a future waiver decision are available.
+
+### [2026-10-05 11:18] P13-DOC - Reconcile product documentation and add human starting guide
+
+- **Agent/session:** Cursor documentation session
+- **Action:** Added a root human-first guide explaining the implemented product, local setup,
+  representative manual walkthrough, automated checks, readiness boundary and route into deeper
+  documentation. Added a dated current-state addendum to the original PRD and reconciled roadmap,
+  architecture, content-schema, Phase 13, QA, handoff and agent read-order details with the shipped
+  guided Case Lab.
+- **Files changed:** `README.md`; `AGENTS.md`; `PRD.md`; `docs/PRD-ANALYSIS.md`;
+  `docs/ROADMAP.md`; `docs/ARCHITECTURE.md`; `docs/CONTENT_SCHEMA.md`; `docs/DECISIONS.md`;
+  `docs/HANDOFF.md`; `docs/phases/phase-13-client-demo-readiness.md`;
+  `docs/qa/phase-13-demo-runbook.md`; `docs/qa/phase-13-demo-readiness-verdict.md`;
+  `docs/qa/phase-13-ux-findings.md`.
+- **Commands run:** Documentation searches; targeted Prettier check; `npx prettier --write
+  README.md`; `git diff --check`.
+- **Result/verification:** The original PRD and historical records remain intact, while current
+  implementation counts, learner-state/session/result versions, primitive coverage, mobile
+  workspace terminology and external No-go boundary are now explicit. No runtime source or content
+  changed, so application tests were not rerun.
+- **Follow-ups:** Update `README.md` whenever the primary learner flow, setup commands, verification
+  baseline or approval boundary changes.

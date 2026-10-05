@@ -1,5 +1,8 @@
 # Architecture
 
+For a non-code product overview and test walkthrough, start with `README.md`. This document
+describes the current implementation boundaries after Phase 13.
+
 ## Layers
 
 ```text
@@ -157,11 +160,12 @@ pure case scorer used by the player, and mismatched authored component breakdown
 loading. Case semantics also reject empty stages, unconsumed orient entry modes and clues with no
 stage, step, finding or teaching reference.
 
-Development plans preserve unsupported steps for diagnosis. Production plans include all 27
-implemented primitive types, including the four DICOM modes, while retaining the fallback for
-unknown or malformed primitives. An activity with no implemented steps is unavailable. The player
-emits results only; the central pipeline awards XP, stars and mastery without primitive or
-learning-engine coupling.
+Development plans preserve unsupported steps for diagnosis. The canonical registry contains 29
+implemented primitive types, including the four DICOM modes and two Case Lab-only reasoning
+primitives. The lesson showcase exercises the 27 types that are valid outside case context.
+Unknown or malformed types retain the development fallback, and an activity with no implemented
+steps is unavailable. The player emits results only; the central pipeline awards XP, stars and
+mastery without primitive or learning-engine coupling.
 
 Loading, empty and failure presentation uses shared contracts. Artifact errors report intent to the
 player, which owns retry, continue or skip behavior. Content, route, offline and quota failures
@@ -248,10 +252,10 @@ opening penalties or progress mutations; findings render their configured label 
 
 Expert comparison is also configuration-driven. An ordered authored path explains the approach,
 weighted evidence marks each clue or finding as decisive, supporting or context, and diagnosis
-rationale explains the final synthesis. Result-v7 supplies reviewed clues, persisted evidence and
-differential ratings to both live and saved routes. Legacy result-v5/v6 attempts remain readable
-and display unavailable review state rather than fabricating it. Presentation resolves all
-references to labels and uses local comparison anchors without rendering raw IDs.
+rationale explains the final synthesis. Result-v8 supplies reviewed clues, cited evidence and
+ordered differential checkpoints to both live and saved routes. Legacy result-v5/v6/v7 attempts
+remain readable and display unavailable review state rather than fabricating it. Presentation
+resolves all references to labels and uses local comparison anchors without rendering raw IDs.
 
 ## Offline runtime
 
@@ -284,10 +288,12 @@ a disconnected device.
 
 ## Showcase and release evidence
 
-The internal `runtime-showcase` course is the canonical executable fixture for the runtime. Its
-single lesson contains all 27 registered primitive types across 28 steps because exploratory and
-assessed image hotspots are both represented. It is hidden from learner catalogues but uses the
-production loader, schema, planner, player, event bus and completion surfaces.
+The internal `runtime-showcase` course is the canonical executable lesson fixture. Its single
+lesson contains all 27 showcase-compatible primitive types across 28 steps because exploratory and
+assessed image hotspots are both represented. The two Case Lab-only reasoning primitives are
+covered by case fixtures and complete case-flow tests. The showcase is hidden from learner
+catalogues but uses the production loader, schema, planner, player, event bus and completion
+surfaces.
 
 Automated parity coverage compares showcase types with the canonical primitive list and fails when
 a new registered type has no fixture. A route integration test completes the ordered lesson,

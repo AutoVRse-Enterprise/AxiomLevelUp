@@ -79,7 +79,7 @@ Two audit corrections were applied at baseline:
 | U14 | The case does not evolve as a patient narrative | P13-T03, P13-T09 | Closed: stage updates appear in a progressive patient timeline |
 | U15 | Time expectations conflict | P13-T02, P13-T09 | Closed: duration is validated and each tier explains its timing mode |
 | U16 | First-attempt consequences arrive late | P13-T03, P13-T09 | Closed: briefing and an inline pre-submission notice explain the rule |
-| U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Evidence/Notes segments preserve one workspace |
+| U17 | Mobile evidence review loses context | P13-T04, P13-T05 | Closed: Task/Clues/Case notes segments preserve one workspace |
 | U18 | Debrief is comprehensive but not directive | P13-T10 | Closed: deterministic takeaway and recommended-next action lead the result |
 | U19 | Seeded identity/history obscures first use | P13-T12 | Closed: fresh history is the default and Profile can explicitly switch or reset demo state |
 | U20 | Pathway, Course, Case Lab and Challenge overlap | P13-T01, P13-T11 | Closed: destinations are fixed and configured surface definitions explain each format |
