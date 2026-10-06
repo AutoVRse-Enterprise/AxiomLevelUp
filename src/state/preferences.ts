@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 
+import { activeExperienceId, storagePrefixFor } from '@/lib/experience'
+
 export interface Preferences {
   motion: 'system' | 'reduced' | 'full'
   hapticsEnabled: boolean
   installPromptDismissedAt?: string
 }
 
-const key = 'axiom-runtime:preferences'
+const key = `${storagePrefixFor(activeExperienceId)}preferences`
 export const defaultPreferences: Preferences = {
   motion: 'system',
   hapticsEnabled: true,

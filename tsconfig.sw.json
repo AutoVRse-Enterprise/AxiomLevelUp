@@ -20,6 +20,7 @@
     "src/pwa/cachePolicy.ts",
     "src/pwa/requestPolicy.ts",
     "src/lib/experience.ts",
-    "src/lib/experienceIds.ts"
+    "src/lib/experienceIds.ts",
+    "src/vite-env.d.ts"
   ]
 }

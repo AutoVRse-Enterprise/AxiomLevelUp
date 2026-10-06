@@ -3358,3 +3358,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   Default manifest, normalized HTML and precache isolation still match the baseline.
 - **Follow-ups:** Scope persistence, browser keys, runtime caches and service-worker settings for
   non-default experiences without changing default names.
+
+### [2026-10-07 04:27] P14-T06 - Namespace non-default persistence and caches
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Applied the active experience to IndexedDB prefixes, preferences, simulated-offline
+  and pathway browser keys, runtime cache names, Workbox cache details and the service-worker
+  settings database. Default helpers still return every legacy literal.
+- **Files changed:** `src/state/persistence/idbStorage.ts`; `src/state/preferences.ts`;
+  `src/pwa/cachePolicy.ts`; `src/routes/learn/PathwayPage.tsx`; `src/sw.ts`;
+  `src/lib/experience.ts`; `tsconfig.sw.json`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run lint`; focused experience,
+  persistence, learner migration and model-cache Vitest; `npm run build`;
+  `npm run verify:default-build`.
+- **Result/verification:** TypeScript and ESLint pass; 4 files / 22 tests pass. Default production
+  metadata and precache isolation match the frozen baseline. Pure helper tests prove sanofi keys
+  use `axiom-runtime:sanofi:`, sanofi runtime caches use a `sanofi-` prefix and its settings
+  database is `axiom-runtime-sanofi-service-worker`.
+- **Follow-ups:** Add the scoped sanofi token override and enforce experience import boundaries.

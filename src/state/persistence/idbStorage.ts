@@ -1,7 +1,9 @@
 import { del, get, set } from 'idb-keyval'
 import type { StateStorage } from 'zustand/middleware'
 
-const prefix = 'axiom-runtime:'
+import { activeExperienceId, storagePrefixFor } from '@/lib/experience'
+
+const prefix = storagePrefixFor(activeExperienceId)
 
 export const idbStorage: StateStorage = {
   async getItem(name) {

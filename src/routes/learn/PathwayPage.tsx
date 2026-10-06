@@ -19,6 +19,7 @@ import { emitEvent } from '@/events/bus'
 import { today } from '@/lib/clock'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
+import { activeExperienceId, storagePrefixFor } from '@/lib/experience'
 import { selectPathwayView } from '@/state/selectors'
 
 const nodeIcons = {
@@ -41,7 +42,7 @@ function PathwayNodeTransition({
   status: string
   children: ReactNode
 }) {
-  const storageKey = `axiom-runtime:pathway:${pathwayId}:${nodeId}`
+  const storageKey = `${storagePrefixFor(activeExperienceId)}pathway:${pathwayId}:${nodeId}`
   const previous = typeof window === 'undefined' ? null : window.sessionStorage.getItem(storageKey)
   const changed = previous !== null && previous !== status
 

@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import { CacheableResponsePlugin } from 'workbox-cacheable-response'
-import { clientsClaim } from 'workbox-core'
+import { clientsClaim, setCacheNameDetails } from 'workbox-core'
 import { ExpirationPlugin } from 'workbox-expiration'
 import {
   cleanupOutdatedCaches,
@@ -23,13 +23,14 @@ import {
 } from '@/pwa/cachePolicy'
 import { isVersionedGlbRequest } from '@/pwa/modelCache'
 import { isDicomRequest, isDownloadableAssetRequest } from '@/pwa/requestPolicy'
+import { activeExperienceId, serviceWorkerDatabaseFor } from '@/lib/experience'
 
 declare let self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: Array<{ url: string; revision?: string }>
 }
 
 const dicomBaseUrl = import.meta.env.VITE_DICOM_BASE_URL?.trim() || '/assets/dicom/'
-const settingsDatabase = 'axiom-runtime-service-worker'
+const settingsDatabase = serviceWorkerDatabaseFor(activeExperienceId)
 const settingsStore = 'settings'
 const simulatedOfflineKey = 'simulated-offline'
 
@@ -94,6 +95,7 @@ const versionedModelStrategy = new CacheFirst({
   ],
 })
 
+if (activeExperienceId !== 'default') setCacheNameDetails({ prefix: activeExperienceId })
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 clientsClaim()

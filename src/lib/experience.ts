@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { resolveExperienceId, type ExperienceId } from '@/lib/experienceIds'
 
 export const activeExperienceId = resolveExperienceId(
