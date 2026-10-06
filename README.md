@@ -75,6 +75,31 @@ npm run preview -- --host 127.0.0.1 --port 4173 --strictPort
 
 Open `http://127.0.0.1:4173`. Stop the server with `Ctrl+C`.
 
+## Experiences
+
+The repository builds two statically selected experiences from the same shared runtime:
+
+- `default` is the complete learning application documented below. It keeps the legacy routes,
+  content root, persisted keys, manifest and port 5173/4173.
+- `sanofi` is the neutral Respiratory Challenge shell. It uses its own routes, copy, content root,
+  theme, storage namespace and port 5174/4174.
+
+Use the committed Vite modes:
+
+```powershell
+npm run dev:default     # http://127.0.0.1:5173
+npm run dev:sanofi      # http://127.0.0.1:5174
+npm run build           # dist/
+npm run build:sanofi    # dist-sanofi/
+npm run preview         # http://127.0.0.1:4173
+npm run preview:sanofi  # http://127.0.0.1:4174
+```
+
+`VITE_EXPERIENCE` accepts only `default` or `sanofi`. Prefer the scripts above; a process-level
+value that conflicts with `--mode default` or `--mode sanofi` fails immediately. `npm run check`
+validates, builds and budgets both artifacts. The dedicated sanofi browser suite is
+`npm run test:e2e:sanofi`.
+
 ## Recommended human test
 
 Use Chrome at 1440 × 900 first. A complete smoke test takes roughly 15–25 minutes.

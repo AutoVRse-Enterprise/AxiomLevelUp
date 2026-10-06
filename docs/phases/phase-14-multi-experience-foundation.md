@@ -1,6 +1,6 @@
 # Phase 14: Multi-experience foundation
 
-**Status:** Planned
+**Status:** Complete
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`.
 
@@ -68,26 +68,32 @@ export type ExperienceId = 'default' | 'sanofi'
 export interface ExperienceBuildMetadata {
   id: ExperienceId
   html: { title: string; description: string; themeColor: string }
-  pwa: { name: string; shortName: string; description: string; themeColor: string;
-         backgroundColor: string; icons: PwaIcon[] }
-  devPort: number            // default 5173, sanofi 5174
-  previewPort: number        // default 4173, sanofi 4174
-  outDir: string             // default 'dist', sanofi 'dist-sanofi'
-  devPwaTempDir: string      // default 'dev-dist', sanofi 'dev-dist-sanofi'
-  contentDir: string         // repository path, e.g. 'public/content'
-  precacheIgnore: string[]   // other experiences' content roots
+  pwa: {
+    name: string
+    shortName: string
+    description: string
+    themeColor: string
+    backgroundColor: string
+    icons: PwaIcon[]
+  }
+  devPort: number // default 5173, sanofi 5174
+  previewPort: number // default 4173, sanofi 4174
+  outDir: string // default 'dist', sanofi 'dist-sanofi'
+  devPwaTempDir: string // default 'dev-dist', sanofi 'dev-dist-sanofi'
+  contentDir: string // repository path, e.g. 'public/content'
+  precacheIgnore: string[] // other experiences' content roots
 }
 
 export interface ExperienceDefinition {
   id: ExperienceId
-  contentBaseUrl: string                // '/content' | '/experiences/sanofi/content'
-  storageNamespace: string | null       // null = legacy unprefixed keys (default only)
+  contentBaseUrl: string // '/content' | '/experiences/sanofi/content'
+  storageNamespace: string | null // null = legacy unprefixed keys (default only)
   routes: { shell: RouteObject[]; immersive: RouteObject[] }
   navigation: readonly NavigationItem[] // { to, label, icon, end }
   shell: {
-    headerStatus: 'learner' | 'none' | ComponentType   // default 'learner' (XP + streak)
-    installPrompt: boolean                               // sanofi false
-    devTools: boolean                                    // default honours existing rule
+    headerStatus: 'learner' | 'none' | ComponentType // default 'learner' (XP + streak)
+    installPrompt: boolean // sanofi false
+    devTools: boolean // default honours existing rule
   }
 }
 ```
@@ -134,7 +140,7 @@ definitions.
 ### Composition root
 
 - `App` obtains the definition from `@experience`, sets `document.documentElement.dataset
-  .experience`, passes `contentBaseUrl` to `ContentProvider` (the loader and worker already accept
+.experience`, passes `contentBaseUrl` to `ContentProvider` (the loader and worker already accept
   a base URL) and builds the router from the definition.
 - `src/app/router.tsx` keeps `lazyPage`, `RouteErrorPage` wiring and the dev-tools rule, and
   exposes `createExperienceRouter(definition)`. The existing default route table moves verbatim to
@@ -152,6 +158,10 @@ definitions.
 - `PwaPromptHost` honours `shell.installPrompt`. `BuildStamp` shows the experience ID only in
   development builds.
 
+Closeout deviation: the experience suffix was removed from `BuildStamp` after browser QA because
+the internal ID is also the prohibited client name. `html[data-experience]` remains the
+non-visible diagnostic/theme hook, so the stronger no-client-name copy rule is preserved.
+
 ### Content roots and schema relaxations
 
 - Each experience owns a complete content root: default keeps `public/content/`; sanofi uses
@@ -166,8 +176,8 @@ definitions.
     are configured;
   - product sub-blocks used only by the LMS (DICOM, offline install-prompt thresholds) receive
     schema defaults.
-  Inferred TypeScript types stay non-optional arrays/objects, so default route code needs no new
-  null checks. The default content still validates with zero warnings and identical counts.
+    Inferred TypeScript types stay non-optional arrays/objects, so default route code needs no new
+    null checks. The default content still validates with zero warnings and identical counts.
 - `scripts/validate-content.ts` iterates every experience's `contentDir` and prints one summary
   line per experience.
 
@@ -211,7 +221,7 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
 
 ## Checklist
 
-- [ ] **P14-T00 — Baseline and decisions**
+- [x] **P14-T00 — Baseline and decisions**
   - Record the default baseline: `npm run check` counts, serial Playwright result, eight golden
     images, gzip sizes per budget role, PWA manifest JSON and persisted key names.
   - Confirm ADR-105 (experience selection) from Proposed to Accepted, or revise it.
@@ -220,12 +230,12 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
     "Respiratory Challenge", "Demo leaderboard", all three difficulties, recommended formats,
     anonymous "You", external hosting gate, and no default game routes.
 
-- [ ] **P14-T01 — Experience contract and resolver**
+- [x] **P14-T01 — Experience contract and resolver**
   - Add `src/experiences/types.ts`, `ids.ts`, `default/build.ts`, `sanofi/build.ts`.
   - Type `VITE_EXPERIENCE` in `src/vite-env.d.ts`.
   - Unit-test resolution: unset → default; valid IDs; unknown ID error; mode/variable mismatch.
 
-- [ ] **P14-T02 — Build and script wiring**
+- [x] **P14-T02 — Build and script wiring**
   - Implement resolution, alias, `define`, ports, `outDir`, PWA manifest, PWA dev temp dir,
     precache ignores and HTML transform in `vite.config.ts`; add the `@experience` alias to
     `vitest.config.ts` and `tsconfig` paths.
@@ -234,38 +244,38 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
   - Verify `npm run dev`, `dev:default` and `dev:sanofi` start on the expected ports, and that both
     can run concurrently.
 
-- [ ] **P14-T03 — Composition root and router factory**
+- [x] **P14-T03 — Composition root and router factory**
   - Move the default route table verbatim into `src/experiences/default/routes.tsx`; keep the
     `createAppRoutes` compatibility export.
   - Add `createExperienceRouter`, `ExperienceContext` and the `data-experience` attribute.
   - Route tests: default table deep-equals the pre-refactor table (paths, handles, dev gating).
 
-- [ ] **P14-T04 — Shell parametrization**
+- [x] **P14-T04 — Shell parametrization**
   - Parameterize `AppShell`, `PageHeader`, `ImmersiveLayout`, `PwaPromptHost` and `BuildStamp`.
   - Default renders identical DOM (snapshot of shell markup before/after) and the same five-item
     grid.
 
-- [ ] **P14-T05 — Experience content root and schema relaxations**
+- [x] **P14-T05 — Experience content root and schema relaxations**
   - Pass `contentBaseUrl` through `ContentProvider`, `loadRuntimeContent` and the content worker.
   - Apply the schema relaxations with semantic replacements; export schemas.
   - Default content validates with identical counts and zero warnings; add fixtures proving a
     minimal non-LMS app-config validates and an LMS config missing pathways still fails.
 
-- [ ] **P14-T06 — Storage, cache and service-worker namespacing**
+- [x] **P14-T06 — Storage, cache and service-worker namespacing**
   - Add `scopedKey`; apply to every persisted key and cache name listed above.
   - Tests prove default keys are literal and sanofi keys are prefixed; migrations unaffected.
 
-- [ ] **P14-T07 — Theme overrides and import boundaries**
+- [x] **P14-T07 — Theme overrides and import boundaries**
   - Add the scoped sanofi theme file loaded by the sanofi definition.
   - Add ESLint boundary rules with failing-fixture verification.
 
-- [ ] **P14-T08 — Sanofi stub experience**
+- [x] **P14-T08 — Sanofi stub experience**
   - Author the minimal sanofi content root and stub homepage using app name "Autovrse LevelUp"
     and game title "Respiratory Challenge".
   - `npm run dev:sanofi` loads, validates and renders the stub on desktop and 375 × 812 with no
     console errors.
 
-- [ ] **P14-T09 — Tooling for both experiences**
+- [x] **P14-T09 — Tooling for both experiences**
   - `validate:content` covers both roots; `content.test.ts` validates the sanofi root.
   - `check` builds both experiences and runs budgets per build; add sanofi budget roles
     (entry only for now) to `bundle-budget.json` keyed by experience.
@@ -273,16 +283,16 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
     default config ignores `e2e/sanofi/**` and builds with `--mode default` so a developer's
     `.env.local` cannot change the default suite.
 
-- [ ] **P14-T10 — Default regression proof**
+- [x] **P14-T10 — Default regression proof**
   - Run `npm run check`, the serial default Playwright suite and the sanofi smoke suite.
   - Compare against the P14-T00 baseline (counts, images, manifest, keys, budgets).
 
-- [ ] **P14-T11 — Documentation closeout**
+- [x] **P14-T11 — Documentation closeout**
   - Update `README.md` (experiences and commands), `AGENTS.md` command list,
     `docs/ARCHITECTURE.md` (new "Experiences" section), `docs/CONTENT_SCHEMA.md` (relaxations),
     roadmap, handoff and activity log.
 
-- [ ] **P14-T12 — Process and workspace cleanup**
+- [x] **P14-T12 — Process and workspace cleanup**
   - Stop every dev, preview and Playwright process started by this phase; prove ports 5173, 5174,
     4173, 4174, 4181 and 4182 are free.
   - Reset browser emulation/locks, restore unintended evidence churn and leave only intended

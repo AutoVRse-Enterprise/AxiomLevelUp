@@ -18,6 +18,26 @@ These 8 JSON Schema documents describe the exported document envelopes. In parti
 per-type content contracts are enforced by the runtime Zod schemas listed below and are not emitted
 as separate JSON Schema files.
 
+## Multi-experience content roots
+
+Every experience owns a complete manifest root. The default root is `public/content/`; sanofi uses
+`public/experiences/sanofi/content/`. Shared binary assets still resolve from `public/`, and each
+root carries its own `assets.json`.
+
+To support a non-LMS experience without making runtime collections nullable:
+
+- manifest `courses` defaults to `[]`;
+- `seeds.advanced` and `seeds.fresh` are individually optional, but the path selected by
+  `defaultSeed` is mandatory;
+- app-config `concepts`, `pathways`, `badges`, `challenges` and `leaderboard.entries` default to
+  `[]`; and
+- optional strict `games.hub` contains `title`, `tagline`, `startLabel` and `unavailableLabel`.
+
+The old LMS minimums remain semantic rules: when a manifest configures any course, concepts,
+pathways and leaderboard entries must each contain at least one item. This keeps inferred arrays
+defined for shared code while permitting a zero-course game shell. `npm run validate:content`
+validates every registered content root and prints one summary per experience.
+
 ## Case documents and anatomy maps
 
 `manifest.json` carries `cases` and `anatomyMaps` path arrays alongside courses. The loader

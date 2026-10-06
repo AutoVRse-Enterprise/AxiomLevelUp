@@ -21,13 +21,19 @@
 
 ```text
 npm run dev
+npm run dev:default
+npm run dev:sanofi
 npm run build
+npm run build:sanofi
 npm run preview
+npm run preview:sanofi
 npm run typecheck
 npm run lint
 npm run test
+npm run test:e2e:sanofi
 npm run validate:content
 npm run schema:export
+npm run verify:default-build
 npm run dicom:prepare -- <source-directory>
 npm run dicom:audit -- <dicom-directory>
 npm run check

@@ -1,7 +1,7 @@
 # Architecture
 
 For a non-code product overview and test walkthrough, start with `README.md`. This document
-describes the current implementation boundaries after Phase 13.
+describes the current implementation boundaries after Phase 14.
 
 ## Layers
 
@@ -66,6 +66,31 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/design/motion`: lazy Motion boundary, resolved motion preference and shared transitions.
 - `src/effects`: event-subscribed presentation effects such as throttled haptics and lazy confetti.
 - `src/spikes`: isolated technical experiments; production code must not depend on these.
+
+## Experiences
+
+`VITE_EXPERIENCE` is resolved at Vite configuration time against the closed `default | sanofi`
+identifier set. Committed `.env.default` and `.env.sanofi` files supply the value for matching Vite
+modes; unknown IDs and process-environment/mode conflicts fail before startup. Build metadata is
+plain data under `src/experiences/*/build.ts` and controls ports, output and PWA temp directories,
+HTML/PWA metadata, content hashing and precache exclusions.
+
+Vite maps the static `@experience` alias to exactly one `src/experiences/<id>/index.ts`. `App` and
+the router are the only shared modules permitted to import that alias. An experience definition
+supplies its content base URL, route factory and shell configuration; Home therefore stays eager
+without placing the other experience in the active entry. ESLint prevents shared modules from
+importing concrete experiences and prevents cross-experience imports.
+
+The shared shell context configures navigation, learner-status visibility, install-prompt policy
+and boot/error/not-found/update copy. Its default value reproduces the legacy five-item learning
+shell. Default content remains at `/content`; sanofi content is a complete independent root at
+`/experiences/sanofi/content`.
+
+Runtime code reads only `src/lib/experience.ts`, never an experience definition. Default storage,
+service-worker database and cache names stay literal. A non-default build uses
+`axiom-runtime:<id>:` for browser/IndexedDB keys, `axiom-runtime-<id>-service-worker` for worker
+settings and `<id>-<legacy-cache-name>` for runtime caches. Separate origins remain recommended;
+namespacing is defence in depth for shared-origin hosting.
 
 ## Content loading
 

@@ -3210,7 +3210,7 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   `docs/qa/phase-13-demo-runbook.md`; `docs/qa/phase-13-demo-readiness-verdict.md`;
   `docs/qa/phase-13-ux-findings.md`.
 - **Commands run:** Documentation searches; targeted Prettier check; `npx prettier --write
-  README.md`; `git diff --check`.
+README.md`; `git diff --check`.
 - **Result/verification:** The original PRD and historical records remain intact, while current
   implementation counts, learner-state/session/result versions, primitive coverage, mobile
   workspace terminology and external No-go boundary are now explicit. No runtime source or content
@@ -3456,3 +3456,36 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   Home retained the original five-item shell and configured content.
 - **Follow-ups:** Close Phase 14 documentation, then stop processes and restore browser/evidence
   churn.
+
+### [2026-10-07 05:23] P14-T11 - Close Phase 14 documentation
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Marked Phase 14 and its roadmap row complete; documented experience commands,
+  architecture, content-root/schema semantics, accepted ADR-105 and the player-copy deviation;
+  and replaced the handoff with the Phase 15 starting state while preserving Phase 13 blockers.
+- **Files changed:** `docs/phases/phase-14-multi-experience-foundation.md`;
+  `docs/ROADMAP.md`; `README.md`; `AGENTS.md`; `docs/ARCHITECTURE.md`;
+  `docs/CONTENT_SCHEMA.md`; `docs/HANDOFF.md`; `docs/qa/phase-14-default-regression.md`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier/document formatting; `git diff --check`; documentation searches for
+  stale status, command and decision references.
+- **Result/verification:** Phase 14 is recorded complete with 80 Vitest files / 522 tests, default
+  Playwright 53 passes / 3 intentional skips, sanofi 2 passes, both budgets and zero content
+  warnings. The approved T10/T11/T12 split and BuildStamp copy-rule deviation are explicit.
+- **Follow-ups:** P14-T12 process/browser/evidence cleanup and the closing commit; then P15-T00.
+
+### [2026-10-07 05:25] P14-T12 - Clean the Phase 14 environment
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Stopped both dev servers, observed all completed Playwright/build jobs, cleared IDE
+  browser device emulation and locks, restored generated Phase 11/12 evidence churn, checked the
+  six reserved ports and reviewed the final intended workspace diff.
+- **Files changed:** `docs/phases/phase-14-multi-experience-foundation.md`;
+  `docs/HANDOFF.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `taskkill` for the two tracked dev process trees; background-shell completion
+  checks; `git restore docs/qa/evidence`; filtered `Get-CimInstance Win32_Process`;
+  `Get-NetTCPConnection`; `git status --short`; `git diff --check`.
+- **Result/verification:** No `AxiomLevelUp` Node process remains. Ports 5173, 5174, 4173, 4174,
+  4181 and 4182 are free. Browser tabs are unlocked with device emulation cleared. Generated
+  evidence churn is restored and only intended closeout documentation remains.
+- **Follow-ups:** Begin Phase 15 at P15-T00.

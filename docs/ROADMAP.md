@@ -3,28 +3,28 @@
 For a human-readable description of the current application and a practical test walkthrough,
 start with `README.md`.
 
-| Phase | Scope                          | Status   | Exit signal                                                                              |
-| ----- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------- |
-| 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict |
-| 2     | Application surfaces           | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state |
-| 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                    |
-| 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                      |
-| 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery               |
-| 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                |
-| 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                    |
-| 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                  |
-| 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix     |
-| 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only        |
-| 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                |
+| Phase | Scope                          | Status   | Exit signal                                                                                |
+| ----- | ------------------------------ | -------- | ------------------------------------------------------------------------------------------ |
+| 1     | Foundation and DICOM/PWA spike | Complete | Validated content, persistent seed state, installable shell and documented DICOM verdict   |
+| 2     | Application surfaces           | Complete | Home, Learn, Pathway, Course, Challenge, Leaderboard and Profile use live registry/state   |
+| 3     | Core lesson engine             | Complete | A configured lesson executes from start to completion                                      |
+| 4     | Standard primitives            | Complete | Content, assessment and scenario primitives are playable and tested                        |
+| 5     | Gamification and mastery       | Complete | Learner events update XP, levels, stars, streaks, badges, rank and mastery                 |
+| 6     | DICOM learning viewer          | Complete | Explore, guide, identify, measure and reveal modes work on target devices                  |
+| 7     | Complete PWA/offline           | Complete | Course assets can be downloaded, verified and removed                                      |
+| 8     | Product polish                 | Complete | Responsive, accessible, animated, performant and resilient target flows                    |
+| 9     | Showcase and device QA         | Active   | Every implemented primitive passes the automated, browser and physical-device matrix       |
+| 10    | Case Lab capability demo       | Complete | Three respiratory cases play through the case player; new cases need content only          |
+| 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                  |
 | 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
-| 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates       |
-| 14    | Multi-experience foundation    | Planned  | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged               |
-| 15    | Game contract and engine       | Planned  | Rounds and games validate; pure seeded engine scores, links and ranks runs               |
-| 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                  |
-| 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone          |
-| 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes        |
-| 19    | Game hub, results and social   | Planned  | Hub, results, challenge links, leaderboard, expert runs and You page work end to end     |
-| 20    | Demo polish and readiness      | Planned  | PRD success criteria have evidence; runbook and deployable sanofi build are published    |
+| 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates         |
+| 14    | Multi-experience foundation    | Complete | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged                 |
+| 15    | Game contract and engine       | Planned  | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
+| 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                    |
+| 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone            |
+| 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
+| 19    | Game hub, results and social   | Planned  | Hub, results, challenge links, leaderboard, expert runs and You page work end to end       |
+| 20    | Demo polish and readiness      | Planned  | PRD success criteria have evidence; runbook and deployable sanofi build are published      |
 
 ## Sequencing note
 
@@ -125,3 +125,10 @@ reusable game engine of timed, scored, shareable rounds built on the existing pr
 viewer and event pipeline. The programme overview, architecture, open questions and dependency
 graph are in `docs/MEDICAL_CHALLENGE_PLAN.md`; each phase has its own file under `docs/phases/`.
 Phase 13's external gates remain open and independent of this programme.
+
+Phase 14 closed on 2026-10-07 with static default/sanofi selection, independent routes, shell
+configuration, content roots, metadata, theme and non-default persistence namespaces. The final
+gate passed 80 Vitest files / 522 tests, default Playwright 53 passes / 3 intentional skips, both
+sanofi desktop/phone smoke projects, both bundle budgets and zero content warnings. All eight
+Phase 13 golden images passed unchanged. Phase 15 is next; Phase 13's human, hosted and physical
+device gates remain open and independent.
