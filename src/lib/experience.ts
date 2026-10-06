@@ -2,9 +2,15 @@
 
 import { resolveExperienceId, type ExperienceId } from '@/lib/experienceIds'
 
+const environment = (
+  import.meta as ImportMeta & {
+    env?: ImportMetaEnv
+  }
+).env
+
 export const activeExperienceId = resolveExperienceId(
-  import.meta.env.VITE_EXPERIENCE,
-  import.meta.env.MODE,
+  environment?.VITE_EXPERIENCE,
+  environment?.MODE,
 )
 
 export function storagePrefixFor(id: ExperienceId): string {

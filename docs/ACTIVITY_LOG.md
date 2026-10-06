@@ -3435,3 +3435,24 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   this suite so registration is exercised instead of producing Playwright's blocked-worker error.
 - **Follow-ups:** Run the final full default and sanofi regression proof and publish the comparison
   against P14-T00.
+
+### [2026-10-07 04:59] P14-T10 - Prove the default regression contract
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Ran the final dual gate, serial default browser suite and sanofi smoke suite; compared
+  every frozen default condition; performed desktop/phone sanofi browser QA and a default Home
+  spot-check; removed an internal experience ID from player-visible development copy; and
+  published the regression record.
+- **Files changed:** `docs/qa/phase-14-default-regression.md`;
+  `src/components/navigation/BuildStamp.tsx`; `src/lib/experience.ts`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run check`; serial default Playwright; serial sanofi Playwright;
+  `npm run typecheck`; `npm run lint`; concurrent default/sanofi dev servers; IDE browser desktop
+  1440 × 900 and touch-phone 375 × 812 inspection.
+- **Result/verification:** Final gate passed in 100.848 seconds with 80 files / 522 tests, both
+  content roots at zero warnings and both budgets passing. Default Playwright passed 53 / skipped
+  3 intentionally in 10.0 minutes; all eight golden images passed without update. Sanofi passed
+  both projects. Browser QA found no horizontal overflow or console/resource errors, and default
+  Home retained the original five-item shell and configured content.
+- **Follow-ups:** Close Phase 14 documentation, then stop processes and restore browser/evidence
+  churn.
