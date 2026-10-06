@@ -16,6 +16,7 @@
     "test:e2e": "playwright test",
     "check:demo": "npm run typecheck && npm run lint && npm run test:e2e",
     "budget": "tsx scripts/budget/check-bundle.ts",
+    "verify:default-build": "tsx scripts/experiences/verify-default-build.ts",
     "validate:content": "tsx scripts/validate-content.ts",
     "schema:export": "tsx scripts/export-json-schema.ts",
     "assets:hash": "tsx scripts/assets/hash-assets.ts",

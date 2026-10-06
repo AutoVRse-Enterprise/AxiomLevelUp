@@ -202,8 +202,8 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
 ### Sanofi stub
 
 - `public/experiences/sanofi/content/`: `manifest.json`, `app-config.json` (app name, minimal
-  product/presentation/anatomy configuration, empty LMS arrays), `seeds/player.json` (anonymous
-  player, zero history) and `assets.json`.
+  product/presentation/anatomy configuration, empty LMS arrays), `seeds/fresh.json` (anonymous
+  player "You", zero history) and `assets.json`.
 - `src/experiences/sanofi/HomePage.tsx`: a placeholder hub with the configured app name and a
   disabled **Start a quick challenge** action labelled "Coming in Phase 16" for internal builds
   only. It composes shared `ui` components and reads copy from configuration.
@@ -216,6 +216,9 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
     images, gzip sizes per budget role, PWA manifest JSON and persisted key names.
   - Confirm ADR-105 (experience selection) from Proposed to Accepted, or revise it.
   - Confirm open question 7 (default does not register game routes).
+  - Record the user's resolved product decisions: app name "Autovrse LevelUp", game title
+    "Respiratory Challenge", "Demo leaderboard", all three difficulties, recommended formats,
+    anonymous "You", external hosting gate, and no default game routes.
 
 - [ ] **P14-T01 — Experience contract and resolver**
   - Add `src/experiences/types.ts`, `ids.ts`, `default/build.ts`, `sanofi/build.ts`.
@@ -257,8 +260,8 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
   - Add ESLint boundary rules with failing-fixture verification.
 
 - [ ] **P14-T08 — Sanofi stub experience**
-  - Author the minimal sanofi content root and stub homepage; confirm open question 1 (product
-    name) or use the default "Medical Challenge".
+  - Author the minimal sanofi content root and stub homepage using app name "Autovrse LevelUp"
+    and game title "Respiratory Challenge".
   - `npm run dev:sanofi` loads, validates and renders the stub on desktop and 375 × 812 with no
     console errors.
 
@@ -270,19 +273,32 @@ Extend `eslint.config.js` `no-restricted-imports`, mirroring the existing Corner
     default config ignores `e2e/sanofi/**` and builds with `--mode default` so a developer's
     `.env.local` cannot change the default suite.
 
-- [ ] **P14-T10 — Default regression proof and documentation**
+- [ ] **P14-T10 — Default regression proof**
   - Run `npm run check`, the serial default Playwright suite and the sanofi smoke suite.
   - Compare against the P14-T00 baseline (counts, images, manifest, keys, budgets).
+
+- [ ] **P14-T11 — Documentation closeout**
   - Update `README.md` (experiences and commands), `AGENTS.md` command list,
     `docs/ARCHITECTURE.md` (new "Experiences" section), `docs/CONTENT_SCHEMA.md` (relaxations),
     roadmap, handoff and activity log.
+
+- [ ] **P14-T12 — Process and workspace cleanup**
+  - Stop every dev, preview and Playwright process started by this phase; prove ports 5173, 5174,
+    4173, 4174, 4181 and 4182 are free.
+  - Reset browser emulation/locks, restore unintended evidence churn and leave only intended
+    changes in `git status`.
 
 ## Sequencing
 
 1. P14-T00 → P14-T01 → P14-T02 establish selection and builds.
 2. P14-T03 and P14-T04 (composition and shell) can proceed together, then P14-T05.
 3. P14-T06 and P14-T07 are independent of each other.
-4. P14-T08 needs T03–T05; P14-T09 needs T08; P14-T10 closes.
+4. P14-T08 needs T03–T05; P14-T09 needs T08; P14-T10 proves regression, P14-T11 closes the
+   documentation and P14-T12 cleans the environment.
+
+The original programme breakdown combined regression proof and documentation in P14-T10.
+The formal implementation plan approved on 2026-10-07 split closeout into P14-T10 through P14-T12
+so regression evidence, documentation and process cleanup are independently verifiable.
 
 ## Exit criteria
 

@@ -262,26 +262,20 @@ P17-T01 spatial-legibility spike may run any time after 14 to de-risk 17 early.
 | §22 non-goals                       | Section 3 of this plan; every phase scope     |
 | §23 success criteria                | 20 (evidence matrix)                           |
 
-## 11. Open questions (recommended defaults in bold)
+## 11. Resolved product decisions
 
-These do not block Phase 14. Each is re-asked at the task that first depends on it.
+The user confirmed these decisions on 2026-10-07:
 
-1. **Player-facing product name.** The PRD forbids Sanofi branding. **Default: app name "Medical
-   Challenge", game title "Respiratory Challenge", AutoVRse logo, all configurable.** (P14-T08,
-   P19)
-2. **Leaderboard disclosure.** Earlier ADRs labelled seeded data "Sample cohort"/"Simulated data";
-   the PRD allows demo data to be "internal". **Default: a small "Demo leaderboard" caption,
-   configurable to hidden.** (P19-T05)
-3. **Difficulty playability.** The PRD requires one playable difficulty. **Default: all three
-   playable through presets; Expert also changes answer options.** (P15-T03, P18-T05)
-4. **Additional formats.** **Default: Quick Challenge and Anatomy Hunt playable; Spot the Finding
-   playable if three quality rounds exist; Clinical Mystery shown as "New soon".** (P18-T06)
-5. **Player name.** **Default: play anonymously as "You"; optional name prompt only when joining
-   the leaderboard or sending a challenge.** (P19-T04, P19-T05)
-6. **Hosting.** A doctor-facing link needs HTTPS hosting of `dist-sanofi/`. **Default: treat as an
-   external gate like P13-T16; the plan delivers a deployable artifact and runbook.** (P20-T09)
-7. **Default experience scope.** **Default: the default experience does not register game routes
-   in this programme.** (P14-T00)
+1. **Player-facing names:** app name **"Autovrse LevelUp"** and game title
+   **"Respiratory Challenge"**, with the AutoVRse logo. (P14-T08, P19)
+2. **Leaderboard disclosure:** show **"Demo leaderboard"**. (P19-T05)
+3. **Difficulty playability:** all three difficulties are playable. (P15-T03, P18-T05)
+4. **Additional formats:** Quick Challenge and Anatomy Hunt are playable; Spot the Finding is
+   playable if three quality rounds exist; Clinical Mystery is shown as "New soon". (P18-T06)
+5. **Player name:** play anonymously as **"You"**; ask for an optional name only when sharing or
+   joining the leaderboard. (P19-T04, P19-T05)
+6. **Hosting:** treat HTTPS hosting of `dist-sanofi/` as an external gate like P13-T16. (P20-T09)
+7. **Default experience scope:** the default experience does not register game routes. (P14-T00)
 
 ## 12. Programme risks
 

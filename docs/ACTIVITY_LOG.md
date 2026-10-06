@@ -3243,3 +3243,26 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Follow-ups:** User review of the plan and the seven open questions in
   `docs/MEDICAL_CHALLENGE_PLAN.md` §11; then start Phase 14 at P14-T00 (capture the default
   baseline and confirm ADR-105).
+
+### [2026-10-07 04:07] P14-T00 - Freeze the default-experience baseline
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Committed the Phase 14–20 programme documentation, recorded all seven user decisions,
+  accepted ADR-105, split regression/documentation/cleanup into P14-T10 through P14-T12, captured
+  the pre-refactor default build and browser baseline, and added route, shell, persistence and
+  built-metadata characterization gates.
+- **Files changed:** `docs/MEDICAL_CHALLENGE_PLAN.md`; `docs/DECISIONS.md`;
+  `docs/phases/phase-14-multi-experience-foundation.md`;
+  `docs/qa/phase-14-default-baseline.md`; `src/app/router.characterization.test.tsx`;
+  `src/app/__snapshots__/router.characterization.test.tsx.snap`;
+  `src/state/persistence/defaultStorageContract.ts`;
+  `src/state/persistence/storageKeys.characterization.test.ts`;
+  `scripts/experiences/default-build-baseline.json`;
+  `scripts/experiences/verify-default-build.ts`; `package.json`.
+- **Commands run:** `npm run check`; serial Playwright with one worker; focused Vitest with snapshot
+  update; `npm run verify:default-build`; `npm run typecheck`; `npm run lint`; `git diff --check`.
+- **Result/verification:** Baseline passed: 73 Vitest files / 500 tests, 5 courses / 13 lessons /
+  4 cases / 1 anatomy map / zero warnings, 53 Playwright passes / 3 intentional skips, eight
+  unchanged golden images, 171 precache entries and all bundle budgets. Evidence screenshot churn
+  was restored. ADR-105 is Accepted.
+- **Follow-ups:** Implement P14-T01 experience IDs, resolution and build metadata.

@@ -1955,7 +1955,7 @@ remain authoritative for technical contracts; QA verdicts remain authoritative f
 
 ## ADR-105: Demo experiences are selected at build time
 
-**Status:** Proposed (confirm in P14-T00)
+**Status:** Accepted
 
 **Context:** The Medical Challenge demo (`newDemoPRD.md`) needs a second experience with its own
 homepage, navigation, theme and content while the existing homepage and application must remain
@@ -1972,6 +1972,15 @@ contain only composition (definition, routes, homepage, theme overrides); everyt
 shared modules and ESLint boundaries forbid cross-experience imports. Each experience has its own
 content root; non-default experiences namespace persisted storage keys and caches, while the
 default keeps its legacy keys.
+
+The accepted implementation keeps build-time-safe IDs and storage helpers in `src/lib/` so shared
+runtime and service-worker code never imports an experience. Experience-specific React
+composition is reached only through the static `@experience` alias. Shared shell behaviour is
+configured through a context whose defaults reproduce the current shell. Non-default persisted
+keys use `axiom-runtime:<experience>:` and non-default runtime cache names use
+`<experience>-<legacy-name>`; default names remain literal. The common schema supplies non-LMS
+array defaults with semantic LMS validation, and permits an optional strict `games.hub` copy block
+that Phase 15 can extend.
 
 **Consequences:** The default build stays byte-for-byte equivalent in behaviour, bundle shape and
 persisted data. A single build cannot switch experiences at runtime; each experience is a separate
