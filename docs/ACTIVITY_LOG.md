@@ -3321,3 +3321,20 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   production/development route tree and exact default shell snapshot are unchanged.
 - **Follow-ups:** Parameterize shared navigation, status, PWA prompts, not-found copy and build
   stamp through the shell context.
+
+### [2026-10-07 04:20] P14-T04 - Parameterize the shared application shell
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Routed navigation, learner-status mode, install-prompt policy, update/not-found copy
+  and the non-default build label through the shared shell context. Bottom navigation now derives
+  its grid from configured item count and is omitted for a one-item shell.
+- **Files changed:** `src/layouts/AppShell.tsx`;
+  `src/components/navigation/PageHeader.tsx`; `src/components/navigation/BuildStamp.tsx`;
+  `src/components/pwa/PwaPromptHost.tsx`; `src/routes/NotFoundPage.tsx`;
+  `src/app/experienceShell.test.tsx`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run lint`; focused shell/router Vitest.
+- **Result/verification:** TypeScript and ESLint pass; 3 files / 15 tests pass. The default shell
+  snapshot remains unchanged. A one-item game shell renders one desktop navigation, no bottom
+  navigation and no learner XP/streak status.
+- **Follow-ups:** Relax content contracts only where the non-LMS experience requires it and retain
+  semantic LMS validation.

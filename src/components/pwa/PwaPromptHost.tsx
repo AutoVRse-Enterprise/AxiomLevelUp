@@ -2,6 +2,7 @@ import { Download, RefreshCw, Wifi } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { useContent } from '@/app/contentContext'
+import { useExperienceShell } from '@/app/experienceShell'
 import { Button, Card } from '@/components/ui'
 import {
   applyServiceWorkerUpdate,
@@ -31,29 +32,33 @@ function isIos() {
 
 export function PwaPromptHost() {
   const { appConfig } = useContent()
+  const { installPrompt, copy } = useExperienceShell()
   const completedLessons = useLearnerStore((state) => state.stats.lessonsCompleted)
   const serviceWorker = useServiceWorkerStatus()
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null)
   const dismissedAt = usePreferencesStore((state) => state.installPromptDismissedAt)
   const setDismissedAt = usePreferencesStore((state) => state.setInstallPromptDismissedAt)
   const promptConfig = appConfig.product.offline.installPrompt
-  const engaged = installPromptEligible(
-    completedLessons,
-    promptConfig.minCompletedLessons,
-    dismissedAt,
-    promptConfig.dismissCooldownDays,
-  )
+  const engaged =
+    installPrompt &&
+    installPromptEligible(
+      completedLessons,
+      promptConfig.minCompletedLessons,
+      dismissedAt,
+      promptConfig.dismissCooldownDays,
+    )
   const standalone = typeof window !== 'undefined' && isStandalone()
   const showIosGuidance = engaged && !standalone && isIos() && !installEvent
 
   useEffect(() => {
+    if (!installPrompt) return
     const capture = (event: Event) => {
       event.preventDefault()
       setInstallEvent(event as InstallPromptEvent)
     }
     window.addEventListener('beforeinstallprompt', capture)
     return () => window.removeEventListener('beforeinstallprompt', capture)
-  }, [])
+  }, [installPrompt])
 
   function dismissInstall() {
     const value = new Date().toISOString()
@@ -69,21 +74,19 @@ export function PwaPromptHost() {
       {serviceWorker.needRefresh ? (
         <Card className="min-w-0 shadow-lg">
           <h2 className="flex items-center gap-2 font-bold">
-            <RefreshCw aria-hidden="true" size={18} /> Update available
+            <RefreshCw aria-hidden="true" size={18} /> {copy.updateNotice.title}
           </h2>
-          <p className="mt-2 text-small text-neutral-600">
-            Reload to use the newest learning content and offline support.
-          </p>
+          <p className="mt-2 text-small text-neutral-600">{copy.updateNotice.message}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button size="sm" onClick={() => void applyServiceWorkerUpdate()}>
-              Reload
+              {copy.updateNotice.reloadLabel}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => dismissServiceWorkerNotice('needRefresh')}
             >
-              Later
+              {copy.updateNotice.laterLabel}
             </Button>
           </div>
         </Card>

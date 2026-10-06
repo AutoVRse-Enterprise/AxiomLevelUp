@@ -3,8 +3,8 @@ import { useEffect } from 'react'
 import { NavLink, useMatches, useNavigate, useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
+import { useExperienceShell } from '@/app/experienceShell'
 import { OfflineIndicator } from '@/components/feedback/OfflineIndicator'
-import { primaryNavigation } from '@/components/navigation/primaryNavigation'
 import { AnimatedNumber, IconButton } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -15,6 +15,7 @@ interface RouteHandle {
 
 export function PageHeader({ immersive = false }: { immersive?: boolean }) {
   const { appConfig, courseById, lessonById } = useContent()
+  const { navigation, headerStatus } = useExperienceShell()
   const matches = useMatches()
   const navigate = useNavigate()
   const { courseId, lessonId, pathwayId, challengeId } = useParams()
@@ -68,7 +69,7 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
         </div>
         {!immersive ? (
           <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
-            {primaryNavigation.map(({ to, label, end }) => (
+            {navigation.map(({ to, label, end }) => (
               <NavLink
                 className={({ isActive }) =>
                   cn(
@@ -87,7 +88,7 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
             ))}
           </nav>
         ) : null}
-        {!immersive ? (
+        {!immersive && headerStatus === 'learner' ? (
           <div
             aria-label="Learner status"
             aria-live="polite"
@@ -101,6 +102,8 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
               <Flame aria-hidden="true" size={17} /> <AnimatedNumber value={streak} />
             </span>
           </div>
+        ) : !immersive ? (
+          <OfflineIndicator />
         ) : null}
       </div>
     </header>
