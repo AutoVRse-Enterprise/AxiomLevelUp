@@ -3266,3 +3266,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   unchanged golden images, 171 precache entries and all bundle budgets. Evidence screenshot churn
   was restored. ADR-105 is Accepted.
 - **Follow-ups:** Implement P14-T01 experience IDs, resolution and build metadata.
+
+### [2026-10-07 04:10] P14-T01 - Add experience contracts and resolution
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the closed experience ID set, fail-fast resolver, active experience and
+  namespace helpers, shared shell contract/default copy, typed runtime/build contracts and pure
+  build metadata for `default` and `sanofi`.
+- **Files changed:** `src/lib/experienceIds.ts`; `src/lib/experience.ts`;
+  `src/lib/experience.test.ts`; `src/experiences/types.ts`; `src/experiences/builds.ts`;
+  `src/experiences/default/build.ts`; `src/experiences/sanofi/build.ts`;
+  `src/app/experienceShell.ts`; `src/components/navigation/primaryNavigation.ts`;
+  `src/vite-env.d.ts`; `tsconfig.sw.json`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`; `npm run lint`; focused Vitest for experience,
+  router-characterization and persistence-characterization tests.
+- **Result/verification:** TypeScript and ESLint pass; 3 files / 12 tests pass. Unknown IDs and
+  experience-mode conflicts fail with actionable messages; default namespace helpers preserve
+  every legacy name.
+- **Follow-ups:** Wire build metadata into Vite, TypeScript, scripts and committed mode files.

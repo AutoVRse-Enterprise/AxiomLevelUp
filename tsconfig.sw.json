@@ -15,5 +15,11 @@
     },
     "types": ["vite/client"]
   },
-  "include": ["src/sw.ts", "src/pwa/cachePolicy.ts", "src/pwa/requestPolicy.ts"]
+  "include": [
+    "src/sw.ts",
+    "src/pwa/cachePolicy.ts",
+    "src/pwa/requestPolicy.ts",
+    "src/lib/experience.ts",
+    "src/lib/experienceIds.ts"
+  ]
 }
