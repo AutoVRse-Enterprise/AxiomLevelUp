@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "0.1",
+  "app": {
+    "name": "Autovrse LevelUp",
+    "cohortName": "Challenge players"
+  },
+  "product": {
+    "weekStartsOn": 1,
+    "revision": {
+      "masteryThreshold": 70,
+      "maxRecommendations": 2
+    },
+    "leaderboard": {
+      "visibleWindow": 10
+    },
+    "home": {
+      "recentAchievementCount": 0
+    },
+    "player": {
+      "maxAttempts": 1,
+      "retryByDefault": false,
+      "revealAnswer": "always",
+      "mediaCompletionThreshold": 0.9,
+      "timerAnnouncements": [60, 30, 10]
+    },
+    "dicom": {
+      "prefetchRadius": 8,
+      "preloadConcurrency": 3,
+      "cacheMaxMiB": 192,
+      "sliceEventDebounceMs": 250,
+      "tapMaxMovementPx": 8
+    },
+    "offline": {
+      "downloadConcurrency": 3,
+      "quotaSafetyMarginRatio": 0.1,
+      "requestPersistentStorage": false,
+      "installPrompt": {
+        "minCompletedLessons": 0,
+        "dismissCooldownDays": 14
+      }
+    }
+  },
+  "gamification": {
+    "xp": {
+      "correctStandard": 0,
+      "correctDifficult": 0,
+      "lessonComplete": 0,
+      "perfectLessonBonus": 0,
+      "dailyChallenge": 0,
+      "perfectChallengeBonus": 0,
+      "revisionComplete": 0,
+      "weeklyTarget": 0,
+      "dicomFirstTask": 0
+    },
+    "levels": [
+      {
+        "level": 1,
+        "minimumXp": 0,
+        "label": "Player"
+      }
+    ],
+    "stars": {
+      "one": 0,
+      "two": 75,
+      "three": 90
+    },
+    "weeklyGoal": {
+      "defaultTargetDays": 1
+    },
+    "mastery": {
+      "gain": 1,
+      "loss": 1,
+      "difficultyWeights": {
+        "foundation": 1,
+        "intermediate": 1,
+        "advanced": 1
+      },
+      "defaultDifficulty": "intermediate",
+      "initialScore": 0,
+      "historyLimit": 10
+    }
+  },
+  "concepts": [],
+  "pathways": [],
+  "badges": [],
+  "challenges": [],
+  "games": {
+    "hub": {
+      "title": "Respiratory Challenge",
+      "tagline": "Read the evidence. Make the call.",
+      "startLabel": "Start a quick challenge",
+      "unavailableLabel": "Coming soon"
+    }
+  },
+  "leaderboard": {
+    "scope": "global",
+    "period": "weekly",
+    "simulated": true,
+    "entries": []
+  }
+}

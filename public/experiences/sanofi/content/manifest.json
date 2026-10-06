@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "appConfig": "app-config.json",
+  "courses": [],
+  "cases": [],
+  "anatomyMaps": [],
+  "seeds": {
+    "fresh": "seeds/fresh.json"
+  },
+  "defaultSeed": "fresh",
+  "assetManifest": "assets.json"
+}

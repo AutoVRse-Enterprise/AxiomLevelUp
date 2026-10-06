@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "0.1",
+  "stateVersion": 8,
+  "seedProfile": "fresh",
+  "referenceDate": "2026-10-01",
+  "learner": {
+    "id": "you",
+    "name": "You",
+    "role": "Player"
+  },
+  "xp": {
+    "total": 0,
+    "weekly": 0
+  },
+  "streak": {
+    "currentDays": 0,
+    "lastQualifyingDate": null
+  },
+  "weeklyGoal": {
+    "targetDays": 1,
+    "completedDays": []
+  },
+  "lessonProgress": {},
+  "caseProgress": {},
+  "caseAttempts": {},
+  "challenges": {},
+  "badges": {},
+  "mastery": {},
+  "gamification": {
+    "xpWeekStart": "2026-09-28",
+    "weeklyTargetRewardedWeek": null,
+    "lessonRewards": {},
+    "caseRewards": {},
+    "challengePeriods": {},
+    "counters": {
+      "perfectLessons": 0,
+      "weeklyGoalsMet": 0,
+      "challengeCompletions": {},
+      "firstAttemptCorrect": 0,
+      "firstAttemptCorrectByType": {},
+      "firstAttemptCorrectByConcept": {},
+      "caseCompletions": {},
+      "caseCompletionsByTier": {
+        "foundation": 0,
+        "intermediate": 0,
+        "advanced": 0
+      }
+    },
+    "activeRun": null,
+    "lastQuestionReward": null,
+    "lastActivityResult": null,
+    "celebrations": [],
+    "digitalRewards": []
+  },
+  "stats": {
+    "coursesCompleted": 0,
+    "lessonsCompleted": 0,
+    "challengesCompleted": 0,
+    "casesCompleted": 0,
+    "questionsAnswered": 0,
+    "correctAnswers": 0
+  },
+  "onboarding": {
+    "viewed": false
+  },
+  "caseLab": {
+    "walkthroughSeen": false,
+    "anatomyHintSeen": false
+  }
+}

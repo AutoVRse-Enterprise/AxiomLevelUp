@@ -3391,3 +3391,26 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
 - **Result/verification:** TypeScript and ESLint pass; 3 files / 7 tests pass. Programmatic ESLint
   tests exercise both forbidden directions and allowed composition/shared imports.
 - **Follow-ups:** Author the minimal sanofi content root, stub hub, routes and definition.
+
+### [2026-10-07 04:33] P14-T08 - Add the sanofi stub experience
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a complete minimal sanofi content root and anonymous "You" seed, an eager
+  one-route game hub, neutral shell copy, the configured Autovrse LevelUp / Respiratory Challenge
+  names and the static sanofi experience definition with its scoped theme.
+- **Files changed:** `public/experiences/sanofi/content/manifest.json`;
+  `public/experiences/sanofi/content/app-config.json`;
+  `public/experiences/sanofi/content/assets.json`;
+  `public/experiences/sanofi/content/seeds/fresh.json`;
+  `src/experiences/sanofi/HomePage.tsx`; `src/experiences/sanofi/routes.tsx`;
+  `src/experiences/sanofi/shell.ts`; `src/experiences/sanofi/index.ts`;
+  `src/experiences/sanofi/sanofi.test.tsx`; `src/experiences/sanofi/build.ts`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run lint`; focused sanofi/shell Vitest;
+  `npm run build:sanofi`; built manifest, HTML and service-worker inspection.
+- **Result/verification:** Sanofi content validates in unit coverage; its 3 stub tests and shared
+  shell test pass. The production artifact has its own HTML metadata, PWA manifest, teal token
+  override and namespaced service-worker/cache strings. The content and shell copy contain no
+  client name or prohibited LMS vocabulary.
+- **Follow-ups:** Make validation, bundle budgets and Playwright run both experiences, then add
+  browser smoke coverage.
