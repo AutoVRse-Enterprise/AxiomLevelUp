@@ -3414,3 +3414,24 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   client name or prohibited LMS vocabulary.
 - **Follow-ups:** Make validation, bundle budgets and Playwright run both experiences, then add
   browser smoke coverage.
+
+### [2026-10-07 04:39] P14-T09 - Add dual-experience tooling and browser smoke
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Made content validation iterate both experience roots; parameterized the bundle
+  budget checker and added a measured sanofi entry budget; expanded `check` to build and budget
+  both artifacts; pinned the default Playwright server to default mode; and added a sanofi
+  desktop/phone smoke suite on port 4182.
+- **Files changed:** `scripts/validate-content.ts`; `scripts/budget/check-bundle.ts`;
+  `scripts/budget/bundle-budget.sanofi.json`; `package.json`; `playwright.config.ts`;
+  `playwright.sanofi.config.ts`; `tsconfig.e2e.json`; `e2e/sanofi/smoke.spec.ts`;
+  `src/components/navigation/BuildStamp.tsx`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run lint`; `npm run validate:content`;
+  focused Vitest; `npm run budget:sanofi`; `npm run check`; serial sanofi Playwright.
+- **Result/verification:** The dual gate passes with 80 Vitest files / 522 tests, both content roots
+  at zero warnings, both builds and budgets passing. Sanofi entry is 268,431 raw / 84,055 gzip
+  bytes against 300,000 / 95,000 limits. Sanofi Playwright passes 2/2 projects with metadata,
+  storage isolation, vocabulary, overflow, axe and not-found checks. Service workers are allowed in
+  this suite so registration is exercised instead of producing Playwright's blocked-worker error.
+- **Follow-ups:** Run the final full default and sanofi regression proof and publish the comparison
+  against P14-T00.

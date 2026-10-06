@@ -12,16 +12,16 @@ import {
 } from '../src/content/loader.ts'
 import { contentManifestSchema } from '../src/content/schema/index.ts'
 import { formulaPrimitiveSchema } from '../src/content/schema/primitives/formula.ts'
+import { experienceBuilds } from '../src/experiences/builds.ts'
+import type { ExperienceBuildMetadata } from '../src/experiences/types.ts'
 import { validateSvgBytes } from './assets/validate-svg.ts'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const contentRoot = resolve(root, 'public/content')
 
-async function readJson(relativePath: string) {
-  return JSON.parse(await readFile(resolve(contentRoot, relativePath), 'utf8')) as unknown
-}
-
-async function main() {
+async function validateExperience(build: ExperienceBuildMetadata) {
+  const contentRoot = resolve(root, build.contentDir)
+  const readJson = async (relativePath: string) =>
+    JSON.parse(await readFile(resolve(contentRoot, relativePath), 'utf8')) as unknown
   const manifestFile = 'manifest.json'
   const manifest = await readJson(manifestFile)
   const manifestResult = contentManifestSchema.safeParse(manifest)
@@ -171,11 +171,15 @@ async function main() {
   if (formulaIssues.length > 0) throw new ContentValidationError(formulaIssues)
 
   console.log(
-    `Validated ${registry.courses.length} courses, ${registry.lessonById.size} lessons, ${registry.cases.length} cases, ${registry.anatomyMaps.length} anatomy maps and ${registry.warnings.length} warnings.`,
+    `Validated ${build.id}: ${registry.courses.length} courses, ${registry.lessonById.size} lessons, ${registry.cases.length} cases, ${registry.anatomyMaps.length} anatomy maps and ${registry.warnings.length} warnings.`,
   )
   for (const warning of registry.warnings) {
     console.warn(`WARN ${warning.file}:${warning.path} ${warning.message}`)
   }
+}
+
+async function main() {
+  for (const build of Object.values(experienceBuilds)) await validateExperience(build)
 }
 
 main().catch((error: unknown) => {

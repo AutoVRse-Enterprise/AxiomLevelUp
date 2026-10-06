@@ -19,5 +19,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["playwright.config.ts", "e2e/**/*.ts"]
+  "include": ["playwright.config.ts", "playwright.sanofi.config.ts", "e2e/**/*.ts"]
 }

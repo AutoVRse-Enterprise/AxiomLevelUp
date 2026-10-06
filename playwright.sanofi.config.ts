@@ -1,20 +1,19 @@
 import { defineConfig } from '@playwright/test'
 
-const previewPort = 4181
+const previewPort = 4182
 const swiftShaderArgs = ['--use-angle=swiftshader', '--use-gl=angle', '--enable-unsafe-swiftshader']
 
 export default defineConfig({
-  testDir: './e2e',
-  testIgnore: ['**/sanofi/**'],
-  outputDir: '.tmp/playwright/results',
+  testDir: './e2e/sanofi',
+  outputDir: '.tmp/playwright-sanofi/results',
   fullyParallel: false,
   workers: 2,
   forbidOnly: true,
   retries: 0,
-  reporter: [['list'], ['html', { outputFolder: '.tmp/playwright/report', open: 'never' }]],
+  reporter: [['list'], ['html', { outputFolder: '.tmp/playwright-sanofi/report', open: 'never' }]],
   use: {
     baseURL: `http://127.0.0.1:${previewPort}`,
-    serviceWorkers: 'block',
+    serviceWorkers: 'allow',
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
@@ -40,10 +39,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build -- --mode default && npm run preview -- --mode default --host 127.0.0.1 --port ${previewPort} --strictPort`,
+    command: `npm run build:sanofi && npm run preview:sanofi -- --host 127.0.0.1 --port ${previewPort} --strictPort`,
     env: {
       VITE_E2E: 'true',
-      VITE_ENABLE_DEV_TOOLS: 'true',
     },
     url: `http://127.0.0.1:${previewPort}`,
     reuseExistingServer: false,

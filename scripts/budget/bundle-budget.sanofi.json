@@ -1,0 +1,7 @@
+{
+  "entry": {
+    "pattern": "^AxiomLevelUp-.*\\.js$",
+    "maxRawBytes": 300000,
+    "maxGzipBytes": 95000
+  }
+}

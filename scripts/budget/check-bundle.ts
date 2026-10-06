@@ -10,8 +10,13 @@ interface Budget {
 }
 
 const root = process.cwd()
-const assetsDirectory = join(root, 'dist', 'assets')
-const configPath = join(root, 'scripts', 'budget', 'bundle-budget.json')
+function option(name: string, fallback: string) {
+  const index = process.argv.indexOf(name)
+  return index >= 0 ? (process.argv[index + 1] ?? fallback) : fallback
+}
+
+const assetsDirectory = join(root, option('--dist', 'dist'), 'assets')
+const configPath = join(root, option('--config', join('scripts', 'budget', 'bundle-budget.json')))
 const budgets = JSON.parse(await readFile(configPath, 'utf8')) as Record<string, Budget>
 const files = await readdir(assetsDirectory)
 let failed = false
