@@ -3303,3 +3303,21 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   startup with actionable messages. All temporary servers were stopped.
 - **Follow-ups:** Move the default route table behind the static alias and make the composition
   root experience-aware.
+
+### [2026-10-07 04:18] P14-T03 - Add the experience composition root
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Moved the default route table verbatim into the default experience, retained the
+  `createAppRoutes` compatibility export, added an experience router factory and shared lazy-page
+  boundary, and made `App` provide the active shell, content root and neutral copy contracts.
+- **Files changed:** `src/app/App.tsx`; `src/app/ContentProvider.tsx`;
+  `src/app/lazyPage.tsx`; `src/app/router.tsx`; `src/app/experienceShell.ts`;
+  `src/experiences/default/index.ts`; `src/experiences/default/routes.tsx`;
+  `src/components/feedback/ErrorBoundary.tsx`; `src/components/feedback/ContentErrorScreen.tsx`;
+  `src/state/LearnerStateProvider.tsx`; `eslint.config.js`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier on touched sources; `npm run typecheck`; `npm run lint`; focused
+  router and router-characterization Vitest.
+- **Result/verification:** TypeScript and ESLint pass; 2 files / 14 tests pass. The frozen
+  production/development route tree and exact default shell snapshot are unchanged.
+- **Follow-ups:** Parameterize shared navigation, status, PWA prompts, not-found copy and build
+  stamp through the shell context.

@@ -7,8 +7,15 @@ import { initializeHapticEffects } from '@/effects/haptics'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { initializeLearningProgressHandlers } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
+import type { ExperienceShellCopy } from '@/app/experienceShell'
 
-export function LearnerStateProvider({ children }: { children: ReactNode }) {
+export function LearnerStateProvider({
+  children,
+  copy,
+}: {
+  children: ReactNode
+  copy?: Pick<ExperienceShellCopy, 'stateLoading' | 'stateError'>
+}) {
   const registry = useContent()
   const { seed } = registry
   const [ready, setReady] = useState(false)
@@ -44,9 +51,9 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
     return (
       <main className="grid min-h-dvh place-items-center p-6">
         <ErrorState
-          title="Progress storage is unavailable"
+          title={copy?.stateError.title ?? 'Progress storage is unavailable'}
           message={storageError}
-          actionLabel="Retry"
+          actionLabel={copy?.stateError.retryLabel ?? 'Retry'}
           onAction={() => window.location.reload()}
         />
       </main>
@@ -57,8 +64,10 @@ export function LearnerStateProvider({ children }: { children: ReactNode }) {
     return (
       <main className="mx-auto max-w-3xl p-5 sm:p-8">
         <LoadingState
-          message="Restoring your progress and active learning session."
-          title="Preparing your learning space"
+          message={
+            copy?.stateLoading.message ?? 'Restoring your progress and active learning session.'
+          }
+          title={copy?.stateLoading.title ?? 'Preparing your learning space'}
         />
       </main>
     )

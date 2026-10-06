@@ -6,14 +6,23 @@ import { LoadingState } from '@/components/ui'
 import type { ContentRegistry } from '@/content/loader'
 import { loadRuntimeContent } from '@/content/runtime'
 import { OfflineReconciler } from '@/offline/OfflineReconciler'
+import type { ExperienceShellCopy } from '@/app/experienceShell'
 
-export function ContentProvider({ children }: { children: ReactNode }) {
+export function ContentProvider({
+  children,
+  baseUrl = '/content',
+  copy,
+}: {
+  children: ReactNode
+  baseUrl?: string
+  copy?: Pick<ExperienceShellCopy, 'contentLoading' | 'contentError'>
+}) {
   const [registry, setRegistry] = useState<ContentRegistry | null>(null)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     let active = true
-    void loadRuntimeContent()
+    void loadRuntimeContent(baseUrl)
       .then((content) => {
         if (active) setRegistry(content)
       })
@@ -24,15 +33,17 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false
     }
-  }, [])
+  }, [baseUrl])
 
-  if (error) return <ContentErrorScreen error={error} />
+  if (error) return <ContentErrorScreen error={error} copy={copy?.contentError} />
   if (!registry) {
     return (
       <main className="mx-auto max-w-3xl p-5 sm:p-8">
         <LoadingState
-          message="Validating courses, activities and scientific assets."
-          title="Loading learning content"
+          message={
+            copy?.contentLoading.message ?? 'Validating courses, activities and scientific assets.'
+          }
+          title={copy?.contentLoading.title ?? 'Loading learning content'}
         />
       </main>
     )

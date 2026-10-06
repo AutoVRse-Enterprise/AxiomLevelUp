@@ -1,9 +1,11 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 import { ErrorState } from '@/components/feedback/ErrorState'
+import type { ExperienceShellCopy } from '@/app/experienceShell'
 
 interface ErrorBoundaryProps {
   children: ReactNode
+  copy?: ExperienceShellCopy['applicationError']
 }
 
 interface ErrorBoundaryState {
@@ -23,16 +25,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (!this.state.error) return this.props.children
+    const copy = this.props.copy ?? {
+      title: 'The learning experience could not continue',
+      reloadLabel: 'Reload application',
+      homeLabel: 'Return home',
+    }
 
     return (
       <main className="grid min-h-dvh place-items-center p-6">
         <ErrorState
-          actionLabel="Reload application"
+          actionLabel={copy.reloadLabel}
           message={this.state.error.message}
           onAction={() => window.location.reload()}
           onSecondaryAction={() => window.location.assign('/')}
-          secondaryActionLabel="Return home"
-          title="The learning experience could not continue"
+          secondaryActionLabel={copy.homeLabel}
+          title={copy.title}
         />
       </main>
     )
