@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 
-import { experienceBuilds } from '@/experiences/builds'
 import { cacheNameFor, serviceWorkerDatabaseFor, storagePrefixFor } from '@/lib/experience'
 import { EXPERIENCE_IDS, resolveExperienceId } from '@/lib/experienceIds'
 
@@ -27,12 +26,7 @@ describe('experience resolution', () => {
   })
 })
 
-describe('experience metadata and namespaces', () => {
-  it('has one build record with a matching id for every known experience', () => {
-    expect(Object.keys(experienceBuilds)).toEqual(EXPERIENCE_IDS)
-    for (const id of EXPERIENCE_IDS) expect(experienceBuilds[id].id).toBe(id)
-  })
-
+describe('experience namespaces', () => {
   it('preserves default names and scopes non-default names', () => {
     expect(storagePrefixFor('default')).toBe('axiom-runtime:')
     expect(storagePrefixFor('sanofi')).toBe('axiom-runtime:sanofi:')

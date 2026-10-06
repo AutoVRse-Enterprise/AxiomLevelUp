@@ -4,6 +4,21 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
+const threeRestriction = {
+  regex: '^three(?:/|$)',
+  message: 'Import Three.js only from src/anatomy3d/three/createAnatomyController.ts.',
+}
+const sharedExperienceRestrictions = [
+  {
+    regex: '^@experience$',
+    message: 'Only src/app/App.tsx and src/app/router.tsx may import the active experience.',
+  },
+  {
+    regex: '^@/experiences(?:/|$)',
+    message: 'Shared modules must not import experience composition.',
+  },
+]
+
 export default tseslint.config(
   {
     ignores: [
@@ -39,10 +54,49 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
+          patterns: [threeRestriction],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/experiences/**', 'src/app/App.tsx', 'src/app/router.tsx'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: [threeRestriction, ...sharedExperienceRestrictions] },
+      ],
+    },
+  },
+  {
+    files: ['src/experiences/default/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
           patterns: [
+            threeRestriction,
             {
-              regex: '^three(?:/|$)',
-              message: 'Import Three.js only from src/anatomy3d/three/createAnatomyController.ts.',
+              regex: '^@/experiences/sanofi(?:/|$)',
+              message: 'The default experience must not import the sanofi experience.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/experiences/sanofi/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            threeRestriction,
+            {
+              regex: '^@/experiences/default(?:/|$)',
+              message: 'The sanofi experience must not import the default experience.',
             },
           ],
         },
@@ -52,7 +106,7 @@ export default tseslint.config(
   {
     files: ['src/anatomy3d/three/createAnatomyController.ts', 'src/spikes/anatomy3d/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': 'off',
+      'no-restricted-imports': ['error', { patterns: sharedExperienceRestrictions }],
     },
   },
   {

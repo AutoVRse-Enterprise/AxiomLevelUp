@@ -3376,3 +3376,18 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   use `axiom-runtime:sanofi:`, sanofi runtime caches use a `sanofi-` prefix and its settings
   database is `axiom-runtime-sanofi-service-worker`.
 - **Follow-ups:** Add the scoped sanofi token override and enforce experience import boundaries.
+
+### [2026-10-07 04:29] P14-T07 - Add scoped theme and import boundaries
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a sanofi-scoped teal brand-token override and ESLint boundaries that prevent
+  shared modules from importing experience composition and prevent either experience importing
+  the other, while retaining the existing Three.js restriction.
+- **Files changed:** `src/experiences/sanofi/theme.css`; `eslint.config.js`;
+  `scripts/lint/experienceBoundaries.test.ts`; `src/lib/experience.test.ts`;
+  `src/experiences/builds.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run lint`; focused boundary, build-metadata
+  and route-characterization Vitest.
+- **Result/verification:** TypeScript and ESLint pass; 3 files / 7 tests pass. Programmatic ESLint
+  tests exercise both forbidden directions and allowed composition/shared imports.
+- **Follow-ups:** Author the minimal sanofi content root, stub hub, routes and definition.
