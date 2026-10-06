@@ -1639,7 +1639,7 @@
       "additionalProperties": false
     },
     "concepts": {
-      "minItems": 1,
+      "default": [],
       "type": "array",
       "items": {
         "type": "object",
@@ -1667,7 +1667,7 @@
       }
     },
     "pathways": {
-      "minItems": 1,
+      "default": [],
       "type": "array",
       "items": {
         "type": "object",
@@ -1765,6 +1765,7 @@
       }
     },
     "badges": {
+      "default": [],
       "type": "array",
       "items": {
         "type": "object",
@@ -2119,6 +2120,7 @@
       }
     },
     "challenges": {
+      "default": [],
       "type": "array",
       "items": {
         "anyOf": [
@@ -3283,6 +3285,43 @@
         ]
       }
     },
+    "games": {
+      "type": "object",
+      "properties": {
+        "hub": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tagline": {
+              "type": "string",
+              "minLength": 1
+            },
+            "startLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "unavailableLabel": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "title",
+            "tagline",
+            "startLabel",
+            "unavailableLabel"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "hub"
+      ],
+      "additionalProperties": false
+    },
     "leaderboard": {
       "type": "object",
       "properties": {
@@ -3304,7 +3343,7 @@
           "type": "boolean"
         },
         "entries": {
-          "minItems": 1,
+          "default": [],
           "type": "array",
           "items": {
             "type": "object",

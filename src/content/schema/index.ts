@@ -627,15 +627,25 @@ export const appConfigSchema = z.object({
     }),
   }),
   caseLab: caseLabConfigSchema.optional(),
-  concepts: z.array(conceptSchema).min(1),
-  pathways: z.array(pathwaySchema).min(1),
-  badges: z.array(badgeSchema),
-  challenges: z.array(challengeSchema),
+  concepts: z.array(conceptSchema).default([]),
+  pathways: z.array(pathwaySchema).default([]),
+  badges: z.array(badgeSchema).default([]),
+  challenges: z.array(challengeSchema).default([]),
+  games: z
+    .strictObject({
+      hub: z.strictObject({
+        title: z.string().trim().min(1),
+        tagline: z.string().trim().min(1),
+        startLabel: z.string().trim().min(1),
+        unavailableLabel: z.string().trim().min(1),
+      }),
+    })
+    .optional(),
   leaderboard: z.strictObject({
     scope: z.string().min(1),
     period: z.enum(['weekly', 'monthly', 'all_time']).default('weekly'),
     simulated: z.boolean().default(false),
-    entries: z.array(leaderboardEntrySchema).min(1),
+    entries: z.array(leaderboardEntrySchema).default([]),
   }),
 })
 
@@ -995,19 +1005,28 @@ export const assetManifestSchema = z.object({
   assets: z.array(assetSchema),
 })
 
-export const contentManifestSchema = z.object({
-  schemaVersion: z.literal('0.1'),
-  appConfig: pathSchema,
-  courses: z.array(pathSchema).min(1),
-  cases: z.array(pathSchema).default([]),
-  anatomyMaps: z.array(pathSchema).default([]),
-  seeds: z.object({
-    advanced: pathSchema,
-    fresh: pathSchema,
-  }),
-  defaultSeed: z.enum(['advanced', 'fresh']),
-  assetManifest: pathSchema,
-})
+export const contentManifestSchema = z
+  .object({
+    schemaVersion: z.literal('0.1'),
+    appConfig: pathSchema,
+    courses: z.array(pathSchema).default([]),
+    cases: z.array(pathSchema).default([]),
+    anatomyMaps: z.array(pathSchema).default([]),
+    seeds: z.object({
+      advanced: pathSchema.optional(),
+      fresh: pathSchema.optional(),
+    }),
+    defaultSeed: z.enum(['advanced', 'fresh']),
+    assetManifest: pathSchema,
+  })
+  .superRefine((manifest, context) => {
+    if (manifest.seeds[manifest.defaultSeed]) return
+    context.addIssue({
+      code: 'custom',
+      path: ['seeds', manifest.defaultSeed],
+      message: `The default seed "${manifest.defaultSeed}" must have a configured path.`,
+    })
+  })
 
 export type Course = z.infer<typeof courseSchema>
 export type Lesson = z.infer<typeof lessonSchema>

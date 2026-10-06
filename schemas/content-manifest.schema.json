@@ -11,7 +11,7 @@
       "minLength": 1
     },
     "courses": {
-      "minItems": 1,
+      "default": [],
       "type": "array",
       "items": {
         "type": "string",
@@ -46,10 +46,6 @@
           "minLength": 1
         }
       },
-      "required": [
-        "advanced",
-        "fresh"
-      ],
       "additionalProperties": false
     },
     "defaultSeed": {

@@ -22,7 +22,9 @@ const courses = manifest.courses
   .map((path) => courseSchema.parse(readContentFile(path)))
   .filter(({ visibility }) => visibility === 'learner')
 const cases = manifest.cases.map((path) => caseDocumentSchema.parse(readContentFile(path)))
-const advancedSeed = learnerSeedSchema.parse(readContentFile(manifest.seeds.advanced))
+const advancedSeedPath = manifest.seeds.advanced
+if (!advancedSeedPath) throw new Error('Default content must configure the advanced demo seed.')
+const advancedSeed = learnerSeedSchema.parse(readContentFile(advancedSeedPath))
 const contentDocuments: unknown[] = [appConfig, ...courses, ...cases]
 
 function collectMachineIds(value: unknown): string[] {

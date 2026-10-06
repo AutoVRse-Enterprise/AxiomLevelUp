@@ -37,6 +37,10 @@ async function main() {
   }
 
   const parsed = manifestResult.data
+  const seedPath = parsed.seeds[parsed.defaultSeed]
+  if (!seedPath) {
+    throw new Error(`The default seed "${parsed.defaultSeed}" has no configured path.`)
+  }
   const input: ContentBundleInput = {
     manifestFile,
     manifest,
@@ -51,8 +55,8 @@ async function main() {
     anatomyMapFiles: await Promise.all(
       parsed.anatomyMaps.map(async (file) => ({ file, data: await readJson(file) })),
     ),
-    seedFile: parsed.seeds[parsed.defaultSeed],
-    seed: await readJson(parsed.seeds[parsed.defaultSeed]),
+    seedFile: seedPath,
+    seed: await readJson(seedPath),
     assetManifestFile: parsed.assetManifest,
     assetManifest: await readJson(parsed.assetManifest),
   }

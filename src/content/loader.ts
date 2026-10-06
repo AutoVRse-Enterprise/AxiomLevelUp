@@ -274,6 +274,23 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const catalogCourses = courses.filter(({ visibility }) => visibility === 'learner')
   const warnings: ContentIssue[] = []
 
+  if (manifest.courses.length > 0) {
+    const requiredLmsCollections = [
+      ['concepts', appConfig.concepts.length],
+      ['pathways', appConfig.pathways.length],
+      ['leaderboard.entries', appConfig.leaderboard.entries.length],
+    ] as const
+    for (const [path, count] of requiredLmsCollections) {
+      if (count > 0) continue
+      issues.push({
+        file: input.appConfigFile,
+        path,
+        message: `${path} must contain at least one item when courses are configured.`,
+        severity: 'error',
+      })
+    }
+  }
+
   const duplicate = (kind: string, ids: string[], file: string) => {
     const seen = new Set<string>()
     for (const id of ids) {
@@ -2002,6 +2019,9 @@ export async function loadContent(baseUrl = '/content'): Promise<ContentRegistry
   const parsedManifest = contentManifestSchema.parse(manifest)
   const appConfigFile = resolveContentPath(baseUrl, parsedManifest.appConfig)
   const seedPath = parsedManifest.seeds[parsedManifest.defaultSeed]
+  if (!seedPath) {
+    throw new Error(`The default seed "${parsedManifest.defaultSeed}" has no configured path.`)
+  }
   const seedFile = resolveContentPath(baseUrl, seedPath)
   const assetManifestFile = resolveContentPath(baseUrl, parsedManifest.assetManifest)
   const courseFiles = parsedManifest.courses.map((path) => resolveContentPath(baseUrl, path))

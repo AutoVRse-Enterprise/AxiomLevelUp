@@ -16,6 +16,7 @@ import {
   assetManifestSchema,
   caseDocumentSchema,
   challengeSchema,
+  contentManifestSchema,
   courseSchema,
   learnerSeedSchema,
   parsePrimitive,
@@ -180,6 +181,86 @@ describe('content schemas', () => {
     const bundle = makeValidContentBundle()
 
     expect(appConfigSchema.parse(bundle.appConfig).app.name).toBe('Autovrse LevelUp')
+  })
+
+  it('accepts a non-LMS experience with defaulted empty collections and hub copy', () => {
+    const bundle = makeValidContentBundle()
+    ;(bundle.manifest as { courses: string[] }).courses = []
+    bundle.courseFiles = []
+    const config = bundle.appConfig as {
+      concepts?: unknown[]
+      pathways?: unknown[]
+      badges?: unknown[]
+      challenges?: unknown[]
+      games?: unknown
+      leaderboard: { entries?: unknown[] }
+    }
+    delete config.concepts
+    delete config.pathways
+    delete config.badges
+    delete config.challenges
+    delete config.leaderboard.entries
+    config.games = {
+      hub: {
+        title: 'Respiratory Challenge',
+        tagline: 'Read the evidence. Make the call.',
+        startLabel: 'Start a quick challenge',
+        unavailableLabel: 'Coming soon',
+      },
+    }
+    const seed = bundle.seed as {
+      lessonProgress: Record<string, unknown>
+      mastery: Record<string, unknown>
+      badges: Record<string, unknown>
+      challenges: Record<string, unknown>
+    }
+    seed.lessonProgress = {}
+    seed.mastery = {}
+    seed.badges = {}
+    seed.challenges = {}
+
+    const registry = validateContentBundle(bundle)
+    expect(registry.courses).toEqual([])
+    expect(registry.appConfig.concepts).toEqual([])
+    expect(registry.appConfig.games?.hub.title).toBe('Respiratory Challenge')
+  })
+
+  it('retains LMS semantic requirements when courses are configured', () => {
+    const bundle = makeValidContentBundle()
+    ;(bundle.appConfig as { pathways: unknown[] }).pathways = []
+
+    expect(() => validateContentBundle(bundle)).toThrowError(
+      expect.objectContaining({
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            path: 'pathways',
+            message: 'pathways must contain at least one item when courses are configured.',
+          }),
+        ]),
+      }),
+    )
+  })
+
+  it('requires the configured default seed path', () => {
+    const bundle = makeValidContentBundle()
+    const manifest = structuredClone(bundle.manifest) as {
+      seeds: { advanced?: string; fresh?: string }
+      defaultSeed: 'advanced' | 'fresh'
+    }
+    delete manifest.seeds[manifest.defaultSeed]
+
+    const result = contentManifestSchema.safeParse(manifest)
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: ['seeds', manifest.defaultSeed],
+            message: `The default seed "${manifest.defaultSeed}" must have a configured path.`,
+          }),
+        ]),
+      )
+    }
   })
 
   it('supports either challenge items or one referenced case while preserving item counts', () => {

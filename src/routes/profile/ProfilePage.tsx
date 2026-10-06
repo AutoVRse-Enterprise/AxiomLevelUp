@@ -86,6 +86,7 @@ export function ProfilePage() {
     setDemoStatus('')
     try {
       const seedPath = registry.manifest.seeds[profile.seedProfile]
+      if (!seedPath) throw new Error(`Seed profile "${profile.seedProfile}" is not configured.`)
       const response = await fetch(`/content/${seedPath}`)
       if (!response.ok) throw new Error(`Seed request failed with ${response.status}.`)
       replaceWithSeed(learnerSeedSchema.parse(await response.json()))
@@ -244,9 +245,7 @@ export function ProfilePage() {
                   {items.map((badge) => (
                     <BadgeTile
                       description={
-                        badge.unlocked
-                          ? badge.description
-                          : `${describeCriterion(badge.criteria)}.`
+                        badge.unlocked ? badge.description : `${describeCriterion(badge.criteria)}.`
                       }
                       icon={getBadgeIcon(badge.icon)}
                       key={badge.id}

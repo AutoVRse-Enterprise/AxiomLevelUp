@@ -3338,3 +3338,23 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   navigation and no learner XP/streak status.
 - **Follow-ups:** Relax content contracts only where the non-LMS experience requires it and retain
   semantic LMS validation.
+
+### [2026-10-07 04:24] P14-T05 - Support non-LMS experience content
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Passed the configured content base URL through runtime loading; defaulted empty
+  non-LMS collections; allowed only the selected seed path; added strict optional `games.hub`
+  copy; replaced former structural minimums with semantic requirements when courses exist; and
+  guarded default-only advanced-seed consumers.
+- **Files changed:** `src/content/schema/index.ts`; `src/content/loader.ts`;
+  `src/content/content.test.ts`; `src/routes/profile/ProfilePage.tsx`;
+  `scripts/validate-content.ts`; `e2e/learner-copy.spec.ts`;
+  `schemas/app-config.schema.json`; `schemas/content-manifest.schema.json`;
+  `docs/CONTENT_SCHEMA.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused content/router Vitest; `npm run schema:export`;
+  `npm run check`; `npm run verify:default-build`.
+- **Result/verification:** Full gate passed in 60.323 seconds: TypeScript/ESLint, 77 files /
+  516 tests, unchanged default content counts and zero warnings, production build and budgets.
+  Default manifest, normalized HTML and precache isolation still match the baseline.
+- **Follow-ups:** Scope persistence, browser keys, runtime caches and service-worker settings for
+  non-default experiences without changing default names.
