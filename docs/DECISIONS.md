@@ -1952,3 +1952,49 @@ hosted-delivery and physical-device approval.
 Maintainers must update the README when learner surfaces, setup commands, primary walkthrough,
 verification results or approval boundaries materially change. Architecture and schema documents
 remain authoritative for technical contracts; QA verdicts remain authoritative for readiness.
+
+## ADR-105: Demo experiences are selected at build time
+
+**Status:** Proposed (confirm in P14-T00)
+
+**Context:** The Medical Challenge demo (`newDemoPRD.md`) needs a second experience with its own
+homepage, navigation, theme and content while the existing homepage and application must remain
+unchanged as the default. Shared functionality, components, game logic and APIs must not be
+duplicated. A runtime registry of experiences would either eagerly bundle every homepage into the
+default entry or turn the eager Home route into a lazy one, both of which change the default.
+
+**Decision:** Select the active experience with `VITE_EXPERIENCE` (`default` or `sanofi`), set by
+committed `.env.default` / `.env.sanofi` files and Vite `--mode`, exposed through `dev:default` and
+`dev:sanofi` scripts (plus `build:sanofi`, `preview:sanofi`, `test:e2e:sanofi`). A static
+`@experience` alias resolves to `src/experiences/<id>/` so only the selected definition, routes and
+homepage enter the bundle. Unknown ids and mode/variable mismatches fail the build. Experiences
+contain only composition (definition, routes, homepage, theme overrides); everything else stays in
+shared modules and ESLint boundaries forbid cross-experience imports. Each experience has its own
+content root; non-default experiences namespace persisted storage keys and caches, while the
+default keeps its legacy keys.
+
+**Consequences:** The default build stays byte-for-byte equivalent in behaviour, bundle shape and
+persisted data. A single build cannot switch experiences at runtime; each experience is a separate
+artifact (`dist/`, `dist-sanofi/`) and host. Adding a future experience means a new folder, mode
+file and content root, not new shared code. Details: `docs/phases/phase-14-multi-experience-foundation.md`.
+
+## ADR-106: Games are a new content type over shared primitives
+
+**Status:** Proposed (confirm in P15-T00)
+
+**Context:** The Medical Challenge needs timed, scored, replayable, shareable rounds with
+difficulty, clue costs, seeded challenge links and a per-game leaderboard. Courses, lessons and
+cases carry learning-path semantics (objectives, mastery, XP, debriefs) that the demo must not
+expose, and their players are tuned to lessons or staged cases.
+
+**Decision:** Add a round library and game documents as a new validated content type with a pure
+engine under `src/engines/games/` (mechanics, plan, seed, scoring, proximity, session, results,
+links, leaderboard, progress), typed `game_*` learner events through the existing pipeline,
+learner state v9 game history and a separate `game-session` store. Rounds reuse existing
+primitives and the anatomy viewer through default-off capability options rather than new
+renderers. All scoring, timing, difficulty, messages and copy live in configuration.
+
+**Consequences:** One engine supports many formats composed purely from content, which is the
+PRD's reusability claim. Existing course, lesson and case contracts are unaffected. The cost is a
+new schema family, a migration to learner state v9 and a dedicated player (ADR-107, Phase 16).
+Details: `docs/phases/phase-15-game-contract-and-engine.md`.

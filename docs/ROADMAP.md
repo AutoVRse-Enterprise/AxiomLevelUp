@@ -18,6 +18,13 @@ start with `README.md`.
 | 11    | Case Lab demo hardening        | Complete | One credible five-minute exacerbation path passes the demo-readiness gate                |
 | 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
 | 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates       |
+| 14    | Multi-experience foundation    | Planned  | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged               |
+| 15    | Game contract and engine       | Planned  | Rounds and games validate; pure seeded engine scores, links and ranks runs               |
+| 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                  |
+| 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone          |
+| 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes        |
+| 19    | Game hub, results and social   | Planned  | Hub, results, challenge links, leaderboard, expert runs and You page work end to end     |
+| 20    | Demo polish and readiness      | Planned  | PRD success criteria have evidence; runbook and deployable sanofi build are published    |
 
 ## Sequencing note
 
@@ -111,3 +118,10 @@ The final local Phase 13 gate covers 73 Vitest files / 500 tests and 53 passing 
 with three intentional project skips across desktop and touch-phone Chromium. On 2026-10-05 the
 user chose to leave the human, hosted and physical-device gates blocked and did not authorize a
 desktop-only waiver; the external-demo verdict therefore remains No-go.
+
+Phases 14–20 were planned on 2026-10-07 from `newDemoPRD.md` (the Medical Challenge demo). They add
+a second build-time experience, `sanofi`, alongside the unchanged default experience, and a
+reusable game engine of timed, scored, shareable rounds built on the existing primitives, anatomy
+viewer and event pipeline. The programme overview, architecture, open questions and dependency
+graph are in `docs/MEDICAL_CHALLENGE_PLAN.md`; each phase has its own file under `docs/phases/`.
+Phase 13's external gates remain open and independent of this programme.

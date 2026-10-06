@@ -3217,3 +3217,29 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   changed, so application tests were not rerun.
 - **Follow-ups:** Update `README.md` whenever the primary learner flow, setup commands, verification
   baseline or approval boundary changes.
+
+### [2026-10-07 03:00] P14-PLAN - Plan the Medical Challenge programme (Phases 14–20)
+
+- **Agent/session:** Cursor planning session
+- **Action:** Read the documentation set and the relevant runtime code, then planned the revised
+  demo in `newDemoPRD.md` as seven phases. The plan adds a build-time `sanofi` experience beside the
+  unchanged default (selected by `VITE_EXPERIENCE`, launched by `dev:default` / `dev:sanofi`, with
+  no duplicated shared code) and a reusable game engine of timed, scored, shareable rounds built on
+  existing primitives, the anatomy viewer and the event pipeline. Documentation only; no Cursor plan
+  files were written.
+- **Files changed:** `docs/MEDICAL_CHALLENGE_PLAN.md`;
+  `docs/phases/phase-14-multi-experience-foundation.md`;
+  `docs/phases/phase-15-game-contract-and-engine.md`;
+  `docs/phases/phase-16-game-player-and-clinical-round.md`;
+  `docs/phases/phase-17-spatial-rounds.md`;
+  `docs/phases/phase-18-spot-the-finding-and-full-challenge.md`;
+  `docs/phases/phase-19-game-hub-results-and-social.md`;
+  `docs/phases/phase-20-demo-polish-and-readiness.md`; `docs/ROADMAP.md`; `docs/DECISIONS.md`
+  (ADR-105 and ADR-106, both Proposed); `docs/HANDOFF.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Documentation and source searches; `git status --short`.
+- **Result/verification:** No runtime source, content, schema or configuration changed, so
+  application checks were not run. Phase 13 remains Active with its external gates unchanged.
+  Nothing was committed.
+- **Follow-ups:** User review of the plan and the seven open questions in
+  `docs/MEDICAL_CHALLENGE_PLAN.md` §11; then start Phase 14 at P14-T00 (capture the default
+  baseline and confirm ADR-105).
