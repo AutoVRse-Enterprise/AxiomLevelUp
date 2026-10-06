@@ -14,12 +14,13 @@ export function resolveBuildId(
   root: string,
   configuredId: string | undefined,
   packageVersion: string,
+  contentDirectory = 'public/content',
 ): string {
   if (configuredId?.trim()) return configuredId.trim()
 
   const inputs = [
     resolve(root, 'src'),
-    resolve(root, 'public/content'),
+    resolve(root, contentDirectory),
     resolve(root, 'package.json'),
     resolve(root, 'package-lock.json'),
     resolve(root, 'vite.config.ts'),

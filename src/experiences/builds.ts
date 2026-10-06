@@ -1,7 +1,7 @@
-import { defaultBuild } from '@/experiences/default/build'
-import { sanofiBuild } from '@/experiences/sanofi/build'
-import type { ExperienceBuildMetadata } from '@/experiences/types'
-import type { ExperienceId } from '@/lib/experienceIds'
+import { defaultBuild } from './default/build'
+import { sanofiBuild } from './sanofi/build'
+import type { ExperienceBuildMetadata } from './types'
+import type { ExperienceId } from '../lib/experienceIds'
 
 export const experienceBuilds = {
   default: defaultBuild,

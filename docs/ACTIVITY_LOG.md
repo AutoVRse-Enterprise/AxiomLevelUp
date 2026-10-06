@@ -3284,3 +3284,22 @@ check`; serial `npm run test:e2e -- --workers=1` with the installed Playwright b
   experience-mode conflicts fail with actionable messages; default namespace helpers preserve
   every legacy name.
 - **Follow-ups:** Wire build metadata into Vite, TypeScript, scripts and committed mode files.
+
+### [2026-10-07 04:15] P14-T02 - Wire experience-aware builds and commands
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Connected the experience resolver to Vite, HTML/PWA metadata, ports, output/temp
+  directories and static `@experience` alias; added committed mode files, cross-platform npm
+  commands, TypeScript/Vitest aliases, experience-aware build hashing and output ignores.
+- **Files changed:** `vite.config.ts`; `vitest.config.ts`; `tsconfig.app.json`; `tsconfig.json`;
+  `scripts/build/build-id.ts`; `src/experiences/builds.ts`; `.env.default`; `.env.sanofi`;
+  `.env.example`; `.gitignore`; `.prettierignore`; `eslint.config.js`; `package.json`;
+  `public/experiences/sanofi/content/.gitkeep`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`; `npm run lint`; focused resolver/build-id Vitest;
+  `npm run dev`; `npm run dev:default`; `npm run dev:sanofi`; concurrent HTTP metadata checks;
+  deliberate conflicting-mode and unknown-ID starts.
+- **Result/verification:** Legacy `dev` and `dev:default` serve default on 5173; sanofi serves
+  transformed HTML on 5174 concurrently. Unknown IDs and a process-env/mode conflict fail before
+  startup with actionable messages. All temporary servers were stopped.
+- **Follow-ups:** Move the default route table behind the static alias and make the composition
+  root experience-aware.

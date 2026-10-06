@@ -1,12 +1,16 @@
 node_modules/
 dist/
+dist-sanofi/
 dev-dist/
+dev-dist-sanofi/
 coverage/
 .vite/
 .tmp/
 .env
 .env.*
 !.env.example
+!.env.default
+!.env.sanofi
 *.local
 *.log
 __pycache__/

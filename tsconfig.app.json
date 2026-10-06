@@ -19,7 +19,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@experience": ["./src/experiences/default/index.ts"]
     },
     "types": ["vite/client", "vite-plugin-pwa/client"]
   },

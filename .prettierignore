@@ -1,7 +1,11 @@
 dist
+dist-sanofi
+dev-dist
+dev-dist-sanofi
 coverage
 node_modules
 package-lock.json
 schemas
 public/content
+public/experiences
 PRD.md

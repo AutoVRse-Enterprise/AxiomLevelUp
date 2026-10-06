@@ -8,10 +8,17 @@ import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 import { resolveBuildId } from './scripts/build/build-id.ts'
+import { getExperienceBuild } from './src/experiences/builds.ts'
+import { resolveExperienceId } from './src/lib/experienceIds.ts'
 
 export default defineConfig(({ mode }) => {
   const root = fileURLToPath(new URL('.', import.meta.url))
   const environment = loadEnv(mode, root, '')
+  const experienceId = resolveExperienceId(
+    process.env.VITE_EXPERIENCE ?? environment.VITE_EXPERIENCE,
+    mode,
+  )
+  const experience = getExperienceBuild(experienceId)
   const packageVersion = (
     JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')) as { version: string }
   ).version
@@ -19,13 +26,34 @@ export default defineConfig(({ mode }) => {
     root,
     environment.VITE_BUILD_ID ?? environment.CI_COMMIT_SHA ?? environment.GITHUB_SHA,
     packageVersion,
+    experience.contentDir,
   )
+
+  console.log(`Active experience: ${experienceId}`)
 
   return {
     define: {
       'import.meta.env.VITE_BUILD_ID': JSON.stringify(buildId),
+      'import.meta.env.VITE_EXPERIENCE': JSON.stringify(experienceId),
     },
     plugins: [
+      {
+        name: 'experience-html',
+        transformIndexHtml(html: string) {
+          if (!experience.html) return html
+          return html
+            .replace('<html lang="en">', `<html lang="en" data-experience="${experienceId}">`)
+            .replace(/<title>[^<]*<\/title>/, `<title>${experience.html.title}</title>`)
+            .replace(
+              /<meta name="description" content="[^"]*" \/>/,
+              `<meta name="description" content="${experience.html.description}" />`,
+            )
+            .replace(
+              /<meta name="theme-color" content="[^"]*" \/>/,
+              `<meta name="theme-color" content="${experience.html.themeColor}" />`,
+            )
+        },
+      },
       react(),
       tailwindcss(),
       viteCommonjs(),
@@ -35,40 +63,8 @@ export default defineConfig(({ mode }) => {
         filename: 'sw.ts',
         registerType: 'prompt',
         injectRegister: null,
-        manifest: {
-          name: 'Autovrse LevelUp',
-          short_name: 'LevelUp',
-          description: 'Interactive scientific and medical learning from Autovrse',
-          theme_color: '#5c4acf',
-          background_color: '#f7f9f8',
-          display: 'standalone',
-          start_url: '/',
-          scope: '/',
-          orientation: 'any',
-          icons: [
-            {
-              src: '/assets/icons/pwa-64x64.png',
-              sizes: '64x64',
-              type: 'image/png',
-            },
-            {
-              src: '/assets/icons/pwa-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
-            },
-            {
-              src: '/assets/icons/pwa-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-            {
-              src: '/assets/icons/maskable-icon-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable',
-            },
-          ],
-        },
+        outDir: experience.outDir,
+        manifest: experience.pwa,
         injectManifest: {
           globPatterns: ['**/*.{js,css,html,json,svg,png,ico,woff2}'],
           globIgnores: [
@@ -76,17 +72,28 @@ export default defineConfig(({ mode }) => {
             '**/*.dicom',
             'assets/icons/pwa-*.png',
             'assets/icons/maskable-*.png',
+            ...experience.precacheIgnore,
           ],
           maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         },
         devOptions: {
           enabled: true,
           type: 'module',
+          resolveTempFolder: () => resolve(root, experience.devPwaTempDir),
         },
       }),
     ],
+    server: {
+      port: experience.devPort,
+      strictPort: true,
+    },
+    preview: {
+      port: experience.previewPort,
+      strictPort: true,
+    },
     resolve: {
       alias: {
+        '@experience': resolve(root, `src/experiences/${experienceId}/index.ts`),
         '@': fileURLToPath(new URL('./src', import.meta.url)),
         events: resolve(root, 'node_modules/events/events.js'),
         url: resolve(root, 'node_modules/url/url.js'),
@@ -100,6 +107,7 @@ export default defineConfig(({ mode }) => {
       format: 'es' as const,
     },
     build: {
+      outDir: experience.outDir,
       rolldownOptions: {
         output: {
           strictExecutionOrder: true,

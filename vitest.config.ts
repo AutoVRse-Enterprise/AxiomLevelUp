@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      '@experience': fileURLToPath(
+        new URL('./src/experiences/default/index.ts', import.meta.url),
+      ),
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       'virtual:pwa-register': fileURLToPath(
         new URL('./src/test/pwaRegisterMock.ts', import.meta.url),
