@@ -3663,3 +3663,14 @@ README.md`; `git diff --check`.
   The first default run had one transient DICOM Continue timeout; its focused retry and the complete
   rerun passed. Default content did not change and `game-session` is absent from `dist/`.
 - **Follow-ups:** Begin Phase 16 at P16-T00. Phase 13 external evidence gates remain independent.
+
+### [2026-10-07 11:20] P16-T00 - Accept game player decisions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Accepted the dedicated game-player architecture and recorded the clue-pause,
+  URL-only fixture, elapsed-checkpoint, presentation-copy and game-effect decisions.
+- **Files changed:** `docs/DECISIONS.md`;
+  `docs/phases/phase-16-game-player-and-clinical-round.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** None.
+- **Result/verification:** ADR-107 and ADR-108 are accepted and Phase 16 is Active.
+- **Follow-ups:** Add the sanofi game routes and shared game layout.

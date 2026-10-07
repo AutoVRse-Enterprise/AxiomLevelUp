@@ -1,6 +1,6 @@
 # Phase 16: Game player and clinical-call round
 
-**Status:** Planned
+**Status:** Active
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phase 15.
 
@@ -77,7 +77,8 @@ locked ──(evaluate)──► reveal ──(Next round)──► intro of nex
   `PresentationAnnouncer`.
 - On expiry, evaluate the current draft through `evaluatePrimitiveTimeout` where a primitive
   defines timeout credit, otherwise accuracy is zero; mark the round timed out (no speed bonus).
-- Pause the clock when the document is hidden and while a clue modal is open.
+- Pause the clock when the document is hidden. Free and revealed clues expand inline while time
+  continues; only the paid-clue cost confirmation pauses the clock (ADR-108).
 
 ### Presentation context and labels
 
@@ -135,9 +136,11 @@ could not load", "Retry activity", "Commit your localisation", "Level 1 of 3"). 
 
 ## Checklist
 
-- [ ] **P16-T00 — Decisions**
+- [x] **P16-T00 — Decisions**
   - Record ADR-107: a dedicated game player over shared primitives instead of extending
     ActivityPlayer.
+  - Accepted 2026-10-07. ADR-108 records fair elapsed checkpoints, game presentation
+    configuration, a URL-only fixture and the paid-clue confirmation pause.
 
 - [ ] **P16-T01 — Routes and `GameLayout`**
   - Add shared routes, layout, top bar, progress dots and score ticker; register them in the

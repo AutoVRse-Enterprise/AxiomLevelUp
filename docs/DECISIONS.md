@@ -2014,3 +2014,39 @@ the run reducer records explicit pauses; and all three configured difficulties a
 PRD's reusability claim. Existing course, lesson and case contracts are unaffected. The cost is a
 new schema family, a migration to learner state v9 and a dedicated player (ADR-107, Phase 16).
 Details: `docs/phases/phase-15-game-contract-and-engine.md`.
+
+## ADR-107: Games use a dedicated player over shared primitives
+
+**Status:** Accepted
+
+**Context:** The lesson `ActivityPlayer` owns an instructional intro, retries, review mode and a
+completion summary. A game run needs a compact intro, one timed decision, an immediate scored
+reveal and the next round. Extending the lesson lifecycle would expose LMS concepts and couple
+game state to lesson attempts.
+
+**Decision:** Build a dedicated shared game player under `src/player/game/`. It plans and persists
+runs through the Phase 15 game engine and session store, while rendering authored interactions
+through `PrimitiveRenderer`. Primitives stay callback-only; scoring and typed game-event emission
+remain at the player boundary.
+
+**Consequences:** Games get the required lean lifecycle without duplicating primitive
+implementations. The player must provide its own layout, timer, focus management, action outlet,
+reveal and result surfaces.
+
+## ADR-108: Phase 16 player presentation and resume semantics
+
+**Status:** Accepted
+
+**Context:** Timed game rounds need fair resume behavior, game-specific copy and effects. The
+clinical-call clue tray also needs readable evidence without eliminating time pressure.
+
+**Decision:** Free and already purchased clues expand inline while the clock runs. Only the paid
+clue confirmation and a hidden document pause the clock. The Phase 16 fixture games remain
+URL-only and the hub action stays disabled until Phase 19. Persist an elapsed checkpoint for an
+active round so exit and reload cannot reset its timer. Add strict game-player copy/timing
+configuration, game presentation labels, timer/reveal announcements through the shared live
+region, and configured game haptic/confetti moments.
+
+**Consequences:** Resume is fair and deterministic, paid clue cost is disclosed before purchase,
+and lesson/case strings remain unchanged under the default presentation context. The session and
+presentation schemas gain backward-compatible defaulted fields.
