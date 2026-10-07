@@ -858,6 +858,42 @@ export const caseAttemptRecordSchema = z.discriminatedUnion('resultVersion', [
   currentCaseAttemptRecordSchema,
 ])
 
+export const gameRunRecordSchema = z.strictObject({
+  resultVersion: z.literal(1),
+  runId: z.string().min(1),
+  difficulty: idSchema,
+  seed: z.number().int().nonnegative(),
+  mode: z.enum(['standard', 'daily', 'challenge', 'expert']),
+  total: z.number().int().nonnegative(),
+  correctCount: z.number().int().nonnegative(),
+  durationSeconds: z.number().nonnegative(),
+  roundResults: z.array(
+    z.strictObject({
+      slotId: idSchema,
+      roundId: idSchema,
+      mechanic: z.enum(['spatial_look', 'spatial_explore', 'spot_finding', 'clinical_call']),
+      accuracy: z.number().min(0).max(1),
+      correct: z.boolean(),
+      points: z.number().int().nonnegative(),
+      basePoints: z.number().int().nonnegative(),
+      speedBonus: z.number().int().nonnegative(),
+      clueCost: z.number().int().nonnegative(),
+      elapsedMs: z.number().nonnegative(),
+      timedOut: z.boolean(),
+    }),
+  ),
+  challengeToken: z.string().min(1).optional(),
+  completedAt: isoDateSchema,
+})
+
+export const gameProgressStateSchema = z.strictObject({
+  plays: z.number().int().nonnegative(),
+  bestTotal: z.number().int().nonnegative().nullable(),
+  bestByDifficulty: z.record(idSchema, z.number().int().nonnegative()),
+  lastPlayedAt: isoDateSchema.nullable(),
+  history: z.array(gameRunRecordSchema),
+})
+
 export const learnerSeedSchema = z.object({
   schemaVersion: z.literal('0.1'),
   stateVersion: z.number().int().positive(),
@@ -884,6 +920,18 @@ export const learnerSeedSchema = z.object({
   lessonProgress: z.record(idSchema, lessonProgressSchema),
   caseProgress: z.record(idSchema, caseProgressStateSchema),
   caseAttempts: z.record(idSchema, z.array(caseAttemptRecordSchema)),
+  games: z.record(idSchema, gameProgressStateSchema).default({}),
+  gameDaily: z
+    .strictObject({
+      lastPlayedDate: z.iso.date().nullable(),
+      streakDays: z.number().int().nonnegative(),
+    })
+    .default({ lastPlayedDate: null, streakDays: 0 }),
+  player: z
+    .strictObject({
+      displayName: z.string().trim().min(1).nullable(),
+    })
+    .default({ displayName: null }),
   challenges: z.record(
     idSchema,
     z.object({
@@ -1029,5 +1077,6 @@ export type AppConfig = z.infer<typeof appConfigSchema>
 export type RecordedOpponent = z.infer<typeof recordedOpponentSchema>
 export type LearnerSeed = z.infer<typeof learnerSeedSchema>
 export type CaseAttemptRecord = z.infer<typeof caseAttemptRecordSchema>
+export type GameRunRecord = z.infer<typeof gameRunRecordSchema>
 export type ContentManifest = z.infer<typeof contentManifestSchema>
 export type AssetManifest = z.infer<typeof assetManifestSchema>

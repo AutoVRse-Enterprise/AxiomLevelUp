@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 8
+export const LEARNER_STATE_VERSION = 9
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -63,6 +63,9 @@ const emptyData: LearnerData = {
   lessonProgress: {},
   caseProgress: {},
   caseAttempts: {},
+  games: {},
+  gameDaily: { lastPlayedDate: null, streakDays: 0 },
+  player: { displayName: null },
   challenges: {},
   badges: {},
   mastery: {},
@@ -146,6 +149,9 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
         ),
       ]),
     ) as LearnerData['caseAttempts'],
+    games: state.games ?? {},
+    gameDaily: state.gameDaily ?? { lastPlayedDate: null, streakDays: 0 },
+    player: state.player ?? { displayName: null },
     gamification,
     stats: {
       ...state.stats,
@@ -212,6 +218,9 @@ export function learnerDataSnapshot(state: LearnerStore): LearnerData {
     lessonProgress: state.lessonProgress,
     caseProgress: state.caseProgress,
     caseAttempts: state.caseAttempts,
+    games: state.games,
+    gameDaily: state.gameDaily,
+    player: state.player,
     challenges: state.challenges,
     badges: state.badges,
     mastery: state.mastery,

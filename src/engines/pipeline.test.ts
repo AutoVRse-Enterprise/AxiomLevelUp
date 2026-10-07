@@ -590,7 +590,7 @@ describe('learner event pipeline', () => {
     }
 
     const migrated = migrateLearnerState(legacy)
-    expect(migrated.stateVersion).toBe(8)
+    expect(migrated.stateVersion).toBe(9)
     expect(migrated.gamification.lessonRewards['imaging-orientation']).toEqual({
       completionAwarded: true,
       perfectAwarded: true,

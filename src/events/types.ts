@@ -1,12 +1,28 @@
 import type { PrimitiveInteraction } from '@/primitives/types'
 import type { AnatomyVector3 } from '@/anatomy3d/viewer/controller'
-import type { CaseDocument } from '@/content/schema'
+import type { CaseDocument, GameMechanic } from '@/content/schema'
 import type { CaseClueOpenContext, CaseClueReviewMethod } from '@/engines/cases/clues'
 import type { CaseScoreBreakdown } from '@/engines/cases/scoring'
 import type { CaseProgress } from '@/engines/learning/session'
 
 export type MediaProgressMilestone = 25 | 50 | 75 | 100
-export type EventActivityKind = 'lesson' | 'challenge' | 'case'
+export type EventActivityKind = 'lesson' | 'challenge' | 'case' | 'game'
+
+export type GameRunMode = 'standard' | 'daily' | 'challenge' | 'expert'
+
+export interface GameEventRoundResult {
+  slotId: string
+  roundId: string
+  mechanic: GameMechanic
+  accuracy: number
+  correct: boolean
+  points: number
+  basePoints: number
+  speedBonus: number
+  clueCost: number
+  elapsedMs: number
+  timedOut: boolean
+}
 
 export interface CaseEventStepResult {
   primitiveId: string
@@ -77,6 +93,53 @@ export interface EventPayloads {
     timeoutCreditApplied: boolean
     challengeId?: string
   }
+  game_opened: { gameId: string; source: 'hub' | 'link' | 'expert' | 'daily' }
+  game_started: {
+    gameId: string
+    runId: string
+    difficulty: string
+    seed: number
+    mode: GameRunMode
+    challengeToken?: string
+  }
+  game_round_started: {
+    runId: string
+    slotId: string
+    roundId: string
+    mechanic: GameMechanic
+  }
+  game_clue_revealed: {
+    runId: string
+    roundId: string
+    clueId: string
+    paid: boolean
+    cost: number
+  }
+  game_round_answered: {
+    runId: string
+    roundId: string
+    accuracy: number
+    correct: boolean
+    points: number
+    speedBonus: number
+    elapsedMs: number
+    timedOut: boolean
+  }
+  game_completed: {
+    runId: string
+    gameId: string
+    difficulty: string
+    seed: number
+    mode: GameRunMode
+    total: number
+    correctCount: number
+    durationSeconds: number
+    roundResults: GameEventRoundResult[]
+    challengeToken?: string
+  }
+  game_abandoned: { runId: string; slotIndex: number }
+  game_shared: { runId: string; channel: 'native' | 'copy' | 'mock' }
+  game_challenge_opened: { token: string; fromName: string; targetScore: number }
   primitive_viewed: {
     activityKind: EventActivityKind
     activityId: string

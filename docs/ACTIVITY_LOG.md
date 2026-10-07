@@ -3584,3 +3584,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** Ten session tests and TypeScript pass, covering lifecycle, illegal
   transitions, pauses, persisted partial state, exact resume and stale-session clearing.
 - **Follow-ups:** Extend typed events and learner state v9 through the central pipeline.
+
+### [2026-10-07 10:30] P15-T07 - Persist game progress through events
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added all typed game lifecycle events, `activityKind: game`, learner-state v9 game
+  history/daily/player fields and a central-pipeline game progress reducer.
+- **Files changed:** `src/events/types.ts`; `src/content/schema/index.ts`;
+  `src/state/learnerStore.ts`; `src/state/learnerStore.test.ts`;
+  `src/engines/games/progress.ts`; `src/engines/games/progress.test.ts`;
+  `src/engines/pipeline.ts`; `src/engines/pipeline.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; focused progress, migration and pipeline
+  Vitest.
+- **Result/verification:** TypeScript and 28 focused tests pass. Completion is idempotent by run
+  ID, history is bounded, per-difficulty bests and daily streaks update, v3-v8 data migrates to v9
+  and game completion awards no XP.
+- **Follow-ups:** Add deterministic result, message and leaderboard selectors.
