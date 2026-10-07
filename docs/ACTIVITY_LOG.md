@@ -3545,3 +3545,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** Six focused tests pass, both content roots validate with zero warnings
   and TypeScript passes.
 - **Follow-ups:** Implement deterministic scoring and organ-agnostic proximity.
+
+### [2026-10-07 10:10] P15-T04 - Add scoring and proximity
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added points, speed-bonus, clue-cost and correctness calculations plus
+  anatomy-level proximity resolution over generic parent chains.
+- **Files changed:** `src/engines/games/scoring.ts`;
+  `src/engines/games/scoring.test.ts`; `src/engines/games/proximity.ts`;
+  `src/engines/games/proximity.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Focused game-engine Vitest; `npm run typecheck`.
+- **Result/verification:** All 16 scoring/proximity tests pass, including the 950-point worked
+  example, timeout and floor cases, the default lung hierarchy and a synthetic non-lung map.
+- **Follow-ups:** Add deterministic run seeds and planning.
