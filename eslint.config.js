@@ -104,7 +104,11 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/anatomy3d/three/createAnatomyController.ts', 'src/spikes/anatomy3d/**/*.{ts,tsx}'],
+    files: [
+      'src/anatomy3d/three/createAnatomyController.ts',
+      'src/spikes/anatomy3d/**/*.{ts,tsx}',
+      'src/spikes/spatial-rounds/**/*.{ts,tsx}',
+    ],
     rules: {
       'no-restricted-imports': ['error', { patterns: sharedExperienceRestrictions }],
     },

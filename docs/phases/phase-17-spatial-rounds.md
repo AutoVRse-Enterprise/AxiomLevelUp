@@ -132,9 +132,12 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
     segment choices from the selected lobe and scopes proximity to the requested structural
     levels. Both mechanics compose an exploration scene with a localisation answer.
 
-- [ ] **P17-T01 — Spatial legibility spike**
+- [x] **P17-T01 — Spatial legibility spike**
   - Build the isolated spike, evaluate six waypoints at both viewports, record cue findings and the
     go/no-go decision. Ask the user to confirm the decision before P17-T04.
+  - No-go recorded 2026-10-07: inside-view side and region cues are not reliably distinguishable
+    at 375 × 812. Round 1 uses the documented outside-in marker fallback; Round 2 retains bounded
+    endoscopic travel and the agreed default-off cue upgrades.
 
 - [ ] **P17-T02 — Look navigation, zoom and orientation overlay**
   - Schema, controller and viewer changes with unit tests; default lesson/case viewer behaviour

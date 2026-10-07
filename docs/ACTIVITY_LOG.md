@@ -3804,3 +3804,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** ADR-109 is accepted and the phase plan now reflects segmental Round 2
   drops and the confirmed scoring model.
 - **Follow-ups:** Run the six-waypoint spatial legibility spike.
+
+### [2026-10-07 13:35] P17-T01 - Evaluate spatial legibility
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Built an isolated procedural-airway spike with six drop points, phone/desktop
+  layouts, look and FOV zoom controls, and configurable ridge/ring/fog/depth cues. Evaluated both
+  target viewports and recorded the no-go fallback decision.
+- **Files changed:** `src/spikes/spatial-rounds/index.html`;
+  `src/spikes/spatial-rounds/main.ts`; `eslint.config.js`;
+  `docs/spikes/spatial-rounds-spike.md`; `docs/phases/phase-17-spatial-rounds.md`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run typecheck`; local Vite spike at 375 × 812 and 1440 × 900.
+- **Result/verification:** The spike remains performant, but procedural inside views do not provide
+  reliable side/region evidence at phone size. Round 1 will use the documented outside-in marker
+  fallback; Round 2 keeps bounded endoscopic navigation.
+- **Follow-ups:** Add generic look navigation, endoscopic zoom and configurable orientation labels.

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spatial rounds legibility spike</title>
+    <style>
+      :root {
+        color: #fff8f6;
+        background: #170d12;
+        font-family: Inter, system-ui, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      main { display: grid; min-height: 100dvh; grid-template-rows: auto minmax(360px, 1fr) auto; }
+      header, footer { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; padding: .75rem; }
+      label { display: inline-flex; gap: .35rem; align-items: center; }
+      select, button {
+        border: 1px solid #d78b80; border-radius: .65rem; padding: .5rem .65rem;
+        color: inherit; background: #42222b;
+      }
+      canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+      .viewport { min-height: 360px; position: relative; overflow: hidden; }
+      .crosshair { position: absolute; inset: 50% auto auto 50%; translate: -50% -50%; opacity: .65; }
+      output { font: .78rem ui-monospace, monospace; }
+      @media (max-width: 500px) {
+        header { font-size: .8rem; }
+        main { grid-template-rows: auto minmax(470px, 1fr) auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <strong>Spatial legibility spike</strong>
+        <label>Drop <select id="waypoint"></select></label>
+        <label><input id="ridge" type="checkbox" checked /> Carina ridge</label>
+        <label><input id="rings" type="checkbox" checked /> Rings</label>
+        <label><input id="fog" type="checkbox" checked /> Radius fog</label>
+        <label><input id="depthTint" type="checkbox" checked /> Depth tint</label>
+      </header>
+      <div class="viewport">
+        <canvas aria-label="Procedural airway interior"></canvas>
+        <span class="crosshair" aria-hidden="true">+</span>
+      </div>
+      <footer>
+        <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
+        <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+        <output aria-live="polite"></output>
+      </footer>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
