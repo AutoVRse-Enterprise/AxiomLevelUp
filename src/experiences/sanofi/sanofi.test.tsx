@@ -19,6 +19,8 @@ const registry = validateContentBundle({
   courseFiles: [],
   caseFiles: [],
   anatomyMapFiles: [],
+  roundFiles: [],
+  gameFiles: [],
   seedFile: 'seeds/fresh.json',
   seed,
   assetManifestFile: 'assets.json',

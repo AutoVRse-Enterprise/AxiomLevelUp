@@ -55,6 +55,12 @@ async function validateExperience(build: ExperienceBuildMetadata) {
     anatomyMapFiles: await Promise.all(
       parsed.anatomyMaps.map(async (file) => ({ file, data: await readJson(file) })),
     ),
+    roundFiles: await Promise.all(
+      parsed.rounds.map(async (file) => ({ file, data: await readJson(file) })),
+    ),
+    gameFiles: await Promise.all(
+      parsed.games.map(async (file) => ({ file, data: await readJson(file) })),
+    ),
     seedFile: seedPath,
     seed: await readJson(seedPath),
     assetManifestFile: parsed.assetManifest,
@@ -171,7 +177,7 @@ async function validateExperience(build: ExperienceBuildMetadata) {
   if (formulaIssues.length > 0) throw new ContentValidationError(formulaIssues)
 
   console.log(
-    `Validated ${build.id}: ${registry.courses.length} courses, ${registry.lessonById.size} lessons, ${registry.cases.length} cases, ${registry.anatomyMaps.length} anatomy maps and ${registry.warnings.length} warnings.`,
+    `Validated ${build.id}: ${registry.courses.length} courses, ${registry.lessonById.size} lessons, ${registry.cases.length} cases, ${registry.anatomyMaps.length} anatomy maps, ${registry.rounds.length} rounds, ${registry.games.length} games and ${registry.warnings.length} warnings.`,
   )
   for (const warning of registry.warnings) {
     console.warn(`WARN ${warning.file}:${warning.path} ${warning.message}`)

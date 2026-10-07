@@ -3502,3 +3502,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** The working tree was clean before Phase 15; there were no pending Phase
   14 edits to commit. The new game domain is accepted as a first-class content type.
 - **Follow-ups:** Add strict round/game schemas and registry loading in P15-T01.
+
+### [2026-10-07 09:35] P15-T01 - Add round and game documents
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added strict round/game schemas, manifest path arrays, loader fetching and registry
+  maps, dual-root validation input and exported JSON Schemas.
+- **Files changed:** `src/content/schema/game.ts`; `src/content/schema/game.test.ts`;
+  `src/content/schema/index.ts`; `src/content/loader.ts`; `src/test/contentFixtures.ts`;
+  `src/experiences/sanofi/sanofi.test.tsx`; `scripts/validate-content.ts`;
+  `scripts/export-json-schema.ts`; `schemas/*.schema.json`; `docs/CONTENT_SCHEMA.md`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run typecheck`; `npm run schema:export`;
+  focused Vitest for game schemas and content validation.
+- **Result/verification:** TypeScript passes; 63 focused tests pass; ten JSON Schema documents are
+  generated, including `round.schema.json` and `game.schema.json`.
+- **Follow-ups:** Add the four declarative and runtime mechanic templates.

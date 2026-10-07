@@ -34,6 +34,22 @@
         "minLength": 1
       }
     },
+    "rounds": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "games": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "seeds": {
       "type": "object",
       "properties": {
@@ -66,6 +82,8 @@
     "courses",
     "cases",
     "anatomyMaps",
+    "rounds",
+    "games",
     "seeds",
     "defaultSeed",
     "assetManifest"

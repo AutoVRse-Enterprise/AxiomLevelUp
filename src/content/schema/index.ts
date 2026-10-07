@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { primitiveTypeSet } from '../primitiveTypes'
 import { caseLabConfigSchema, caseTierSchema } from './case'
+import { gameConfigSchema } from './game'
 import {
   primitiveContentSchemas,
   validateScenarioGraph,
@@ -18,6 +19,7 @@ export * from './primitiveBase'
 export * from './primitives'
 export * from './anatomyMap'
 export * from './case'
+export * from './game'
 
 export interface PrimitiveParseResult {
   primitive?: Primitive
@@ -631,16 +633,7 @@ export const appConfigSchema = z.object({
   pathways: z.array(pathwaySchema).default([]),
   badges: z.array(badgeSchema).default([]),
   challenges: z.array(challengeSchema).default([]),
-  games: z
-    .strictObject({
-      hub: z.strictObject({
-        title: z.string().trim().min(1),
-        tagline: z.string().trim().min(1),
-        startLabel: z.string().trim().min(1),
-        unavailableLabel: z.string().trim().min(1),
-      }),
-    })
-    .optional(),
+  games: gameConfigSchema.optional(),
   leaderboard: z.strictObject({
     scope: z.string().min(1),
     period: z.enum(['weekly', 'monthly', 'all_time']).default('weekly'),
@@ -1012,6 +1005,8 @@ export const contentManifestSchema = z
     courses: z.array(pathSchema).default([]),
     cases: z.array(pathSchema).default([]),
     anatomyMaps: z.array(pathSchema).default([]),
+    rounds: z.array(pathSchema).default([]),
+    games: z.array(pathSchema).default([]),
     seeds: z.object({
       advanced: pathSchema.optional(),
       fresh: pathSchema.optional(),

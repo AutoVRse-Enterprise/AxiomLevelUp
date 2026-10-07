@@ -164,6 +164,8 @@ export function makeValidContentBundle(): ContentBundleInput {
     courseFiles: courseDocuments.map(([file, data]) => ({ file, data })),
     caseFiles: [],
     anatomyMapFiles: [{ file: 'anatomy/lung-map.json', data: lungMap }],
+    roundFiles: [],
+    gameFiles: [],
     seedFile: 'seeds/advanced.json',
     seed: advancedSeed,
     assetManifestFile: 'assets.json',

@@ -6,8 +6,10 @@ import {
   contentManifestSchema,
   courseSchema,
   getPrimitiveAssetRefs,
+  gameDocumentSchema,
   learnerSeedSchema,
   parsePrimitive,
+  roundDocumentSchema,
   type AppConfig,
   type AchievementCriterion,
   type AnatomyExplorePrimitive,
@@ -20,9 +22,11 @@ import {
   type ContentManifest,
   type Course,
   type DicomPrimitive,
+  type GameDocument,
   type LearnerSeed,
   type Lesson,
   type Primitive,
+  type RoundDocument,
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
 import { validateAnatomyVolumes } from './anatomyVolumeValidation'
@@ -46,6 +50,8 @@ export interface ContentBundleInput {
   courseFiles: Array<{ file: string; data: unknown }>
   caseFiles: Array<{ file: string; data: unknown }>
   anatomyMapFiles: Array<{ file: string; data: unknown }>
+  roundFiles: Array<{ file: string; data: unknown }>
+  gameFiles: Array<{ file: string; data: unknown }>
   seedFile: string
   seed: unknown
   assetManifestFile: string
@@ -59,12 +65,16 @@ export interface ContentRegistry {
   catalogCourses: readonly Course[]
   cases: readonly CaseDocument[]
   anatomyMaps: readonly AnatomyMap[]
+  rounds: readonly RoundDocument[]
+  games: readonly GameDocument[]
   seed: LearnerSeed
   assetManifest: AssetManifest
   courseById: ReadonlyMap<string, Course>
   lessonById: ReadonlyMap<string, Lesson>
   caseById: ReadonlyMap<string, CaseDocument>
   anatomyMapById: ReadonlyMap<string, AnatomyMap>
+  roundById: ReadonlyMap<string, RoundDocument>
+  gameById: ReadonlyMap<string, GameDocument>
   assetById: ReadonlyMap<string, AssetManifest['assets'][number]>
   warnings: readonly ContentIssue[]
 }
@@ -221,6 +231,14 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     file,
     result: anatomyMapSchema.safeParse(data),
   }))
+  const roundResults = input.roundFiles.map(({ file, data }) => ({
+    file,
+    result: roundDocumentSchema.safeParse(data),
+  }))
+  const gameResults = input.gameFiles.map(({ file, data }) => ({
+    file,
+    result: gameDocumentSchema.safeParse(data),
+  }))
 
   if (!manifestResult.success)
     issues.push(...zodIssues(input.manifestFile, manifestResult.error.issues))
@@ -242,6 +260,12 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       issues.push(...zodIssues(anatomyMap.file, anatomyMap.result.error.issues))
     }
   }
+  for (const round of roundResults) {
+    if (!round.result.success) issues.push(...zodIssues(round.file, round.result.error.issues))
+  }
+  for (const game of gameResults) {
+    if (!game.result.success) issues.push(...zodIssues(game.file, game.result.error.issues))
+  }
 
   if (
     !manifestResult.success ||
@@ -250,7 +274,9 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     !assetManifestResult.success ||
     courseResults.some(({ result }) => !result.success) ||
     caseResults.some(({ result }) => !result.success) ||
-    anatomyMapResults.some(({ result }) => !result.success)
+    anatomyMapResults.some(({ result }) => !result.success) ||
+    roundResults.some(({ result }) => !result.success) ||
+    gameResults.some(({ result }) => !result.success)
   ) {
     throw new ContentValidationError(issues)
   }
@@ -269,6 +295,14 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   })
   const anatomyMaps = anatomyMapResults.map(({ result }) => {
     if (!result.success) throw new Error('Unreachable invalid anatomy map result')
+    return result.data
+  })
+  const rounds = roundResults.map(({ result }) => {
+    if (!result.success) throw new Error('Unreachable invalid round result')
+    return result.data
+  })
+  const games = gameResults.map(({ result }) => {
+    if (!result.success) throw new Error('Unreachable invalid game result')
     return result.data
   })
   const catalogCourses = courses.filter(({ visibility }) => visibility === 'learner')
@@ -341,10 +375,22 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     anatomyMaps.map(({ id }) => id),
     input.manifestFile,
   )
+  duplicate(
+    'round',
+    rounds.map(({ id }) => id),
+    input.manifestFile,
+  )
+  duplicate(
+    'game',
+    games.map(({ id }) => id),
+    input.manifestFile,
+  )
 
   const courseById = new Map(courses.map((course) => [course.id, course]))
   const caseById = new Map(cases.map((caseDocument) => [caseDocument.id, caseDocument]))
   const anatomyMapById = new Map(anatomyMaps.map((anatomyMap) => [anatomyMap.id, anatomyMap]))
+  const roundById = new Map(rounds.map((round) => [round.id, round]))
+  const gameById = new Map(games.map((game) => [game.id, game]))
   const lessons = courses.flatMap((course) => course.lessons)
   duplicate(
     'lesson',
@@ -1991,12 +2037,16 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     catalogCourses: Object.freeze(catalogCourses),
     cases: Object.freeze(cases),
     anatomyMaps: Object.freeze(anatomyMaps),
+    rounds: Object.freeze(rounds),
+    games: Object.freeze(games),
     seed,
     assetManifest,
     courseById,
     lessonById,
     caseById,
     anatomyMapById,
+    roundById,
+    gameById,
     assetById,
     warnings: Object.freeze(warnings),
   }
@@ -2029,14 +2079,19 @@ export async function loadContent(baseUrl = '/content'): Promise<ContentRegistry
   const anatomyMapFiles = parsedManifest.anatomyMaps.map((path) =>
     resolveContentPath(baseUrl, path),
   )
-  const [appConfig, seed, assetManifest, courses, cases, anatomyMaps] = await Promise.all([
-    fetchJson(appConfigFile),
-    fetchJson(seedFile),
-    fetchJson(assetManifestFile),
-    Promise.all(courseFiles.map(fetchJson)),
-    Promise.all(caseFiles.map(fetchJson)),
-    Promise.all(anatomyMapFiles.map(fetchJson)),
-  ])
+  const roundFiles = parsedManifest.rounds.map((path) => resolveContentPath(baseUrl, path))
+  const gameFiles = parsedManifest.games.map((path) => resolveContentPath(baseUrl, path))
+  const [appConfig, seed, assetManifest, courses, cases, anatomyMaps, rounds, games] =
+    await Promise.all([
+      fetchJson(appConfigFile),
+      fetchJson(seedFile),
+      fetchJson(assetManifestFile),
+      Promise.all(courseFiles.map(fetchJson)),
+      Promise.all(caseFiles.map(fetchJson)),
+      Promise.all(anatomyMapFiles.map(fetchJson)),
+      Promise.all(roundFiles.map(fetchJson)),
+      Promise.all(gameFiles.map(fetchJson)),
+    ])
 
   return validateContentBundle({
     manifestFile,
@@ -2049,6 +2104,8 @@ export async function loadContent(baseUrl = '/content'): Promise<ContentRegistry
       file,
       data: anatomyMaps[index],
     })),
+    roundFiles: roundFiles.map((file, index) => ({ file, data: rounds[index] })),
+    gameFiles: gameFiles.map((file, index) => ({ file, data: games[index] })),
     seedFile,
     seed,
     assetManifestFile,

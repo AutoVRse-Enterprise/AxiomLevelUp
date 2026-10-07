@@ -3315,10 +3315,466 @@
             "unavailableLabel"
           ],
           "additionalProperties": false
+        },
+        "difficulties": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timeMultiplier": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "maxMoves": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "freeClues": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "clueCostPoints": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "speedBonus": {
+                "type": "boolean"
+              },
+              "optionSet": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "timeMultiplier",
+              "maxMoves",
+              "freeClues",
+              "clueCostPoints",
+              "speedBonus",
+              "optionSet"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "scoring": {
+          "type": "object",
+          "properties": {
+            "roundMaxPoints": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "speedBonuses": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "maxFractionOfLimit": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1
+                  },
+                  "points": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "maxFractionOfLimit",
+                  "points",
+                  "label"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "minAccuracyForSpeedBonus": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "correctThreshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "proximity": {
+              "type": "object",
+              "properties": {
+                "exact": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "byCommonLevel": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  }
+                },
+                "none": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "required": [
+                "exact",
+                "byCommonLevel",
+                "none"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "roundMaxPoints",
+            "speedBonuses",
+            "minAccuracyForSpeedBonus",
+            "correctThreshold",
+            "proximity"
+          ],
+          "additionalProperties": false
+        },
+        "timing": {
+          "type": "object",
+          "properties": {
+            "revealAllowanceSeconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "defaultWindowSeconds": {
+              "type": "object",
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "max": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "min",
+                "max"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "revealAllowanceSeconds",
+            "defaultWindowSeconds"
+          ],
+          "additionalProperties": false
+        },
+        "messages": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "when": {
+                "type": "object",
+                "properties": {
+                  "minCorrectRatio": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "maxCorrectRatio": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "lastRoundCorrect": {
+                    "type": "boolean"
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "when",
+              "text"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "copy": {
+          "type": "object",
+          "properties": {
+            "lockIn": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nextRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "correct": {
+              "type": "string",
+              "minLength": 1
+            },
+            "incorrect": {
+              "type": "string",
+              "minLength": 1
+            },
+            "seeResult": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "lockIn",
+            "nextRound",
+            "correct",
+            "incorrect",
+            "seeResult"
+          ],
+          "additionalProperties": false
+        },
+        "formats": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "gameId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "playable",
+                  "preview"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "description",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "leaderboard": {
+          "default": {
+            "entries": [],
+            "disclosure": "Demo leaderboard"
+          },
+          "type": "object",
+          "properties": {
+            "entries": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "specialty": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "country": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "gameId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "period": {
+                    "type": "string",
+                    "enum": [
+                      "today",
+                      "week",
+                      "all_time"
+                    ]
+                  },
+                  "score": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "gameId",
+                  "difficulty",
+                  "period",
+                  "score"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "disclosure": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "entries",
+            "disclosure"
+          ],
+          "additionalProperties": false
+        },
+        "expertRuns": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "persona": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "role": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "initials": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "name",
+                  "role",
+                  "initials"
+                ],
+                "additionalProperties": false
+              },
+              "gameId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "difficulty": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "targetScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "persona",
+              "gameId",
+              "difficulty",
+              "seed",
+              "targetScore"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "historyLimit": {
+          "default": 20,
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
         }
       },
       "required": [
-        "hub"
+        "hub",
+        "difficulties",
+        "messages",
+        "formats",
+        "leaderboard",
+        "expertRuns",
+        "historyLimit"
       ],
       "additionalProperties": false
     },

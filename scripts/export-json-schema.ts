@@ -12,6 +12,8 @@ import {
   courseSchema,
   learnerSeedSchema,
   primitiveBaseSchema,
+  roundDocumentSchema,
+  gameDocumentSchema,
 } from '../src/content/schema/index.ts'
 import {
   anatomyPrimitiveTypes,
@@ -30,6 +32,8 @@ const schemas: Record<string, ZodType> = {
   'app-config': appConfigSchema,
   course: courseSchema,
   case: caseDocumentSchema,
+  round: roundDocumentSchema,
+  game: gameDocumentSchema,
   'anatomy-map': anatomyMapSchema,
   'learner-seed': learnerSeedSchema,
   'asset-manifest': assetManifestSchema,
