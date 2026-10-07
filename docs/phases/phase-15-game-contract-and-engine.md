@@ -1,6 +1,6 @@
 # Phase 15: Game contract and engine
 
-**Status:** Active
+**Status:** Complete
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phase 14.
 
@@ -25,15 +25,15 @@ evaluators, seeded shuffle, anatomy maps and event pipeline. Recorded as ADR-106
 
 ## Vocabulary
 
-| Internal term      | Player-facing term | Meaning                                                              |
-| ------------------ | ------------------ | -------------------------------------------------------------------- |
-| game               | Challenge          | An ordered set of round slots, e.g. the Respiratory Challenge        |
-| format             | Game format        | A hub card that points to a game (Quick Challenge, Anatomy Hunt)     |
-| round              | Round              | One decision built from primitives                                   |
-| mechanic           | (not shown)        | Reusable round template: `spatial_look`, `spatial_explore`, …       |
-| run                | Game               | One seeded play-through with a difficulty                            |
-| difficulty         | Difficulty         | Warm-up, Challenge, Expert presets                                   |
-| clue               | Clue               | Optional supporting content inside a round                           |
+| Internal term | Player-facing term | Meaning                                                          |
+| ------------- | ------------------ | ---------------------------------------------------------------- |
+| game          | Challenge          | An ordered set of round slots, e.g. the Respiratory Challenge    |
+| format        | Game format        | A hub card that points to a game (Quick Challenge, Anatomy Hunt) |
+| round         | Round              | One decision built from primitives                               |
+| mechanic      | (not shown)        | Reusable round template: `spatial_look`, `spatial_explore`, …    |
+| run           | Game               | One seeded play-through with a difficulty                        |
+| difficulty    | Difficulty         | Warm-up, Challenge, Expert presets                               |
+| clue          | Clue               | Optional supporting content inside a round                       |
 
 ## Content contracts (sketches)
 
@@ -55,8 +55,14 @@ evaluators, seeded shuffle, anatomy maps and event pipeline. Recorded as ADR-106
       "expert": ["right-lower-posterior-basal-segment", "left-lower-lateral-basal-airway"]
     }
   },
-  "primitive": { "type": "anatomy_locate", "content": { "navigation": "look", "answerFrom": "entry",
-    "levels": ["…side, region and airway-level choice levels…"] } },
+  "primitive": {
+    "type": "anatomy_locate",
+    "content": {
+      "navigation": "look",
+      "answerFrom": "entry",
+      "levels": ["…side, region and airway-level choice levels…"]
+    }
+  },
   "clues": [],
   "feedback": {
     "correct": "The branching pattern and airway diameter were the main clues.",
@@ -136,18 +142,18 @@ Formats, leaderboard rows and expert runs are filled in Phases 18–19; their sc
 
 All modules are pure, framework-free and deterministic.
 
-| Module          | Responsibility                                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `mechanics.ts`  | Mechanic templates: allowed primitive types, required content fields, accuracy source, timeout policy, presentation hints.    |
-| `plan.ts`       | `planRun(game, rounds, difficulty, seed)`: pick rounds per slot, pick drop points, apply difficulty and per-round overrides.  |
-| `seed.ts`       | Seed creation, daily seed (`gameId` + local date), deterministic picks via `src/primitives/shared/seededShuffle.ts`.         |
-| `scoring.ts`    | Accuracy → base points, speed bonus tiers, clue costs, floor at zero, correct/incorrect classification, run totals.          |
-| `proximity.ts`  | Hierarchy proximity for spatial answers using anatomy-map parent chains and waypoint `answerIds`; organ-agnostic.            |
-| `session.ts`    | Run reducer: `start`, `roundStarted`, `clueRevealed`, `draftChanged`, `submitted`, `timedOut`, `revealed`, `next`, `complete`. |
-| `results.ts`    | Summary (total, correct count, total seconds, best round, difficulty), message rule matching, round strip view model.         |
-| `links.ts`      | Challenge-link codec: versioned base64url payload `{v, gameId, difficulty, seed, from, score}` with a checksum.               |
-| `leaderboard.ts`| Merge configured rows with the player's bests by period and difficulty; rank and highlight.                                   |
-| `progress.ts`   | Pipeline reducer applying game events to learner state.                                                                       |
+| Module           | Responsibility                                                                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `mechanics.ts`   | Mechanic templates: allowed primitive types, required content fields, accuracy source, timeout policy, presentation hints.     |
+| `plan.ts`        | `planRun(game, rounds, difficulty, seed)`: pick rounds per slot, pick drop points, apply difficulty and per-round overrides.   |
+| `seed.ts`        | Seed creation, daily seed (`gameId` + local date), deterministic picks via `src/primitives/shared/seededShuffle.ts`.           |
+| `scoring.ts`     | Accuracy → base points, speed bonus tiers, clue costs, floor at zero, correct/incorrect classification, run totals.            |
+| `proximity.ts`   | Hierarchy proximity for spatial answers using anatomy-map parent chains and waypoint `answerIds`; organ-agnostic.              |
+| `session.ts`     | Run reducer: `start`, `roundStarted`, `clueRevealed`, `draftChanged`, `submitted`, `timedOut`, `revealed`, `next`, `complete`. |
+| `results.ts`     | Summary (total, correct count, total seconds, best round, difficulty), message rule matching, round strip view model.          |
+| `links.ts`       | Challenge-link codec: versioned base64url payload `{v, gameId, difficulty, seed, from, score}` with a checksum.                |
+| `leaderboard.ts` | Merge configured rows with the player's bests by period and difficulty; rank and highlight.                                    |
+| `progress.ts`    | Pipeline reducer applying game events to learner state.                                                                        |
 
 ### Scoring model
 
@@ -175,17 +181,17 @@ another organ map works without code changes.
 
 ### Events (added to `src/events/types.ts`)
 
-| Event                 | Payload (summary)                                                                 |
-| --------------------- | --------------------------------------------------------------------------------- |
-| `game_opened`         | `gameId`, `source: 'hub' | 'link' | 'expert' | 'daily'`                           |
-| `game_started`        | `gameId`, `runId`, `difficulty`, `seed`, `challengeToken?`                       |
-| `game_round_started`  | `runId`, `slotId`, `roundId`, `mechanic`                                         |
-| `game_clue_revealed`  | `runId`, `roundId`, `clueId`, `paid`, `cost`                                     |
-| `game_round_answered` | `runId`, `roundId`, `accuracy`, `correct`, `points`, `speedBonus`, `elapsedMs`, `timedOut` |
-| `game_completed`      | `runId`, `gameId`, `difficulty`, `seed`, `total`, `correctCount`, `durationSeconds`, `roundResults`, `challengeToken?` |
-| `game_abandoned`      | `runId`, `slotIndex`                                                              |
-| `game_shared`         | `runId`, `channel: 'native' | 'copy' | 'mock'`                                   |
-| `game_challenge_opened` | `token`, `fromName`, `targetScore`                                             |
+| Event                   | Payload (summary)                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `game_opened`           | `gameId`, `source: 'hub'                                                                                               | 'link' | 'expert' | 'daily'` |
+| `game_started`          | `gameId`, `runId`, `difficulty`, `seed`, `challengeToken?`                                                             |
+| `game_round_started`    | `runId`, `slotId`, `roundId`, `mechanic`                                                                               |
+| `game_clue_revealed`    | `runId`, `roundId`, `clueId`, `paid`, `cost`                                                                           |
+| `game_round_answered`   | `runId`, `roundId`, `accuracy`, `correct`, `points`, `speedBonus`, `elapsedMs`, `timedOut`                             |
+| `game_completed`        | `runId`, `gameId`, `difficulty`, `seed`, `total`, `correctCount`, `durationSeconds`, `roundResults`, `challengeToken?` |
+| `game_abandoned`        | `runId`, `slotIndex`                                                                                                   |
+| `game_shared`           | `runId`, `channel: 'native'                                                                                            | 'copy' | 'mock'`  |
+| `game_challenge_opened` | `token`, `fromName`, `targetScore`                                                                                     |
 
 Primitive interactions inside a round are still emitted as `artifact_interacted` with
 `activityKind: 'game'` (extend `EventActivityKind`).
@@ -275,10 +281,19 @@ untouched.
     root, `docs/CONTENT_SCHEMA.md` game sections and an architecture update.
   - `npm run check` passes for both experiences; default regression gate passes.
 
-- [ ] **P15-T11 — Regression gate and closeout**
+- [x] **P15-T11 — Regression gate and closeout**
   - Run both build/content gates, the default browser/golden suite and sanofi smoke suite.
   - Record the default bundle delta and confirm the game-session store is absent from `dist/`.
   - Close the roadmap, activity log and handoff snapshot.
+
+## Closeout
+
+Completed 2026-10-07. The final gate passed 95 Vitest files / 593 tests, both content roots with
+zero warnings, both production builds and bundle budgets, the default build-contract check,
+53 default Playwright tests with three intentional skips, and both sanofi smoke projects. The
+eight committed Phase 13 desktop goldens passed without update. One default touch-phone DICOM tour
+timed out on its first run; the exact test passed immediately, and the complete serial suite then
+passed cleanly. Default content is unchanged and `game-session` is absent from the default build.
 
 ## Exit criteria
 

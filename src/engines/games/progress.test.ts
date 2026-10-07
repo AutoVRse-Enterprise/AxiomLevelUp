@@ -11,6 +11,7 @@ const gamesConfig = appConfigSchema.parse(appConfigData).games!
 
 function state(): LearnerData {
   const { schemaVersion: _schemaVersion, ...data } = learnerSeedSchema.parse(seedData)
+  void _schemaVersion
   return structuredClone(data)
 }
 

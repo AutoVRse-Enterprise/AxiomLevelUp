@@ -1,20 +1,20 @@
 # Medical Challenge programme plan (Phases 14–20)
 
-**Status:** Planned — documentation only, written 2026-10-07. No implementation has started.
+**Status:** Active — Phases 14 and 15 complete; Phase 16 is next.
 
 This document is the programme-level plan for turning the existing Learning Runtime into a
 multi-experience codebase and delivering the mobile-first medical challenge game described in
 `newDemoPRD.md`. Each phase has its own detailed checklist under `docs/phases/`:
 
-| Phase | Document                                                       |
-| ----- | -------------------------------------------------------------- |
-| 14    | `docs/phases/phase-14-multi-experience-foundation.md`          |
-| 15    | `docs/phases/phase-15-game-contract-and-engine.md`             |
-| 16    | `docs/phases/phase-16-game-player-and-clinical-round.md`       |
-| 17    | `docs/phases/phase-17-spatial-rounds.md`                       |
-| 18    | `docs/phases/phase-18-spot-the-finding-and-full-challenge.md`  |
-| 19    | `docs/phases/phase-19-game-hub-results-and-social.md`          |
-| 20    | `docs/phases/phase-20-demo-polish-and-readiness.md`            |
+| Phase | Document                                                      |
+| ----- | ------------------------------------------------------------- |
+| 14    | `docs/phases/phase-14-multi-experience-foundation.md`         |
+| 15    | `docs/phases/phase-15-game-contract-and-engine.md`            |
+| 16    | `docs/phases/phase-16-game-player-and-clinical-round.md`      |
+| 17    | `docs/phases/phase-17-spatial-rounds.md`                      |
+| 18    | `docs/phases/phase-18-spot-the-finding-and-full-challenge.md` |
+| 19    | `docs/phases/phase-19-game-hub-results-and-social.md`         |
+| 20    | `docs/phases/phase-20-demo-polish-and-readiness.md`           |
 
 ## 1. Sources
 
@@ -72,27 +72,27 @@ experience implies a broader engine rather than a one-off lung game.
 
 ## 4. What exists versus what the target needs
 
-| PRD need                                           | Existing capability                                                                                                    | Gap                                                                                                            | Phase      |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ---------- |
-| Several demo experiences from one codebase         | One static route table, nav constant, PWA manifest and storage namespace                                              | Experience contract, build-time selection, shell parameters, scoped storage, per-experience content and builds | 14         |
-| Mobile-link web experience, no install             | Responsive PWA, service worker, install prompt                                                                         | Install prompt must be disabled per experience; per-experience manifest/title                                  | 14, 20     |
-| Game hub home                                      | LMS Home (XP, streak, Continue learning, pathway)                                                                      | New hub composed from shared game components                                                                   | 14 (stub), 19 |
-| Four-round session, Start → Play → Reveal → Next   | Case player (stages, clue workspace, differential, debrief) and lesson ActivityPlayer (intro, retries, review)         | Lean game run engine and player; round reveal; cumulative score                                                | 15, 16     |
-| Round 1 — look but don't travel                    | Endoscopic view with bounded look-around; seeded `unknown_waypoint` entry; neutral labels                              | No zoom inside the airway, travel controls always offered, fixed Left/Right overlay, case-only entry context   | 17         |
-| Round 2 — limited movement                         | Branch fly-through, parent/child travel, neutral branch labels, breadcrumbs                                            | Movement budget and allowed sub-network; moves-left UI                                                         | 17         |
-| Location answer with precision                     | `anatomy_locate` model/choice/image levels; waypoint `answerIds`; hierarchy levels                                    | Hierarchy-proximity scoring; pin-versus-actual reveal; answer dimensions for many drop points                  | 15, 17     |
-| Round 3 — spot the finding                         | `image_hotspot` assess mode, `PanZoomImage`, `image_compare`, 3D finding picking; histology images                     | Hotspot zoom/pan, tap-precision scoring, compare toggle; CT fixture is normal anatomy so not usable           | 18         |
-| Round 4 — multimodal clinical call                 | `multiple_choice`, `audio` (wheeze, crackles), `image`, `data_table`, `chart`; case clue economy                       | Compact clue tray with free/paid clues inside a game round                                                     | 16         |
-| Brief feedback after every round                   | Lesson `FeedbackPanel`; extensive case debrief                                                                         | One-line reveal card with correct answer, key clue and points breakdown                                        | 16         |
-| Points, speed bonus, cumulative score              | Case score 0–100 with weighted speed; XP and stars                                                                     | Game points model (+850, "Fast answer bonus +100") from configuration                                          | 15         |
-| Game difficulty (Warm-up / Challenge / Expert)     | Case tiers named Foundation / Intermediate / Advanced (curriculum language)                                           | Difficulty presets that change time, moves, clues, drop pools and option similarity                           | 15, 17, 18 |
-| Strong end-of-session result                       | Case results and Model answer comparison                                                                               | Game result: big score, four stats, personality message, round strip                                           | 16, 19     |
-| Challenge a colleague / Score to beat              | Recorded-opponent simulation (ADR from P13-T13)                                                                        | Seeded share link that replays identical rounds and compares scores; share sheet                               | 15, 19     |
-| Leaderboard                                        | XP "Sample cohort" with country/specialty/institution filters                                                          | Per-game score leaderboard with periods and difficulty                                                          | 19         |
-| Expert challenge                                   | None                                                                                                                   | Configured expert runs with fixed seed and target score                                                         | 19         |
-| Replayability                                      | Seeded unknown-waypoint entry per case attempt                                                                         | Seeded round pools and drop pools per run; daily seed                                                          | 15, 17, 18 |
-| Game vocabulary                                    | LMS copy throughout primitives and surfaces                                                                            | Presentation-context labels, game copy configuration, automated vocabulary sweep                               | 16, 20     |
-| Visible reusable-engine story                      | 29 primitives, content validation, event pipeline                                                                      | Round library, mechanic templates and multiple playable formats from the same rounds                           | 15, 18, 19 |
+| PRD need                                         | Existing capability                                                                                            | Gap                                                                                                            | Phase         |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ------------- |
+| Several demo experiences from one codebase       | One static route table, nav constant, PWA manifest and storage namespace                                       | Experience contract, build-time selection, shell parameters, scoped storage, per-experience content and builds | 14            |
+| Mobile-link web experience, no install           | Responsive PWA, service worker, install prompt                                                                 | Install prompt must be disabled per experience; per-experience manifest/title                                  | 14, 20        |
+| Game hub home                                    | LMS Home (XP, streak, Continue learning, pathway)                                                              | New hub composed from shared game components                                                                   | 14 (stub), 19 |
+| Four-round session, Start → Play → Reveal → Next | Case player (stages, clue workspace, differential, debrief) and lesson ActivityPlayer (intro, retries, review) | Lean game run engine and player; round reveal; cumulative score                                                | 15, 16        |
+| Round 1 — look but don't travel                  | Endoscopic view with bounded look-around; seeded `unknown_waypoint` entry; neutral labels                      | No zoom inside the airway, travel controls always offered, fixed Left/Right overlay, case-only entry context   | 17            |
+| Round 2 — limited movement                       | Branch fly-through, parent/child travel, neutral branch labels, breadcrumbs                                    | Movement budget and allowed sub-network; moves-left UI                                                         | 17            |
+| Location answer with precision                   | `anatomy_locate` model/choice/image levels; waypoint `answerIds`; hierarchy levels                             | Hierarchy-proximity scoring; pin-versus-actual reveal; answer dimensions for many drop points                  | 15, 17        |
+| Round 3 — spot the finding                       | `image_hotspot` assess mode, `PanZoomImage`, `image_compare`, 3D finding picking; histology images             | Hotspot zoom/pan, tap-precision scoring, compare toggle; CT fixture is normal anatomy so not usable            | 18            |
+| Round 4 — multimodal clinical call               | `multiple_choice`, `audio` (wheeze, crackles), `image`, `data_table`, `chart`; case clue economy               | Compact clue tray with free/paid clues inside a game round                                                     | 16            |
+| Brief feedback after every round                 | Lesson `FeedbackPanel`; extensive case debrief                                                                 | One-line reveal card with correct answer, key clue and points breakdown                                        | 16            |
+| Points, speed bonus, cumulative score            | Case score 0–100 with weighted speed; XP and stars                                                             | Game points model (+850, "Fast answer bonus +100") from configuration                                          | 15            |
+| Game difficulty (Warm-up / Challenge / Expert)   | Case tiers named Foundation / Intermediate / Advanced (curriculum language)                                    | Difficulty presets that change time, moves, clues, drop pools and option similarity                            | 15, 17, 18    |
+| Strong end-of-session result                     | Case results and Model answer comparison                                                                       | Game result: big score, four stats, personality message, round strip                                           | 16, 19        |
+| Challenge a colleague / Score to beat            | Recorded-opponent simulation (ADR from P13-T13)                                                                | Seeded share link that replays identical rounds and compares scores; share sheet                               | 15, 19        |
+| Leaderboard                                      | XP "Sample cohort" with country/specialty/institution filters                                                  | Per-game score leaderboard with periods and difficulty                                                         | 19            |
+| Expert challenge                                 | None                                                                                                           | Configured expert runs with fixed seed and target score                                                        | 19            |
+| Replayability                                    | Seeded unknown-waypoint entry per case attempt                                                                 | Seeded round pools and drop pools per run; daily seed                                                          | 15, 17, 18    |
+| Game vocabulary                                  | LMS copy throughout primitives and surfaces                                                                    | Presentation-context labels, game copy configuration, automated vocabulary sweep                               | 16, 20        |
+| Visible reusable-engine story                    | 29 primitives, content validation, event pipeline                                                              | Round library, mechanic templates and multiple playable formats from the same rounds                           | 15, 18, 19    |
 
 ## 5. Target architecture
 
@@ -142,15 +142,15 @@ public/
 
 ### 5.3 Build and run matrix
 
-| Command                    | Experience | Dev port | Output        | Notes                                  |
-| -------------------------- | ---------- | -------- | ------------- | -------------------------------------- |
-| `npm run dev`              | resolved   | 5173     | n/a           | `default` unless `VITE_EXPERIENCE` set |
-| `npm run dev:default`      | default    | 5173     | n/a           | explicit                                |
-| `npm run dev:sanofi`       | sanofi     | 5174     | n/a           | separate origin from default dev       |
-| `npm run build`            | resolved   | n/a      | `dist/`       | unchanged default artifact             |
-| `npm run build:sanofi`     | sanofi     | n/a      | `dist-sanofi/`| separate deployable                    |
-| `npm run preview:sanofi`   | sanofi     | 4174     | `dist-sanofi/`| production-like manual test            |
-| `npm run test:e2e:sanofi`  | sanofi     | 4182     | `dist-sanofi/`| `playwright.sanofi.config.ts`          |
+| Command                   | Experience | Dev port | Output         | Notes                                  |
+| ------------------------- | ---------- | -------- | -------------- | -------------------------------------- |
+| `npm run dev`             | resolved   | 5173     | n/a            | `default` unless `VITE_EXPERIENCE` set |
+| `npm run dev:default`     | default    | 5173     | n/a            | explicit                               |
+| `npm run dev:sanofi`      | sanofi     | 5174     | n/a            | separate origin from default dev       |
+| `npm run build`           | resolved   | n/a      | `dist/`        | unchanged default artifact             |
+| `npm run build:sanofi`    | sanofi     | n/a      | `dist-sanofi/` | separate deployable                    |
+| `npm run preview:sanofi`  | sanofi     | 4174     | `dist-sanofi/` | production-like manual test            |
+| `npm run test:e2e:sanofi` | sanofi     | 4182     | `dist-sanofi/` | `playwright.sanofi.config.ts`          |
 
 ### 5.4 Game domain model
 
@@ -170,12 +170,12 @@ learner state v9            per-game best, history, plays, daily streak, player 
 One synthetic patient connects the rounds, so they feel related while each demonstrates a
 different primitive. Copy below is illustrative; final copy is authored in Phase 18.
 
-| Round | Player-facing title  | Mechanic          | Shared primitive(s)                         | Interaction                                       | Answer                                              | Precision source                      |
-| ----- | -------------------- | ----------------- | ------------------------------------------- | ------------------------------------------------- | --------------------------------------------------- | ------------------------------------- |
-| 1     | Where are you?       | `spatial_look`    | `anatomy_locate` (look navigation)          | Look around and zoom from a seeded drop point      | Side, region and airway level                       | Per-dimension weights                 |
-| 2     | Find your way        | `spatial_explore` | `anatomy_explore` + `anatomy_locate` (pin)  | Up to N moves in a small branch network, then pin  | Tap the lobe on the 3D lung, choose the segment     | Hierarchy proximity                   |
-| 3     | Spot the finding     | `spot_finding`    | `image_hotspot` (zoomable assess)           | Pinch/zoom/pan a histology image and tap           | The mucus-obstructed lumen                          | Region hit or distance fall-off       |
-| 4     | Make the call        | `clinical_call`   | `multiple_choice` + clue primitives         | Review free clues, optionally buy more             | Most plausible interpretation from four options     | Correctness and clue cost             |
+| Round | Player-facing title | Mechanic          | Shared primitive(s)                        | Interaction                                       | Answer                                          | Precision source                |
+| ----- | ------------------- | ----------------- | ------------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ------------------------------- |
+| 1     | Where are you?      | `spatial_look`    | `anatomy_locate` (look navigation)         | Look around and zoom from a seeded drop point     | Side, region and airway level                   | Per-dimension weights           |
+| 2     | Find your way       | `spatial_explore` | `anatomy_explore` + `anatomy_locate` (pin) | Up to N moves in a small branch network, then pin | Tap the lobe on the 3D lung, choose the segment | Hierarchy proximity             |
+| 3     | Spot the finding    | `spot_finding`    | `image_hotspot` (zoomable assess)          | Pinch/zoom/pan a histology image and tap          | The mucus-obstructed lumen                      | Region hit or distance fall-off |
+| 4     | Make the call       | `clinical_call`   | `multiple_choice` + clue primitives        | Review free clues, optionally buy more            | Most plausible interpretation from four options | Correctness and clue cost       |
 
 Example reveal after Round 2: **Not quite** · "Correct answer: Right lower lobe, posterior basal
 segment." · "The branch count after the junction was the strongest clue." · **+420** ·
@@ -183,15 +183,15 @@ segment." · "The branch count after the junction was the strongest clue." · **
 
 ## 7. Phase map
 
-| Phase | Title                                         | Goal                                                                                     | Depends on | Size | Exit signal                                                                                     |
-| ----- | --------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------- | ---- | ----------------------------------------------------------------------------------------------- |
-| 14    | Multi-experience foundation                   | Same codebase serves `default` (unchanged) and `sanofi` (stub hub)                       | —          | M    | Both dev scripts boot; default regression gate passes with zero re-baselined images            |
-| 15    | Game contract and engine                      | Validated round/game content and a pure, tested run/scoring/link engine                  | 14         | L    | Fixture game validates; engine, events and learner-state v9 are unit-tested; no UI             |
-| 16    | Game player and clinical-call round           | Playable run loop with reveal, points, timer and a real multimodal Round 4               | 15         | L    | A one-round and a two-round fixture game complete on desktop and phone                          |
-| 17    | Spatial rounds                                | Look-only and limited-movement location rounds with proximity scoring and pin reveal     | 15, 16     | XL   | Rounds 1 and 2 complete through visible controls on both viewports; spike verdict recorded      |
-| 18    | Spot the finding and the full challenge       | Round 3, the complete four-round Respiratory Challenge, difficulties and extra formats   | 16, 17     | L    | The four-round challenge completes in 2–4 minutes on each playable difficulty                   |
-| 19    | Game hub, results, social and competition     | Sanofi homepage, result page, share/challenge links, leaderboard, expert runs, You page  | 16 (18 for final content) | L | Hub → play → result → share link → rival replay → comparison works end to end           |
-| 20    | Demo polish and readiness                     | Visual/motion polish, vocabulary sweep, accessibility, performance, E2E, docs and runbook | 14–19      | M    | All automated gates pass for both experiences; runbook and readiness verdict published          |
+| Phase | Title                                     | Goal                                                                                      | Depends on                | Size | Exit signal                                                                                |
+| ----- | ----------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------- | ---- | ------------------------------------------------------------------------------------------ |
+| 14    | Multi-experience foundation               | Same codebase serves `default` (unchanged) and `sanofi` (stub hub)                        | —                         | M    | Both dev scripts boot; default regression gate passes with zero re-baselined images        |
+| 15    | Game contract and engine                  | Validated round/game content and a pure, tested run/scoring/link engine                   | 14                        | L    | Fixture game validates; engine, events and learner-state v9 are unit-tested; no UI         |
+| 16    | Game player and clinical-call round       | Playable run loop with reveal, points, timer and a real multimodal Round 4                | 15                        | L    | A one-round and a two-round fixture game complete on desktop and phone                     |
+| 17    | Spatial rounds                            | Look-only and limited-movement location rounds with proximity scoring and pin reveal      | 15, 16                    | XL   | Rounds 1 and 2 complete through visible controls on both viewports; spike verdict recorded |
+| 18    | Spot the finding and the full challenge   | Round 3, the complete four-round Respiratory Challenge, difficulties and extra formats    | 16, 17                    | L    | The four-round challenge completes in 2–4 minutes on each playable difficulty              |
+| 19    | Game hub, results, social and competition | Sanofi homepage, result page, share/challenge links, leaderboard, expert runs, You page   | 16 (18 for final content) | L    | Hub → play → result → share link → rival replay → comparison works end to end              |
+| 20    | Demo polish and readiness                 | Visual/motion polish, vocabulary sweep, accessibility, performance, E2E, docs and runbook | 14–19                     | M    | All automated gates pass for both experiences; runbook and readiness verdict published     |
 
 ### 7.1 Dependency graph
 
@@ -239,28 +239,28 @@ P17-T01 spatial-legibility spike may run any time after 14 to de-risk 17 early.
 
 ## 10. PRD traceability
 
-| PRD section                         | Delivered by                                  |
-| ----------------------------------- | --------------------------------------------- |
-| §2–4 positioning and demo jobs      | 18 (content), 19 (hub), 20 (tone, sweep)       |
-| §5 mobile-first, 2–4 min, 4 rounds  | 14 (no-install shell), 16, 18 (timing), 20     |
-| §6 game hub and formats             | 19 (14 stub, 18 format content)                |
-| §7 four-round respiratory challenge | 15, 16, 17, 18                                 |
-| §8 Round 1 restricted movement      | 17                                             |
-| §9 Round 2 limited movement         | 17                                             |
-| §10 Round 3 spot the finding        | 18                                             |
-| §11 Round 4 clinical interpretation | 16                                             |
-| §12 feedback after every round      | 15 (feedback contract), 16 (reveal UI)         |
-| §13 scoring                         | 15 (model), 16 (presentation)                  |
-| §14 difficulty                      | 15 (presets), 17, 18 (content), 19 (picker)    |
-| §15 end-of-session result           | 16 (basic), 19 (full)                          |
-| §16 social and competitive          | 15 (link codec), 19                            |
-| §17 vocabulary                      | 16 (labels), 18 (copy), 20 (automated sweep)   |
-| §18 visual and interaction tone     | 14 (theme), 19, 20                             |
-| §19 medical content expectations    | 18 (plausibility checklist)                    |
-| §20 implied platform primitives     | 15 (round library, mechanics), 18, 19 (formats)|
-| §21 do not reproduce the deck       | 18 (authoring rules), 20 (review)              |
-| §22 non-goals                       | Section 3 of this plan; every phase scope     |
-| §23 success criteria                | 20 (evidence matrix)                           |
+| PRD section                         | Delivered by                                    |
+| ----------------------------------- | ----------------------------------------------- |
+| §2–4 positioning and demo jobs      | 18 (content), 19 (hub), 20 (tone, sweep)        |
+| §5 mobile-first, 2–4 min, 4 rounds  | 14 (no-install shell), 16, 18 (timing), 20      |
+| §6 game hub and formats             | 19 (14 stub, 18 format content)                 |
+| §7 four-round respiratory challenge | 15, 16, 17, 18                                  |
+| §8 Round 1 restricted movement      | 17                                              |
+| §9 Round 2 limited movement         | 17                                              |
+| §10 Round 3 spot the finding        | 18                                              |
+| §11 Round 4 clinical interpretation | 16                                              |
+| §12 feedback after every round      | 15 (feedback contract), 16 (reveal UI)          |
+| §13 scoring                         | 15 (model), 16 (presentation)                   |
+| §14 difficulty                      | 15 (presets), 17, 18 (content), 19 (picker)     |
+| §15 end-of-session result           | 16 (basic), 19 (full)                           |
+| §16 social and competitive          | 15 (link codec), 19                             |
+| §17 vocabulary                      | 16 (labels), 18 (copy), 20 (automated sweep)    |
+| §18 visual and interaction tone     | 14 (theme), 19, 20                              |
+| §19 medical content expectations    | 18 (plausibility checklist)                     |
+| §20 implied platform primitives     | 15 (round library, mechanics), 18, 19 (formats) |
+| §21 do not reproduce the deck       | 18 (authoring rules), 20 (review)               |
+| §22 non-goals                       | Section 3 of this plan; every phase scope       |
+| §23 success criteria                | 20 (evidence matrix)                            |
 
 ## 11. Resolved product decisions
 
@@ -279,15 +279,15 @@ The user confirmed these decisions on 2026-10-07:
 
 ## 12. Programme risks
 
-| Risk                                                                                  | Mitigation                                                                                                  |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Inside-airway views are not legible enough to infer location from visual evidence      | P17-T01 spike with explicit go/no-go; visual cue upgrades; documented outside-in fallback                  |
-| The refactor perturbs the default experience (layout shift, storage, bundle, images)  | Build-time static selection; legacy storage keys; per-phase default regression gate; budgets               |
-| Sharing primitives leaks LMS copy into the game                                        | Presentation-context label overrides with defaults equal to current strings; vocabulary sweep              |
-| Mobile WebGL performance or context loss on mid-range phones                           | Existing pixel-ratio cap and recovery; model prefetch at hub; per-round fallback policy; device gate      |
-| Same-origin hosting of both builds collides service workers and caches                 | Separate origins recommended; namespaced storage and cache names for non-default experiences               |
-| Medical implausibility undermines credibility with specialists                         | Plausibility checklist, consistent single-patient thread, avoidance of over-specific claims                |
-| Scope creep toward real multiplayer or analytics                                       | Non-goals restated per phase; share links are client-only and documented as such                          |
+| Risk                                                                                 | Mitigation                                                                                           |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Inside-airway views are not legible enough to infer location from visual evidence    | P17-T01 spike with explicit go/no-go; visual cue upgrades; documented outside-in fallback            |
+| The refactor perturbs the default experience (layout shift, storage, bundle, images) | Build-time static selection; legacy storage keys; per-phase default regression gate; budgets         |
+| Sharing primitives leaks LMS copy into the game                                      | Presentation-context label overrides with defaults equal to current strings; vocabulary sweep        |
+| Mobile WebGL performance or context loss on mid-range phones                         | Existing pixel-ratio cap and recovery; model prefetch at hub; per-round fallback policy; device gate |
+| Same-origin hosting of both builds collides service workers and caches               | Separate origins recommended; namespaced storage and cache names for non-default experiences         |
+| Medical implausibility undermines credibility with specialists                       | Plausibility checklist, consistent single-patient thread, avoidance of over-specific claims          |
+| Scope creep toward real multiplayer or analytics                                     | Non-goals restated per phase; share links are client-only and documented as such                     |
 
 ## 13. Explicitly out of scope
 

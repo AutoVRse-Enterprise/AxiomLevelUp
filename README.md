@@ -17,6 +17,8 @@ The learner can:
 - manipulate a real DICOM stack using educational scroll, window, zoom, pan, identification and
   measurement tasks;
 - inspect a configured 3D anatomy model and authored spatial findings;
+- load validated, seeded game and round documents through a pure scoring engine (player UI begins
+  in Phase 16);
 - complete Foundation, Intermediate and Advanced Case Lab scenarios;
 - gather clues, revise a differential, cite reviewed evidence and commit a conclusion;
 - review a prioritized takeaway and compare reasoning with an authored Model answer;
@@ -191,17 +193,18 @@ npx playwright test --workers=1
 Install Chromium first with `npx playwright install chromium` if Playwright reports that its
 browser is missing.
 
-The last recorded Phase 13 run passed:
+The last recorded Phase 15 run passed:
 
-- 73 Vitest files and 500 tests;
-- content validation for 5 courses, 13 lessons, 4 cases and 1 anatomy map with zero warnings;
-- production build and bundle budgets; and
+- 95 Vitest files and 593 tests;
+- default content validation for 5 courses, 13 lessons, 4 cases and 1 anatomy map, plus sanofi
+  validation for 2 rounds and 1 game, all with zero warnings;
+- both production builds and bundle budgets; and
 - 53 Playwright tests, with 3 intentional project skips and no failures, across desktop Chromium
-  and 375 × 812 touch-phone Chromium.
+  and 375 × 812 touch-phone Chromium, plus both sanofi smoke projects.
 
 ## Current readiness
 
-Implementation and local automated coverage are complete through P13-T14. External client-demo
+Implementation and local automated coverage are complete through Phase 15. External client-demo
 approval remains **No-go** because the following evidence has not been supplied:
 
 - five qualifying unaided usability sessions;

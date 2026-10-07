@@ -3644,3 +3644,22 @@ README.md`; `git diff --check`.
   rounds and one game; TypeScript and 66 focused tests pass.
 - **Follow-ups:** Run the full dual-build and browser regression gate, record default invariants
   and close Phase 15.
+
+### [2026-10-07 10:45] P15-T11 - Close Phase 15
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Ran the complete dual gate and browser suites, added a fixture-run integration test,
+  restored generated evidence churn, recorded default invariants and closed Phase 15 documentation.
+- **Files changed:** `src/engines/games/fixtureRun.test.ts`;
+  `src/engines/games/progress.test.ts`; `README.md`; `docs/ROADMAP.md`;
+  `docs/MEDICAL_CHALLENGE_PLAN.md`; `docs/phases/phase-15-game-contract-and-engine.md`;
+  `docs/qa/phase-15-default-regression.md`; `docs/HANDOFF.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run check`; serial default Playwright (initial run and clean rerun);
+  focused retry of the touch-phone DICOM tour; serial sanofi Playwright; final `npm run test`;
+  `git diff --check`; default-content and built-output invariant checks.
+- **Result/verification:** 95 Vitest files / 593 tests pass; both content roots validate at zero
+  warnings; both builds and budgets pass; default build metadata/precache matches Phase 14;
+  default Playwright passes 53 with 3 intentional skips and unchanged goldens; sanofi passes 2.
+  The first default run had one transient DICOM Continue timeout; its focused retry and the complete
+  rerun passed. Default content did not change and `game-session` is absent from `dist/`.
+- **Follow-ups:** Begin Phase 16 at P16-T00. Phase 13 external evidence gates remain independent.

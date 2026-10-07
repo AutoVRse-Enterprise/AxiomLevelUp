@@ -19,7 +19,7 @@ start with `README.md`.
 | 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
 | 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates         |
 | 14    | Multi-experience foundation    | Complete | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged                 |
-| 15    | Game contract and engine       | Active   | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
+| 15    | Game contract and engine       | Complete | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
 | 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                    |
 | 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone            |
 | 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
@@ -132,3 +132,9 @@ gate passed 80 Vitest files / 522 tests, default Playwright 53 passes / 3 intent
 sanofi desktop/phone smoke projects, both bundle budgets and zero content warnings. All eight
 Phase 13 golden images passed unchanged. Phase 15 is next; Phase 13's human, hosted and physical
 device gates remain open and independent.
+
+Phase 15 closed on 2026-10-07 with strict round/game/configuration contracts, two validated sanofi
+fixture rounds, a pure deterministic planning/scoring/proximity/session/results/link/leaderboard
+engine, typed game events and learner state v9. The gate passed 95 Vitest files / 593 tests, both
+content roots and builds, 53 default Playwright passes with 3 intentional skips, and both sanofi
+smoke projects. Phase 16 is next; it adds the game player and clinical-call UI.

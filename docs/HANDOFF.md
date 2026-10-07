@@ -2,8 +2,8 @@
 
 ## Current phase/task
 
-Phase 14 (multi-experience foundation) is complete. Phase 15 (game contract and engine) is next,
-starting at P15-T00 in `docs/phases/phase-15-game-contract-and-engine.md`.
+Phase 15 (game contract and engine) is complete. Phase 16 (game player and clinical-call round) is
+next, starting at P16-T00 in `docs/phases/phase-16-game-player-and-clinical-round.md`.
 
 Phase 13 remains Active and independent. P13-T15 is blocked on five qualifying human sessions and
 P13-T16 on HTTPS hosting, a production DICOM origin and physical Android/iPhone access. The user
@@ -12,20 +12,16 @@ No-go.
 
 ## Done
 
-- Added build-time `default | sanofi` resolution, committed Vite modes and static `@experience`
-  composition without changing the default route tree or eager Home boundary.
-- Gave each experience its own routes, shell configuration, content root, HTML/PWA metadata, port,
-  output directory and precache policy.
-- Added the minimal Autovrse LevelUp / Respiratory Challenge hub with neutral copy, anonymous
-  player "You", teal token override and no default game routes.
-- Namespaced non-default IndexedDB/browser keys, service-worker settings and runtime caches while
-  preserving all default literals.
-- Relaxed structural LMS minimums with non-optional defaults and semantic replacements; added the
-  strict optional `games.hub` block.
-- Added import boundaries, dual-root validation, dual builds/budgets and dedicated sanofi
-  Playwright coverage.
-- Published the frozen baseline and final comparison in `docs/qa/phase-14-default-baseline.md` and
-  `docs/qa/phase-14-default-regression.md`.
+- Added strict `round` and `game` 0.1 documents, full games app configuration, manifest paths,
+  dual-root loading, immutable registry maps and exported JSON Schemas.
+- Added four fixed mechanic templates and semantic validation for primitive/clue compatibility,
+  references, option sets, drop answers, leakage, placeholders and timing.
+- Added a pure seeded game engine for run planning, difficulty application, scoring, generic
+  anatomy proximity, sessions, results, messages, leaderboards and challenge links.
+- Added a separate namespaced `game-session` store, typed `game_*` events and learner state v9
+  game history, bests, daily streak and optional display name.
+- Added two valid sanofi clinical-call fixture rounds and one deterministic two-round game.
+- Published `docs/qa/phase-15-default-regression.md`.
 
 ## In progress
 
@@ -33,14 +29,13 @@ No-go.
 
 ## Next three steps
 
-1. P15-T00: reconfirm ADR-106 and freeze game-domain terminology/configuration boundaries.
-2. P15-T01 onward: add strict game/round schemas, fixtures and semantic validation.
-3. Build the pure seeded game engine, scoring/link/ranking helpers and learner-state v9 event
-   integration without adding UI.
+1. P16-T00: record ADR-107 for a dedicated game player over shared primitives.
+2. Add the shared sanofi game routes/layout and lifecycle UI over the Phase 15 plan/session engine.
+3. Author the real clinical-call round and prove the one/two-round loop on desktop and phone.
 
 ## Blockers/questions for the user
 
-- No Phase 14 blockers.
+- No Phase 15 blockers.
 - Resolved programme decisions are recorded in `docs/MEDICAL_CHALLENGE_PLAN.md` §11.
 - Phase 13 blockers remain: qualifying participants, HTTPS/production DICOM hosting and physical
   Android/iPhone access.
@@ -54,10 +49,10 @@ No-go.
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`.
 - Ports: default dev/preview 5173/4173; sanofi dev/preview 5174/4174; default/sanofi Playwright
   4181/4182.
-- Final gate: 80 Vitest files / 522 tests; both content roots at zero warnings; both builds and
+- Final gate: 95 Vitest files / 593 tests; both content roots at zero warnings; both builds and
   budgets pass.
 - Browser gate: default 53 passed / 3 intentional skips; sanofi 2 passed; eight golden images
-  unchanged.
+  unchanged. One initial touch-phone DICOM timeout passed on exact retry and full-suite rerun.
 - No development, preview or Playwright processes are running. Ports 5173, 5174, 4173, 4174, 4181
   and 4182 were confirmed free at closeout.
 
@@ -75,3 +70,6 @@ No-go.
 - The thoracic CT fixture shows normal anatomy and must not be used for abnormality spotting.
 - Playwright SwiftShader proves the WebGL contract, not hardware GPU performance or
   physical-device behavior.
+- Game links use a checksum for corruption detection, not authentication or tamper resistance.
+- The sanofi fixture game is content/engine proof only; no game route or player UI exists until
+  Phase 16.
