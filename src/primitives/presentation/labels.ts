@@ -30,6 +30,9 @@ export interface PresentationLabels {
   nextLevel: string
   previousLevel: string
   checkLocation: string
+  anatomyInteractionHint: string
+  zoomIn: string
+  zoomOut: string
 }
 
 export const defaultPresentationLabels: PresentationLabels = {
@@ -61,6 +64,9 @@ export const defaultPresentationLabels: PresentationLabels = {
   nextLevel: 'Next level',
   previousLevel: 'Previous level',
   checkLocation: 'Check location',
+  anatomyInteractionHint: 'Drag to rotate. Tap a branch or use the buttons.',
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out',
 }
 
 export const PresentationContext = createContext<{

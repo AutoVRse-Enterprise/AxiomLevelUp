@@ -220,6 +220,7 @@ export function AnatomyLocatePrimitive({
                 : undefined
             }
             navigation={primitive.content.navigation}
+            orientationLabels={primitive.content.orientationLabels}
             neutralNavigationLabels={unknownEntry && mode === 'interactive'}
             hideLocationLabels={unknownEntry && mode === 'interactive'}
             prompt={levelLabel}

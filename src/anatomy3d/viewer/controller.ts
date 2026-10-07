@@ -69,6 +69,10 @@ export interface AnatomyControllerConfig {
   highlightColor: string
   highlightOpacity: number
   markerColor: string
+  comparisonStyles: {
+    guess: AnatomyHighlightStyle
+    actual: AnatomyHighlightStyle
+  }
   volumeStyles: {
     color: string
     opacity: number
@@ -132,6 +136,13 @@ export interface AnatomyControllerConfig {
       degreesPerPixel: number
       maxYawDegrees: number
       maxPitchDegrees: number
+      keyboardStepDegrees: number
+    }
+    zoom: {
+      enabled: boolean
+      minFovDegrees: number
+      maxFovDegrees: number
+      step: number
     }
     rings: {
       color: string
@@ -167,10 +178,20 @@ export interface AnatomyViewerController {
   enterEndoscopic(waypointId: string): void
   exitEndoscopic(options?: { animate?: boolean }): void
   lookAround(deltaX: number, deltaY: number): void
+  setZoom(fovDegrees: number): void
+  zoomBy(deltaDegrees: number): void
   frameStructures(structureIds: readonly string[], options?: { animate?: boolean }): void
   resetView(): void
   getTestSnapshot(): AnatomyTestSnapshot
   loseContext(): boolean
   restoreContext(): boolean
   dispose(): void
+}
+
+export function clampAnatomyFov(
+  fovDegrees: number,
+  zoom: AnatomyControllerConfig['lumen']['zoom'],
+) {
+  if (!Number.isFinite(fovDegrees)) return zoom.maxFovDegrees
+  return Math.min(zoom.maxFovDegrees, Math.max(zoom.minFovDegrees, fovDegrees))
 }

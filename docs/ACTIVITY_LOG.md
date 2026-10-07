@@ -3820,3 +3820,18 @@ README.md`; `git diff --check`.
   reliable side/region evidence at phone size. Round 1 will use the documented outside-in marker
   fallback; Round 2 keeps bounded endoscopic navigation.
 - **Follow-ups:** Add generic look navigation, endoscopic zoom and configurable orientation labels.
+
+### [2026-10-07 13:55] P17-T02 - Add look-only navigation and zoom
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added default-off look-only navigation, clamped FOV zoom, pinch/wheel/button/keyboard
+  inputs, arrow-key look, configurable patient-or-hidden orientation labels and presentation
+  labels. Look-only mode suppresses travel, location and structure-list affordances.
+- **Files changed:** `src/content/schema/{index.ts,primitives/anatomy.ts}`;
+  `src/anatomy3d/viewer/{controller,AnatomyViewer}.tsx`;
+  `src/anatomy3d/three/createAnatomyController.ts`; anatomy primitive components;
+  presentation labels and focused tests; phase/activity docs.
+- **Commands run:** Prettier; focused Vitest; `npm run typecheck`.
+- **Result/verification:** 95 focused tests pass; schema additions default to current behavior and
+  existing content typechecks without edits.
+- **Follow-ups:** Add a pure bounded-movement model and persisted viewer draft.

@@ -11,7 +11,8 @@ export const anatomyStartViewSchema = z.discriminatedUnion('mode', [
   z.strictObject({ mode: z.literal('endoscopic'), waypointId: idSchema }),
 ])
 
-export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both'])
+export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both', 'look'])
+export const anatomyOrientationLabelsSchema = z.enum(['patient', 'hidden'])
 
 const anatomyLocateLevelBase = {
   levelId: idSchema,
@@ -80,6 +81,7 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
       prompt: z.string().trim().min(1),
       startView: anatomyStartViewSchema.default({ mode: 'overview' }),
       navigation: anatomyNavigationSchema.default('both'),
+      orientationLabels: anatomyOrientationLabelsSchema.default('patient'),
       findingIds: z.array(idSchema).min(1).optional(),
       requiredWaypointIds: z.array(idSchema).min(1).optional(),
       requiredStructureIds: z.array(idSchema).min(1).optional(),
@@ -87,6 +89,16 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
     }),
   })
   .superRefine((primitive, context) => {
+    if (
+      primitive.content.navigation === 'look' &&
+      primitive.content.startView.mode !== 'endoscopic'
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['content', 'startView'],
+        message: 'Look-only anatomy navigation requires an endoscopic start view.',
+      })
+    }
     if (!['viewed', 'explored', 'minimum_interactions'].includes(primitive.completion.mode)) {
       context.addIssue({
         code: 'custom',
@@ -166,6 +178,7 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
         prompt: z.string().trim().min(1),
         startView: anatomyStartViewSchema.default({ mode: 'overview' }),
         navigation: anatomyNavigationSchema.default('orbit'),
+        orientationLabels: anatomyOrientationLabelsSchema.default('patient'),
         findingIds: z.array(idSchema).min(1).optional(),
         answerFrom: z.literal('entry').optional(),
         levels: z.array(anatomyLocateLevelSchema).min(1),
@@ -184,6 +197,16 @@ export const anatomyLocatePrimitiveSchema = primitiveBaseSchema
       }),
   })
   .superRefine((primitive, context) => {
+    if (
+      primitive.content.navigation === 'look' &&
+      primitive.content.startView.mode !== 'endoscopic'
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['content', 'startView'],
+        message: 'Look-only anatomy navigation requires an endoscopic start view.',
+      })
+    }
     if (primitive.completion.mode !== 'answer') {
       context.addIssue({
         code: 'custom',

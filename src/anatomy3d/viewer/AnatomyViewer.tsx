@@ -1,4 +1,4 @@
-import { Expand, RotateCcw, X } from 'lucide-react'
+import { Expand, Minus, Plus, RotateCcw, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { AnatomyMap } from '@/content/schema/anatomyMap'
@@ -6,6 +6,7 @@ import type { AppConfig, CaseFinding } from '@/content/schema'
 import { Button } from '@/components/ui'
 import { useResolvedMotion } from '@/design/motion/useResolvedMotion'
 import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type {
   AnatomyLoadResult,
   AnatomyPerformanceSnapshot,
@@ -22,7 +23,8 @@ export interface AnatomyViewerProps {
   map: AnatomyMap
   config: AppConfig['product']['anatomy3d']
   prompt?: string
-  navigation?: 'orbit' | 'flythrough' | 'both'
+  navigation?: 'orbit' | 'flythrough' | 'both' | 'look'
+  orientationLabels?: 'patient' | 'hidden'
   disabled?: boolean
   startView?: AnatomyStartView
   selectedStructureIds?: readonly string[]
@@ -49,6 +51,7 @@ export function AnatomyViewer({
   config,
   prompt = 'Explore the interactive anatomy model.',
   navigation = 'both',
+  orientationLabels = 'patient',
   disabled = false,
   startView,
   selectedStructureIds,
@@ -81,9 +84,12 @@ export function AnatomyViewer({
   } | null>(null)
   const pointerStart = useRef<{ x: number; y: number } | null>(null)
   const pointerLast = useRef<{ x: number; y: number } | null>(null)
+  const pointerPositions = useRef(new Map<number, { x: number; y: number }>())
+  const pinchDistance = useRef<number | null>(null)
   const endoscopicRef = useRef(endoscopic)
   const structureButtons = useRef(new Map<string, HTMLButtonElement>())
   const motion = useResolvedMotion()
+  const { labels } = usePresentation()
   const anatomyHintSeen = useLearnerStore((learner) => learner.caseLab.anatomyHintSeen)
   const markAnatomyHintSeen = useLearnerStore((learner) => learner.markAnatomyHintSeen)
   const anatomyDebugEnabled =
@@ -213,7 +219,8 @@ export function AnatomyViewer({
     onWaypointReached?.(waypointId)
   }
 
-  const branches = navigation === 'orbit' ? [] : (controller?.availableBranches() ?? [])
+  const lookOnly = navigation === 'look'
+  const branches = navigation === 'orbit' || lookOnly ? [] : (controller?.availableBranches() ?? [])
   const failed = state.status === 'error'
   const currentWaypoint = map.waypoints.find(({ id }) => id === currentWaypointId)
   const selectedFinding = findings.find(({ id }) => id === selectedFindingId)
@@ -263,11 +270,13 @@ export function AnatomyViewer({
             immersive && 'min-h-0 flex-1 md:h-full',
             disabled && 'pointer-events-none',
           )}
-          role="img"
+          role="button"
           onContextMenu={(event) => event.preventDefault()}
           onPointerCancel={() => {
             pointerStart.current = null
             pointerLast.current = null
+            pointerPositions.current.clear()
+            pinchDistance.current = null
           }}
           onPointerDown={(event) => {
             if (
@@ -278,9 +287,28 @@ export function AnatomyViewer({
             }
             pointerStart.current = { x: event.clientX, y: event.clientY }
             pointerLast.current = { x: event.clientX, y: event.clientY }
+            pointerPositions.current.set(event.pointerId, {
+              x: event.clientX,
+              y: event.clientY,
+            })
             event.currentTarget.setPointerCapture?.(event.pointerId)
           }}
           onPointerMove={(event) => {
+            if (pointerPositions.current.has(event.pointerId)) {
+              pointerPositions.current.set(event.pointerId, {
+                x: event.clientX,
+                y: event.clientY,
+              })
+            }
+            if (endoscopic && config.lumen.zoom.enabled && pointerPositions.current.size === 2) {
+              const [first, second] = [...pointerPositions.current.values()]
+              const distance = Math.hypot(first!.x - second!.x, first!.y - second!.y)
+              if (pinchDistance.current !== null) {
+                controller?.zoomBy((pinchDistance.current - distance) * 0.08)
+              }
+              pinchDistance.current = distance
+              return
+            }
             const last = pointerLast.current
             if (!last || !endoscopic || !config.lumen.lookAround.enabled) return
             controller?.lookAround(event.clientX - last.x, event.clientY - last.y)
@@ -290,6 +318,8 @@ export function AnatomyViewer({
             const start = pointerStart.current
             pointerStart.current = null
             pointerLast.current = null
+            pointerPositions.current.delete(event.pointerId)
+            if (pointerPositions.current.size < 2) pinchDistance.current = null
             if (
               !start ||
               Math.hypot(event.clientX - start.x, event.clientY - start.y) > config.tapMaxMovementPx
@@ -305,13 +335,32 @@ export function AnatomyViewer({
             const structureId = controller?.pick(event.clientX, event.clientY, selectableLevelIds)
             if (structureId) selectStructure(structureId, true)
           }}
+          onWheel={(event) => {
+            if (!endoscopic || !config.lumen.zoom.enabled) return
+            event.preventDefault()
+            controller?.zoomBy(Math.sign(event.deltaY) * config.lumen.zoom.step)
+          }}
+          onKeyDown={(event) => {
+            if (!endoscopic) return
+            const keyboardPixels =
+              config.lumen.lookAround.keyboardStepDegrees / config.lumen.lookAround.degreesPerPixel
+            if (event.key === 'ArrowLeft') controller?.lookAround(-keyboardPixels, 0)
+            else if (event.key === 'ArrowRight') controller?.lookAround(keyboardPixels, 0)
+            else if (event.key === 'ArrowUp') controller?.lookAround(0, -keyboardPixels)
+            else if (event.key === 'ArrowDown') controller?.lookAround(0, keyboardPixels)
+            else if (event.key === '+' || event.key === '=') {
+              controller?.zoomBy(-config.lumen.zoom.step)
+            } else if (event.key === '-') {
+              controller?.zoomBy(config.lumen.zoom.step)
+            } else return
+            event.preventDefault()
+          }}
+          tabIndex={0}
         >
           <div className="absolute inset-0" ref={setElement} />
           {!anatomyHintSeen && !disabled ? (
             <div className="absolute right-3 bottom-3 left-3 z-20 flex items-start justify-between gap-3 rounded-lg border border-brand-300 bg-clinical-900/95 p-3 shadow-overlay">
-              <p className="text-small text-white">
-                Drag to rotate. Tap a branch or use the buttons.
-              </p>
+              <p className="text-small text-white">{labels.anatomyInteractionHint}</p>
               <button
                 aria-label="Dismiss anatomy interaction hint"
                 className="shrink-0 rounded p-1 text-neutral-200 hover:bg-clinical-700 focus-visible:outline-2 focus-visible:outline-brand-300"
@@ -322,7 +371,7 @@ export function AnatomyViewer({
               </button>
             </div>
           ) : null}
-          {endoscopic ? (
+          {endoscopic && orientationLabels === 'patient' ? (
             <>
               <span className="pointer-events-none absolute left-3 top-1/2 rounded bg-black/60 px-2 py-1 text-caption font-bold uppercase tracking-wide">
                 Left
@@ -331,6 +380,32 @@ export function AnatomyViewer({
                 Right
               </span>
             </>
+          ) : null}
+          {endoscopic && config.lumen.zoom.enabled ? (
+            <div
+              aria-label="Airway zoom"
+              className="absolute top-3 right-3 z-20 flex gap-1"
+              role="group"
+            >
+              <Button
+                aria-label={labels.zoomOut}
+                disabled={disabled}
+                size="sm"
+                variant="secondary"
+                onClick={() => controller?.zoomBy(config.lumen.zoom.step)}
+              >
+                <Minus aria-hidden="true" size={16} />
+              </Button>
+              <Button
+                aria-label={labels.zoomIn}
+                disabled={disabled}
+                size="sm"
+                variant="secondary"
+                onClick={() => controller?.zoomBy(-config.lumen.zoom.step)}
+              >
+                <Plus aria-hidden="true" size={16} />
+              </Button>
+            </div>
           ) : null}
           {state.status !== 'ready' ? (
             <div className="absolute inset-0 z-10 grid place-items-center bg-clinical-950/95 p-6 text-center">
@@ -403,7 +478,7 @@ export function AnatomyViewer({
               </dl>
             </details>
           ) : null}
-          {currentWaypoint && !hideLocationLabels ? (
+          {currentWaypoint && !hideLocationLabels && !lookOnly ? (
             <div className="rounded-lg border border-clinical-700 bg-clinical-900 p-3">
               <nav aria-label="Anatomy location">
                 <ol className="flex flex-wrap items-center gap-1 text-caption text-neutral-300">
@@ -444,54 +519,56 @@ export function AnatomyViewer({
               ) : null}
             </div>
           ) : null}
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              disabled={disabled}
-              leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
-              size="sm"
-              variant="secondary"
-              onClick={() => {
-                controller?.resetView()
-                setCurrentWaypointId(null)
-                setArrivalMessage(null)
-                setEndoscopic(false)
-                endoscopicRef.current = false
-              }}
-            >
-              Reset
-            </Button>
-            {currentWaypointId && navigation === 'both' ? (
-              <div aria-label="View mode" className="flex gap-1" role="group">
-                <Button
-                  aria-pressed={!endoscopic}
-                  disabled={disabled}
-                  size="sm"
-                  variant={!endoscopic ? 'primary' : 'secondary'}
-                  onClick={() => {
-                    controller?.exitEndoscopic({ animate: motion === 'full' })
-                    setEndoscopic(false)
-                    endoscopicRef.current = false
-                  }}
-                >
-                  Outside
-                </Button>
-                <Button
-                  aria-pressed={endoscopic}
-                  disabled={disabled}
-                  size="sm"
-                  variant={endoscopic ? 'primary' : 'secondary'}
-                  onClick={() => {
-                    controller?.enterEndoscopic(currentWaypointId)
-                    setEndoscopic(true)
-                    endoscopicRef.current = true
-                  }}
-                >
-                  Airway
-                </Button>
-              </div>
-            ) : null}
-          </div>
-          {parentWaypoint ? (
+          {!lookOnly ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                disabled={disabled}
+                leadingIcon={<RotateCcw aria-hidden="true" size={16} />}
+                size="sm"
+                variant="secondary"
+                onClick={() => {
+                  controller?.resetView()
+                  setCurrentWaypointId(null)
+                  setArrivalMessage(null)
+                  setEndoscopic(false)
+                  endoscopicRef.current = false
+                }}
+              >
+                Reset
+              </Button>
+              {currentWaypointId && navigation === 'both' ? (
+                <div aria-label="View mode" className="flex gap-1" role="group">
+                  <Button
+                    aria-pressed={!endoscopic}
+                    disabled={disabled}
+                    size="sm"
+                    variant={!endoscopic ? 'primary' : 'secondary'}
+                    onClick={() => {
+                      controller?.exitEndoscopic({ animate: motion === 'full' })
+                      setEndoscopic(false)
+                      endoscopicRef.current = false
+                    }}
+                  >
+                    Outside
+                  </Button>
+                  <Button
+                    aria-pressed={endoscopic}
+                    disabled={disabled}
+                    size="sm"
+                    variant={endoscopic ? 'primary' : 'secondary'}
+                    onClick={() => {
+                      controller?.enterEndoscopic(currentWaypointId)
+                      setEndoscopic(true)
+                      endoscopicRef.current = true
+                    }}
+                  >
+                    Airway
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {parentWaypoint && !lookOnly ? (
             <div>
               <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
                 Back to parent
@@ -532,7 +609,7 @@ export function AnatomyViewer({
               </div>
             </div>
           ) : null}
-          {findings.length ? (
+          {findings.length && !lookOnly ? (
             <details className="rounded-lg border border-clinical-700 bg-clinical-900">
               <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
                 Inspect spatial findings
@@ -554,52 +631,54 @@ export function AnatomyViewer({
               </ul>
             </details>
           ) : null}
-          <details
-            className="rounded-lg border border-clinical-700 bg-clinical-900"
-            open={failed || listOpen}
-            onToggle={(event) => setListOpen(event.currentTarget.open)}
-          >
-            <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-              Choose from list
-            </summary>
-            <div className="max-h-[36dvh] space-y-4 overflow-y-auto border-t border-clinical-700 p-3">
-              <p className="text-small text-neutral-300">
-                This list provides the same selection without using the 3D canvas.
-              </p>
-              {map.levels
-                .filter((level) => !selectableLevelIds || selectableLevelIds.includes(level.id))
-                .map((level) => {
-                  const structures = map.structures.filter(({ levelId }) => levelId === level.id)
-                  if (structures.length === 0) return null
-                  return (
-                    <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
-                      <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
-                        {level.label}
-                      </h3>
-                      <ul className="mt-2 grid gap-2 sm:grid-cols-2">
-                        {structures.map((structure) => (
-                          <li key={structure.id}>
-                            <button
-                              aria-pressed={selection.includes(structure.id)}
-                              className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
-                              disabled={disabled}
-                              ref={(button) => {
-                                if (button) structureButtons.current.set(structure.id, button)
-                                else structureButtons.current.delete(structure.id)
-                              }}
-                              type="button"
-                              onClick={() => selectStructure(structure.id)}
-                            >
-                              {structure.label}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </section>
-                  )
-                })}
-            </div>
-          </details>
+          {!lookOnly ? (
+            <details
+              className="rounded-lg border border-clinical-700 bg-clinical-900"
+              open={failed || listOpen}
+              onToggle={(event) => setListOpen(event.currentTarget.open)}
+            >
+              <summary className="cursor-pointer px-3 py-2 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+                Choose from list
+              </summary>
+              <div className="max-h-[36dvh] space-y-4 overflow-y-auto border-t border-clinical-700 p-3">
+                <p className="text-small text-neutral-300">
+                  This list provides the same selection without using the 3D canvas.
+                </p>
+                {map.levels
+                  .filter((level) => !selectableLevelIds || selectableLevelIds.includes(level.id))
+                  .map((level) => {
+                    const structures = map.structures.filter(({ levelId }) => levelId === level.id)
+                    if (structures.length === 0) return null
+                    return (
+                      <section aria-labelledby={`anatomy-level-${level.id}`} key={level.id}>
+                        <h3 className="text-small font-semibold" id={`anatomy-level-${level.id}`}>
+                          {level.label}
+                        </h3>
+                        <ul className="mt-2 grid gap-2 sm:grid-cols-2">
+                          {structures.map((structure) => (
+                            <li key={structure.id}>
+                              <button
+                                aria-pressed={selection.includes(structure.id)}
+                                className="w-full rounded-lg border border-clinical-600 px-3 py-2 text-left text-small hover:bg-clinical-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 aria-pressed:border-brand-400 aria-pressed:bg-clinical-800"
+                                disabled={disabled}
+                                ref={(button) => {
+                                  if (button) structureButtons.current.set(structure.id, button)
+                                  else structureButtons.current.delete(structure.id)
+                                }}
+                                type="button"
+                                onClick={() => selectStructure(structure.id)}
+                              >
+                                {structure.label}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    )
+                  })}
+              </div>
+            </details>
+          ) : null}
         </footer>
       </div>
 

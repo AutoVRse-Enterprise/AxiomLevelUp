@@ -331,6 +331,21 @@ export const appConfigSchema = z.object({
         highlightColor: z.string().regex(/^#[0-9a-f]{6}$/i),
         highlightOpacity: z.number().min(0).max(1),
         markerColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+        comparisonStyles: z
+          .strictObject({
+            guess: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+            }),
+            actual: z.strictObject({
+              color: z.string().regex(/^#[0-9a-f]{6}$/i),
+              opacity: z.number().positive().max(1),
+            }),
+          })
+          .default({
+            guess: { color: '#38bdf8', opacity: 0.78 },
+            actual: { color: '#f6c453', opacity: 0.86 },
+          }),
         volumeStyles: z
           .strictObject({
             color: z.string().regex(/^#[0-9a-f]{6}$/i),
@@ -445,7 +460,25 @@ export const appConfigSchema = z.object({
             degreesPerPixel: z.number().positive().max(5),
             maxYawDegrees: z.number().positive().max(90),
             maxPitchDegrees: z.number().positive().max(90),
+            keyboardStepDegrees: z.number().positive().max(30).default(4),
           }),
+          zoom: z
+            .strictObject({
+              enabled: z.boolean(),
+              minFovDegrees: z.number().positive().max(120),
+              maxFovDegrees: z.number().positive().max(120),
+              step: z.number().positive().max(30),
+            })
+            .refine(({ minFovDegrees, maxFovDegrees }) => minFovDegrees < maxFovDegrees, {
+              path: ['maxFovDegrees'],
+              message: 'Maximum anatomy FOV must be greater than the minimum.',
+            })
+            .default({
+              enabled: false,
+              minFovDegrees: 28,
+              maxFovDegrees: 64,
+              step: 4,
+            }),
           rings: z.strictObject({
             color: z.string().regex(/^#[0-9a-f]{6}$/i),
             opacity: z.number().positive().max(1),
@@ -466,6 +499,10 @@ export const appConfigSchema = z.object({
         highlightColor: '#f6c453',
         highlightOpacity: 1,
         markerColor: '#f97316',
+        comparisonStyles: {
+          guess: { color: '#38bdf8', opacity: 0.78 },
+          actual: { color: '#f6c453', opacity: 0.86 },
+        },
         volumeStyles: {
           color: '#38bdf8',
           opacity: 0.28,
@@ -533,6 +570,13 @@ export const appConfigSchema = z.object({
             degreesPerPixel: 0.12,
             maxYawDegrees: 24,
             maxPitchDegrees: 16,
+            keyboardStepDegrees: 4,
+          },
+          zoom: {
+            enabled: false,
+            minFovDegrees: 28,
+            maxFovDegrees: 64,
+            step: 4,
           },
           rings: {
             color: '#d68b7f',

@@ -106,6 +106,7 @@ export function AnatomyExplorePrimitive({
       }
       modelUrl={modelUrl}
       navigation={primitive.content.navigation}
+      orientationLabels={primitive.content.orientationLabels}
       neutralNavigationLabels={unknownEntry}
       hideLocationLabels={unknownEntry}
       prompt={primitive.content.prompt}

@@ -25,6 +25,8 @@ const mocked = vi.hoisted(() => ({
     enterEndoscopic: vi.fn(),
     exitEndoscopic: vi.fn(),
     lookAround: vi.fn(),
+    setZoom: vi.fn(),
+    zoomBy: vi.fn(),
     frameStructures: vi.fn(),
     resetView: vi.fn(),
     getTestSnapshot: vi.fn(() => ({
@@ -219,6 +221,38 @@ describe('AnatomyViewer', () => {
     })
     expect(onWaypointReached).toHaveBeenCalledWith('terminal-waypoint')
     expect(screen.getByRole('status')).toHaveTextContent('You are now in Terminal waypoint.')
+  })
+
+  it('keeps look-only navigation inside the airway and supports keyboard zoom and look', () => {
+    const zoomConfig = {
+      ...config,
+      lumen: {
+        ...config.lumen,
+        zoom: { ...config.lumen.zoom, enabled: true },
+      },
+    }
+    render(
+      <AnatomyViewer
+        config={zoomConfig}
+        map={map}
+        modelUrl="/model.glb"
+        navigation="look"
+        orientationLabels="hidden"
+        startView={{ mode: 'endoscopic', waypointId: 'entry-waypoint' }}
+      />,
+    )
+
+    const viewport = screen.getByLabelText('Interactive 3D anatomy viewport')
+    fireEvent.keyDown(viewport, { key: 'ArrowLeft' })
+    fireEvent.keyDown(viewport, { key: '+' })
+
+    expect(mocked.controller.lookAround).toHaveBeenCalled()
+    expect(mocked.controller.zoomBy).toHaveBeenCalledWith(-zoomConfig.lumen.zoom.step)
+    expect(screen.queryByText('Current landmark:')).not.toBeInTheDocument()
+    expect(screen.queryByText('Back to parent')).not.toBeInTheDocument()
+    expect(screen.queryByText('Branches from')).not.toBeInTheDocument()
+    expect(screen.queryByText('Left')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Zoom in' })).toBeVisible()
   })
 
   it('shows a persistent dismissible interaction hint once per learner', async () => {

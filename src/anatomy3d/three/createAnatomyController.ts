@@ -15,6 +15,7 @@ import type {
   AnatomyViewState,
   CreateAnatomyControllerOptions,
 } from '@/anatomy3d/viewer/controller'
+import { clampAnatomyFov } from '@/anatomy3d/viewer/controller'
 import { resolveStructure } from '@/anatomy3d/viewer/resolveStructure'
 import { deterministicOcclusionBlobs } from '@/anatomy3d/three/findingGeometry'
 import { ReferenceCountedCache, type CacheLease } from '@/anatomy3d/three/referenceCache'
@@ -37,6 +38,7 @@ interface CameraTween {
 }
 
 const modelCache = new ReferenceCountedCache<THREE.Group>()
+const DEFAULT_FOV_DEGREES = 42
 
 function materialsOf(mesh: THREE.Mesh) {
   return Array.isArray(mesh.material) ? mesh.material : [mesh.material]
@@ -202,7 +204,7 @@ export function createAnatomyController({
   element.replaceChildren(renderer.domElement)
 
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.001, 10_000)
+  const camera = new THREE.PerspectiveCamera(DEFAULT_FOV_DEGREES, 1, 0.001, 10_000)
   scene.add(camera)
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
@@ -726,6 +728,8 @@ export function createAnatomyController({
     endoscopicLookDistance = Math.max(position.distanceTo(target), radius)
     lookYaw = 0
     lookPitch = 0
+    camera.fov = clampAnatomyFov(DEFAULT_FOV_DEGREES, config.lumen.zoom)
+    camera.updateProjectionMatrix()
   }
 
   const buildLumen = () => {
@@ -1036,6 +1040,7 @@ export function createAnatomyController({
       headlight.visible = false
       scene.fog = null
       camera.near = overviewNear
+      camera.fov = DEFAULT_FOV_DEGREES
       camera.updateProjectionMatrix()
       updateFindingVisibility()
       controller.travelTo(waypoint.id, options)
@@ -1065,6 +1070,17 @@ export function createAnatomyController({
       controls.target.copy(camera.position).addScaledVector(direction, endoscopicLookDistance)
       camera.lookAt(controls.target)
       notifyViewChanged()
+    },
+
+    setZoom(fovDegrees) {
+      if (!endoscopic || !config.lumen.zoom.enabled) return
+      camera.fov = clampAnatomyFov(fovDegrees, config.lumen.zoom)
+      camera.updateProjectionMatrix()
+      notifyViewChanged()
+    },
+
+    zoomBy(deltaDegrees) {
+      controller.setZoom(camera.fov + deltaDegrees)
     },
 
     frameStructures(structureIds, options = {}) {
@@ -1107,6 +1123,7 @@ export function createAnatomyController({
       headlight.visible = false
       scene.fog = null
       camera.near = overviewNear
+      camera.fov = DEFAULT_FOV_DEGREES
       camera.updateProjectionMatrix()
       applyStructureAppearance()
       updateFindingVisibility()

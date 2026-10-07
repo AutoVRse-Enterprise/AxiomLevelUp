@@ -139,7 +139,7 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
     at 375 × 812. Round 1 uses the documented outside-in marker fallback; Round 2 retains bounded
     endoscopic travel and the agreed default-off cue upgrades.
 
-- [ ] **P17-T02 — Look navigation, zoom and orientation overlay**
+- [x] **P17-T02 — Look navigation, zoom and orientation overlay**
   - Schema, controller and viewer changes with unit tests; default lesson/case viewer behaviour
     unchanged (existing anatomy tests and golden images pass).
 
