@@ -102,6 +102,15 @@ drop answers, clue policy, option-set identity, references, placeholders, answer
 per-difficulty timing. Challenge links are versioned and checksummed for accidental corruption;
 they are not signed or tamper-proof.
 
+`games.player` configures the short intro and locked-state delays. `games.copy` is a strict
+player-facing dictionary for route errors, progress, timer announcements, primitive actions,
+clue purchase, exit/resume, reveal and result labels. A game supplies those labels through
+`PresentationContext`; the default lesson context preserves the existing primitive strings.
+
+Clue order is significant: the selected difficulty's `freeClues` count opens that many clues from
+the start of the array, and the remainder cost `clueCostPoints` each. Free and purchased clues are
+read inline while the timer runs. Only the paid-clue confirmation pauses timing.
+
 ## Primitive registry
 
 The canonical registry contains 29 strict primitive types: 25 standard types and 4 DICOM types.
