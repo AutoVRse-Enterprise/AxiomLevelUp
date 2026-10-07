@@ -3571,3 +3571,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** Ten seed/planning tests pass. Plans retain `gameVersion`; identical
   inputs reproduce rounds and drop points while changed seeds vary selection.
 - **Follow-ups:** Add the persisted pure run-session reducer.
+
+### [2026-10-07 10:20] P15-T06 - Add resumable game sessions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a pure guarded run reducer and an experience-scoped Zustand `game-session`
+  store with exact game/version resume semantics.
+- **Files changed:** `src/engines/games/session.ts`;
+  `src/engines/games/session.test.ts`; `src/engines/games/sessionStore.ts`;
+  `src/engines/games/sessionStore.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused Vitest; `npm run typecheck`.
+- **Result/verification:** Ten session tests and TypeScript pass, covering lifecycle, illegal
+  transitions, pauses, persisted partial state, exact resume and stale-session clearing.
+- **Follow-ups:** Extend typed events and learner state v9 through the central pipeline.
