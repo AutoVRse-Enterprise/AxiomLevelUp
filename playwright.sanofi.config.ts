@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: './e2e/sanofi',
   outputDir: '.tmp/playwright-sanofi/results',
   fullyParallel: false,
-  workers: 2,
+  workers: 1,
   forbidOnly: true,
   retries: 0,
   reporter: [['list'], ['html', { outputFolder: '.tmp/playwright-sanofi/report', open: 'never' }]],

@@ -215,6 +215,12 @@ asked hierarchy levels and their ancestors. Scoring converts accuracy to configu
 adds the first eligible speed tier and subtracts paid clue costs with a zero floor. Result messages
 match ratios so the same rules work for games of different lengths.
 
+Spot-finding rounds use the same primitive evaluator path. Optional hotspot pan/zoom maps taps
+through the active image transform, distance precision awards linear near-miss credit in normalized
+image space and the default remains static binary region scoring. Optional healthy comparison uses
+the shared image-comparison presentation. Review composes the learner marker and authored target
+outline without a game-specific primitive implementation.
+
 The separate `game-session` Zustand store persists only an active run under the existing
 experience-scoped IndexedDB prefix. Its pure reducer accepts explicit IDs, timestamps and elapsed
 time, including pause records, the spatial explore/answer step, exploration drafts and zero-point
@@ -230,7 +236,9 @@ inline. Spatial rounds compose an anatomy scene with a drawer or replacement loc
 and exploration retains its movement draft when the learner returns from the answer. Configured
 viewer failures pause the clock and offer remount Retry or a persisted zero-point Skip. Only
 paid-clue confirmation, configured viewer failure and document backgrounding pause the clock. The
-sanofi experience alone registers `/play/:gameId` and `/results/:runId`.
+sanofi experience alone registers `/play/:gameId` and `/results/:runId`. Result surfaces derive
+credits from each run's primitive, clue, option-set and anatomy-map asset references, then render
+manifest-backed provenance through the shared accessible Credits sheet.
 
 ## Delivery and presentation runtime
 

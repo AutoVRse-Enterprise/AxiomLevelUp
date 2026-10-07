@@ -1,6 +1,6 @@
 # Medical Challenge programme plan (Phases 14–20)
 
-**Status:** Active — Phases 14–17 complete; Phase 18 is active.
+**Status:** Active — Phases 14–18 complete; Phase 19 is next.
 
 This document is the programme-level plan for turning the existing Learning Runtime into a
 multi-experience codebase and delivering the mobile-first medical challenge game described in

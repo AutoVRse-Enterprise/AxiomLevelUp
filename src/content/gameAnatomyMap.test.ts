@@ -15,7 +15,10 @@ describe('respiratory game anatomy map', () => {
   it('reuses the verified lung model contract', () => {
     const expected = defaultAssets.assets.find(({ assetId }) => assetId === 'lung-model')
     const actual = sanofiAssets.assets.find(({ assetId }) => assetId === 'lung-model')
-    expect(actual).toEqual(expected)
+    const { provenance: expectedProvenance, ...expectedContract } = expected!
+    const { provenance: actualProvenance, ...actualContract } = actual!
+    expect(actualContract).toEqual(expectedContract)
+    expect(actualProvenance).toMatchObject(expectedProvenance!)
     expect(map.modelAssetId).toBe('lung-model')
   })
 

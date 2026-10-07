@@ -11,11 +11,14 @@ import { HomePage } from '@/experiences/sanofi/HomePage'
 import { createSanofiRoutes } from '@/experiences/sanofi/routes'
 import { sanofiExperienceShell } from '@/experiences/sanofi/shell'
 
+const testAppConfig = structuredClone(appConfig)
+testAppConfig.games.formats = []
+
 const registry = validateContentBundle({
   manifestFile: 'manifest.json',
   manifest,
   appConfigFile: 'app-config.json',
-  appConfig,
+  appConfig: testAppConfig,
   courseFiles: [],
   caseFiles: [],
   anatomyMapFiles: [],

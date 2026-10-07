@@ -1,6 +1,8 @@
+import { CreditsSheet } from '@/components/game/CreditsSheet'
 import { Button } from '@/components/ui'
 import { GameSummaryCard } from '@/components/game/GameSummaryCard'
 import type { GameConfig } from '@/content/schema/game'
+import type { CreditedAsset } from '@/engines/games/credits'
 import type { GameRunSummary } from '@/engines/games/results'
 
 export function GameFinal({
@@ -9,6 +11,7 @@ export function GameFinal({
   bestRoundTitle,
   difficultyLabel,
   copy,
+  credits,
   onPlayAgain,
 }: {
   summary: GameRunSummary
@@ -16,6 +19,7 @@ export function GameFinal({
   bestRoundTitle: string
   difficultyLabel: string
   copy: NonNullable<GameConfig['copy']>
+  credits: readonly CreditedAsset[]
   onPlayAgain: () => void
 }) {
   return (
@@ -31,6 +35,9 @@ export function GameFinal({
         <Button onClick={onPlayAgain} size="lg">
           {copy.playAgain}
         </Button>
+        <div className="mt-3">
+          <CreditsSheet copy={copy} credits={credits} />
+        </div>
       </div>
     </div>
   )

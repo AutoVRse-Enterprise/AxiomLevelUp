@@ -5,6 +5,7 @@ import { AnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { useContent } from '@/app/contentContext'
 import type { GameDocument } from '@/content/schema/game'
 import { correctAnswerDimensions, correctAnswerLabel } from '@/engines/games/answers'
+import { collectRunCredits } from '@/engines/games/credits'
 import { createRunSeed } from '@/engines/games/seed'
 import { resolveSpeedBonusTier } from '@/engines/games/scoring'
 import type { GameSession } from '@/engines/games/session'
@@ -105,6 +106,14 @@ function GameRun({
       ),
     ],
     [plan.rounds, registry.anatomyMapById, registry.assetById, registry.roundById],
+  )
+  const credits = useMemo(
+    () =>
+      collectRunCredits(
+        plan.rounds.map(({ roundId }) => roundId),
+        registry,
+      ),
+    [plan.rounds, registry],
   )
   const plannedRound = plan.rounds[session.roundIndex]
   const round = plannedRound ? registry.roundById.get(plannedRound.roundId) : undefined
@@ -343,6 +352,7 @@ function GameRun({
               <GameFinal
                 bestRoundTitle={bestRoundTitle}
                 copy={copy}
+                credits={credits}
                 difficultyLabel={difficulty.label}
                 message={message}
                 onPlayAgain={() => {

@@ -4081,3 +4081,27 @@ README.md`; `git diff --check`.
 - **Result/verification:** No blocking internal plausibility or licensing finding remains. The UIP
   target is explicitly the expanded lower-left interstitium, not the nearby vascular profiles.
 - **Follow-ups:** Phase 19 must surface the persistent synthetic-case notice and Credits on You.
+
+### [2026-10-07 20:05] P18-T08 - Close spot-the-finding challenge
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Extracted shared spatial-round browser helpers and added the Phase 18 browser matrix
+  for all challenge difficulties, both target viewports, keyboard and zoomed hotspot input,
+  Anatomy Hunt, Spot the Finding, Credits, accessibility and prohibited vocabulary. Added
+  clock-paced duration evidence, serialized the SwiftShader-heavy Sanofi suite to prevent active
+  rounds expiring under parallel renderer contention, refreshed generated schema documentation
+  and closed the phase architecture, roadmap, programme, regression and handoff records.
+- **Files changed:** `e2e/sanofi/{challenge.spec.ts,spatial.spec.ts,helpers/rounds.ts}`;
+  `playwright.sanofi.config.ts`; game-player Credits integration and focused fixtures; schema
+  exporter and generated docs; `docs/qa/evidence/phase-18/challenge-durations.json`; Phase 18
+  regression, phase, roadmap, programme and handoff docs.
+- **Commands run:** Prettier; `npm run schema:export`; focused Vitest and Playwright iterations;
+  `npm run test:e2e:sanofi`; `npm run check`; serial `npx playwright test --workers=1`;
+  production-bundle region-debug string checks.
+- **Result/verification:** 105 Vitest files / 637 tests pass; both content roots validate with zero
+  warnings; both builds, budgets and default-build isolation pass. Sanofi Playwright passes 20
+  tests with 4 intentional project skips; default Playwright passes 53 with 3 intentional skips,
+  and all eight golden snapshots remain unchanged. Paced persisted active durations are 176 / 145
+  / 112 seconds for Warm-up / Challenge / Expert.
+- **Follow-ups:** Phase 19 owns the game hub, richer result/social surfaces, leaderboard, expert
+  runs, You-page Credits and persistent synthetic-case notice.

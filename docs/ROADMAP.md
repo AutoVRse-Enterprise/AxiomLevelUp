@@ -20,9 +20,9 @@ start with `README.md`.
 | 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates         |
 | 14    | Multi-experience foundation    | Complete | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged                 |
 | 15    | Game contract and engine       | Complete | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
-| 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                    |
-| 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone            |
-| 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
+| 16    | Game player and clinical round | Complete | A two-round game plays end to end with timer, clues, reveal and results                    |
+| 17    | Spatial rounds                 | Complete | Look-around and limited-move rounds score proximity and read clearly on a phone            |
+| 18    | Spot the finding and challenge | Complete | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
 | 19    | Game hub, results and social   | Planned  | Hub, results, challenge links, leaderboard, expert runs and You page work end to end       |
 | 20    | Demo polish and readiness      | Planned  | PRD success criteria have evidence; runbook and deployable sanofi build are published      |
 
@@ -149,5 +149,12 @@ Phase 17 closed on 2026-10-07 with a marker-based spatial-look round, two bounde
 exploration rounds, weighted and hierarchy-proximity scoring, dynamic lobe-child segment choices,
 pin-versus-actual reveal, failure Retry/Skip and model prefetch. The deterministic spatial fixture
 completes through visible and keyboard controls on desktop and 375 × 812 Chromium while default
-content and all eight existing golden images remain unchanged. Phase 18 is next; it adds the
-spot-the-finding round and complete four-round challenge.
+content and all eight existing golden images remain unchanged.
+
+Phase 18 closed on 2026-10-07 with zoomable, distance-scored image findings, healthy-reference
+comparison, provenance-driven Credits and three licensed histology rounds. The four-round
+Respiratory Challenge completes at every difficulty on desktop and 375 × 812 Chromium; Anatomy
+Hunt and Spot the Finding prove content-only game composition. Clock-paced persisted durations are
+176 / 145 / 112 seconds for Warm-up / Challenge / Expert. The final gate passed 105 Vitest files /
+637 tests, 20 Sanofi Playwright tests with 4 intentional skips, and the serial default suite with
+all eight golden snapshots unchanged. Phase 19 is next.

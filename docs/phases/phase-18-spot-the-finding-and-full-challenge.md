@@ -1,6 +1,6 @@
 # Phase 18: Spot the finding and the full Respiratory Challenge
 
-**Status:** Active
+**Status:** Complete
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phases 16 and 17.
 
@@ -55,9 +55,9 @@ shows a reference image side by side (phone: swipe or toggle).
 
 ### Credits
 
-Histology, illustration and audio assets carry CC BY / CC BY-SA provenance in `assets.json`. Add a
-shared **Credits** sheet (reachable from the result page and the You page) generated from asset
-provenance for every asset in the active run.
+Histology, illustration and audio assets carry CC BY / CC BY-SA provenance in `assets.json`. A
+shared **Credits** sheet on the result page is generated from asset provenance for every asset in
+the active run. Phase 19 will reuse it on the You page.
 
 ## Assembling the Respiratory Challenge
 
@@ -66,43 +66,43 @@ provenance for every asset in the active run.
 One synthetic adult with a worsening airway presentation connects the rounds, each with a one-line
 intro:
 
-1. "You've been dropped inside an airway. Where are you?"
-2. "Something is narrowing this airway. Find it."
-3. "Here's tissue from that airway. What's blocking it?"
+1. "A marker shows where you've been dropped. Use the lung shape and branch position to orient."
+2. "Trace the nearby branches, then pin the marked airway's lobe and segment."
+3. "Here is tissue from that airway. Identify the feature driving the obstruction."
 4. "Put it together. What's going on?"
 
-Round answers stay internally consistent: the obstruction found in Round 2 is mucus (Round 3),
-which is consistent with the Round 4 interpretation. Round 1's drop is independent so its answer
-does not leak into later rounds.
+Round answers stay internally consistent: Round 2 localises the marked airway without claiming a
+visible lesion, Round 3 identifies mucus, and Round 4's interpretation is consistent with that
+histology. Round 1's drop is independent so its answer does not leak into later rounds.
 
 ### Time budget
 
 | Round | Warm-up | Challenge | Expert |
 | ----- | ------- | --------- | ------ |
-| 1     | 60 s    | 40 s      | 30 s   |
-| 2     | 90 s    | 60 s      | 45 s   |
-| 3     | 45 s    | 30 s      | 25 s   |
-| 4     | 70 s    | 45 s      | 35 s   |
+| 1     | 50 s    | 40 s      | 30 s   |
+| 2     | 70 s    | 60 s      | 45 s   |
+| 3     | 40 s    | 30 s      | 25 s   |
+| 4     | 55 s    | 45 s      | 35 s   |
 
-Challenge maximum is 175 s of play plus about 20 s of reveals; typical play lands near 2–3
-minutes. Values live in round documents and difficulty multipliers; the Phase 15 timing rule
-warns outside 120–240 s.
+Active limits plus four five-second reveals are 235 s for Warm-up, 195 s for Challenge and 155 s
+for Expert. Values live in round documents and difficulty overrides; the Phase 15 timing rule
+warns outside each game's configured duration window.
 
 ### Difficulty content differences
 
 - Warm-up: proximal drop points, more moves, more free clues, distinct options.
 - Challenge: default.
-- Expert: segmental drop points, fewer moves, one free clue, the destruction round in the Round 3
-  pool, and similar answer options in Rounds 1 and 4.
+- Expert: segmental drop points, fewer moves, one free clue, tighter mucus-finding precision
+  without the healthy reference, and similar answer options in Rounds 1 and 4.
 
 ### Additional formats (round library reuse)
 
-| Format            | Composition                                             | Default status           |
-| ----------------- | ------------------------------------------------------- | ------------------------ |
-| Quick Challenge   | The four-slot Respiratory Challenge                     | Playable                 |
-| Anatomy Hunt      | Three spatial slots drawing from Round 1 and 2 pools    | Playable                 |
-| Spot the Finding  | Three `spot_finding` rounds                             | Playable if three rounds meet the quality bar |
-| Clinical Mystery  | Two `clinical_call` rounds                              | "New soon" preview card  |
+| Format           | Composition                                          | Default status          |
+| ---------------- | ---------------------------------------------------- | ----------------------- |
+| Quick Challenge  | The four-slot Respiratory Challenge                  | Playable                |
+| Anatomy Hunt     | Three spatial slots drawing from Round 1 and 2 pools | Playable                |
+| Spot the Finding | Three `spot_finding` rounds                          | Playable                |
+| Clinical Mystery | Two `clinical_call` rounds                           | "New soon" preview card |
 
 Each playable format is a game document referencing existing rounds; no format-specific code.
 
@@ -174,10 +174,12 @@ feedback lines and format names are authored independently and reviewed against 
     vascular profile to the source-described expanded lower-left interstitium.
   - No blocking internal consistency, product/treatment claim or licensing issue remains.
 
-- [ ] **P18-T08 — Tests and closeout**
+- [x] **P18-T08 — Tests and closeout**
   - Sanofi Playwright completes the four-round challenge on each playable difficulty on desktop and
     375 × 812; a scripted run measures total duration; content validates with zero warnings.
-  - `npm run check` passes; default regression gate passes; schema and architecture docs updated.
+  - `npm run check` passes with 105 Vitest files / 637 tests; the serial default regression gate
+    passes 53 tests with 3 intentional skips and all eight golden snapshots unchanged; schema,
+    architecture, roadmap, programme, regression and handoff docs are updated.
 
 ## Exit criteria
 

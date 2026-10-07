@@ -159,6 +159,9 @@ documents exist this configuration is required. Semantic validation enforces the
 templates, strict primitive content, complete and reachable spatial drop answers, clue policy,
 option-set identity, references, placeholders, answer leakage and per-difficulty timing. Challenge
 links are versioned and checksummed for accidental corruption; they are not signed or tamper-proof.
+Configured formats are either \`playable\`, with a resolving \`gameId\`, or \`preview\`. Result
+credits are selected from manifest provenance for every asset referenced by the run's rounds,
+answer variants, clues and anatomy maps.
 
 ## Primitive registry
 
