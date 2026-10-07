@@ -3600,3 +3600,16 @@ README.md`; `git diff --check`.
   ID, history is bounded, per-difficulty bests and daily streaks update, v3-v8 data migrates to v9
   and game completion awards no XP.
 - **Follow-ups:** Add deterministic result, message and leaderboard selectors.
+
+### [2026-10-07 10:35] P15-T08 - Add result and leaderboard selectors
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added run summaries, ratio-message matching, round strips, reveal breakdowns and
+  period/difficulty leaderboard merging with stable ranking and pinned-player behavior.
+- **Files changed:** `src/engines/games/results.ts`;
+  `src/engines/games/results.test.ts`; `src/engines/games/leaderboard.ts`;
+  `src/engines/games/leaderboard.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused Vitest; `npm run typecheck`.
+- **Result/verification:** Seven result/leaderboard tests and TypeScript pass, including earliest
+  best-round ties, first matching message rules and a player outside the visible ranking window.
+- **Follow-ups:** Add the versioned challenge-link codec.
