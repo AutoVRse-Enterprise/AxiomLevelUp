@@ -1,6 +1,6 @@
 # Phase 18: Spot the finding and the full Respiratory Challenge
 
-**Status:** Planned
+**Status:** Active
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phases 16 and 17.
 
@@ -120,9 +120,18 @@ feedback lines and format names are authored independently and reviewed against 
 
 ## Checklist
 
-- [ ] **P18-T00 — Decisions**
-  - Confirm open question 4 (which formats are playable). Record ADR-109 for tap-precision scoring
-    and zoomable assessment.
+- [x] **P18-T00 — Decisions**
+  - Open question 4 was resolved in the programme plan: Quick Challenge, Anatomy Hunt and Spot
+    the Finding are playable; Clinical Mystery is a preview.
+  - Recorded ADR-110 for tap-precision scoring and zoomable assessment, and ADR-111 for challenge
+    composition. ADR-109 is already the Phase 17 spatial-round decision.
+  - Confirmed that Expert keeps the mucus round with a tighter `similar` option-set variant; the
+    destruction round remains exclusive to Spot the Finding.
+  - Confirmed a newly sourced, openly licensed third histology image rather than a duplicate target
+    or 3D variant.
+  - Trimmed Warm-up limits to 50 / 70 / 40 / 55 seconds so play plus four reveal allowances fits
+    the 120–240-second window. Challenge and Expert retain 40 / 60 / 30 / 45 and
+    30 / 45 / 25 / 35 seconds respectively.
 
 - [ ] **P18-T01 — Zoomable hotspot assessment**
   - Schema, component and keyboard changes; existing image primitive tests pass unchanged.

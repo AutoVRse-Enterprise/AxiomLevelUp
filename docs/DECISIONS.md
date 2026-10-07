@@ -2086,3 +2086,57 @@ game dimensions and neutral labels.
 Default lessons and cases retain their existing controls, copy, content and visual baselines.
 Spatial result records gain a skipped flag and exploration checkpoint, and content authors must
 provide coherent answer paths and reachable drop pools for every difficulty.
+
+## ADR-110: Image hotspots gain default-off zoom, comparison and precision assessment
+
+**Status:** Accepted
+
+**Context:** Phase 18 needs a medical-image finding interaction that stays usable at phone size,
+maps a tap correctly after pan and zoom, gives partial credit for a near miss and can expose a
+healthy reference. The existing `image_hotspot` assess mode renders a static image and awards only
+binary region credit. `PanZoomImage`, normalized region geometry, evaluator scores in the 0–1
+range and the image comparison presentation already exist as shared capabilities.
+
+**Decision:** Add optional assess-only `zoom`, `precision`, `compare` and `answerLabel` fields to
+`image_hotspot`. Zoom reuses the shared pan/zoom transform and maps taps through
+`screenToNormalized`; keyboard arrows continue to place the marker while +/− zoom. Region
+precision preserves the current binary behavior. Distance precision awards
+`max(0, 1 - distance / falloffRadius)`, where distance is measured to the nearest target-region
+boundary in normalized image coordinates. Inside and boundary points receive full credit.
+Comparison reuses an extracted shared image-comparison presentation. Review shows both the
+learner marker and authored target outline.
+
+All additions are default-off. A development-only `?regionDebug=1` overlay supports normalized
+region authoring and is removed from production builds.
+
+**Consequences:** Existing lessons, cases and showcase content render and score exactly as before.
+Authors can build zoomable, fractionally scored finding rounds without a game-specific renderer.
+Normalized distance is intentionally resolution-independent, though equal normalized distances
+can represent unequal source-image pixels on non-square images.
+
+## ADR-111: The Respiratory Challenge keeps one patient thread and composes formats from content
+
+**Status:** Accepted
+
+**Context:** The four-round challenge must stay internally coherent, fit two to four minutes on
+all difficulties and demonstrate reusable formats. Substituting emphysema histology only for the
+Expert third round would contradict the mucus obstruction and type 2 asthma interpretation. The
+original Warm-up limits total 285 seconds after reveal allowances. Spot the Finding also needs
+three credible rounds, while only two suitable images are currently available.
+
+**Decision:** Every difficulty uses the mucus finding in the connected challenge. Expert selects
+the existing `similar` primitive option set with a tighter precision falloff and no healthy
+reference. Emphysema destruction remains exclusive to the standalone Spot the Finding format,
+which receives a third openly licensed respiratory histology image. Warm-up round limits become
+50, 70, 40 and 55 seconds; Challenge uses 40, 60, 30 and 45; Expert uses 30, 45, 25 and 35. With
+four five-second reveal allowances these plan to 235, 195 and 155 seconds respectively.
+
+Quick Challenge, Anatomy Hunt and Spot the Finding are game documents over existing round pools.
+Anatomy Hunt uses a slot with `pick: 2`; Spot the Finding gets a format-specific 60–180-second
+window. Clinical Mystery remains a preview. Credits are generated from the active run's asset
+references and shown on the result page; the shared sheet is mounted on the You page when that
+Phase 19 route exists.
+
+**Consequences:** Difficulty changes challenge precision and assistance without changing the
+patient's pathology. The primary game stays inside its timing contract. Additional formats need
+content only, and the remaining You-page credits entry is an explicit Phase 19 integration.

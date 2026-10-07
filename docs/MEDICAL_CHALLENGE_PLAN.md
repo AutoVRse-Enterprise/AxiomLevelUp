@@ -1,6 +1,6 @@
 # Medical Challenge programme plan (Phases 14–20)
 
-**Status:** Active — Phases 14–17 complete; Phase 18 is next.
+**Status:** Active — Phases 14–17 complete; Phase 18 is active.
 
 This document is the programme-level plan for turning the existing Learning Runtime into a
 multi-experience codebase and delivering the mobile-first medical challenge game described in
@@ -276,6 +276,12 @@ The user confirmed these decisions on 2026-10-07:
    joining the leaderboard. (P19-T04, P19-T05)
 6. **Hosting:** treat HTTPS hosting of `dist-sanofi/` as an external gate like P13-T16. (P20-T09)
 7. **Default experience scope:** the default experience does not register game routes. (P14-T00)
+8. **Expert Round 3:** the four-round challenge keeps the mucus finding on every difficulty;
+   Expert uses the existing `similar` option-set path with tighter precision and no healthy
+   comparison. The emphysema finding remains in the Spot the Finding format so the connected
+   patient thread stays coherent. (P18-T00)
+9. **Spot the Finding breadth:** source a third openly licensed respiratory histology image and
+   make the three-round format playable. (P18-T00)
 
 ## 12. Programme risks
 

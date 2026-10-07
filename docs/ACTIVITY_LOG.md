@@ -3957,3 +3957,17 @@ README.md`; `git diff --check`.
   with 2 intentional project skips; default Playwright passes 53 with 3 intentional skips. Default
   content and all eight existing golden images remain unchanged.
 - **Follow-ups:** Begin Phase 18 spot-the-finding and complete four-round challenge work.
+
+### [2026-10-07 17:00] P18-T00 - Confirm finding and challenge decisions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Activated Phase 18, corrected the occupied ADR number, and recorded the default-off
+  zoom/precision/compare contract and coherent four-round challenge composition. Confirmed the
+  mucus Expert variant, licensed third histology image, playable formats, timing trim and Credits
+  placement.
+- **Files changed:** `docs/phases/phase-18-spot-the-finding-and-full-challenge.md`;
+  `docs/MEDICAL_CHALLENGE_PLAN.md`; `docs/DECISIONS.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** None.
+- **Result/verification:** ADR-110 and ADR-111 are accepted; Warm-up now plans to 235 seconds
+  including reveal allowances, within the configured 120–240-second window.
+- **Follow-ups:** Add zoomable hotspot assessment without changing default behavior.
