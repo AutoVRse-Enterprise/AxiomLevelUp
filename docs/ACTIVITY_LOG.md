@@ -4068,3 +4068,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** Sanofi validates 8 rounds and 6 games with zero warnings; multi-pick
   plans select distinct rounds and result keys remain unique when slot IDs repeat.
 - **Follow-ups:** Complete the internal medical plausibility and licensing review.
+
+### [2026-10-07 19:35] P18-T07 - Review medical and licensing plausibility
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Reviewed every production round for terminology, claim scope, answer/clue
+  consistency, distractors, prohibited product/treatment claims, synthetic labelling and media
+  licensing. Compared the independently authored flow once against PRD sections 7–21.
+- **Files changed:** `docs/qa/phase-18-content-plausibility.md`;
+  `docs/phases/phase-18-spot-the-finding-and-full-challenge.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Content/source review.
+- **Result/verification:** No blocking internal plausibility or licensing finding remains. The UIP
+  target is explicitly the expanded lower-left interstitium, not the nearby vascular profiles.
+- **Follow-ups:** Phase 19 must surface the persistent synthetic-case notice and Credits on You.

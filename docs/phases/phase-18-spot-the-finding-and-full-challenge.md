@@ -169,8 +169,10 @@ feedback lines and format names are authored independently and reviewed against 
     and Spot the Finding are playable formats; Clinical Mystery is a "New soon" preview.
   - Verified multi-pick slots select distinct rounds and expose stable, unique result-strip keys.
 
-- [ ] **P18-T07 — Plausibility review**
-  - Publish the checklist and fix any inconsistency it finds.
+- [x] **P18-T07 — Plausibility review**
+  - Published `docs/qa/phase-18-content-plausibility.md`. Corrected the approved UIP target from a
+    vascular profile to the source-described expanded lower-left interstitium.
+  - No blocking internal consistency, product/treatment claim or licensing issue remains.
 
 - [ ] **P18-T08 — Tests and closeout**
   - Sanofi Playwright completes the four-round challenge on each playable difficulty on desktop and
