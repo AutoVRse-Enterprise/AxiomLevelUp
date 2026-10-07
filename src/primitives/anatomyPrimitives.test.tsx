@@ -599,6 +599,56 @@ describe('anatomy localisation component', () => {
     })
   })
 
+  it('derives structure choices from the selected parent structure', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    const value = anatomyLocatePrimitiveSchema.parse({
+      ...locatePrimitive(),
+      content: {
+        anatomyMapId: 'lung-map',
+        prompt: 'Pin the lobe and choose its segment.',
+        levels: [
+          {
+            levelId: 'lobe',
+            input: 'model',
+            targetStructureId: 'right-lower-lobe',
+          },
+          {
+            levelId: 'segment',
+            input: 'structure_choice',
+            parentLevelId: 'lobe',
+            targetStructureId: 'right-lower-posterior-basal-segment-volume',
+          },
+        ],
+      },
+    })
+    render(
+      <ContentContext.Provider value={registry}>
+        <AnatomyLocatePrimitive
+          attempt={0}
+          draft={null}
+          mode="interactive"
+          onComplete={vi.fn()}
+          onDraftChange={vi.fn()}
+          onInteract={vi.fn()}
+          onSubmit={onSubmit}
+          primitive={value}
+        />
+      </ContentContext.Provider>,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Select right lower lobe' }))
+    await user.click(screen.getByRole('button', { name: 'Next level' }))
+    expect(screen.getByRole('radio', { name: 'Posterior basal segment' })).toBeVisible()
+    expect(screen.queryByRole('radio', { name: 'Apical segment' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'Posterior basal segment' }))
+    await user.click(screen.getByRole('button', { name: 'Commit your localisation' }))
+    expect(onSubmit).toHaveBeenCalledWith({
+      lobe: 'right-lower-lobe',
+      segment: 'right-lower-posterior-basal-segment-volume',
+    })
+  })
+
   it('reveals the correct structure, region, and choice in review', () => {
     const value = locatePrimitive()
     const response = {

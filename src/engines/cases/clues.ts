@@ -151,7 +151,7 @@ function selectedAnatomyClueIds(
     if (typeof selectedId !== 'string') return level.clueIds ?? []
 
     const targetId =
-      level.input === 'model'
+      level.input === 'model' || level.input === 'structure_choice'
         ? level.targetStructureId
         : level.input === 'image'
           ? level.targetRegionId
@@ -159,7 +159,7 @@ function selectedAnatomyClueIds(
     if (selectedId === targetId) return []
 
     const responseClueIds =
-      level.input === 'model'
+      level.input === 'model' || level.input === 'structure_choice'
         ? anatomyMap?.structures.find(({ id }) => id === selectedId)?.clueIds
         : level.input === 'image'
           ? level.regions.find(({ id }) => id === selectedId)?.clueIds

@@ -32,6 +32,36 @@
         "licence": "Creative Commons Attribution-ShareAlike 3.0 Unported",
         "author": "James Heilman, MD"
       }
+    },
+    {
+      "assetId": "lung-model",
+      "path": "/assets/models/lung-map/model.glb",
+      "type": "model",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 514852,
+      "mimeType": "model/gltf-binary",
+      "sha256": "8884cefbb5be256af5dfd46b8d8071af677d4cf4ade8477e3311e2c09086766a",
+      "meshNames": [
+        "right_upper_lobe",
+        "right_middle_lobe",
+        "right_lower_lobe",
+        "left_upper_lobe",
+        "left_lower_lobe",
+        "trachea",
+        "right_main_bronchus",
+        "left_main_bronchus"
+      ],
+      "triangleCount": 96152,
+      "bounds": {
+        "min": [-116.53643205781646, -177.86728333124444, 1014.5900268554688],
+        "max": [125.42874481626566, -20.311649119184203, 1395.43994140625]
+      },
+      "provenance": {
+        "sourceUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",
+        "licence": "Creative Commons Attribution 4.0 International",
+        "author": "BodyParts3D, © The Database Center for Life Science"
+      }
     }
   ]
 }

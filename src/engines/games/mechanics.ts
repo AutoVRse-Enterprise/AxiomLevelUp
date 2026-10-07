@@ -7,29 +7,50 @@ export interface GameMechanicTemplate {
     immersive: boolean
     clueTray: boolean
     answerDrawer: boolean
+    answerSurface: 'drawer' | 'replace'
   }
 }
 
 export const gameMechanicTemplates = {
   spatial_look: {
-    accuracySource: 'proximity',
+    accuracySource: 'evaluator',
     timeoutPolicy: 'evaluate_draft',
-    presentation: { immersive: true, clueTray: false, answerDrawer: true },
+    presentation: {
+      immersive: true,
+      clueTray: false,
+      answerDrawer: true,
+      answerSurface: 'drawer',
+    },
   },
   spatial_explore: {
     accuracySource: 'proximity',
     timeoutPolicy: 'evaluate_draft',
-    presentation: { immersive: true, clueTray: false, answerDrawer: true },
+    presentation: {
+      immersive: true,
+      clueTray: false,
+      answerDrawer: true,
+      answerSurface: 'replace',
+    },
   },
   spot_finding: {
     accuracySource: 'evaluator',
     timeoutPolicy: 'evaluate_draft',
-    presentation: { immersive: true, clueTray: false, answerDrawer: false },
+    presentation: {
+      immersive: true,
+      clueTray: false,
+      answerDrawer: false,
+      answerSurface: 'replace',
+    },
   },
   clinical_call: {
     accuracySource: 'evaluator',
     timeoutPolicy: 'zero',
-    presentation: { immersive: false, clueTray: true, answerDrawer: false },
+    presentation: {
+      immersive: false,
+      clueTray: true,
+      answerDrawer: false,
+      answerSurface: 'replace',
+    },
   },
 } as const satisfies Record<GameMechanic, GameMechanicTemplate>
 

@@ -23,7 +23,9 @@ export function resolveEntryLocalisation(
       levels: primitive.content.levels.map((level) => {
         const answerId = answerIds[level.levelId]
         if (!answerId) return level
-        if (level.input === 'model') return { ...level, targetStructureId: answerId }
+        if (level.input === 'model' || level.input === 'structure_choice') {
+          return { ...level, targetStructureId: answerId }
+        }
         if (level.input === 'image') return { ...level, targetRegionId: answerId }
         return { ...level, correctOptionId: answerId }
       }),

@@ -34,7 +34,9 @@ function responseLabel(
   structureLabels: ReadonlyMap<string, string>,
 ): string {
   if (!selectionId) return 'No response'
-  if (level.input === 'model') return structureLabels.get(selectionId) ?? selectionId
+  if (level.input === 'model' || level.input === 'structure_choice') {
+    return structureLabels.get(selectionId) ?? selectionId
+  }
   const options = level.input === 'image' ? level.regions : level.options
   return options.find(({ id }) => id === selectionId)?.label ?? selectionId
 }
@@ -155,6 +157,54 @@ function ChoiceLevel({
   )
 }
 
+function StructureChoiceLevel({
+  level,
+  levelLabel,
+  selectionId,
+  parentSelectionId,
+  structures,
+  disabled,
+  reviewStatus,
+  revealAnswer,
+  onSelect,
+}: LevelProps & {
+  level: Extract<AnatomyLocateLevel, { input: 'structure_choice' }>
+  parentSelectionId?: string
+  structures: readonly { id: string; label: string; levelId: string; parentId?: string }[]
+}) {
+  const options = structures
+    .filter(
+      (structure) =>
+        structure.levelId === level.levelId && structure.parentId === parentSelectionId,
+    )
+    .map(({ id, label }) => ({ id, label }))
+  if (!parentSelectionId) {
+    return <p className="text-small text-neutral-600">Choose the previous location first.</p>
+  }
+  return (
+    <div className="space-y-3">
+      <ChoiceList
+        disabled={disabled}
+        legend={levelLabel}
+        name={`anatomy-locate-${level.levelId}`}
+        options={options}
+        selectionMode="single"
+        selectedIds={new Set(selectionId ? [selectionId] : [])}
+        reviewItems={reviewStatus && selectionId ? { [selectionId]: reviewStatus } : undefined}
+        revealAnswer={revealAnswer}
+        onChange={onSelect}
+      />
+      {revealAnswer ? (
+        <p className="text-small font-medium text-success-700">
+          Correct choice:{' '}
+          {structures.find(({ id }) => id === level.targetStructureId)?.label ??
+            level.targetStructureId}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
 export function AnatomyLocatePrimitive({
   primitive,
   mode,
@@ -185,6 +235,11 @@ export function AnatomyLocatePrimitive({
   const select = (level: AnatomyLocateLevel, selectionId: string) => {
     if (readOnly) return
     const next = { ...selections, [level.levelId]: selectionId }
+    primitive.content.levels.forEach((candidate) => {
+      if (candidate.input === 'structure_choice' && candidate.parentLevelId === level.levelId) {
+        delete next[candidate.levelId]
+      }
+    })
     setSelections(next)
     onDraftChange(next)
     onInteract({
@@ -279,6 +334,16 @@ export function AnatomyLocatePrimitive({
       reviewStatus,
       revealAnswer,
       onSelect: (selection) => select(level, selection),
+    }
+    if (level.input === 'structure_choice') {
+      return (
+        <StructureChoiceLevel
+          {...commonProps}
+          level={level}
+          parentSelectionId={selections[level.parentLevelId]}
+          structures={map.structures}
+        />
+      )
     }
     return level.input === 'image' ? (
       <ImageLevel {...commonProps} level={level} />

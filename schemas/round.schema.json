@@ -1563,6 +1563,18 @@
             "type": "integer",
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
+          },
+          "maxHopsFromEntry": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "orientationLabels": {
+            "type": "string",
+            "enum": [
+              "patient",
+              "hidden"
+            ]
           }
         },
         "additionalProperties": false

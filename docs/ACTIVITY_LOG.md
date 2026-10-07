@@ -3863,3 +3863,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** 34 focused tests pass; case evidence keeps its case-specific reasoning
   context while reusable anatomy primitives no longer import it.
 - **Follow-ups:** Author and validate the game-specific respiratory anatomy map.
+
+### [2026-10-07 14:50] P17-T06 - Add game anatomy map and spatial contracts
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the sanofi respiratory game map with coherent side/region/lobe/segment/airway
+  answers and the verified shared lung asset. Added dynamic child-structure choices, weighted
+  evaluator scoring for spatial look, scoped hierarchy proximity, spatial scene requirements and
+  stricter drop validation.
+- **Files changed:** sanofi anatomy map/manifest/assets; anatomy primitive and game schemas;
+  game mechanics/planning validation, proximity/scoring and case compatibility helpers;
+  generated schemas and content docs; focused tests and phase/activity docs.
+- **Commands run:** Prettier; `npm run schema:export`; `npm run typecheck`;
+  `npm run validate:content`; focused Vitest.
+- **Result/verification:** Both content roots validate with zero warnings; 36 focused tests pass;
+  the sanofi lung asset is asserted identical to the default model contract.
+- **Follow-ups:** Implement default-off visual cue upgrades for bounded endoscopic exploration.

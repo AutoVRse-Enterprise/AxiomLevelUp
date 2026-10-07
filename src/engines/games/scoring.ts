@@ -42,6 +42,7 @@ export interface RoundAccuracyInput {
   anatomyMap?: AnatomyMap
   correctAnswer?: AnatomyAnswerReference
   proximity?: GameScoringConfig['proximity']
+  proximityLevelIds?: readonly string[]
 }
 
 function normalizedAccuracy(accuracy: number): number {
@@ -122,5 +123,11 @@ export function resolveRoundAccuracy(input: RoundAccuracyInput): number {
 
   const expected = resolveAnswerPath(input.anatomyMap, input.correctAnswer)
   const actual = resolveAnswerPath(input.anatomyMap, input.response)
-  return resolveProximityAccuracy(input.anatomyMap, expected, actual, input.proximity)
+  return resolveProximityAccuracy(
+    input.anatomyMap,
+    expected,
+    actual,
+    input.proximity,
+    input.proximityLevelIds,
+  )
 }

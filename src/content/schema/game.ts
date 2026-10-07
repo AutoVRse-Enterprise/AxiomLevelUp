@@ -24,6 +24,8 @@ export const roundDifficultyOverrideSchema = z.strictObject({
   timeLimitSeconds: z.number().int().positive().optional(),
   freeClues: z.number().int().nonnegative().optional(),
   maxMoves: z.number().int().positive().optional(),
+  maxHopsFromEntry: z.number().int().positive().optional(),
+  orientationLabels: z.enum(['patient', 'hidden']).optional(),
 })
 
 export const roundDocumentSchema = z.strictObject({

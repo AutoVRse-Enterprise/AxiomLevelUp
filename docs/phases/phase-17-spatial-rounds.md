@@ -154,7 +154,7 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
   - Introduce `AnatomyEntryContext`; the case player provides it; all case-flow tests pass
     unchanged.
 
-- [ ] **P17-T06 — Game anatomy map and drop validation**
+- [x] **P17-T06 — Game anatomy map and drop validation**
   - Author `respiratory-game-map.json`; add drop-pool and answer-dimension semantic rules.
 
 - [ ] **P17-T07 — Round 1 content and integration**

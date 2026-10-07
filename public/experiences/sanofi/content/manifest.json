@@ -3,7 +3,7 @@
   "appConfig": "app-config.json",
   "courses": [],
   "cases": [],
-  "anatomyMaps": [],
+  "anatomyMaps": ["anatomy/respiratory-game-map.json"],
   "rounds": [
     "rounds/fixture-warmup-call.json",
     "rounds/clinical-call-t2.json"

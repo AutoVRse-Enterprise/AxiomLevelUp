@@ -745,7 +745,25 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         previousLevelOrder = Math.max(previousLevelOrder, order)
       }
 
-      if (level.input !== 'model') return
+      if (level.input === 'structure_choice') {
+        requireRef(
+          levelIds,
+          level.parentLevelId,
+          file,
+          `${levelPath}.parentLevelId`,
+          'anatomy level',
+        )
+        const parentOrder = levelOrder.get(level.parentLevelId)
+        if (parentOrder === undefined || order === undefined || parentOrder >= order) {
+          issues.push({
+            file,
+            path: `${levelPath}.parentLevelId`,
+            message: 'Structure choice parent level must precede its answer level.',
+            severity: 'error',
+          })
+        }
+      }
+      if (level.input !== 'model' && level.input !== 'structure_choice') return
       requireRef(
         structureIds,
         level.targetStructureId,
@@ -1804,7 +1822,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
             const answerId = waypoint.answerIds?.[level.levelId]
             const validAnswer =
               answerId !== undefined &&
-              (level.input === 'model'
+              (level.input === 'model' || level.input === 'structure_choice'
                 ? anatomyMap.structures.some(
                     ({ id, levelId }) => id === answerId && levelId === level.levelId,
                   )

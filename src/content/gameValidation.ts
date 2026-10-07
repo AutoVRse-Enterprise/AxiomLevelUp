@@ -1,6 +1,8 @@
 import { contentRuleForMechanic, mechanicContentProblems } from './gameMechanics'
 import type { AnatomyMap, GameConfig, GameDocument, Primitive, RoundDocument } from './schema'
+import type { AnatomyLocatePrimitive } from './schema/primitives'
 import type { ContentIssue } from './errors'
+import { reachableWithin } from '@/anatomy3d/viewer/movement'
 
 interface GameValidationInput {
   rounds: readonly RoundDocument[]
@@ -119,9 +121,15 @@ function validateRound(
   }
   if (round.drop && map) {
     const waypointById = new Map(map.waypoints.map((waypoint) => [waypoint.id, waypoint]))
-    const levels = Array.isArray(round.primitive.content.levels)
-      ? (round.primitive.content.levels as Array<{ levelId?: unknown }>)
-      : []
+    const structureById = new Map(map.structures.map((structure) => [structure.id, structure]))
+    const levels =
+      round.primitive.type === 'anatomy_locate'
+        ? (round.primitive as AnatomyLocatePrimitive).content.levels
+        : []
+    const movement =
+      round.explore?.type === 'anatomy_explore'
+        ? (round.explore.content.movement as { maxHopsFromEntry?: number } | undefined)
+        : undefined
     Object.entries(round.drop.pools).forEach(([difficulty, waypointIds]) => {
       if (!difficultyIds.has(difficulty)) {
         issue(
@@ -143,15 +151,57 @@ function validateRound(
           return
         }
         levels.forEach(({ levelId }, levelIndex) => {
-          if (typeof levelId === 'string' && !waypoint.answerIds?.[levelId]) {
+          const answerId = waypoint.answerIds?.[levelId]
+          if (!answerId) {
             issue(
               input.issues,
               file,
               `drop.pools.${difficulty}.${waypointIndex}`,
               `Waypoint "${waypointId}" has no answerIds value for level "${levelId}" (primitive level ${levelIndex}).`,
             )
+            return
+          }
+          const level = levels[levelIndex]!
+          const validAnswer =
+            level.input === 'choice'
+              ? level.options.some(({ id }) => id === answerId)
+              : level.input === 'image'
+                ? level.regions.some(({ id }) => id === answerId)
+                : structureById.get(answerId)?.levelId === level.levelId
+          if (!validAnswer) {
+            issue(
+              input.issues,
+              file,
+              `drop.pools.${difficulty}.${waypointIndex}`,
+              `Waypoint "${waypointId}" answer "${answerId}" is invalid for level "${level.levelId}".`,
+            )
+          }
+          if (level.input === 'structure_choice') {
+            const parentAnswerId = waypoint.answerIds?.[level.parentLevelId]
+            if (structureById.get(answerId)?.parentId !== parentAnswerId) {
+              issue(
+                input.issues,
+                file,
+                `drop.pools.${difficulty}.${waypointIndex}`,
+                `Waypoint "${waypointId}" structure choice "${answerId}" is not a child of its "${level.parentLevelId}" answer.`,
+              )
+            }
           }
         })
+        const difficultyOverride = round.difficulty[difficulty] as
+          { maxHopsFromEntry?: number } | undefined
+        const maxHops = difficultyOverride?.maxHopsFromEntry ?? movement?.maxHopsFromEntry
+        if (movement && maxHops !== undefined) {
+          const reachable = reachableWithin(map, waypointId, maxHops)
+          if (reachable.size < 2) {
+            issue(
+              input.issues,
+              file,
+              `drop.pools.${difficulty}.${waypointIndex}`,
+              `Waypoint "${waypointId}" has no reachable move within ${maxHops} hop(s).`,
+            )
+          }
+        }
       })
     })
   }

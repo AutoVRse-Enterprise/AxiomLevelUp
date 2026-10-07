@@ -15,6 +15,7 @@ export const gameMechanicContentRules = {
     requiresAnatomyMap: true,
     requiresDrop: true,
     requiresEntryAnswer: true,
+    requiresExploreType: 'anatomy_explore',
     cluePolicy: 'none',
   },
   spatial_explore: {

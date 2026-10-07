@@ -25,7 +25,7 @@ function round(mechanic: GameMechanic) {
     anatomyMapId: spatial ? 'map' : undefined,
     drop: spatial ? { pools: { challenge: ['waypoint'] } } : undefined,
     explore:
-      mechanic === 'spatial_explore'
+      spatial
         ? { id: 'explore', type: 'anatomy_explore', content: {} }
         : undefined,
     primitive: {

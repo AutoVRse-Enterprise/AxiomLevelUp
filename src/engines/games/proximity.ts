@@ -75,10 +75,14 @@ export function resolveProximityAccuracy(
   expected: AnatomyAnswerPath | null,
   actual: AnatomyAnswerPath | null,
   config: GameScoringConfig['proximity'],
+  levelIds?: readonly string[],
 ): number {
   if (!expected || !actual) return boundedAccuracy(config.none)
 
-  const expectedLevels = map.levels.filter(({ id }) => expected[id] !== undefined)
+  const levelScope = levelIds ? new Set(levelIds) : null
+  const expectedLevels = map.levels.filter(
+    ({ id }) => expected[id] !== undefined && (!levelScope || levelScope.has(id)),
+  )
   if (expectedLevels.length === 0) return boundedAccuracy(config.none)
 
   if (expectedLevels.every(({ id }) => actual[id] === expected[id])) {

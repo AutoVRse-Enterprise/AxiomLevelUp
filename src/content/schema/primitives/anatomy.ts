@@ -72,10 +72,18 @@ const anatomyLocateChoiceLevelSchema = z
     message: 'correctOptionId must reference one of the configured options.',
   })
 
+const anatomyLocateStructureChoiceLevelSchema = z.strictObject({
+  ...anatomyLocateLevelBase,
+  input: z.literal('structure_choice'),
+  parentLevelId: idSchema,
+  targetStructureId: idSchema,
+})
+
 export const anatomyLocateLevelSchema = z.discriminatedUnion('input', [
   anatomyLocateModelLevelSchema,
   anatomyLocateImageLevelSchema,
   anatomyLocateChoiceLevelSchema,
+  anatomyLocateStructureChoiceLevelSchema,
 ])
 
 export const anatomyExplorePrimitiveSchema = primitiveBaseSchema

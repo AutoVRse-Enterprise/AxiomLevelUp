@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import lungMapDocument from '../../../public/content/anatomy/lung-map.json'
+import gameMapDocument from '../../../public/experiences/sanofi/content/anatomy/respiratory-game-map.json'
 
 import { anatomyMapSchema, type AnatomyMap } from '@/content/schema/anatomyMap'
 import { gameScoringSchema, roundDocumentSchema } from '@/content/schema/game'
@@ -8,6 +9,7 @@ import { resolveAnswerPath, resolveProximityAccuracy } from '@/engines/games/pro
 import { resolveRoundAccuracy } from '@/engines/games/scoring'
 
 const lungMap = anatomyMapSchema.parse(lungMapDocument)
+const gameMap = anatomyMapSchema.parse(gameMapDocument)
 const proximity = gameScoringSchema.shape.proximity.parse({
   exact: 1,
   byCommonLevel: { segment: 0.85, lobe: 0.6, side: 0.25 },
@@ -106,6 +108,20 @@ describe('anatomy proximity', () => {
     expect(resolveProximityAccuracy(lungMap, posterior, left, proximity)).toBe(0)
   })
 
+  it('scopes proximity to the dimensions asked by the round', () => {
+    const expected = resolveAnswerPath(gameMap, 'right-lower-posterior-airway')
+    const actual = resolveAnswerPath(gameMap, {
+      side: 'right-lung',
+      region: 'region-upper',
+      lobe: 'right-lower-lobe',
+      segment: 'right-lower-superior-segment',
+    })
+    expect(resolveProximityAccuracy(gameMap, expected, actual, proximity)).toBe(0.25)
+    expect(
+      resolveProximityAccuracy(gameMap, expected, actual, proximity, ['side', 'lobe', 'segment']),
+    ).toBe(0.6)
+  })
+
   it('derives levels from a synthetic non-lung map', () => {
     const renalProximity = {
       exact: 1,
@@ -133,7 +149,7 @@ describe('anatomy proximity', () => {
       roundVersion: '1',
       id: 'airway-location',
       title: 'Airway location',
-      mechanic: 'spatial_look',
+      mechanic: 'spatial_explore',
       anatomyMapId: 'lung-map',
       intro: 'Locate this airway.',
       timeLimitSeconds: 40,

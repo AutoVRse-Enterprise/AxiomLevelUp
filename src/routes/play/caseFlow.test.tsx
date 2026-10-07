@@ -284,6 +284,10 @@ async function answerAnatomyLocate(
       structureButton.focus()
       await user.keyboard('{Enter}')
       expect(structureButton).toHaveFocus()
+    } else if (level.input === 'structure_choice') {
+      const label = map.structures.find(({ id }) => id === selectionId)?.label
+      if (!label) throw new Error(`Missing structure "${selectionId}".`)
+      await user.click(await screen.findByRole('radio', { name: label }))
     } else {
       const options = level.input === 'image' ? level.regions : level.options
       await user.click(
@@ -586,9 +590,9 @@ describe('configured Case Lab flows', () => {
 
       if (caseDoc.entry.mode === 'unknown_waypoint') {
         await waitFor(() =>
-          expect(
-            useActivitySessionStore.getState().session?.caseProgress?.entrySeed,
-          ).toBeTypeOf('number'),
+          expect(useActivitySessionStore.getState().session?.caseProgress?.entrySeed).toBeTypeOf(
+            'number',
+          ),
         )
       }
       await completeCase(user, caseDoc, registry)

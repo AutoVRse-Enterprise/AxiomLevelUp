@@ -79,6 +79,8 @@ export function anatomyLocateTargetId(level: AnatomyLocateLevel): string {
       return level.targetRegionId
     case 'choice':
       return level.correctOptionId
+    case 'structure_choice':
+      return level.targetStructureId
   }
 }
 
@@ -90,6 +92,8 @@ function isKnownSelection(level: AnatomyLocateLevel, selectionId: string): boole
       return level.regions.some(({ id }) => id === selectionId)
     case 'choice':
       return level.options.some(({ id }) => id === selectionId)
+    case 'structure_choice':
+      return true
   }
 }
 
