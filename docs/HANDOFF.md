@@ -2,26 +2,23 @@
 
 ## Current phase/task
 
-Phase 15 (game contract and engine) is complete. Phase 16 (game player and clinical-call round) is
-next, starting at P16-T00 in `docs/phases/phase-16-game-player-and-clinical-round.md`.
+Phase 16 (game player and clinical-call round) is complete. Phase 17 (spatial rounds) is next,
+starting at P17-T00 in `docs/phases/phase-17-spatial-rounds.md`.
 
-Phase 13 remains Active and independent. P13-T15 is blocked on five qualifying human sessions and
-P13-T16 on HTTPS hosting, a production DICOM origin and physical Android/iPhone access. The user
-declined a desktop-only waiver on 2026-10-05 (ADR-103); the external Case Lab verdict remains
-No-go.
+Phase 13 remains Active and independent. Its human, HTTPS and physical-device gates remain open;
+the external Case Lab verdict is still No-go.
 
 ## Done
 
-- Added strict `round` and `game` 0.1 documents, full games app configuration, manifest paths,
-  dual-root loading, immutable registry maps and exported JSON Schemas.
-- Added four fixed mechanic templates and semantic validation for primitive/clue compatibility,
-  references, option sets, drop answers, leakage, placeholders and timing.
-- Added a pure seeded game engine for run planning, difficulty application, scoring, generic
-  anatomy proximity, sessions, results, messages, leaderboards and challenge links.
-- Added a separate namespaced `game-session` store, typed `game_*` events and learner state v9
-  game history, bests, daily streak and optional display name.
-- Added two valid sanofi clinical-call fixture rounds and one deterministic two-round game.
-- Published `docs/qa/phase-15-default-regression.md`.
+- Added the sanofi-only `/play/:gameId` and `/results/:runId` routes and full-bleed `GameLayout`.
+- Added the shared game lifecycle, active timer, checkpointed resume, timeout, reveal, final,
+  replay, exit/new-game behavior and typed event emission.
+- Added lesson-default/game-override `PresentationContext` labels without changing default copy.
+- Added the clinical clue tray with free clues, paid confirmation, inline multimodal evidence and
+  configured score deductions.
+- Added correct-answer haptics and score-threshold game completion confetti.
+- Added `clinical-call-t2`, shared wheeze/histology assets and deterministic one/two-round fixtures.
+- Published `docs/qa/phase-16-regression.md`.
 
 ## In progress
 
@@ -29,15 +26,15 @@ No-go.
 
 ## Next three steps
 
-1. P16-T00: record ADR-107 for a dedicated game player over shared primitives.
-2. Add the shared sanofi game routes/layout and lifecycle UI over the Phase 15 plan/session engine.
-3. Author the real clinical-call round and prove the one/two-round loop on desktop and phone.
+1. P17-T00: record spatial-player decisions and activate Phase 17.
+2. Author the spatial look/explore rounds over the existing anatomy map and viewer.
+3. Extend the game player with configured spatial move/commit presentation and tests.
 
 ## Blockers/questions for the user
 
-- No Phase 15 blockers.
-- Resolved programme decisions are recorded in `docs/MEDICAL_CHALLENGE_PLAN.md` §11.
-- Phase 13 blockers remain: qualifying participants, HTTPS/production DICOM hosting and physical
+- No Phase 16 blockers.
+- The hub remains intentionally disabled until Phase 19; Phase 16 fixtures are URL-only.
+- Phase 13 blockers remain qualifying participants, HTTPS/production DICOM hosting and physical
   Android/iPhone access.
 - HTTPS hosting of `dist-sanofi/` remains an external Phase 20 gate.
 
@@ -49,27 +46,23 @@ No-go.
   `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`.
 - Ports: default dev/preview 5173/4173; sanofi dev/preview 5174/4174; default/sanofi Playwright
   4181/4182.
-- Final gate: 95 Vitest files / 593 tests; both content roots at zero warnings; both builds and
+- The sanofi player fixtures are `/play/fixture-two-round?seed=42` and
+  `/play/fixture-one-round?seed=7`.
+- Final gate: 99 Vitest files / 602 tests; both content roots at zero warnings; both builds and
   budgets pass.
-- Browser gate: default 53 passed / 3 intentional skips; sanofi 2 passed; eight golden images
-  unchanged. One initial touch-phone DICOM timeout passed on exact retry and full-suite rerun.
-- No development, preview or Playwright processes are running. Ports 5173, 5174, 4173, 4174, 4181
-  and 4182 were confirmed free at closeout.
+- Browser gate: default 53 passed / 3 intentional skips; sanofi 8 passed; eight default golden
+  images unchanged.
 
 ## Gotchas
 
-- Shared modules must not import `@experience` or concrete experiences. Only `App.tsx` and
-  `router.tsx` consume the alias; ESLint enforces the boundary.
-- Keep default Home eager. Do not replace static alias selection with a runtime registry.
-- Default storage and cache names are migration contracts; scope only non-default experiences.
-- `src/lib/experience.ts` deliberately tolerates missing `import.meta.env` for Node-loaded
-  Playwright helpers.
+- Shared modules must not import `@experience` or concrete experiences.
+- Keep default Home eager and its route/snapshot/golden contracts unchanged.
+- `game-session` uses `skipHydration`; `PlayGamePage` must explicitly rehydrate before selecting a
+  resumable run.
+- The active timer is checkpointed on hide, pagehide, exit and paid-clue confirmation. Free and
+  purchased clues remain inline while time runs.
 - Learner-visible sanofi copy must not contain the client name or PRD §17 LMS vocabulary.
-- Shared `public/` files are copied into both artifacts but cross-experience roots are excluded from
-  precache. Physical pruning is deferred to Phase 20.
+- The hub remains disabled until Phase 19; direct game URLs are intentional.
 - The thoracic CT fixture shows normal anatomy and must not be used for abnormality spotting.
-- Playwright SwiftShader proves the WebGL contract, not hardware GPU performance or
-  physical-device behavior.
+- Playwright SwiftShader proves the WebGL contract, not hardware GPU performance.
 - Game links use a checksum for corruption detection, not authentication or tamper resistance.
-- The sanofi fixture game is content/engine proof only; no game route or player UI exists until
-  Phase 16.

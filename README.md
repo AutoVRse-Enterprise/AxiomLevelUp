@@ -17,8 +17,8 @@ The learner can:
 - manipulate a real DICOM stack using educational scroll, window, zoom, pan, identification and
   measurement tasks;
 - inspect a configured 3D anatomy model and authored spatial findings;
-- load validated, seeded game and round documents through a pure scoring engine (player UI begins
-  in Phase 16);
+- play validated, seeded game rounds through a timed shared player with clues, instant reveals,
+  scoring and resume;
 - complete Foundation, Intermediate and Advanced Case Lab scenarios;
 - gather clues, revise a differential, cite reviewed evidence and commit a conclusion;
 - review a prioritized takeaway and compare reasoning with an authored Model answer;

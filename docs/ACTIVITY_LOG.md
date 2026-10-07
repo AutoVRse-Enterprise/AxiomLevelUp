@@ -3674,3 +3674,121 @@ README.md`; `git diff --check`.
 - **Commands run:** None.
 - **Result/verification:** ADR-107 and ADR-108 are accepted and Phase 16 is Active.
 - **Follow-ups:** Add the sanofi game routes and shared game layout.
+
+### [2026-10-07 11:25] P16-T01 - Add game routes and layout
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the sanofi-only play/result routes, full-bleed game layout, progress top bar,
+  score ticker and countdown ring.
+- **Files changed:** `src/experiences/sanofi/routes.tsx`; `src/layouts/GameLayout.tsx`;
+  `src/routes/games/*`; `src/player/game/GameTopBar.tsx`;
+  `src/player/game/CountdownRing.tsx`.
+- **Commands run:** `npm run typecheck`; `npm run build:sanofi`.
+- **Result/verification:** Both routes resolve lazily and the default route table is untouched.
+- **Follow-ups:** Implement the game lifecycle.
+
+### [2026-10-07 11:30] P16-T02 - Add game round lifecycle
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the run-controller hook, intro/play/lock/reveal/final transitions and
+  safe-area game action placement over the Phase 15 reducer.
+- **Files changed:** `src/player/game/{GamePlayer,RoundIntro,RoundStage,useGameRun}.tsx`;
+  `src/player/StepActionSlot.tsx`.
+- **Commands run:** `npm run typecheck`; manual Chromium fixture play-through.
+- **Result/verification:** A planned run advances through both rounds and emits typed game events.
+- **Follow-ups:** Route reusable primitive strings through a presentation context.
+
+### [2026-10-07 11:35] P16-T03 - Add game presentation context
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added lesson-default/game-override labels and routed renderer, assessment, media,
+  table, chart and anatomy controls through them.
+- **Files changed:** `src/primitives/presentation/*`; `src/primitives/registry.tsx`;
+  `src/primitives/components/*`; `src/content/schema/game.ts`.
+- **Commands run:** Focused Vitest; `npm run lint`.
+- **Result/verification:** Game rounds display game vocabulary while the default labels remain
+  byte-identical.
+- **Follow-ups:** Add the active timer and persisted checkpoints.
+
+### [2026-10-07 11:40] P16-T04 - Add fair game timing
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the countdown hook/ring, threshold announcements, timeout submission,
+  visibility and clue-confirmation pauses, and persisted elapsed checkpoints.
+- **Files changed:** `src/player/game/useRoundClock.ts`; `src/player/game/CountdownRing.tsx`;
+  `src/engines/games/session.ts`; `src/components/feedback/PresentationAnnouncer.tsx`.
+- **Commands run:** Focused Vitest; sanofi Playwright timeout scenario.
+- **Result/verification:** Timeout fires once and active elapsed time survives reload.
+- **Follow-ups:** Add the scored reveal.
+
+### [2026-10-07 11:45] P16-T05 - Add round reveal
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added correct/incorrect reveal, configured answer line and explanation, named speed
+  tier, point breakdown, cumulative total, reduced-motion count-up and focus announcement.
+- **Files changed:** `src/player/game/RoundReveal.tsx`; `src/engines/games/answers.ts`;
+  `src/engines/games/scoring.ts`.
+- **Commands run:** Focused Vitest; manual Chromium verification.
+- **Result/verification:** Each answer produces one outcome, one explanation and one breakdown.
+- **Follow-ups:** Add the clinical clue tray.
+
+### [2026-10-07 11:50] P16-T06 - Add clinical clue tray
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added compact free/paid clue cards, inline primitive content, cost confirmation,
+  timer pause and clue events.
+- **Files changed:** `src/player/game/{ClueTray,ClueCard,ClueRevealConfirm}.tsx`.
+- **Commands run:** Sanofi Playwright desktop and touch-phone paid-clue flow.
+- **Result/verification:** Paid clues disclose and deduct their configured cost and open inline.
+- **Follow-ups:** Add the final summary and saved-result route.
+
+### [2026-10-07 11:55] P16-T07 - Add basic game results
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added final score, correct count, duration, best round, difficulty, matched message,
+  replay with a new seed and a compact saved-result route.
+- **Files changed:** `src/components/game/GameSummaryCard.tsx`;
+  `src/player/game/GameFinal.tsx`; `src/routes/games/GameResultPage.tsx`.
+- **Commands run:** Manual two-round Chromium play-through.
+- **Result/verification:** The run reaches a configured final score and replay creates a new seed.
+- **Follow-ups:** Complete exit/resume and effects.
+
+### [2026-10-07 12:00] P16-T08 - Add resume and game effects
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added exit confirmation, continue/new-game behavior, abandon events, correct-answer
+  haptics and score-threshold game confetti.
+- **Files changed:** `src/player/game/{GameExitDialog,GameResumePrompt}.tsx`;
+  `src/effects/{haptics,gameConfetti}.ts`; `src/state/LearnerStateProvider.tsx`;
+  `src/content/schema/index.ts`.
+- **Commands run:** Focused Vitest; sanofi Playwright reload/resume scenario.
+- **Result/verification:** Active rounds resume from saved state; abandoned runs do not complete.
+- **Follow-ups:** Author the real multimodal clinical round.
+
+### [2026-10-07 12:05] P16-T09 - Author clinical-call round
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the five-clue type-2 clinical call, registered shared audio/histology assets,
+  added one/two-round games and configured strict player copy and effects.
+- **Files changed:** `public/experiences/sanofi/content/*`; `src/test/gameFixtures.ts`;
+  generated app-config schema.
+- **Commands run:** `npm run validate:content`; `npm run schema:export`.
+- **Result/verification:** Both content roots validate with zero warnings.
+- **Follow-ups:** Run the full regression gate and close Phase 16.
+
+### [2026-10-07 12:15] P16-T10 - Close Phase 16
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added unit/component/browser coverage, stabilized the time-sensitive default route
+  characterization, ran both experience gates, restored unchanged golden evidence and closed the
+  phase documentation.
+- **Files changed:** `e2e/sanofi/game.spec.ts`; affected game/effect tests;
+  `src/app/router.characterization.test.tsx`; `README.md`; `docs/{ARCHITECTURE,CONTENT_SCHEMA,ROADMAP,MEDICAL_CHALLENGE_PLAN,HANDOFF}.md`;
+  `docs/phases/phase-16-game-player-and-clinical-round.md`;
+  `docs/qa/phase-16-regression.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `npm run schema:export`; `npm run check`; serial default Playwright;
+  `npm run test:e2e:sanofi`; `git diff --check`.
+- **Result/verification:** 99 Vitest files / 602 tests pass; both content roots validate with zero
+  warnings; both builds and budgets pass; default Playwright passes 53 with 3 intentional skips;
+  sanofi Playwright passes 8; all eight default goldens remain unchanged.
+- **Follow-ups:** Begin Phase 17 spatial rounds at P17-T00.

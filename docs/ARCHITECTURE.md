@@ -221,6 +221,13 @@ time, including pause records; it never reads clocks or emits events. Typed `gam
 only aggregate-state input. Challenge tokens encode the game ID/version, difficulty, seed, sender
 and target score as checksummed base64url. The checksum detects corruption, not malicious edits.
 
+The shared player under `src/player/game/` owns the UI lifecycle
+`intro → playing → locked → reveal → final`. It renders the planned primitive through
+`PrimitiveRenderer`, supplies a game presentation context, checkpoints active elapsed time for
+resume and sends every state transition through the pure reducer. Free and purchased clues render
+inline; only paid-clue confirmation and document backgrounding pause the clock. The sanofi
+experience alone registers `/play/:gameId` and `/results/:runId`.
+
 ## Delivery and presentation runtime
 
 Learner, player and developer pages are route-level lazy modules with a designed route fallback.

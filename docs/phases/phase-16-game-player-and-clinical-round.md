@@ -1,6 +1,6 @@
 # Phase 16: Game player and clinical-call round
 
-**Status:** Active
+**Status:** Complete
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phase 15.
 
@@ -36,10 +36,10 @@ ActivityPlayer lifecycle (intro page, retries, review mode, completion summary).
 
 ### Routes (shared, in `src/routes/games/`)
 
-| Path                     | Layout         | Purpose                                                            |
-| ------------------------ | -------------- | ------------------------------------------------------------------ |
-| `/play/:gameId`          | `GameLayout`   | Plans or resumes a run and hosts every round plus the final score  |
-| `/results/:runId`        | shell          | Saved result for a completed run (expanded in Phase 19)            |
+| Path              | Layout       | Purpose                                                           |
+| ----------------- | ------------ | ----------------------------------------------------------------- |
+| `/play/:gameId`   | `GameLayout` | Plans or resumes a run and hosts every round plus the final score |
+| `/results/:runId` | shell        | Saved result for a completed run (expanded in Phase 19)           |
 
 Query parameters: `difficulty`, `seed` (development and links), `challenge` (Phase 19 token). The
 sanofi definition registers these routes; default does not.
@@ -142,41 +142,48 @@ could not load", "Retry activity", "Commit your localisation", "Level 1 of 3"). 
   - Accepted 2026-10-07. ADR-108 records fair elapsed checkpoints, game presentation
     configuration, a URL-only fixture and the paid-clue confirmation pause.
 
-- [ ] **P16-T01 — Routes and `GameLayout`**
+- [x] **P16-T01 — Routes and `GameLayout`**
   - Add shared routes, layout, top bar, progress dots and score ticker; register them in the
     sanofi definition.
 
-- [ ] **P16-T02 — Round lifecycle and action outlet**
+- [x] **P16-T02 — Round lifecycle and action outlet**
   - Implement intro/playing/locked/reveal/final states over the Phase 15 reducer and the game
     action outlet.
 
-- [ ] **P16-T03 — Presentation context**
+- [x] **P16-T03 — Presentation context**
   - Add `PresentationContext`, route renderer and primitive strings through it, and prove default
     lesson/case copy is byte-identical in existing tests.
 
-- [ ] **P16-T04 — Timer and timeout**
+- [x] **P16-T04 — Timer and timeout**
   - Countdown, announcements, visibility pause and timeout evaluation with tests.
 
-- [ ] **P16-T05 — Reveal card and points breakdown**
+- [x] **P16-T05 — Reveal card and points breakdown**
   - `RoundReveal`, cumulative ticker and reduced-motion behaviour; all copy from configuration.
 
-- [ ] **P16-T06 — Clue tray**
+- [x] **P16-T06 — Clue tray**
   - Free/paid clue cards, cost disclosure, event emission and pausing while open.
 
-- [ ] **P16-T07 — Basic final score**
+- [x] **P16-T07 — Basic final score**
   - Summary, message and Play again with a new seed.
 
-- [ ] **P16-T08 — Exit, resume, abandon and effects**
+- [x] **P16-T08 — Exit, resume, abandon and effects**
   - Confirmation, Continue game, abandon event, haptics and confetti subscriptions.
 
-- [ ] **P16-T09 — Round 4 and fixture content**
+- [x] **P16-T09 — Round 4 and fixture content**
   - Author the clinical call and the fixture game; content validates with zero warnings.
 
-- [ ] **P16-T10 — Tests and closeout**
+- [x] **P16-T10 — Tests and closeout**
   - Component tests for lifecycle, reveal, timer and clue tray; route tests for resume; a sanofi
     Playwright spec that completes the fixture game on desktop and 375 × 812, including a timeout
     path.
   - `npm run check` passes for both experiences; default regression gate passes; docs updated.
+
+## Closeout
+
+Completed 2026-10-07. The sanofi build now registers the shared game player and compact saved-result
+route while the default route table remains unchanged. The deterministic two-round fixture and
+single-round timeout fixture complete on desktop and 375 × 812 Chromium. The final verification
+counts are recorded in `docs/qa/phase-16-regression.md`.
 
 ## Exit criteria
 

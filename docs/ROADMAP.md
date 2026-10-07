@@ -138,3 +138,9 @@ fixture rounds, a pure deterministic planning/scoring/proximity/session/results/
 engine, typed game events and learner state v9. The gate passed 95 Vitest files / 593 tests, both
 content roots and builds, 53 default Playwright passes with 3 intentional skips, and both sanofi
 smoke projects. Phase 16 is next; it adds the game player and clinical-call UI.
+
+Phase 16 closed on 2026-10-07 with a shared timed game player, game-only presentation labels,
+inline free and paid clinical clues, scored reveals, final results, exit/resume/abandon behavior,
+and event-driven game effects. A real multimodal clinical-call round and one/two-round fixtures
+complete on desktop and 375 × 812 Chromium. Phase 17 is next; it adds the two spatial airway
+rounds.
