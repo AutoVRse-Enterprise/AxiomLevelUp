@@ -6,9 +6,14 @@
   "anatomyMaps": ["anatomy/respiratory-game-map.json"],
   "rounds": [
     "rounds/fixture-warmup-call.json",
-    "rounds/clinical-call-t2.json"
+    "rounds/clinical-call-t2.json",
+    "rounds/airway-drop-look.json"
   ],
-  "games": ["games/fixture-two-round.json", "games/fixture-one-round.json"],
+  "games": [
+    "games/fixture-two-round.json",
+    "games/fixture-one-round.json",
+    "games/fixture-spatial.json"
+  ],
   "seeds": {
     "fresh": "seeds/fresh.json"
   },

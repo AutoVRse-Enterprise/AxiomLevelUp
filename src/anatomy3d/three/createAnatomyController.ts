@@ -229,7 +229,7 @@ export function createAnatomyController({
   let model: THREE.Group | null = null
   let map: AnatomyMap | null = null
   let marker: THREE.Mesh | null = null
-  let markerStructureId: string | null = null
+  let markerId: string | null = null
   let lumen: THREE.Group | null = null
   let findingRoot: THREE.Group | null = null
   let volumeRoot: THREE.Group | null = null
@@ -326,7 +326,7 @@ export function createAnatomyController({
       materialsOf(marker).forEach((material) => material.dispose())
     }
     marker = null
-    markerStructureId = null
+    markerId = null
   }
 
   const clearLumen = () => {
@@ -892,6 +892,9 @@ export function createAnatomyController({
       else if (view.mode === 'marker') {
         controller.resetView()
         controller.setMarker(view.structureId)
+      } else if (view.mode === 'waypoint_marker') {
+        controller.resetView()
+        controller.setWaypointMarker(view.waypointId)
       } else if (view.mode === 'waypoint') {
         controller.travelTo(view.waypointId, { animate: false })
       } else {
@@ -977,7 +980,22 @@ export function createAnatomyController({
       )
       marker.position.copy(sphere.center)
       scene.add(marker)
-      markerStructureId = structureId
+      markerId = structureId
+    },
+
+    setWaypointMarker(waypointId) {
+      clearMarker()
+      if (!waypointId) return
+      const waypoint = map?.waypoints.find(({ id }) => id === waypointId)
+      if (!waypoint) return
+      const radius = waypoint.radius ?? config.lumen.defaultRadius
+      marker = new THREE.Mesh(
+        new THREE.SphereGeometry(Math.max(radius * 0.35, 0.01), 18, 14),
+        new THREE.MeshBasicMaterial({ color: config.markerColor }),
+      )
+      marker.position.copy(vector(waypoint.position))
+      scene.add(marker)
+      markerId = waypointId
     },
 
     setFindings(nextFindings) {
@@ -1207,8 +1225,8 @@ export function createAnatomyController({
         return [projectPoint(id, bounds.getCenter(new THREE.Vector3()), true)]
       })
       const markers =
-        marker && markerStructureId
-          ? [projectPoint(markerStructureId, marker.getWorldPosition(new THREE.Vector3()), true)]
+        marker && markerId
+          ? [projectPoint(markerId, marker.getWorldPosition(new THREE.Vector3()), true)]
           : []
 
       const context = renderer.getContext()

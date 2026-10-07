@@ -1,5 +1,6 @@
 import type { ContentRegistry } from '@/content/loader'
 import type {
+  AnatomyExplorePrimitive,
   AnatomyLocatePrimitive,
   AnatomyMap,
   GameDocument,
@@ -126,6 +127,38 @@ function resolvePlannedPrimitive(
   return resolveEntryLocalisation(primitive, map, dropWaypointId)
 }
 
+function resolvePlannedExplore(
+  round: RoundDocument,
+  dropWaypointId: string | undefined,
+  maxMoves: number,
+  maxHopsFromEntry: number | undefined,
+  orientationLabels: 'patient' | 'hidden' | undefined,
+): Primitive | undefined {
+  if (round.explore?.type !== 'anatomy_explore' || !dropWaypointId) return round.explore
+  const explore = round.explore as AnatomyExplorePrimitive
+  const startView =
+    round.mechanic === 'spatial_look' && explore.content.navigation !== 'look'
+      ? ({ mode: 'waypoint_marker', waypointId: dropWaypointId } as const)
+      : ({ mode: 'endoscopic', waypointId: dropWaypointId } as const)
+  return {
+    ...explore,
+    content: {
+      ...explore.content,
+      startView,
+      orientationLabels: orientationLabels ?? explore.content.orientationLabels,
+      ...(explore.content.movement
+        ? {
+            movement: {
+              ...explore.content.movement,
+              maxMoves,
+              maxHopsFromEntry: maxHopsFromEntry ?? explore.content.movement.maxHopsFromEntry,
+            },
+          }
+        : {}),
+    },
+  }
+}
+
 function planRound(
   round: RoundDocument,
   slotId: string,
@@ -184,6 +217,14 @@ function planRound(
     override?.timeLimitSeconds ??
     Math.max(1, Math.round(round.timeLimitSeconds * difficulty.timeMultiplier))
   const primitive = resolvePlannedPrimitive(round, selectedPrimitive, map, dropWaypointId)
+  const maxMoves = override?.maxMoves ?? difficulty.maxMoves
+  const explore = resolvePlannedExplore(
+    round,
+    dropWaypointId,
+    maxMoves,
+    override?.maxHopsFromEntry,
+    override?.orientationLabels,
+  )
 
   return {
     slotId,
@@ -193,11 +234,11 @@ function planRound(
     freeClueIds: clueIds.slice(0, freeClueCount),
     paidClueIds: clueIds.slice(freeClueCount),
     clueCostPoints: difficulty.clueCostPoints,
-    maxMoves: override?.maxMoves ?? difficulty.maxMoves,
+    maxMoves,
     speedBonus: difficulty.speedBonus,
     ...(dropWaypointId ? { dropWaypointId } : {}),
     primitive,
-    ...(round.explore ? { explore: round.explore } : {}),
+    ...(explore ? { explore } : {}),
   }
 }
 

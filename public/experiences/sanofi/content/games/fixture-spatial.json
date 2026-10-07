@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "0.1",
+  "gameVersion": "1",
+  "id": "fixture-spatial",
+  "title": "Spatial Challenge Fixture",
+  "tagline": "Look, locate and lock in.",
+  "organSystem": "respiratory",
+  "estimatedSeconds": 60,
+  "slots": [
+    {
+      "id": "look",
+      "pool": ["airway-drop-look"],
+      "pick": 1
+    }
+  ],
+  "difficulties": ["warmup", "challenge", "expert"],
+  "defaultDifficulty": "challenge",
+  "durationWindowSeconds": { "min": 30, "max": 120 }
+}

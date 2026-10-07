@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
+import { AnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { useContent } from '@/app/contentContext'
 import type { GameDocument } from '@/content/schema/game'
-import { correctAnswerLabel } from '@/engines/games/answers'
+import { correctAnswerDimensions, correctAnswerLabel } from '@/engines/games/answers'
 import { createRunSeed } from '@/engines/games/seed'
 import { resolveSpeedBonusTier } from '@/engines/games/scoring'
 import type { GameSession } from '@/engines/games/session'
@@ -188,89 +189,100 @@ function GameRun({
 
   return (
     <PresentationProvider labels={labels} variant="game">
-      <StepActionScope placement="game">
-        <GameTopBar
-          exitLabel={copy.exitGame}
-          onExit={() => setExitOpen(true)}
-          pointsLabel={copy.pointsAbbreviation}
-          roundCount={plan.rounds.length}
-          roundIndex={session.roundIndex}
-          roundProgressLabel={copy.roundProgress}
-          score={total}
-          seconds={
-            session.phase === 'playing' ? clock.remainingSeconds : plannedRound.timeLimitSeconds
-          }
-          totalSeconds={plannedRound.timeLimitSeconds}
-          timerLabel={copy.secondsRemaining}
-        />
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          {session.phase === 'intro' ? (
-            <RoundIntro
-              autoAdvanceMs={config.player.introAutoAdvanceMs}
-              onContinue={run.startRound}
-              round={plannedRound}
-              roundLabel={copy.roundLabel}
-              title={round.intro}
-            />
-          ) : null}
-          {session.phase === 'playing' || session.phase === 'locked' ? (
-            <RoundStage
-              copy={copy}
-              disabled={session.phase === 'locked'}
-              onClueReveal={run.revealClue}
-              onConfirmOpenChange={(open) => {
-                if (open) {
-                  checkpoint(clock.getElapsedMs())
-                  pauseStartedAt.current = Date.now()
-                } else if (pauseStartedAt.current !== null) {
-                  dispatch({ type: 'paused', elapsedMs: Date.now() - pauseStartedAt.current })
-                  pauseStartedAt.current = null
-                }
-                setConfirmOpen(open)
-              }}
-              onDraftChange={(draft) => dispatch({ type: 'draftChanged', draft })}
-              onInteract={run.interact}
-              onSubmit={(response) => run.submit(response, clock.getElapsedMs())}
-              plannedRound={plannedRound}
-              round={round}
-              roundSession={roundSession}
-            />
-          ) : null}
-          {session.phase === 'reveal' && reveal ? (
-            <RoundReveal
-              copy={copy}
-              lastRound={session.roundIndex === plan.rounds.length - 1}
-              onNext={run.next}
-              speedBonusLabel={speedTier?.label ?? null}
-              total={total}
-              view={reveal}
-            />
-          ) : null}
-          {session.phase === 'final' || session.phase === 'complete' ? (
-            <GameFinal
-              bestRoundTitle={bestRoundTitle}
-              copy={copy}
-              difficultyLabel={difficulty.label}
-              message={message}
-              onPlayAgain={() => {
-                useGameSessionStore.getState().clear()
-                navigate(`?difficulty=${difficulty.id}&seed=${createRunSeed()}`, { replace: true })
-                window.location.reload()
-              }}
-              summary={summary}
-            />
-          ) : null}
-        </div>
-        <GameExitDialog
-          copy={copy}
-          onExit={() => {
-            checkpoint(clock.getElapsedMs())
-            navigate('/')
-          }}
-          onOpenChange={setExitOpen}
-          open={exitOpen}
-        />
-      </StepActionScope>
+      <AnatomyEntryContext.Provider
+        value={{
+          ...(plannedRound.dropWaypointId ? { entryWaypointId: plannedRound.dropWaypointId } : {}),
+          neutralNavigationLabels: Boolean(plannedRound.dropWaypointId),
+          hideLocationLabels: Boolean(plannedRound.dropWaypointId),
+        }}
+      >
+        <StepActionScope placement="game">
+          <GameTopBar
+            exitLabel={copy.exitGame}
+            onExit={() => setExitOpen(true)}
+            pointsLabel={copy.pointsAbbreviation}
+            roundCount={plan.rounds.length}
+            roundIndex={session.roundIndex}
+            roundProgressLabel={copy.roundProgress}
+            score={total}
+            seconds={
+              session.phase === 'playing' ? clock.remainingSeconds : plannedRound.timeLimitSeconds
+            }
+            totalSeconds={plannedRound.timeLimitSeconds}
+            timerLabel={copy.secondsRemaining}
+          />
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            {session.phase === 'intro' ? (
+              <RoundIntro
+                autoAdvanceMs={config.player.introAutoAdvanceMs}
+                onContinue={run.startRound}
+                round={plannedRound}
+                roundLabel={copy.roundLabel}
+                title={round.intro}
+              />
+            ) : null}
+            {session.phase === 'playing' || session.phase === 'locked' ? (
+              <RoundStage
+                copy={copy}
+                disabled={session.phase === 'locked'}
+                onClueReveal={run.revealClue}
+                onConfirmOpenChange={(open) => {
+                  if (open) {
+                    checkpoint(clock.getElapsedMs())
+                    pauseStartedAt.current = Date.now()
+                  } else if (pauseStartedAt.current !== null) {
+                    dispatch({ type: 'paused', elapsedMs: Date.now() - pauseStartedAt.current })
+                    pauseStartedAt.current = null
+                  }
+                  setConfirmOpen(open)
+                }}
+                onDraftChange={(draft) => dispatch({ type: 'draftChanged', draft })}
+                onInteract={run.interact}
+                onSubmit={(response) => run.submit(response, clock.getElapsedMs())}
+                plannedRound={plannedRound}
+                round={round}
+                roundSession={roundSession}
+              />
+            ) : null}
+            {session.phase === 'reveal' && reveal ? (
+              <RoundReveal
+                answerDimensions={correctAnswerDimensions(plannedRound)}
+                copy={copy}
+                lastRound={session.roundIndex === plan.rounds.length - 1}
+                onNext={run.next}
+                speedBonusLabel={speedTier?.label ?? null}
+                total={total}
+                view={reveal}
+              />
+            ) : null}
+            {session.phase === 'final' || session.phase === 'complete' ? (
+              <GameFinal
+                bestRoundTitle={bestRoundTitle}
+                copy={copy}
+                difficultyLabel={difficulty.label}
+                message={message}
+                onPlayAgain={() => {
+                  useGameSessionStore.getState().clear()
+                  navigate(`?difficulty=${difficulty.id}&seed=${createRunSeed()}`, {
+                    replace: true,
+                  })
+                  window.location.reload()
+                }}
+                summary={summary}
+              />
+            ) : null}
+          </div>
+          <GameExitDialog
+            copy={copy}
+            onExit={() => {
+              checkpoint(clock.getElapsedMs())
+              navigate('/')
+            }}
+            onOpenChange={setExitOpen}
+            open={exitOpen}
+          />
+        </StepActionScope>
+      </AnatomyEntryContext.Provider>
     </PresentationProvider>
   )
 }

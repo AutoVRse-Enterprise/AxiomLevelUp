@@ -138,6 +138,10 @@ export function AnatomyViewer({
   }, [config.highlightColor, config.highlightOpacity, controller, selection])
 
   useEffect(() => {
+    if (startView?.mode === 'waypoint_marker') {
+      controller?.setWaypointMarker(startView.waypointId)
+      return
+    }
     controller?.setMarker(
       markerStructureId ?? (startView?.mode === 'marker' ? startView.structureId : null),
     )
@@ -594,11 +598,15 @@ export function AnatomyViewer({
                 size="sm"
                 variant="secondary"
                 onClick={() => {
-                  controller?.resetView()
-                  setCurrentWaypointId(null)
+                  if (startView) controller?.setStartView(startView)
+                  else controller?.resetView()
+                  setCurrentWaypointId(
+                    startView && 'waypointId' in startView ? startView.waypointId : null,
+                  )
                   setArrivalMessage(null)
-                  setEndoscopic(false)
-                  endoscopicRef.current = false
+                  const nextEndoscopic = startView?.mode === 'endoscopic'
+                  setEndoscopic(nextEndoscopic)
+                  endoscopicRef.current = nextEndoscopic
                 }}
               >
                 Reset
@@ -698,7 +706,7 @@ export function AnatomyViewer({
               </ul>
             </details>
           ) : null}
-          {!lookOnly ? (
+          {!lookOnly && !hideLocationLabels ? (
             <details
               className="rounded-lg border border-clinical-700 bg-clinical-900"
               open={failed || listOpen}

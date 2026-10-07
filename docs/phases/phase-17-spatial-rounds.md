@@ -160,8 +160,10 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
 - [x] **P17-T06 — Game anatomy map and drop validation**
   - Author `respiratory-game-map.json`; add drop-pool and answer-dimension semantic rules.
 
-- [ ] **P17-T07 — Round 1 content and integration**
+- [x] **P17-T07 — Round 1 content and integration**
   - Author `airway-drop-look` for all difficulties; integrate with the game player and scoring.
+  - Following the P17-T01 no-go, the scene uses the documented outside-in waypoint marker with
+    orbit/zoom rather than an ambiguous inside-airway drop.
 
 - [ ] **P17-T08 — Round 2 content, pin drop and reveal**
   - Author at least two `spatial_explore` rounds; implement the pin-versus-actual reveal.

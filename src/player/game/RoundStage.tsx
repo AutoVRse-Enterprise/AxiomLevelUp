@@ -2,6 +2,7 @@ import type { GameConfig, RoundDocument } from '@/content/schema/game'
 import type { PlannedRound } from '@/engines/games/plan'
 import type { GameRoundSession } from '@/engines/games/session'
 import { ClueTray } from '@/player/game/ClueTray'
+import { SpatialRoundStage } from '@/player/game/SpatialRoundStage'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import type { PrimitiveInteraction } from '@/primitives/types'
 
@@ -32,6 +33,20 @@ export function RoundStage({
   ) => void
   disabled?: boolean
 }) {
+  if (round.mechanic === 'spatial_look' || round.mechanic === 'spatial_explore') {
+    return (
+      <SpatialRoundStage
+        copy={copy}
+        disabled={disabled}
+        onDraftChange={onDraftChange}
+        onInteract={onInteract}
+        onSubmit={onSubmit}
+        plannedRound={plannedRound}
+        round={round}
+        roundSession={roundSession}
+      />
+    )
+  }
   return (
     <div
       aria-disabled={disabled}

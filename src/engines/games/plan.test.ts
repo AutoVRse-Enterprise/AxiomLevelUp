@@ -182,6 +182,16 @@ function spatialRound(
         expert: dropIds,
       },
     },
+    explore: {
+      id: 'scene',
+      type: 'anatomy_explore',
+      content: {
+        anatomyMapId,
+        prompt: 'Inspect the marker.',
+        navigation: 'orbit',
+        startView: { mode: 'waypoint_marker', waypointId: 'left-drop' },
+      },
+    },
     primitive,
     primitiveByOptionSet: { standard: primitive },
     feedback: {
@@ -250,6 +260,10 @@ describe('game run planning', () => {
         }),
       ]),
     )
+    expect(spatial.explore?.content.startView).toEqual({
+      mode: 'waypoint_marker',
+      waypointId: spatial.dropWaypointId,
+    })
   })
 
   it('changes the planned selection when the seed changes', () => {

@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "airway-drop-look",
+  "title": "Where are you?",
+  "mechanic": "spatial_look",
+  "anatomyMapId": "respiratory-game-map",
+  "intro": "A marker shows an unknown airway point. Use the lung shape and branch position to place it.",
+  "timeLimitSeconds": 45,
+  "drop": {
+    "pools": {
+      "warmup": ["trachea-mid", "carina", "right-main-airway", "left-main-airway"],
+      "challenge": ["right-upper-airway", "right-middle-airway", "right-lower-airway", "left-upper-airway", "left-lower-airway"],
+      "expert": ["right-upper-apical-airway", "right-lower-posterior-airway", "left-upper-apicoposterior-airway", "left-lower-posterior-airway"]
+    }
+  },
+  "explore": {
+    "id": "airway-drop-scene",
+    "type": "anatomy_explore",
+    "content": {
+      "anatomyMapId": "respiratory-game-map",
+      "prompt": "Orbit the lung and inspect the glowing drop marker.",
+      "startView": { "mode": "waypoint_marker", "waypointId": "trachea-mid" },
+      "navigation": "orbit",
+      "orientationLabels": "hidden"
+    },
+    "completion": { "mode": "viewed" }
+  },
+  "primitive": {
+    "id": "airway-drop-answer",
+    "type": "anatomy_locate",
+    "content": {
+      "anatomyMapId": "respiratory-game-map",
+      "prompt": "Where is the marker?",
+      "answerFrom": "entry",
+      "levels": [
+        {
+          "levelId": "side",
+          "input": "choice",
+          "weight": 0.4,
+          "options": [
+            { "id": "midline-airway", "label": "Midline" },
+            { "id": "right-lung", "label": "Right" },
+            { "id": "left-lung", "label": "Left" }
+          ],
+          "correctOptionId": "midline-airway"
+        },
+        {
+          "levelId": "region",
+          "input": "choice",
+          "weight": 0.3,
+          "options": [
+            { "id": "region-central", "label": "Central" },
+            { "id": "region-upper", "label": "Upper" },
+            { "id": "region-middle", "label": "Middle" },
+            { "id": "region-lower", "label": "Lower" }
+          ],
+          "correctOptionId": "region-central"
+        },
+        {
+          "levelId": "airway-level",
+          "input": "choice",
+          "weight": 0.3,
+          "options": [
+            { "id": "trachea", "label": "Trachea" },
+            { "id": "main-bronchus", "label": "Main bronchus" },
+            { "id": "lobar-bronchus", "label": "Lobar bronchus" },
+            { "id": "segmental-bronchus", "label": "Segmental bronchus" }
+          ],
+          "correctOptionId": "trachea"
+        }
+      ],
+      "explanation": "The marker position and branch depth identify each dimension."
+    },
+    "completion": { "mode": "answer" }
+  },
+  "feedback": {
+    "correct": "The marker position and branch depth were the strongest clues.",
+    "incorrect": "Compare the marker with the lobe boundaries and central airway.",
+    "answerTemplate": "Correct answer: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 60, "orientationLabels": "patient" },
+    "challenge": { "timeLimitSeconds": 45, "orientationLabels": "hidden" },
+    "expert": { "timeLimitSeconds": 30, "orientationLabels": "hidden" }
+  }
+}

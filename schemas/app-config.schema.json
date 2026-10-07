@@ -3810,6 +3810,18 @@
               "type": "string",
               "minLength": 1
             },
+            "openAnswerDrawer": {
+              "type": "string",
+              "minLength": 1
+            },
+            "answerDrawerTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "backToScene": {
+              "type": "string",
+              "minLength": 1
+            },
             "revealClue": {
               "type": "string",
               "minLength": 1
@@ -4011,6 +4023,9 @@
             "previousStep",
             "nextStep",
             "checkLocation",
+            "openAnswerDrawer",
+            "answerDrawerTitle",
+            "backToScene",
             "revealClue",
             "clueConfirmTitle",
             "clueConfirmDescription",

@@ -3893,3 +3893,18 @@ README.md`; `git diff --check`.
 - **Result/verification:** 96,152 model triangles; 59.9 median fps across 120 frame samples under
   SwiftShader. Default configuration keeps cues and lumen FOV zoom disabled.
 - **Follow-ups:** Integrate Round 1's outside-in marker fallback with the game player.
+
+### [2026-10-07 15:35] P17-T07 - Deliver spatial look round
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Applied seeded drops to anatomy scene start views, wired anatomy maps and answer
+  scopes into scoring, added a shared spatial scene/answer stage and authored the three-difficulty
+  outside-in marker round plus URL-only fixture. Added per-dimension answer reveal.
+- **Files changed:** game planner/player/scoring integration; `SpatialRoundStage.tsx` and tests;
+  waypoint marker viewer capability; sanofi round/game/manifest/copy; generated schemas and docs.
+- **Commands run:** Prettier; schema export; typecheck; content validation; focused Vitest;
+  manual desktop sanofi fixture play-through.
+- **Result/verification:** The deterministic fixture loads the selected marker, conceals anatomy
+  labels, opens the location answer surface without unmounting the scene and validates with zero
+  content warnings.
+- **Follow-ups:** Add persisted explore/answer steps, pin selection and comparison reveal.

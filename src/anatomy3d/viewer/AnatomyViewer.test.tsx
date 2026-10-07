@@ -17,6 +17,7 @@ const mocked = vi.hoisted(() => ({
     pickFinding: vi.fn(),
     highlight: vi.fn(),
     setMarker: vi.fn(),
+    setWaypointMarker: vi.fn(),
     setFindings: vi.fn(),
     travelTo: vi.fn(),
     availableBranches: vi.fn(),
@@ -337,6 +338,16 @@ describe('AnatomyViewer', () => {
       <AnatomyViewer config={config} map={map} modelUrl="/model.glb" startView={startView} />,
     )
     expect(mocked.controller.setMarker).toHaveBeenLastCalledWith('target-structure')
+  })
+
+  it('preserves a waypoint marker start view', async () => {
+    const user = userEvent.setup()
+    const startView = { mode: 'waypoint_marker', waypointId: 'entry-waypoint' } as const
+    render(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" startView={startView} />)
+
+    expect(mocked.controller.setWaypointMarker).toHaveBeenLastCalledWith('entry-waypoint')
+    await user.click(screen.getByRole('button', { name: 'Reset' }))
+    expect(mocked.controller.setStartView).toHaveBeenLastCalledWith(startView)
   })
 
   it('lets an explicit marker override take precedence over the authored marker', () => {

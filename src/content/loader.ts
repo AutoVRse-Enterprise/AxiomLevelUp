@@ -657,6 +657,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
     if (
       primitive.content.startView.mode === 'waypoint' ||
+      primitive.content.startView.mode === 'waypoint_marker' ||
       primitive.content.startView.mode === 'endoscopic'
     ) {
       requireRef(
@@ -716,6 +717,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     }
     if (
       primitive.content.startView.mode === 'waypoint' ||
+      primitive.content.startView.mode === 'waypoint_marker' ||
       primitive.content.startView.mode === 'endoscopic'
     ) {
       requireRef(

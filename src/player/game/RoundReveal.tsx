@@ -4,6 +4,7 @@ import { announcePresentation } from '@/components/feedback/PresentationAnnounce
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
 import { Button, Card } from '@/components/ui'
 import type { GameConfig } from '@/content/schema/game'
+import type { AnswerDimensionLabel } from '@/engines/games/answers'
 import type { RoundRevealViewModel } from '@/engines/games/results'
 import { StepActionSlot } from '@/player/StepActionSlot'
 
@@ -16,6 +17,7 @@ export function RoundReveal({
   copy,
   lastRound,
   onNext,
+  answerDimensions = [],
 }: {
   view: RoundRevealViewModel
   total: number
@@ -23,6 +25,7 @@ export function RoundReveal({
   copy: GameCopy
   lastRound: boolean
   onNext: () => void
+  answerDimensions?: readonly AnswerDimensionLabel[]
 }) {
   const heading = useRef<HTMLHeadingElement>(null)
   const outcome = view.outcome === 'correct' ? copy.correct : copy.incorrect
@@ -40,6 +43,18 @@ export function RoundReveal({
           <p className="mt-3 font-semibold">{view.answerLine}</p>
         ) : null}
         <p className="mt-2 text-neutral-700">{view.feedbackSentence}</p>
+        {answerDimensions.length ? (
+          <dl className="mt-4 grid gap-2 rounded-xl bg-neutral-50 p-4 sm:grid-cols-3">
+            {answerDimensions.map(({ levelId, label }) => (
+              <div key={levelId}>
+                <dt className="text-caption font-semibold uppercase tracking-wide text-neutral-500">
+                  {levelId.replaceAll('-', ' ')}
+                </dt>
+                <dd className="mt-1 font-semibold">{label}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
         <dl className="mt-6 grid gap-2 border-t pt-5">
           <div className="flex justify-between">
             <dt>{copy.basePoints}</dt>

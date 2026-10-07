@@ -7,6 +7,7 @@ export type AnatomyStartView =
   | { mode: 'overview' }
   | { mode: 'marker'; structureId: string }
   | { mode: 'waypoint'; waypointId: string }
+  | { mode: 'waypoint_marker'; waypointId: string }
   | { mode: 'endoscopic'; waypointId: string }
 
 export interface AnatomyHighlightStyle {
@@ -179,6 +180,7 @@ export interface AnatomyViewerController {
   pickFinding(clientX: number, clientY: number): string | null
   highlight(structureIds: readonly string[], style: AnatomyHighlightStyle): void
   setMarker(structureId: string | null): void
+  setWaypointMarker(waypointId: string | null): void
   setFindings(findings: readonly CaseFinding[]): void
   travelTo(waypointId: string, options?: { animate?: boolean }): void
   availableBranches(): readonly string[]

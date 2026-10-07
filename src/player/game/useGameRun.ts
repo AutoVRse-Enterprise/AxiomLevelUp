@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import type { ContentRegistry } from '@/content/loader'
 import type { GameDocument } from '@/content/schema/game'
+import type { AnatomyLocatePrimitive } from '@/content/schema/primitives'
 import { planRun } from '@/engines/games/plan'
 import { resolveRoundAccuracy, scoreRound } from '@/engines/games/scoring'
 import {
@@ -85,11 +86,36 @@ export function useGameRun({
         : { type: 'submitted', at: now, elapsedMs, response }
       dispatch(action)
       const effectiveRound = { ...round, primitive: planned.primitive }
+      const anatomyMap = round.anatomyMapId
+        ? registry.anatomyMapById.get(round.anatomyMapId)
+        : undefined
+      const proximityLevelIds =
+        anatomyMap && planned.primitive.type === 'anatomy_locate'
+          ? (() => {
+              const primitive = planned.primitive as AnatomyLocatePrimitive
+              const levels = new Set(primitive.content.levels.map(({ levelId }) => levelId))
+              const structures = new Map(
+                anatomyMap.structures.map((structure) => [structure.id, structure]),
+              )
+              primitive.content.levels.forEach((level) => {
+                if (level.input !== 'model' && level.input !== 'structure_choice') return
+                let current = structures.get(level.targetStructureId)
+                while (current) {
+                  levels.add(current.levelId)
+                  current = current.parentId ? structures.get(current.parentId) : undefined
+                }
+              })
+              return [...levels]
+            })()
+          : undefined
       const accuracy = resolveRoundAccuracy({
         round: effectiveRound,
         response,
         timedOut,
+        anatomyMap,
+        correctAnswer: planned.dropWaypointId,
         proximity: config.scoring.proximity,
+        proximityLevelIds,
       })
       const currentRound = session.rounds[session.roundIndex]
       const paidClueCount = (currentRound?.revealedClueIds ?? []).filter((id) =>
@@ -134,6 +160,7 @@ export function useGameRun({
       dispatch,
       plan.rounds,
       registry.roundById,
+      registry.anatomyMapById,
       session.roundIndex,
       session.rounds,
       session.runId,
