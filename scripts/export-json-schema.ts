@@ -137,6 +137,22 @@ clue-category labels, all three tier presets, normalized component and speed-ble
 defaults, the first-attempt minimum score for time-only step-speed eligibility, clue penalties, XP
 and attempt-history limit. Every configured case ID and clue category used by a case must resolve.
 
+## Game documents and configuration
+
+\`manifest.json\` also carries \`rounds\` and \`games\` path arrays. A strict round document wraps
+one scored primitive, optional exploration and clue primitives, feedback, timing, drop pools and
+per-difficulty overrides. A strict game document provides a version, ordered slots of round pools,
+playable difficulty IDs and an optional duration window. The registry exposes \`roundById\` and
+\`gameById\`.
+
+The optional \`games\` app-config block owns difficulty presets, score and speed-bonus rules,
+anatomy-level proximity, timing windows, ratio-based result messages, player copy, formats,
+leaderboard rows, expert runs and bounded history. When game documents exist this configuration is
+required. Semantic validation enforces the four mechanic templates, strict primitive content,
+drop answers, clue policy, option-set identity, references, placeholders, answer leakage and
+per-difficulty timing. Challenge links are versioned and checksummed for accidental corruption;
+they are not signed or tamper-proof.
+
 ## Primitive registry
 
 The canonical registry contains ${primitiveTypes.length} strict primitive types: ${
@@ -232,7 +248,7 @@ target modes use answer completion.
 - Badge criteria support completed lessons/courses, perfect lessons, streak days, weekly goals,
   challenge completions, first-attempt correctness and authored primitive rewards.
 - Badge progress is derived from learner facts; persisted badge records contain unlock timestamps.
-- Learner state version 7 stores reward idempotency, challenge periods, counters, the active reward
+- Learner state version 9 stores reward idempotency, challenge periods, counters, the active reward
   run, latest activity/question results, celebrations and an abstract digital reward ledger.
 - Case attempt result-v7 records use the \`time_eligible\` speed model and retain both time-only
   speed components, eligibility threshold and counts, effective score weights, clue cost, timing
@@ -290,7 +306,8 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: \`0.1\`
 - Course documents also include an independent \`courseVersion\`.
-- Persisted learner state is version 7 and migrates older snapshots. Legacy case result-v5 and
+- Persisted learner state is version 9 and migrates older snapshots. Game state adds bounded
+  per-game run history and bests, a daily streak and an optional player display name. Legacy case result-v5 and
   result-v6 records remain readable without synthesizing result-v7 detail.
 - In-flight activity sessions are persisted independently at version 5; older supported sessions
   migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.

@@ -235,45 +235,50 @@ untouched.
     layer, rounds support exploration and option-set variants, games can declare a duration
     window, and the session reducer records pauses.
 
-- [ ] **P15-T01 — Round and game schemas**
+- [x] **P15-T01 — Round and game schemas**
   - Add `src/content/schema/game.ts` (round, game, slot, drop, feedback, overrides).
   - Extend the manifest and registry; export `schemas/round.schema.json` and
     `schemas/game.schema.json`.
 
-- [ ] **P15-T02 — Mechanic templates**
+- [x] **P15-T02 — Mechanic templates**
   - Implement `mechanics.ts` with the four templates and unit tests for allowed primitives and
     required fields.
 
-- [ ] **P15-T03 — Games configuration**
+- [x] **P15-T03 — Games configuration**
   - Add the `games` app-config block (difficulties, scoring, messages, copy, formats, leaderboard,
     expert runs) with strict schemas and defaults.
 
-- [ ] **P15-T04 — Scoring and proximity**
+- [x] **P15-T04 — Scoring and proximity**
   - Implement `scoring.ts` and `proximity.ts` with table-driven tests, including timeouts, clue
     costs, floor at zero, speed-bonus eligibility and organ-agnostic proximity.
 
-- [ ] **P15-T05 — Seeds and run planning**
+- [x] **P15-T05 — Seeds and run planning**
   - Implement `seed.ts` and `plan.ts`; prove determinism (same seed → same rounds and drop points),
     daily seeds and difficulty application.
 
-- [ ] **P15-T06 — Run session reducer and store**
+- [x] **P15-T06 — Run session reducer and store**
   - Implement the reducer and the scoped persisted `game-session` store with resume semantics.
 
-- [ ] **P15-T07 — Events, learner state v9 and pipeline**
+- [x] **P15-T07 — Events, learner state v9 and pipeline**
   - Add the event payloads, `activityKind: 'game'`, state v9 migration, seed fields and
     `applyGameProgressEvent`; prove idempotent completion and bounded history.
 
-- [ ] **P15-T08 — Results, messages and leaderboard selectors**
+- [x] **P15-T08 — Results, messages and leaderboard selectors**
   - Implement `results.ts`, message matching and `leaderboard.ts` with tests.
 
-- [ ] **P15-T09 — Challenge-link codec**
+- [x] **P15-T09 — Challenge-link codec**
   - Implement `links.ts` with version, checksum, malformed-input rejection and round-trip tests.
     Document that links are not tamper-proof.
 
-- [ ] **P15-T10 — Validation, fixtures and docs**
+- [x] **P15-T10 — Validation, fixtures and docs**
   - Add the semantic rules above, valid/invalid fixtures, a two-round fixture game in the sanofi
     root, `docs/CONTENT_SCHEMA.md` game sections and an architecture update.
   - `npm run check` passes for both experiences; default regression gate passes.
+
+- [ ] **P15-T11 — Regression gate and closeout**
+  - Run both build/content gates, the default browser/golden suite and sanofi smoke suite.
+  - Record the default bundle delta and confirm the game-session store is absent from `dist/`.
+  - Close the roadmap, activity log and handoff snapshot.
 
 ## Exit criteria
 

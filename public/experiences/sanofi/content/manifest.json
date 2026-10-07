@@ -4,6 +4,11 @@
   "courses": [],
   "cases": [],
   "anatomyMaps": [],
+  "rounds": [
+    "rounds/fixture-warmup-call.json",
+    "rounds/fixture-clinical-call.json"
+  ],
+  "games": ["games/fixture-two-round.json"],
   "seeds": {
     "fresh": "seeds/fresh.json"
   },

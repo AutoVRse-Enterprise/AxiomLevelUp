@@ -3625,3 +3625,22 @@ README.md`; `git diff --check`.
 - **Result/verification:** Four link-codec tests and TypeScript pass, including Unicode
   round-trips and malformed, checksum, version, length and payload rejection.
 - **Follow-ups:** Integrate semantic game validation and the sanofi fixture content.
+
+### [2026-10-07 10:50] P15-T10 - Validate fixture games and document the engine
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added path-precise game semantic validation, valid and invalid fixtures, a
+  two-round sanofi game, regenerated schemas and documented game contracts and architecture.
+- **Files changed:** `src/content/gameValidation.ts`;
+  `src/content/gameValidation.test.ts`; `src/content/loader.ts`;
+  `src/test/gameFixtures.ts`; `src/test/invalidGameFixtures.ts`;
+  `public/experiences/sanofi/content/{manifest.json,rounds/*,games/*}`;
+  `scripts/export-json-schema.ts`; `schemas/learner-seed.schema.json`;
+  `docs/CONTENT_SCHEMA.md`; `docs/ARCHITECTURE.md`;
+  `docs/phases/phase-15-game-contract-and-engine.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; `npm run schema:export`; `npm run typecheck`;
+  `npm run validate:content`; focused game/content Vitest.
+- **Result/verification:** Both content roots validate with zero warnings; sanofi loads two
+  rounds and one game; TypeScript and 66 focused tests pass.
+- **Follow-ups:** Run the full dual-build and browser regression gate, record default invariants
+  and close Phase 15.

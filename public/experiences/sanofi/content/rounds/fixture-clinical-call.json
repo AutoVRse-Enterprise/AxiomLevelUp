@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "fixture-clinical-call",
+  "title": "Make the call",
+  "mechanic": "clinical_call",
+  "intro": "Bring the history and biomarker pattern together.",
+  "timeLimitSeconds": 45,
+  "primitive": {
+    "id": "fixture-clinical-answer",
+    "type": "multiple_choice",
+    "content": {
+      "prompt": "Which interpretation best explains the combined evidence?",
+      "options": [
+        { "id": "type-2", "label": "Type 2 airway inflammation" },
+        { "id": "infection", "label": "Acute bacterial infection" },
+        { "id": "cardiac", "label": "Cardiac congestion" },
+        { "id": "normal", "label": "Normal variation" }
+      ],
+      "correctOptionId": "type-2",
+      "explanation": "Variable symptoms and elevated inflammatory markers align.",
+      "shuffle": false
+    },
+    "completion": { "mode": "answer" }
+  },
+  "clues": [
+    {
+      "id": "history",
+      "title": "Patient snapshot",
+      "primitive": {
+        "id": "fixture-clinical-history",
+        "type": "rich_text",
+        "content": {
+          "body": "A synthetic adult reports variable wheeze and nocturnal symptoms."
+        }
+      }
+    },
+    {
+      "id": "biomarkers",
+      "title": "Biomarkers",
+      "primitive": {
+        "id": "fixture-clinical-biomarkers",
+        "type": "data_table",
+        "content": {
+          "caption": "Synthetic inflammatory markers",
+          "columns": [
+            { "id": "marker", "label": "Marker" },
+            { "id": "result", "label": "Result" }
+          ],
+          "rows": [
+            {
+              "id": "eosinophils",
+              "cells": [
+                { "columnId": "marker", "value": "Blood eosinophils" },
+                { "columnId": "result", "value": "Elevated" }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "course",
+      "title": "Course",
+      "primitive": {
+        "id": "fixture-clinical-course",
+        "type": "rich_text",
+        "content": {
+          "body": "Symptoms fluctuate rather than progressing continuously."
+        }
+      }
+    }
+  ],
+  "feedback": {
+    "correct": "The variable symptoms and inflammatory markers point in the same direction.",
+    "incorrect": "Use the symptom variability together with the biomarker pattern.",
+    "answerTemplate": "Correct answer: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 55 },
+    "expert": { "timeLimitSeconds": 30 }
+  }
+}

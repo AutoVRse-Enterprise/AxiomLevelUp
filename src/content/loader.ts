@@ -30,6 +30,7 @@ import {
 } from './schema'
 import { badgeIconIdSet } from './badgeIcons'
 import { validateAnatomyVolumes } from './anatomyVolumeValidation'
+import { validateGameContent } from './gameValidation'
 import { ContentValidationError, type ContentIssue } from './errors'
 import {
   assessmentPrimitiveTypeSet,
@@ -911,6 +912,19 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
       seen.add(primitive.id)
     })
   }
+
+  validateGameContent({
+    rounds,
+    games,
+    anatomyMaps,
+    config: appConfig.games,
+    roundFiles: input.roundFiles,
+    gameFiles: input.gameFiles,
+    appConfigFile: input.appConfigFile,
+    issues,
+    warnings,
+    validatePrimitive,
+  })
 
   courses.forEach((course, courseIndex) => {
     const file = input.courseFiles[courseIndex]?.file ?? `course:${course.id}`

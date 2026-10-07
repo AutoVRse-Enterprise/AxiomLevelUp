@@ -1,12 +1,12 @@
 # Architecture
 
 For a non-code product overview and test walkthrough, start with `README.md`. This document
-describes the current implementation boundaries after Phase 14.
+describes the current implementation boundaries after Phase 15.
 
 ## Layers
 
 ```text
-public/content JSON
+per-experience content JSON
         |
         v
 content loader + strict Zod/semantic validation
@@ -29,11 +29,11 @@ read-only ContentRegistry -----> routes -----> activity plan
                                                                 subscriber       |
                                                                       +-----------+-----------+
                                                                       v           v           v
-                                                                  progress  gamification  mastery
+                                                             learning/case/game  gamification  mastery
                                                                       +-----------+-----------+
                                                                                   |
                                                                                   v
-                                                                          learner store v8
+                                                                          learner store v9
 ```
 
 ## Boundaries
@@ -47,6 +47,8 @@ read-only ContentRegistry -----> routes -----> activity plan
 - `src/engines/gamification`: pure XP, stars, levels, calendar, challenge and achievement rules.
 - `src/engines/mastery`: pure deterministic concept-score updates and bounded history.
 - `src/engines/cases`: pure case planning, clue resolution and composite scoring.
+- `src/engines/games`: pure seeded run planning, mechanic policy, scoring, anatomy proximity,
+  session reduction, result/message/leaderboard selectors, challenge-link coding and progress.
 - `src/engines/pipeline.ts`: ordered learner-event reduction and one aggregate state result.
 - `src/player`: activity lifecycle orchestration, draft persistence, timers, review/reveal and
   shared player presentation; `src/player/case` composes the staged case shell.
@@ -94,13 +96,15 @@ namespacing is defence in depth for shared-origin hosting.
 
 ## Content loading
 
-The app fetches `public/content/manifest.json`, resolves the app configuration, courses, cases,
-anatomy maps, learner seed and asset manifest, validates every document, then performs
+The app fetches the selected experience's `manifest.json`, resolves the app configuration, courses,
+cases, anatomy maps, rounds, games, learner seed and asset manifest, validates every document, then performs
 cross-reference and per-primitive semantic checks. Lesson primitives, challenge items, case clues
 and case-stage steps use the same strict parser. Typed asset references verify manifest existence
 and media type; scenario graphs, formula syntax, case references, anatomy hierarchy and waypoint
 graphs receive content-layer validation. UI receives a read-only registry indexed by identifier,
-plus learner-visible catalogue projections. Parse failures include source file and JSON path.
+plus learner-visible catalogue projections. Round mechanics, primitive/clue policies, seeded drop
+answers, difficulty references, timing windows and answer leakage receive game-specific semantic
+validation. Parse failures include source file and JSON path.
 
 Production startup performs fetching and the complete validation pipeline in a module worker, then
 structured-clones the validated registry and its identifier maps to the main thread. The provider
@@ -110,8 +114,8 @@ startup contract; environments without Worker support retain the direct asynchro
 
 ## State and events
 
-Components emit typed learner input events. One subscriber queues and reduces them through learning
-progress, case progress, gamification and mastery, commits one learner-state v8 snapshot and
+Components emit typed learner input events. One subscriber queues and reduces them through learning,
+case and game progress, gamification and mastery, commits one learner-state v9 snapshot and
 publishes informational reward events. The event-history subscriber records a bounded audit trail.
 Output events are not reduced again. Persisted reward ledgers make lesson, case, perfect, daily and
 badge awards idempotent.
@@ -128,7 +132,8 @@ when a criterion has no specific safe destination.
 Mastery applies configured weighted gains/losses to first-attempt fractional scores and keeps
 bounded per-concept history. Case questions update mastery but do not award per-question XP; case
 completion awards configured XP and stores bounded per-case attempt history. Badge and level
-transitions enter a persisted celebration queue.
+transitions enter a persisted celebration queue. Game completion never awards XP; it records
+bounded per-game history and difficulty bests, and daily runs update a separate local-day streak.
 
 Application surfaces consume view models from `src/state/selectors/`. Effective lesson availability
 is derived from prerequisites, and route components do not duplicate progression logic. Demo seed
@@ -148,7 +153,7 @@ that were not persisted rather than reconstructing them.
 Routes adapt a configured lesson or challenge into an immutable activity plan. Planning first parses
 the strict primitive contract, then resolves its pure definition and derives support, family, scoring,
 layout, prompt, exploration keys and timer compatibility. The player advances a pure reducer and
-persists one version 4 activity session separately from aggregate learner state. Session progress
+persists one version 6 activity session separately from aggregate learner state. Session progress
 stores resumable drafts, first/latest fractional scores, distinct interactions and monotonic media
 coverage; first-attempt scores remain authoritative.
 
@@ -196,6 +201,25 @@ Loading, empty and failure presentation uses shared contracts. Artifact errors r
 player, which owns retry, continue or skip behavior. Content, route, offline and quota failures
 offer recovery actions at their owning boundary rather than mutating progress inside presentation
 components.
+
+## Game execution
+
+A game orders slots whose round pools are sampled by a deterministic uint32 seed. Planning applies
+the chosen difficulty, per-round timing overrides, clue economics, movement limits, option sets and
+seeded anatomy drop points. The plan includes the game version so persisted sessions and shared
+links cannot silently resume against changed content.
+
+The game engine is framework-free. Primitive evaluators provide ordinary answer accuracy; spatial
+mechanics compare answer paths through the configured anatomy-map hierarchy. Scoring converts
+accuracy to configured base points, adds the first eligible speed tier and subtracts paid clue
+costs with a zero floor. Result messages match ratios so the same rules work for games of different
+lengths.
+
+The separate `game-session` Zustand store persists only an active run under the existing
+experience-scoped IndexedDB prefix. Its pure reducer accepts explicit IDs, timestamps and elapsed
+time, including pause records; it never reads clocks or emits events. Typed `game_*` events are the
+only aggregate-state input. Challenge tokens encode the game ID/version, difficulty, seed, sender
+and target score as checksummed base64url. The checksum detects corruption, not malicious edits.
 
 ## Delivery and presentation runtime
 
@@ -289,7 +313,7 @@ remain `offlineRequired: false` but may explicitly opt into package downloads. P
 derivation walks course images and lesson primitives or a case's anatomy model, patient image,
 clue primitives and stage primitives. It deduplicates exact asset IDs, hashes and sizes, versions
 model URLs with the validated hash and produces package fingerprints and total bytes. Download
-records are kind-aware, device-scoped IndexedDB state separate from learner state v8.
+records are kind-aware, device-scoped IndexedDB state separate from learner state v9.
 
 The foreground download manager checks estimated quota, requests persistent storage, expands and
 validates DICOM manifests, fetches with bounded concurrency and verifies every file before placing it

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "fixture-warmup-call",
+  "title": "Read the pattern",
+  "mechanic": "clinical_call",
+  "intro": "Review the compact evidence and choose the best interpretation.",
+  "timeLimitSeconds": 35,
+  "primitive": {
+    "id": "fixture-warmup-answer",
+    "type": "multiple_choice",
+    "content": {
+      "prompt": "Which interpretation best fits this pattern?",
+      "options": [
+        { "id": "obstructive", "label": "Obstructive pattern" },
+        { "id": "restrictive", "label": "Restrictive pattern" },
+        { "id": "normal", "label": "Normal variation" }
+      ],
+      "correctOptionId": "obstructive",
+      "explanation": "The expiratory measurements show variable airflow limitation.",
+      "shuffle": false
+    },
+    "completion": { "mode": "answer" }
+  },
+  "primitiveByOptionSet": {
+    "similar": {
+      "id": "fixture-warmup-answer",
+      "type": "multiple_choice",
+      "content": {
+        "prompt": "Which interpretation best fits this pattern?",
+        "options": [
+          { "id": "obstructive", "label": "Obstructive pattern" },
+          { "id": "mixed", "label": "Mixed ventilatory pattern" },
+          { "id": "fixed", "label": "Fixed upper-airway pattern" },
+          { "id": "normal", "label": "Normal variation" }
+        ],
+        "correctOptionId": "obstructive",
+        "explanation": "The expiratory measurements show variable airflow limitation.",
+        "shuffle": false
+      },
+      "completion": { "mode": "answer" }
+    }
+  },
+  "clues": [
+    {
+      "id": "symptoms",
+      "title": "Symptoms",
+      "primitive": {
+        "id": "fixture-warmup-symptoms",
+        "type": "rich_text",
+        "content": {
+          "body": "Symptoms vary over the day and worsen with exertion."
+        }
+      }
+    },
+    {
+      "id": "flow",
+      "title": "Flow measurements",
+      "primitive": {
+        "id": "fixture-warmup-flow",
+        "type": "data_table",
+        "content": {
+          "caption": "Synthetic expiratory measurements",
+          "columns": [
+            { "id": "measure", "label": "Measure" },
+            { "id": "value", "label": "Value" }
+          ],
+          "rows": [
+            {
+              "id": "morning",
+              "cells": [
+                { "columnId": "measure", "value": "Morning flow" },
+                { "columnId": "value", "value": "Reduced" }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "response",
+      "title": "Repeat measurement",
+      "primitive": {
+        "id": "fixture-warmup-response",
+        "type": "rich_text",
+        "content": {
+          "body": "A later measurement improves compared with the initial value."
+        }
+      }
+    }
+  ],
+  "feedback": {
+    "correct": "Variability across repeated expiratory measurements is the strongest clue.",
+    "incorrect": "Compare the first and repeat expiratory measurements.",
+    "answerTemplate": "Correct answer: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 45 },
+    "expert": { "timeLimitSeconds": 25 }
+  }
+}
