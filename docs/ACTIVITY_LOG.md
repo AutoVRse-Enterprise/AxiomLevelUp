@@ -3613,3 +3613,15 @@ README.md`; `git diff --check`.
 - **Result/verification:** Seven result/leaderboard tests and TypeScript pass, including earliest
   best-round ties, first matching message rules and a player outside the visible ranking window.
 - **Follow-ups:** Add the versioned challenge-link codec.
+
+### [2026-10-07 10:40] P15-T09 - Add challenge-link codec
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added UTF-8 base64url challenge tokens with game version, FNV-1a checksum, strict
+  decoding and registry resolution for unknown, outdated and unsupported links.
+- **Files changed:** `src/engines/games/links.ts`;
+  `src/engines/games/links.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused Vitest; `npm run typecheck`.
+- **Result/verification:** Four link-codec tests and TypeScript pass, including Unicode
+  round-trips and malformed, checksum, version, length and payload rejection.
+- **Follow-ups:** Integrate semantic game validation and the sanofi fixture content.
