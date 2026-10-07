@@ -3530,3 +3530,18 @@ README.md`; `git diff --check`.
 - **Result/verification:** Six mechanic tests and TypeScript pass, including primitive-type,
   entry-answer, exploration and clue-policy enforcement.
 - **Follow-ups:** Populate and validate the full games application configuration.
+
+### [2026-10-07 10:00] P15-T03 - Configure game difficulty and scoring
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Expanded the strict games configuration with difficulties, scoring, timing,
+  ratio-based messages, copy, formats, leaderboard, expert runs and history retention; populated
+  the sanofi configuration and added semantic checks.
+- **Files changed:** `src/content/schema/game.ts`; `src/content/loader.ts`;
+  `src/content/gameConfig.test.ts`;
+  `public/experiences/sanofi/content/app-config.json`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused Vitest; `npm run validate:content`;
+  `npm run typecheck`.
+- **Result/verification:** Six focused tests pass, both content roots validate with zero warnings
+  and TypeScript passes.
+- **Follow-ups:** Implement deterministic scoring and organ-agnostic proximity.

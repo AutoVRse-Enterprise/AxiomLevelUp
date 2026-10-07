@@ -90,7 +90,111 @@
       "tagline": "Read the evidence. Make the call.",
       "startLabel": "Start a quick challenge",
       "unavailableLabel": "Coming soon"
-    }
+    },
+    "difficulties": [
+      {
+        "id": "warmup",
+        "label": "Warm-up",
+        "timeMultiplier": 1.5,
+        "maxMoves": 5,
+        "freeClues": 3,
+        "clueCostPoints": 50,
+        "speedBonus": true,
+        "optionSet": "standard"
+      },
+      {
+        "id": "challenge",
+        "label": "Challenge",
+        "timeMultiplier": 1,
+        "maxMoves": 3,
+        "freeClues": 2,
+        "clueCostPoints": 100,
+        "speedBonus": true,
+        "optionSet": "standard"
+      },
+      {
+        "id": "expert",
+        "label": "Expert",
+        "timeMultiplier": 0.75,
+        "maxMoves": 2,
+        "freeClues": 1,
+        "clueCostPoints": 150,
+        "speedBonus": true,
+        "optionSet": "similar"
+      }
+    ],
+    "scoring": {
+      "roundMaxPoints": 1000,
+      "speedBonuses": [
+        {
+          "maxFractionOfLimit": 0.25,
+          "points": 150,
+          "label": "Lightning bonus"
+        },
+        {
+          "maxFractionOfLimit": 0.5,
+          "points": 100,
+          "label": "Fast answer bonus"
+        }
+      ],
+      "minAccuracyForSpeedBonus": 0.5,
+      "correctThreshold": 0.8,
+      "proximity": {
+        "exact": 1,
+        "byCommonLevel": {
+          "segment": 0.85,
+          "lobe": 0.6,
+          "side": 0.25
+        },
+        "none": 0
+      }
+    },
+    "timing": {
+      "revealAllowanceSeconds": 5,
+      "defaultWindowSeconds": {
+        "min": 120,
+        "max": 240
+      }
+    },
+    "messages": [
+      {
+        "when": {
+          "minCorrectRatio": 1
+        },
+        "text": "Sharp eye. Strong finish."
+      },
+      {
+        "when": {
+          "minCorrectRatio": 0.75,
+          "lastRoundCorrect": false
+        },
+        "text": "Almost perfect. One clue got you."
+      },
+      {
+        "when": {
+          "minCorrectRatio": 0.75
+        },
+        "text": "You know your airways."
+      },
+      {
+        "when": {},
+        "text": "Good run. Ready for a rematch?"
+      }
+    ],
+    "copy": {
+      "lockIn": "Lock in",
+      "nextRound": "Next round",
+      "correct": "Correct",
+      "incorrect": "Not quite",
+      "seeResult": "See your score"
+    },
+    "formats": [],
+    "leaderboard": {
+      "entries": [],
+      "disclosure": "Demo leaderboard"
+    },
+    "expertRuns": [],
+    "historyLimit": 20
   },
   "leaderboard": {
     "scope": "global",

@@ -405,7 +405,99 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
   const badgeIds = new Set(appConfig.badges.map(({ id }) => id))
   const caseIds = new Set(cases.map(({ id }) => id))
   const anatomyMapIds = new Set(anatomyMaps.map(({ id }) => id))
+  const gameIds = new Set(games.map(({ id }) => id))
   const assetById = new Map(assetManifest.assets.map((asset) => [asset.assetId, asset]))
+
+  if (games.length > 0 && !appConfig.games) {
+    issues.push({
+      file: input.appConfigFile,
+      path: 'games',
+      message: 'Game configuration is required when games are configured.',
+      severity: 'error',
+    })
+  }
+  if (appConfig.games) {
+    duplicate(
+      'game difficulty',
+      appConfig.games.difficulties.map(({ id }) => id),
+      input.appConfigFile,
+    )
+    const difficultyIds = new Set(appConfig.games.difficulties.map(({ id }) => id))
+    const speedTiers = appConfig.games.scoring?.speedBonuses ?? []
+    if (
+      speedTiers.some(
+        (tier, index) =>
+          index > 0 && tier.maxFractionOfLimit <= (speedTiers[index - 1]?.maxFractionOfLimit ?? 0),
+      )
+    ) {
+      issues.push({
+        file: input.appConfigFile,
+        path: 'games.scoring.speedBonuses',
+        message: 'Speed bonus fractions must be strictly increasing.',
+        severity: 'error',
+      })
+    }
+    const finalMessage = appConfig.games.messages.at(-1)
+    if (finalMessage && Object.keys(finalMessage.when).length > 0) {
+      issues.push({
+        file: input.appConfigFile,
+        path: `games.messages.${appConfig.games.messages.length - 1}.when`,
+        message: 'The final game message rule must be unconditional.',
+        severity: 'error',
+      })
+    }
+    appConfig.games.formats.forEach((format, index) => {
+      if (format.status === 'playable' && !format.gameId) {
+        issues.push({
+          file: input.appConfigFile,
+          path: `games.formats.${index}.gameId`,
+          message: 'A playable game format requires a game id.',
+          severity: 'error',
+        })
+      }
+      if (format.gameId) {
+        requireRef(
+          gameIds,
+          format.gameId,
+          input.appConfigFile,
+          `games.formats.${index}.gameId`,
+          'game',
+        )
+      }
+    })
+    appConfig.games.expertRuns.forEach((run, index) => {
+      requireRef(
+        gameIds,
+        run.gameId,
+        input.appConfigFile,
+        `games.expertRuns.${index}.gameId`,
+        'game',
+      )
+      requireRef(
+        difficultyIds,
+        run.difficulty,
+        input.appConfigFile,
+        `games.expertRuns.${index}.difficulty`,
+        'game difficulty',
+      )
+    })
+    appConfig.games.leaderboard.entries.forEach((entry, index) => {
+      requireRef(
+        gameIds,
+        entry.gameId,
+        input.appConfigFile,
+        `games.leaderboard.entries.${index}.gameId`,
+        'game',
+      )
+      requireRef(
+        difficultyIds,
+        entry.difficulty,
+        input.appConfigFile,
+        `games.leaderboard.entries.${index}.difficulty`,
+        'game difficulty',
+      )
+    })
+  }
   assetManifest.assets.forEach((asset, index) => {
     if (asset.offlineRequired && !asset.offlineAvailable) {
       warnings.push({
