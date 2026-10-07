@@ -478,6 +478,35 @@ describe('image primitive components', () => {
     expect(screen.queryByRole('heading', { name: 'Healthy reference' })).not.toBeInTheDocument()
   })
 
+  it('shows normalized coordinates only in the development region debug mode', async () => {
+    window.history.replaceState({}, '', '/?regionDebug=1')
+    render(
+      <ImageHotspotPrimitive
+        primitive={assessHotspot}
+        attempt={0}
+        mode="interactive"
+        draft={null}
+        {...callbacks()}
+      />,
+    )
+    const selector = screen.getByRole('button', { name: /Image location selector/ })
+    vi.spyOn(selector, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      right: 200,
+      bottom: 100,
+      width: 200,
+      height: 100,
+      toJSON: () => ({}),
+    })
+    fireEvent.pointerMove(selector, { clientX: 50, clientY: 25 })
+    expect(await screen.findByLabelText('Region authoring readout')).toBeVisible()
+    expect(screen.getByText('{ "x": 0.2500, "y": 0.2500 }')).toBeVisible()
+    window.history.replaceState({}, '', '/')
+  })
+
   it('reveals assessment targets only when review policy allows it', () => {
     const props = callbacks()
     const { container, rerender } = render(

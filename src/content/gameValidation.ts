@@ -38,9 +38,11 @@ function duplicateIndexes(values: readonly string[]) {
 
 function correctAnswerLabel(primitive: Primitive): string | null {
   const content = primitive.content as {
+    answerLabel?: unknown
     correctOptionId?: unknown
     options?: unknown
   }
+  if (typeof content.answerLabel === 'string') return content.answerLabel
   if (typeof content.correctOptionId !== 'string' || !Array.isArray(content.options)) return null
   const option = content.options.find(
     (candidate) =>
@@ -100,6 +102,19 @@ function validateRound(
       file,
       'feedback.answerTemplate',
       'The answer template must contain the {answer} placeholder.',
+    )
+  }
+  if (
+    round.mechanic === 'spot_finding' &&
+    (round.primitive.type !== 'image_hotspot' ||
+      round.primitive.content.mode !== 'assess' ||
+      !round.primitive.content.answerLabel)
+  ) {
+    issue(
+      input.issues,
+      file,
+      'primitive.content.answerLabel',
+      'Spot-the-finding rounds require an assessment hotspot answer label.',
     )
   }
   Object.keys(round.difficulty).forEach((difficulty) => {
@@ -212,7 +227,15 @@ function validateRound(
       typeof round.primitive.content.prompt === 'string'
         ? round.primitive.content.prompt.toLocaleLowerCase()
         : ''
-    if (round.intro.toLocaleLowerCase().includes(label) || prompt.includes(label)) {
+    const alt =
+      'alt' in round.primitive.content && typeof round.primitive.content.alt === 'string'
+        ? round.primitive.content.alt.toLocaleLowerCase()
+        : ''
+    if (
+      round.intro.toLocaleLowerCase().includes(label) ||
+      prompt.includes(label) ||
+      alt.includes(label)
+    ) {
       issue(
         input.issues,
         file,
@@ -301,6 +324,45 @@ export function validateGameContent(input: GameValidationInput): void {
             `Unknown round "${roundId}".`,
           )
         }
+      })
+    })
+    game.slots.forEach((slot, slotIndex) => {
+      const earlierRounds = slot.pool.flatMap((roundId) => {
+        const round = roundById.get(roundId)
+        return round ? [round] : []
+      })
+      game.slots.slice(slotIndex + 1).forEach((laterSlot, laterOffset) => {
+        const labels = laterSlot.pool.flatMap((roundId) => {
+          const laterRound = roundById.get(roundId)
+          if (!laterRound) return []
+          const label = correctAnswerLabel(laterRound.primitive)?.trim().toLocaleLowerCase()
+          return label ? [label] : []
+        })
+        earlierRounds.forEach((earlierRound) => {
+          const content = earlierRound.primitive.content as {
+            prompt?: unknown
+            alt?: unknown
+            explanation?: unknown
+          }
+          const exposed = visibleText([
+            earlierRound.intro,
+            content.prompt,
+            content.alt,
+            content.explanation,
+            earlierRound.feedback.correct,
+            earlierRound.feedback.incorrect,
+          ]).toLocaleLowerCase()
+          labels.forEach((label) => {
+            if (exposed.includes(label)) {
+              issue(
+                input.issues,
+                file,
+                `slots.${slotIndex}.pool`,
+                `Round "${earlierRound.id}" leaks later answer label "${label}" before slot ${slotIndex + laterOffset + 2}.`,
+              )
+            }
+          })
+        })
       })
     })
 

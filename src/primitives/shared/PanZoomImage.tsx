@@ -26,6 +26,7 @@ interface PanZoomImageProps {
   className?: string
   dark?: boolean
   onTap?: (point: NormalizedPoint) => void
+  onPointerPosition?: (point: NormalizedPoint) => void
   focusPoint?: NormalizedPoint | null
   keyboardMode?: 'pan' | 'external'
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>
@@ -51,6 +52,7 @@ export function PanZoomImage({
   className,
   dark = false,
   onTap,
+  onPointerPosition,
   focusPoint,
   keyboardMode = 'pan',
   onKeyDown,
@@ -68,6 +70,16 @@ export function PanZoomImage({
     onTap: onTap
       ? (point, transform) =>
           onTap(
+            screenToNormalized(
+              point,
+              { left: 0, top: 0, width: content.width, height: content.height },
+              transform,
+            ),
+          )
+      : undefined,
+    onPointerPosition: onPointerPosition
+      ? (point, transform) =>
+          onPointerPosition(
             screenToNormalized(
               point,
               { left: 0, top: 0, width: content.width, height: content.height },

@@ -3998,3 +3998,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** Circle, rectangle and polygon distances, near-miss scoring, comparison
   interaction and existing comparison behavior pass; default region scoring remains binary.
 - **Follow-ups:** Add the development region authoring overlay and author finding content.
+
+### [2026-10-07 18:05] P18-T03 - Add finding authoring safeguards
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a development-only lazy region overlay with normalized coordinate readout and
+  JSON copy, registered the existing emphysema and healthy-airway images in sanofi content, and
+  added required answer-label and same/cross-round answer-leak checks.
+- **Files changed:** region debug overlay and hotspot integration; pan/zoom pointer reporting;
+  game content validation; sanofi asset manifest; focused tests; activity log.
+- **Commands run:** Prettier; TypeScript; focused Vitest and ESLint; content validation.
+- **Result/verification:** 25 focused tests pass and both content roots validate with zero
+  warnings. Region authoring UI is guarded by `import.meta.env.DEV`.
+- **Follow-ups:** Source and confirm a third licensed histology image, then author all three rounds.

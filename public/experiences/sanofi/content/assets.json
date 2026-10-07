@@ -19,6 +19,40 @@
       }
     },
     {
+      "assetId": "emphysema-histology-image",
+      "path": "/assets/images/cases/emphysema-histology.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 83138,
+      "mimeType": "image/webp",
+      "width": 1104,
+      "height": 1136,
+      "sha256": "d47ee273128d719538eb8ebbd417408777499db33c6002467b1c7a44208125ce",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Histopathology_of_emphysema.jpg",
+        "licence": "CC0 1.0 Universal Public Domain Dedication",
+        "author": "Mikael Häggström, M.D."
+      }
+    },
+    {
+      "assetId": "airway-comparison-image",
+      "path": "/assets/images/cases/airway-comparison.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 107844,
+      "mimeType": "image/webp",
+      "width": 1200,
+      "height": 1334,
+      "sha256": "4f872870a175398ec39fb0d197631fae86fa55782034925269839ac42e5d8a0e",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:2311_Lung_Tissue.jpg",
+        "licence": "Creative Commons Attribution 3.0 Unported",
+        "author": "OpenStax College"
+      }
+    },
+    {
       "assetId": "wheeze-audio",
       "path": "/assets/media/cases/wheeze.m4a",
       "type": "audio",

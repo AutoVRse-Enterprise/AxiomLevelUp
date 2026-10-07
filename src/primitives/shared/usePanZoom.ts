@@ -20,6 +20,7 @@ interface UsePanZoomOptions {
   minScale?: number
   maxScale?: number
   onTap?: (point: Point, transform: PanZoomTransform) => void
+  onPointerPosition?: (point: Point, transform: PanZoomTransform) => void
 }
 
 export interface PanZoomHandlers {
@@ -36,6 +37,7 @@ export function usePanZoom({
   minScale = 1,
   maxScale = 4,
   onTap,
+  onPointerPosition,
 }: UsePanZoomOptions) {
   const viewportWidth = viewport.width
   const viewportHeight = viewport.height
@@ -175,6 +177,11 @@ export function usePanZoom({
       event.currentTarget.setPointerCapture?.(event.pointerId)
     },
     onPointerMove: (event) => {
+      const bounds = event.currentTarget.getBoundingClientRect()
+      onPointerPosition?.(
+        { x: event.clientX - bounds.left, y: event.clientY - bounds.top },
+        constrainedTransform,
+      )
       if (pointers.current.has(event.pointerId)) {
         pointers.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
       }
@@ -184,7 +191,6 @@ export function usePanZoom({
         const second = pointers.current.get(secondId)
         if (!first || !second || pinch.current.distance === 0) return
         const distance = Math.hypot(second.x - first.x, second.y - first.y)
-        const bounds = event.currentTarget.getBoundingClientRect()
         const midpoint = {
           x: (first.x + second.x) / 2 - bounds.left,
           y: (first.y + second.y) / 2 - bounds.top,

@@ -1,5 +1,5 @@
 import { Maximize2 } from 'lucide-react'
-import { useState, type KeyboardEvent, type MouseEvent } from 'react'
+import { lazy, Suspense, useState, type KeyboardEvent, type MouseEvent } from 'react'
 
 import { Button } from '@/components/ui'
 import type {
@@ -20,6 +20,14 @@ import type { PrimitiveComponentProps } from '@/primitives/types'
 import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import { cn } from '@/lib/cn'
 
+const RegionDebugOverlay = import.meta.env.DEV
+  ? lazy(() =>
+      import('@/primitives/shared/RegionDebugOverlay').then((module) => ({
+        default: module.RegionDebugOverlay,
+      })),
+    )
+  : null
+
 export function ImageHotspotPrimitive({
   primitive,
   mode,
@@ -37,6 +45,7 @@ export function ImageHotspotPrimitive({
   )
   const [explored, setExplored] = useState(() => new Set<string>())
   const [showCompare, setShowCompare] = useState(false)
+  const [debugPoint, setDebugPoint] = useState<NormalizedPoint | null>(null)
   const [selectedPoint, setSelectedPoint] = useState<NormalizedPoint | null>(
     isNormalizedPoint(draft) ? draft : null,
   )
@@ -48,6 +57,9 @@ export function ImageHotspotPrimitive({
   const responsePoint =
     mode === 'review' && isNormalizedPoint(review?.response) ? review.response : selectedPoint
   const readOnly = disabled || mode === 'review'
+  const regionDebugEnabled =
+    RegionDebugOverlay !== null &&
+    new URLSearchParams(window.location.search).get('regionDebug') === '1'
 
   const updatePoint = (point: NormalizedPoint) => {
     if (readOnly || primitive.content.mode !== 'assess') return
@@ -202,6 +214,24 @@ export function ImageHotspotPrimitive({
           tabIndex={assessMode && !zoomEnabled && !readOnly ? 0 : undefined}
           onClick={assessMode && !zoomEnabled ? handleAssessmentClick : undefined}
           onKeyDown={assessMode && !zoomEnabled ? handleAssessmentKeyDown : undefined}
+          onPointerMove={
+            !zoomEnabled && regionDebugEnabled
+              ? (event) => {
+                  const bounds = event.currentTarget.getBoundingClientRect()
+                  setDebugPoint(
+                    screenToNormalized(
+                      { x: event.clientX, y: event.clientY },
+                      {
+                        left: bounds.left,
+                        top: bounds.top,
+                        width: bounds.width,
+                        height: bounds.height,
+                      },
+                    ),
+                  )
+                }
+              : undefined
+          }
         >
           {zoomEnabled ? (
             <PanZoomImage
@@ -212,6 +242,7 @@ export function ImageHotspotPrimitive({
               keyboardMode="external"
               maxZoom={assessmentContent.zoom?.maxScale ?? 4}
               onKeyDown={handleAssessmentKeyDown}
+              onPointerPosition={regionDebugEnabled ? setDebugPoint : undefined}
               onTap={readOnly ? undefined : updatePoint}
               overlay={
                 <>
@@ -227,6 +258,11 @@ export function ImageHotspotPrimitive({
                       label="Selected location"
                       status={markerStatus}
                     />
+                  ) : null}
+                  {regionDebugEnabled && RegionDebugOverlay ? (
+                    <Suspense fallback={null}>
+                      <RegionDebugOverlay point={debugPoint} regions={primitive.content.regions} />
+                    </Suspense>
                   ) : null}
                 </>
               }
@@ -249,6 +285,11 @@ export function ImageHotspotPrimitive({
               ) : null}
             </>
           )}
+          {!zoomEnabled && regionDebugEnabled && RegionDebugOverlay ? (
+            <Suspense fallback={null}>
+              <RegionDebugOverlay point={debugPoint} regions={primitive.content.regions} />
+            </Suspense>
+          ) : null}
           {!assessMode
             ? primitive.content.regions.map((region) => {
                 const center = regionCenter(region)
