@@ -3558,3 +3558,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** All 16 scoring/proximity tests pass, including the 950-point worked
   example, timeout and floor cases, the default lung hierarchy and a synthetic non-lung map.
 - **Follow-ups:** Add deterministic run seeds and planning.
+
+### [2026-10-07 10:15] P15-T05 - Add seeded run planning
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added stable run and daily seeds, salted pool selection and deterministic run
+  planning with difficulty, clue, movement, option-set and drop-point resolution.
+- **Files changed:** `src/engines/games/seed.ts`; `src/engines/games/seed.test.ts`;
+  `src/engines/games/plan.ts`; `src/engines/games/plan.test.ts`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Focused game-engine Vitest; `npm run typecheck`.
+- **Result/verification:** Ten seed/planning tests pass. Plans retain `gameVersion`; identical
+  inputs reproduce rounds and drop points while changed seeds vary selection.
+- **Follow-ups:** Add the persisted pure run-session reducer.
