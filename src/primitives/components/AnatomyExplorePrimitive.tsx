@@ -11,6 +11,8 @@ import type { PrimitiveComponentProps, PrimitiveInteraction } from '@/primitives
 
 function initialObservation(draft: unknown): AnatomyExploreObservation {
   const value = draft && typeof draft === 'object' ? (draft as Record<string, unknown>) : {}
+  const currentWaypointId =
+    typeof value.currentWaypointId === 'string' ? value.currentWaypointId : null
   return {
     loaded: false,
     interactionCount:
@@ -26,6 +28,16 @@ function initialObservation(draft: unknown): AnatomyExploreObservation {
     inspectedFindingIds: Array.isArray(value.inspectedFindingIds)
       ? value.inspectedFindingIds.filter((id): id is string => typeof id === 'string')
       : [],
+    currentWaypointId,
+    visitedWaypointIds: Array.isArray(value.visitedWaypointIds)
+      ? value.visitedWaypointIds.filter((id): id is string => typeof id === 'string')
+      : currentWaypointId
+        ? [currentWaypointId]
+        : [],
+    movesUsed:
+      typeof value.movesUsed === 'number' && Number.isFinite(value.movesUsed)
+        ? Math.max(0, Math.floor(value.movesUsed))
+        : 0,
   }
 }
 
@@ -71,6 +83,9 @@ export function AnatomyExplorePrimitive({
       selectedStructureIds: next.selectedStructureIds,
       reachedWaypointIds: next.reachedWaypointIds,
       inspectedFindingIds: next.inspectedFindingIds,
+      currentWaypointId: next.currentWaypointId,
+      visitedWaypointIds: next.visitedWaypointIds,
+      movesUsed: next.movesUsed,
     })
   }
 
@@ -105,13 +120,32 @@ export function AnatomyExplorePrimitive({
           : undefined
       }
       modelUrl={modelUrl}
+      movement={primitive.content.movement}
+      movementState={
+        primitive.content.movement &&
+        primitive.content.startView.mode === 'endoscopic' &&
+        observation.currentWaypointId
+          ? {
+              entryWaypointId: primitive.content.startView.waypointId,
+              currentWaypointId: observation.currentWaypointId,
+              visitedWaypointIds: observation.visitedWaypointIds ?? [],
+              movesUsed: observation.movesUsed ?? 0,
+            }
+          : undefined
+      }
       navigation={primitive.content.navigation}
       orientationLabels={primitive.content.orientationLabels}
       neutralNavigationLabels={unknownEntry}
       hideLocationLabels={unknownEntry}
       prompt={primitive.content.prompt}
       selectedStructureIds={observation.selectedStructureIds}
-      startView={primitive.content.startView}
+      startView={
+        primitive.content.movement &&
+        primitive.content.startView.mode === 'endoscopic' &&
+        observation.currentWaypointId
+          ? { mode: 'endoscopic', waypointId: observation.currentWaypointId }
+          : primitive.content.startView
+      }
       onFailed={(reason) => {
         if (disabled) return
         viewerLoaded.current = false
@@ -127,7 +161,8 @@ export function AnatomyExplorePrimitive({
           triangleCount: result.triangleCount,
         })
         const entryWaypointId =
-          unknownEntry && primitive.content.startView.mode === 'endoscopic'
+          (unknownEntry || primitive.content.movement) &&
+          primitive.content.startView.mode === 'endoscopic'
             ? primitive.content.startView.waypointId
             : null
         if (entryWaypointId) {
@@ -137,6 +172,10 @@ export function AnatomyExplorePrimitive({
               reachedWaypointIds: [
                 ...new Set([...observationRef.current.reachedWaypointIds, entryWaypointId]),
               ],
+              currentWaypointId: observationRef.current.currentWaypointId ?? entryWaypointId,
+              visitedWaypointIds: [
+                ...new Set([...(observationRef.current.visitedWaypointIds ?? []), entryWaypointId]),
+              ],
             },
             (key) => ({ name: 'anatomy_waypoint_reached', waypointId: entryWaypointId, key }),
             `waypoint:${entryWaypointId}`,
@@ -144,6 +183,13 @@ export function AnatomyExplorePrimitive({
         } else {
           update({ loaded: true })
         }
+      }}
+      onMovementStateChange={(movementState) => {
+        update({
+          currentWaypointId: movementState.currentWaypointId,
+          visitedWaypointIds: movementState.visitedWaypointIds,
+          movesUsed: movementState.movesUsed,
+        })
       }}
       onStructureSelected={(structureId) => {
         const selectedStructureIds = observationRef.current.selectedStructureIds.includes(

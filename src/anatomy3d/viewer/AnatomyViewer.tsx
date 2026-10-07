@@ -14,6 +14,13 @@ import type {
   AnatomyStartView,
   AnatomyViewState,
 } from '@/anatomy3d/viewer/controller'
+import {
+  canTravelTo,
+  movementCost,
+  reachableWithin,
+  type AnatomyMovementRule,
+  type AnatomyMovementState,
+} from '@/anatomy3d/viewer/movement'
 import { useAnatomyViewer } from '@/anatomy3d/viewer/useAnatomyViewer'
 import { cn } from '@/lib/cn'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -25,6 +32,8 @@ export interface AnatomyViewerProps {
   prompt?: string
   navigation?: 'orbit' | 'flythrough' | 'both' | 'look'
   orientationLabels?: 'patient' | 'hidden'
+  movement?: AnatomyMovementRule
+  movementState?: AnatomyMovementState
   disabled?: boolean
   startView?: AnatomyStartView
   selectedStructureIds?: readonly string[]
@@ -36,6 +45,7 @@ export interface AnatomyViewerProps {
   onStructureSelected?: (structureId: string) => void
   onFindingInspected?: (findingId: string) => void
   onWaypointReached?: (waypointId: string) => void
+  onMovementStateChange?: (state: AnatomyMovementState) => void
   onViewChanged?: (view: AnatomyViewState) => void
   onLoaded?: (result: AnatomyLoadResult, loadMs: number) => void
   onFailed?: (reason: string) => void
@@ -52,6 +62,8 @@ export function AnatomyViewer({
   prompt = 'Explore the interactive anatomy model.',
   navigation = 'both',
   orientationLabels = 'patient',
+  movement,
+  movementState,
   disabled = false,
   startView,
   selectedStructureIds,
@@ -63,6 +75,7 @@ export function AnatomyViewer({
   onStructureSelected,
   onFindingInspected,
   onWaypointReached,
+  onMovementStateChange,
   onViewChanged,
   onLoaded,
   onFailed,
@@ -208,8 +221,41 @@ export function AnatomyViewer({
   const waypointLabel = (waypoint: AnatomyMap['waypoints'][number]) =>
     neutralNavigationLabels ? (waypoint.neutralLabel ?? 'Branch') : waypoint.label
 
+  const entryWaypointId =
+    movementState?.entryWaypointId ??
+    (startView && 'waypointId' in startView ? startView.waypointId : null)
+  const effectiveMovementState =
+    movement && entryWaypointId
+      ? (movementState ?? {
+          entryWaypointId,
+          currentWaypointId: currentWaypointId ?? entryWaypointId,
+          visitedWaypointIds: [entryWaypointId],
+          movesUsed: 0,
+        })
+      : null
+  const reachableWaypointIds =
+    movement && entryWaypointId
+      ? reachableWithin(map, entryWaypointId, movement.maxHopsFromEntry)
+      : null
+
   const travelTo = (waypointId: string) => {
     if (disabled) return
+    if (movement && effectiveMovementState && reachableWaypointIds) {
+      if (!canTravelTo(waypointId, reachableWaypointIds, effectiveMovementState, movement)) return
+      const cost = movementCost(
+        effectiveMovementState.visitedWaypointIds,
+        waypointId,
+        movement.freeBacktrack,
+      )
+      onMovementStateChange?.({
+        ...effectiveMovementState,
+        currentWaypointId: waypointId,
+        visitedWaypointIds: [
+          ...new Set([...effectiveMovementState.visitedWaypointIds, waypointId]),
+        ],
+        movesUsed: effectiveMovementState.movesUsed + cost,
+      })
+    }
     const waypoint = map.waypoints.find(({ id }) => id === waypointId)
     const destinationLabel = waypoint ? waypointLabel(waypoint) : waypointId
     controller?.travelTo(waypointId, { animate: motion === 'full' })
@@ -220,12 +266,28 @@ export function AnatomyViewer({
   }
 
   const lookOnly = navigation === 'look'
-  const branches = navigation === 'orbit' || lookOnly ? [] : (controller?.availableBranches() ?? [])
+  const branches =
+    navigation === 'orbit' || lookOnly
+      ? []
+      : (controller?.availableBranches() ?? []).filter(
+          (id) =>
+            !movement ||
+            !effectiveMovementState ||
+            !reachableWaypointIds ||
+            canTravelTo(id, reachableWaypointIds, effectiveMovementState, movement),
+        )
   const failed = state.status === 'error'
   const currentWaypoint = map.waypoints.find(({ id }) => id === currentWaypointId)
   const selectedFinding = findings.find(({ id }) => id === selectedFindingId)
   const parentWaypointId = controller?.parentWaypoint()
-  const parentWaypoint = map.waypoints.find(({ id }) => id === parentWaypointId)
+  const parentWaypoint =
+    !movement ||
+    !parentWaypointId ||
+    !effectiveMovementState ||
+    !reachableWaypointIds ||
+    canTravelTo(parentWaypointId, reachableWaypointIds, effectiveMovementState, movement)
+      ? map.waypoints.find(({ id }) => id === parentWaypointId)
+      : undefined
   const breadcrumb = (controller?.waypointPath() ?? (currentWaypointId ? [currentWaypointId] : []))
     .map((id) => map.waypoints.find((waypoint) => waypoint.id === id))
     .filter((waypoint): waypoint is AnatomyMap['waypoints'][number] => Boolean(waypoint))
@@ -435,6 +497,11 @@ export function AnatomyViewer({
               role="status"
             >
               {arrivalMessage}
+            </p>
+          ) : null}
+          {movement && effectiveMovementState ? (
+            <p className="text-small font-semibold" role="status">
+              Moves left: {Math.max(0, movement.maxMoves - effectiveMovementState.movesUsed)}
             </p>
           ) : null}
           {anatomyDebugEnabled ? (

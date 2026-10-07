@@ -223,6 +223,37 @@ describe('AnatomyViewer', () => {
     expect(screen.getByRole('status')).toHaveTextContent('You are now in Terminal waypoint.')
   })
 
+  it('enforces and reports the configured movement budget', async () => {
+    const user = userEvent.setup()
+    const onMovementStateChange = vi.fn()
+    render(
+      <AnatomyViewer
+        config={config}
+        map={map}
+        modelUrl="/model.glb"
+        movement={{ maxMoves: 1, maxHopsFromEntry: 1, freeBacktrack: true }}
+        movementState={{
+          entryWaypointId: 'entry-waypoint',
+          currentWaypointId: 'entry-waypoint',
+          visitedWaypointIds: ['entry-waypoint'],
+          movesUsed: 0,
+        }}
+        navigation="flythrough"
+        startView={{ mode: 'endoscopic', waypointId: 'entry-waypoint' }}
+        onMovementStateChange={onMovementStateChange}
+      />,
+    )
+
+    expect(screen.getByText('Moves left: 1')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Terminal waypoint' }))
+    expect(onMovementStateChange).toHaveBeenCalledWith({
+      entryWaypointId: 'entry-waypoint',
+      currentWaypointId: 'terminal-waypoint',
+      visitedWaypointIds: ['entry-waypoint', 'terminal-waypoint'],
+      movesUsed: 1,
+    })
+  })
+
   it('keeps look-only navigation inside the airway and supports keyboard zoom and look', () => {
     const zoomConfig = {
       ...config,

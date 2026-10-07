@@ -3835,3 +3835,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** 95 focused tests pass; schema additions default to current behavior and
   existing content typechecks without edits.
 - **Follow-ups:** Add a pure bounded-movement model and persisted viewer draft.
+
+### [2026-10-07 14:10] P17-T03 - Add bounded airway movement
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure reversible waypoint graph helpers, hop-bound reachability, configurable
+  move cost and a persisted exploration draft. The viewer filters parent/branch controls, reports
+  moves left and restores the current waypoint without resetting the budget.
+- **Files changed:** `src/anatomy3d/viewer/{movement,AnatomyViewer}*`;
+  `src/content/schema/primitives/anatomy.ts`;
+  `src/primitives/{components/AnatomyExplorePrimitive,definitions/anatomy}.ts*`; tests and docs.
+- **Commands run:** Prettier; focused Vitest; TypeScript and focused ESLint.
+- **Result/verification:** Movement helpers and viewer behavior pass unit/component coverage;
+  existing anatomy and content tests remain green.
+- **Follow-ups:** Decouple anatomy entry concealment from the case player.

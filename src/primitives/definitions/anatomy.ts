@@ -15,6 +15,9 @@ export interface AnatomyExploreObservation {
   selectedStructureIds: readonly string[]
   reachedWaypointIds: readonly string[]
   inspectedFindingIds: readonly string[]
+  currentWaypointId?: string | null
+  visitedWaypointIds?: readonly string[]
+  movesUsed?: number
 }
 
 export function anatomyExploreRequirementKeys(primitive: AnatomyExplorePrimitive): string[] {

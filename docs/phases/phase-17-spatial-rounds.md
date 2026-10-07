@@ -143,7 +143,7 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
   - Schema, controller and viewer changes with unit tests; default lesson/case viewer behaviour
     unchanged (existing anatomy tests and golden images pass).
 
-- [ ] **P17-T03 — Movement budget**
+- [x] **P17-T03 — Movement budget**
   - Schema, reachable-subgraph filtering, moves-left UI and tests.
 
 - [ ] **P17-T04 — Visual cue upgrades**

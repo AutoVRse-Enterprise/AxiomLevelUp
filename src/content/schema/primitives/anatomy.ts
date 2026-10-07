@@ -13,6 +13,11 @@ export const anatomyStartViewSchema = z.discriminatedUnion('mode', [
 
 export const anatomyNavigationSchema = z.enum(['orbit', 'flythrough', 'both', 'look'])
 export const anatomyOrientationLabelsSchema = z.enum(['patient', 'hidden'])
+export const anatomyMovementSchema = z.strictObject({
+  maxMoves: z.number().int().positive(),
+  maxHopsFromEntry: z.number().int().positive(),
+  freeBacktrack: z.boolean().default(true),
+})
 
 const anatomyLocateLevelBase = {
   levelId: idSchema,
@@ -82,6 +87,7 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
       startView: anatomyStartViewSchema.default({ mode: 'overview' }),
       navigation: anatomyNavigationSchema.default('both'),
       orientationLabels: anatomyOrientationLabelsSchema.default('patient'),
+      movement: anatomyMovementSchema.optional(),
       findingIds: z.array(idSchema).min(1).optional(),
       requiredWaypointIds: z.array(idSchema).min(1).optional(),
       requiredStructureIds: z.array(idSchema).min(1).optional(),
@@ -97,6 +103,16 @@ export const anatomyExplorePrimitiveSchema = primitiveBaseSchema
         code: 'custom',
         path: ['content', 'startView'],
         message: 'Look-only anatomy navigation requires an endoscopic start view.',
+      })
+    }
+    if (
+      primitive.content.movement &&
+      !['flythrough', 'both'].includes(primitive.content.navigation)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        path: ['content', 'movement'],
+        message: 'Anatomy movement budgets require flythrough navigation.',
       })
     }
     if (!['viewed', 'explored', 'minimum_interactions'].includes(primitive.completion.mode)) {
