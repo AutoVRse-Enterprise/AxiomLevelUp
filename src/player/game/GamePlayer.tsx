@@ -15,6 +15,7 @@ import { GameExitDialog } from '@/player/game/GameExitDialog'
 import { GameFinal } from '@/player/game/GameFinal'
 import { GameResumePrompt } from '@/player/game/GameResumePrompt'
 import { GameTopBar } from '@/player/game/GameTopBar'
+import { FindingReveal } from '@/player/game/FindingReveal'
 import { PinReveal } from '@/player/game/PinReveal'
 import { RoundIntro } from '@/player/game/RoundIntro'
 import { RoundReveal } from '@/player/game/RoundReveal'
@@ -197,6 +198,8 @@ function GameRun({
       imageZoomControls: copy.imageZoomControls,
       imageViewerHint: copy.imageViewerHint,
       zoomLevel: (percent) => copy.zoomLevel.replace('{percent}', String(percent)),
+      compareReference: copy.compareReference,
+      returnToFinding: copy.returnToFinding,
       movesLeft: (count) => copy.movesLeft.replace('{count}', String(count)),
       anatomyInteractionHint: copy.spatialHint,
     }),
@@ -322,6 +325,14 @@ function GameRun({
                     config={registry.appConfig.product.anatomy3d}
                     copy={copy}
                     map={registry.anatomyMapById.get(round.anatomyMapId)!}
+                    plannedRound={plannedRound}
+                    response={roundSession.response}
+                  />
+                ) : null}
+                {round.mechanic === 'spot_finding' && !roundSession.result?.skipped ? (
+                  <FindingReveal
+                    copy={copy}
+                    correct={roundSession.result?.correct ?? false}
                     plannedRound={plannedRound}
                     response={roundSession.response}
                   />

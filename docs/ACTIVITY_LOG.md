@@ -3985,3 +3985,16 @@ README.md`; `git diff --check`.
 - **Result/verification:** 14 focused tests pass; both content roots validate with zero warnings;
   the additions are optional and existing static hotspots retain their current path.
 - **Follow-ups:** Add fractional tap precision, comparison and finding reveal.
+
+### [2026-10-07 17:45] P18-T02 - Add precision, comparison and finding reveal
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure distance-to-region geometry and linear partial-credit evaluation,
+  extracted a reusable image comparison presentation, added a hotspot reference toggle and asset
+  reference, and integrated marker-versus-target imagery into the game reveal.
+- **Files changed:** hotspot and game schemas; image evaluator and geometry; hotspot, comparison,
+  marker and reveal components; game answer labels/copy; focused tests; phase/activity docs.
+- **Commands run:** Prettier; TypeScript; 32 focused Vitest tests.
+- **Result/verification:** Circle, rectangle and polygon distances, near-miss scoring, comparison
+  interaction and existing comparison behavior pass; default region scoring remains binary.
+- **Follow-ups:** Add the development region authoring overlay and author finding content.

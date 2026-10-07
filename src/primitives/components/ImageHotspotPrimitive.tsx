@@ -9,7 +9,9 @@ import type {
 import { useAsset } from '@/content/useAssetUrl'
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { isNormalizedPoint } from '@/primitives/definitions/imageHitTesting'
+import { ImageComparePresentation } from '@/primitives/shared/ImageComparePresentation'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
+import { LocationMarker } from '@/primitives/shared/LocationMarker'
 import { PanZoomImage } from '@/primitives/shared/PanZoomImage'
 import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import { clamp, screenToNormalized } from '@/primitives/shared/panZoomMath'
@@ -17,31 +19,6 @@ import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import { cn } from '@/lib/cn'
-
-function LocationMarker({
-  point,
-  label,
-  status,
-}: {
-  point: NormalizedPoint
-  label: string
-  status?: 'correct' | 'incorrect'
-}) {
-  return (
-    <span
-      aria-label={label}
-      className={`pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow ring-2 ${
-        status === 'correct'
-          ? 'bg-success-600 ring-success-700'
-          : status === 'incorrect'
-            ? 'bg-danger-600 ring-danger-700'
-            : 'bg-brand-700 ring-brand-800'
-      }`}
-      role="img"
-      style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }}
-    />
-  )
-}
 
 export function ImageHotspotPrimitive({
   primitive,
@@ -55,7 +32,11 @@ export function ImageHotspotPrimitive({
 }: PrimitiveComponentProps<ImageHotspotPrimitiveConfig>) {
   const { labels } = usePresentation()
   const asset = useAsset(primitive.content.assetId)
+  const compareAsset = useAsset(
+    primitive.content.mode === 'assess' ? primitive.content.compare?.assetId : undefined,
+  )
   const [explored, setExplored] = useState(() => new Set<string>())
+  const [showCompare, setShowCompare] = useState(false)
   const [selectedPoint, setSelectedPoint] = useState<NormalizedPoint | null>(
     isNormalizedPoint(draft) ? draft : null,
   )
@@ -157,112 +138,146 @@ export function ImageHotspotPrimitive({
         ) : (
           <span />
         )}
-        <Button
-          leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
-          onClick={() => void toggleImmersive()}
-          size="sm"
-          variant="secondary"
+        <div className="flex flex-wrap justify-end gap-2">
+          {assessmentContent?.compare && compareAsset ? (
+            <Button
+              onClick={() => {
+                setShowCompare((current) => !current)
+                onInteract({ name: 'hotspot_compare_toggled' })
+              }}
+              size="sm"
+              variant="secondary"
+            >
+              {showCompare ? labels.returnToFinding : labels.compareReference}
+            </Button>
+          ) : null}
+          <Button
+            leadingIcon={<Maximize2 aria-hidden="true" size={16} />}
+            onClick={() => void toggleImmersive()}
+            size="sm"
+            variant="secondary"
+          >
+            {immersive ? 'Exit' : 'Expand'}
+          </Button>
+        </div>
+      </div>
+      {showCompare && assessmentContent?.compare && compareAsset ? (
+        <ImageComparePresentation
+          after={{
+            src: compareAsset.path,
+            alt: assessmentContent.compare.alt,
+            label: assessmentContent.compare.label,
+            width: compareAsset.width,
+            height: compareAsset.height,
+          }}
+          before={{
+            src: asset.path,
+            alt: primitive.content.alt,
+            label: assessmentContent.answerLabel ?? 'Finding',
+            width: asset.width,
+            height: asset.height,
+          }}
+          mode="side_by_side"
+        />
+      ) : (
+        <div
+          className={cn(
+            'relative overflow-hidden rounded-xl bg-neutral-100',
+            assessMode &&
+              !readOnly &&
+              'cursor-crosshair focus-visible:outline-2 focus-visible:outline-offset-2',
+            immersive && 'min-h-0 flex-1',
+          )}
+          style={
+            asset.width && asset.height
+              ? { aspectRatio: `${asset.width} / ${asset.height}` }
+              : undefined
+          }
+          role={assessMode && !zoomEnabled ? 'button' : 'group'}
+          aria-label={
+            assessMode
+              ? 'Image location selector. Use arrow keys to move the marker, Shift plus arrow for larger steps, and Enter to submit.'
+              : 'Image hotspots'
+          }
+          tabIndex={assessMode && !zoomEnabled && !readOnly ? 0 : undefined}
+          onClick={assessMode && !zoomEnabled ? handleAssessmentClick : undefined}
+          onKeyDown={assessMode && !zoomEnabled ? handleAssessmentKeyDown : undefined}
         >
-          {immersive ? 'Exit' : 'Expand'}
-        </Button>
-      </div>
-      <div
-        className={cn(
-          'relative overflow-hidden rounded-xl bg-neutral-100',
-          assessMode &&
-            !readOnly &&
-            'cursor-crosshair focus-visible:outline-2 focus-visible:outline-offset-2',
-          immersive && 'min-h-0 flex-1',
-        )}
-        style={
-          asset.width && asset.height
-            ? { aspectRatio: `${asset.width} / ${asset.height}` }
-            : undefined
-        }
-        role={assessMode && !zoomEnabled ? 'button' : 'group'}
-        aria-label={
-          assessMode
-            ? 'Image location selector. Use arrow keys to move the marker, Shift plus arrow for larger steps, and Enter to submit.'
-            : 'Image hotspots'
-        }
-        tabIndex={assessMode && !zoomEnabled && !readOnly ? 0 : undefined}
-        onClick={assessMode && !zoomEnabled ? handleAssessmentClick : undefined}
-        onKeyDown={assessMode && !zoomEnabled ? handleAssessmentKeyDown : undefined}
-      >
-        {zoomEnabled ? (
-          <PanZoomImage
-            alt={primitive.content.alt}
-            className="h-full min-h-64 rounded-none"
-            focusPoint={responsePoint}
-            height={asset.height}
-            keyboardMode="external"
-            maxZoom={assessmentContent.zoom?.maxScale ?? 4}
-            onKeyDown={handleAssessmentKeyDown}
-            onTap={readOnly ? undefined : updatePoint}
-            overlay={
-              <>
-                {targetIds.size ? (
-                  <ImageRegionOverlay
-                    regions={primitive.content.regions}
-                    visibleRegionIds={targetIds}
-                  />
-                ) : null}
-                {responsePoint ? (
-                  <LocationMarker
-                    point={responsePoint}
-                    label="Selected location"
-                    status={markerStatus}
-                  />
-                ) : null}
-              </>
-            }
-            src={asset.path}
-            width={asset.width}
-          />
-        ) : (
-          <>
-            <img
-              className="block w-full"
-              src={asset.path}
+          {zoomEnabled ? (
+            <PanZoomImage
               alt={primitive.content.alt}
-              draggable={false}
+              className="h-full min-h-64 rounded-none"
+              focusPoint={responsePoint}
+              height={asset.height}
+              keyboardMode="external"
+              maxZoom={assessmentContent.zoom?.maxScale ?? 4}
+              onKeyDown={handleAssessmentKeyDown}
+              onTap={readOnly ? undefined : updatePoint}
+              overlay={
+                <>
+                  {targetIds.size ? (
+                    <ImageRegionOverlay
+                      regions={primitive.content.regions}
+                      visibleRegionIds={targetIds}
+                    />
+                  ) : null}
+                  {responsePoint ? (
+                    <LocationMarker
+                      point={responsePoint}
+                      label="Selected location"
+                      status={markerStatus}
+                    />
+                  ) : null}
+                </>
+              }
+              src={asset.path}
+              width={asset.width}
             />
-            {targetIds.size ? (
-              <ImageRegionOverlay
-                regions={primitive.content.regions}
-                visibleRegionIds={targetIds}
+          ) : (
+            <>
+              <img
+                className="block w-full"
+                src={asset.path}
+                alt={primitive.content.alt}
+                draggable={false}
               />
-            ) : null}
-          </>
-        )}
-        {!assessMode
-          ? primitive.content.regions.map((region) => {
-              const center = regionCenter(region)
-              const isExplored = explored.has(region.id)
-              return (
-                <button
-                  key={region.id}
-                  type="button"
-                  disabled={readOnly}
-                  className="absolute grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-brand-700 font-bold text-white shadow focus-visible:outline-2 focus-visible:outline-offset-2"
-                  style={{ left: `${center.x * 100}%`, top: `${center.y * 100}%` }}
-                  aria-label={`Explore ${region.label}`}
-                  aria-pressed={isExplored}
-                  onClick={() => {
-                    if (readOnly || isExplored) return
-                    setExplored((current) => new Set(current).add(region.id))
-                    onInteract({ name: 'hotspot_revealed', key: region.id })
-                  }}
-                >
-                  {isExplored ? '✓' : '+'}
-                </button>
-              )
-            })
-          : null}
-        {responsePoint && !zoomEnabled ? (
-          <LocationMarker point={responsePoint} label="Selected location" status={markerStatus} />
-        ) : null}
-      </div>
+              {targetIds.size ? (
+                <ImageRegionOverlay
+                  regions={primitive.content.regions}
+                  visibleRegionIds={targetIds}
+                />
+              ) : null}
+            </>
+          )}
+          {!assessMode
+            ? primitive.content.regions.map((region) => {
+                const center = regionCenter(region)
+                const isExplored = explored.has(region.id)
+                return (
+                  <button
+                    key={region.id}
+                    type="button"
+                    disabled={readOnly}
+                    className="absolute grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-brand-700 font-bold text-white shadow focus-visible:outline-2 focus-visible:outline-offset-2"
+                    style={{ left: `${center.x * 100}%`, top: `${center.y * 100}%` }}
+                    aria-label={`Explore ${region.label}`}
+                    aria-pressed={isExplored}
+                    onClick={() => {
+                      if (readOnly || isExplored) return
+                      setExplored((current) => new Set(current).add(region.id))
+                      onInteract({ name: 'hotspot_revealed', key: region.id })
+                    }}
+                  >
+                    {isExplored ? '✓' : '+'}
+                  </button>
+                )
+              })
+            : null}
+          {responsePoint && !zoomEnabled ? (
+            <LocationMarker point={responsePoint} label="Selected location" status={markerStatus} />
+          ) : null}
+        </div>
+      )}
       {!assessMode && explored.size ? (
         <div className="space-y-2" aria-live="polite">
           {primitive.content.regions

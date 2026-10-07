@@ -15,7 +15,12 @@ import { ImageHotspotPrimitive } from '@/primitives/components/ImageHotspotPrimi
 import { ImagePrimitive } from '@/primitives/components/ImagePrimitive'
 import { ZoomableImagePrimitive } from '@/primitives/components/ZoomableImagePrimitive'
 import { evaluatePrimitive } from '@/primitives/definitions'
-import { hitImageRegions, isPointInImageRegion } from '@/primitives/definitions/imageHitTesting'
+import {
+  distanceToImageRegion,
+  hitImageRegions,
+  isPointInImageRegion,
+} from '@/primitives/definitions/imageHitTesting'
+import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import { buildActivityPlan } from '@/engines/learning/plan'
 
 vi.mock('@/content/useAssetUrl', () => ({
@@ -243,6 +248,28 @@ describe('image hotspot geometry and definitions', () => {
     expect(evaluatePrimitive(assessHotspot, { x: Number.NaN, y: 0.25 }).score).toBe(0)
   })
 
+  it.each([
+    ['circle', regions[0]!, { x: 0.4, y: 0.25 }, 0.05],
+    ['rectangle', regions[1]!, { x: 0.75, y: 0.25 }, 0.05],
+    ['polygon', regions[2]!, { x: 0.6, y: 0.55 }, 0.05],
+  ])('measures distance to a %s region boundary', (_shape, region, point, expected) => {
+    expect(distanceToImageRegion(point, region)).toBeCloseTo(expected, 6)
+    expect(distanceToImageRegion(regionCenter(region), region)).toBe(0)
+  })
+
+  it('awards linearly falling partial precision to the nearest target', () => {
+    const precise = imageHotspotPrimitiveSchema.parse({
+      ...assessHotspot,
+      content: {
+        ...assessHotspot.content,
+        precision: { mode: 'distance', falloffRadius: 0.2 },
+      },
+    })
+    expect(evaluatePrimitive(precise, { x: 0.25, y: 0.25 }).score).toBe(1)
+    expect(evaluatePrimitive(precise, { x: 0.45, y: 0.25 }).score).toBeCloseTo(0.5)
+    expect(evaluatePrimitive(precise, { x: 0.56, y: 0.25 }).score).toBe(0)
+  })
+
   it('plans explore as content and assess as scored assessment', () => {
     const player = {
       retryByDefault: false,
@@ -416,6 +443,39 @@ describe('image primitive components', () => {
     fireEvent.keyDown(viewer, { key: 'Enter' })
     expect(props.onSubmit).toHaveBeenCalled()
     rect.mockRestore()
+  })
+
+  it('toggles a configured comparison reference without submitting', async () => {
+    const user = userEvent.setup()
+    const props = callbacks()
+    const compared = imageHotspotPrimitiveSchema.parse({
+      ...assessHotspot,
+      content: {
+        ...assessHotspot.content,
+        answerLabel: 'Luminal finding',
+        compare: {
+          assetId: 'healthy-reference',
+          alt: 'Reference tissue',
+          label: 'Healthy reference',
+        },
+      },
+    })
+    render(
+      <ImageHotspotPrimitive
+        primitive={compared}
+        attempt={0}
+        mode="interactive"
+        draft={null}
+        {...props}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Compare with reference' }))
+    expect(screen.getByRole('heading', { name: 'Healthy reference' })).toBeVisible()
+    expect(props.onInteract).toHaveBeenCalledWith({ name: 'hotspot_compare_toggled' })
+    expect(props.onSubmit).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: 'Return to finding' }))
+    expect(screen.queryByRole('heading', { name: 'Healthy reference' })).not.toBeInTheDocument()
   })
 
   it('reveals assessment targets only when review policy allows it', () => {

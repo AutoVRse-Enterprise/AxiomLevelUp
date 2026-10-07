@@ -30,6 +30,22 @@ function pointInPolygon(point: NormalizedPoint, vertices: readonly NormalizedPoi
   return inside
 }
 
+function distanceToSegment(
+  point: NormalizedPoint,
+  start: NormalizedPoint,
+  end: NormalizedPoint,
+): number {
+  const dx = end.x - start.x
+  const dy = end.y - start.y
+  const squaredLength = dx * dx + dy * dy
+  if (squaredLength <= epsilon) return Math.hypot(point.x - start.x, point.y - start.y)
+  const fraction = Math.min(
+    1,
+    Math.max(0, ((point.x - start.x) * dx + (point.y - start.y) * dy) / squaredLength),
+  )
+  return Math.hypot(point.x - (start.x + fraction * dx), point.y - (start.y + fraction * dy))
+}
+
 export function isPointInImageRegion(point: NormalizedPoint, region: ImageRegion): boolean {
   switch (region.shape) {
     case 'circle':
@@ -43,6 +59,25 @@ export function isPointInImageRegion(point: NormalizedPoint, region: ImageRegion
       )
     case 'polygon':
       return pointInPolygon(point, region.points)
+  }
+}
+
+export function distanceToImageRegion(point: NormalizedPoint, region: ImageRegion): number {
+  if (isPointInImageRegion(point, region)) return 0
+  switch (region.shape) {
+    case 'circle':
+      return Math.max(0, Math.hypot(point.x - region.x, point.y - region.y) - region.radius)
+    case 'rect': {
+      const nearestX = Math.min(Math.max(point.x, region.x), region.x + region.width)
+      const nearestY = Math.min(Math.max(point.y, region.y), region.y + region.height)
+      return Math.hypot(point.x - nearestX, point.y - nearestY)
+    }
+    case 'polygon':
+      return Math.min(
+        ...region.points.map((start, index) =>
+          distanceToSegment(point, start, region.points[(index + 1) % region.points.length]!),
+        ),
+      )
   }
 }
 

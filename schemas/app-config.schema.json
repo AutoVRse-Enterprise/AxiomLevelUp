@@ -4103,6 +4103,31 @@
               "default": "Zoom {percent}%",
               "type": "string",
               "minLength": 1
+            },
+            "compareReference": {
+              "default": "Compare with reference",
+              "type": "string",
+              "minLength": 1
+            },
+            "returnToFinding": {
+              "default": "Return to finding",
+              "type": "string",
+              "minLength": 1
+            },
+            "findingRevealPrompt": {
+              "default": "Compare your marker with the highlighted target.",
+              "type": "string",
+              "minLength": 1
+            },
+            "findingMarkerLabel": {
+              "default": "Your marker",
+              "type": "string",
+              "minLength": 1
+            },
+            "findingTargetLabel": {
+              "default": "Target region",
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
@@ -4187,7 +4212,12 @@
             "resetImageView",
             "imageZoomControls",
             "imageViewerHint",
-            "zoomLevel"
+            "zoomLevel",
+            "compareReference",
+            "returnToFinding",
+            "findingRevealPrompt",
+            "findingMarkerLabel",
+            "findingTargetLabel"
           ],
           "additionalProperties": false
         },

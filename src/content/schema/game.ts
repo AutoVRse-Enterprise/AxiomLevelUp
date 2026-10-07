@@ -248,6 +248,13 @@ export const gameConfigSchema = z.strictObject({
         'Interactive image viewer. Use plus and minus to zoom, arrow keys to move the marker, and zero to reset.',
       ),
       zoomLevel: nonEmptyStringSchema.default('Zoom {percent}%'),
+      compareReference: nonEmptyStringSchema.default('Compare with reference'),
+      returnToFinding: nonEmptyStringSchema.default('Return to finding'),
+      findingRevealPrompt: nonEmptyStringSchema.default(
+        'Compare your marker with the highlighted target.',
+      ),
+      findingMarkerLabel: nonEmptyStringSchema.default('Your marker'),
+      findingTargetLabel: nonEmptyStringSchema.default('Target region'),
     })
     .optional(),
   player: z

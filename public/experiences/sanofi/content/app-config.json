@@ -388,7 +388,12 @@
       "resetImageView": "Reset image view",
       "imageZoomControls": "Image zoom controls",
       "imageViewerHint": "Interactive image viewer. Use plus and minus to zoom, arrow keys to move the marker, and zero to reset.",
-      "zoomLevel": "Zoom {percent}%"
+      "zoomLevel": "Zoom {percent}%",
+      "compareReference": "Compare with healthy",
+      "returnToFinding": "Return to finding",
+      "findingRevealPrompt": "Compare your marker with the highlighted target.",
+      "findingMarkerLabel": "Your marker",
+      "findingTargetLabel": "Target region"
     },
     "player": {
       "introAutoAdvanceMs": 1200,

@@ -1,5 +1,9 @@
 import type { PlannedRound } from '@/engines/games/plan'
-import type { AnatomyLocatePrimitive, MultipleChoicePrimitive } from '@/content/schema/primitives'
+import type {
+  AnatomyLocatePrimitive,
+  ImageHotspotPrimitive,
+  MultipleChoicePrimitive,
+} from '@/content/schema/primitives'
 
 export interface AnswerDimensionLabel {
   levelId: string
@@ -35,6 +39,10 @@ export function correctAnswerLabel(round: PlannedRound): string {
     return correctAnswerDimensions(round)
       .map(({ label }) => label)
       .join(' · ')
+  }
+  if (round.primitive.type === 'image_hotspot') {
+    const content = (round.primitive as ImageHotspotPrimitive).content
+    return content.mode === 'assess' ? (content.answerLabel ?? '') : ''
   }
   return ''
 }

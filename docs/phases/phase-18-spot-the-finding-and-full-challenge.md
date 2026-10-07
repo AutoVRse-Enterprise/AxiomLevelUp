@@ -139,8 +139,12 @@ feedback lines and format names are authored independently and reviewed against 
     presentation-driven zoom labels.
   - Existing non-zoom hotspot behavior remains unchanged; 14 focused image primitive tests pass.
 
-- [ ] **P18-T02 — Tap precision and comparison reference**
-  - Pure distance evaluator, compare option, reveal overlay and table-driven tests.
+- [x] **P18-T02 — Tap precision and comparison reference**
+  - Added pure circle, rectangle and polygon distance evaluation with linear falloff; region mode
+    retains binary scoring.
+  - Extracted the shared image comparison presentation, added an optional reference toggle and
+    asset reference, and added a game reveal with both the learner marker and target outline.
+  - Focused image, scoring and reveal coverage passes.
 
 - [ ] **P18-T03 — Region authoring overlay and Round 3 content**
   - Development-only overlay; author the mucus and destruction rounds; optional 3D variant.

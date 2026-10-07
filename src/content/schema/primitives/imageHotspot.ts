@@ -30,6 +30,19 @@ const assessContentSchema = z.strictObject({
       maxScale: z.number().min(1).max(8),
     })
     .optional(),
+  precision: z
+    .strictObject({
+      mode: z.enum(['region', 'distance']),
+      falloffRadius: z.number().positive().max(0.5),
+    })
+    .optional(),
+  compare: z
+    .strictObject({
+      assetId: idSchema,
+      alt: z.string().min(1),
+      label: z.string().min(1),
+    })
+    .optional(),
 })
 
 export const imageHotspotPrimitiveSchema = primitiveBaseSchema
@@ -82,11 +95,21 @@ export type ImageHotspotPrimitive = z.infer<typeof imageHotspotPrimitiveSchema>
 
 export const imageHotspotContentSchema = {
   schema: imageHotspotPrimitiveSchema,
-  assetRefs: (primitive) => [
-    {
-      assetId: primitive.content.assetId,
-      type: 'image',
-      path: 'content.assetId',
-    },
-  ],
+  assetRefs: (primitive) => {
+    const refs = [
+      {
+        assetId: primitive.content.assetId,
+        type: 'image' as const,
+        path: 'content.assetId',
+      },
+    ]
+    if (primitive.content.mode === 'assess' && primitive.content.compare) {
+      refs.push({
+        assetId: primitive.content.compare.assetId,
+        type: 'image',
+        path: 'content.compare.assetId',
+      })
+    }
+    return refs
+  },
 } satisfies PrimitiveContentSchema<ImageHotspotPrimitive>

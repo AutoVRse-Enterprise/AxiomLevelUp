@@ -37,6 +37,8 @@ export interface PresentationLabels {
   imageZoomControls: string
   imageViewerHint: string
   zoomLevel: (percent: number) => string
+  compareReference: string
+  returnToFinding: string
   movesLeft: (count: number) => string
 }
 
@@ -77,6 +79,8 @@ export const defaultPresentationLabels: PresentationLabels = {
   imageViewerHint:
     'Interactive image viewer. Use plus and minus to zoom, arrow keys to pan, and zero to reset.',
   zoomLevel: (percent) => `Zoom ${percent}%`,
+  compareReference: 'Compare with reference',
+  returnToFinding: 'Return to finding',
   movesLeft: (count) => `Moves left: ${count}`,
 }
 

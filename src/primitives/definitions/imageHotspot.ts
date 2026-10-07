@@ -1,7 +1,11 @@
 import { timerCompatibleTypeSet } from '@/content/primitiveTypes'
 import type { ImageHotspotPrimitive } from '@/content/schema/primitives'
 import { definePrimitive } from '@/primitives/definitions/types'
-import { hitImageRegions, isNormalizedPoint } from '@/primitives/definitions/imageHitTesting'
+import {
+  distanceToImageRegion,
+  hitImageRegions,
+  isNormalizedPoint,
+} from '@/primitives/definitions/imageHitTesting'
 
 export const imageHotspotDefinition = definePrimitive<ImageHotspotPrimitive>({
   type: 'image_hotspot',
@@ -15,14 +19,23 @@ export const imageHotspotDefinition = definePrimitive<ImageHotspotPrimitive>({
       return { score: 0, correct: false, explanation: null }
     }
 
-    const targetRegionIds = primitive.content.targetRegionIds
-    const correct =
+    const targetRegionIds = new Set(primitive.content.targetRegionIds)
+    const targetRegions = primitive.content.regions.filter(({ id }) => targetRegionIds.has(id))
+    const hit = isNormalizedPoint(response) && hitImageRegions(response, targetRegions).length > 0
+    const score =
       isNormalizedPoint(response) &&
-      hitImageRegions(response, primitive.content.regions).some((region) =>
-        targetRegionIds.includes(region.id),
-      )
+      primitive.content.precision?.mode === 'distance' &&
+      targetRegions.length
+        ? Math.max(
+            0,
+            1 -
+              Math.min(...targetRegions.map((region) => distanceToImageRegion(response, region))) /
+                primitive.content.precision.falloffRadius,
+          )
+        : Number(hit)
+    const correct = score === 1
     return {
-      score: Number(correct),
+      score,
       correct,
       explanation: primitive.content.explanation,
       items: { location: correct ? 'correct' : 'incorrect' },
