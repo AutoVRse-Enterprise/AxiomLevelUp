@@ -95,9 +95,11 @@ and attempt-history limit. Every configured case ID and clue category used by a 
 `manifest.json` also carries `rounds` and `games` path arrays. A strict round document wraps
 one scored primitive, optional exploration and clue primitives, feedback, timing, drop pools and
 per-difficulty overrides. Spatial mechanics require an `anatomy_explore` scene plus an
-`anatomy_locate` answer; presentation selects a drawer or scene-replacement answer surface. A
-strict game document provides a version, ordered slots of round pools, playable difficulty IDs and
-an optional duration window. The registry exposes `roundById` and `gameById`.
+`anatomy_locate` answer; presentation selects a drawer or scene-replacement answer surface.
+`spot_finding` uses a zoomable `image_hotspot` assessment with optional distance falloff and a
+comparison reference. A strict game document provides a version, ordered slots of round pools,
+playable difficulty IDs and an optional duration window. The registry exposes `roundById` and
+`gameById`.
 
 The optional `games` app-config block owns difficulty presets, score and speed-bonus rules,
 anatomy-level proximity, timing windows, ratio-based result messages, player copy, formats,
@@ -188,12 +190,14 @@ budget, maximum hop distance from entry and whether revisiting a waypoint is fre
 optional positive weights and stable level-keyed responses. A `structure_choice` names a previous
 `parentLevelId` and derives options from structures at its own level parented to that selection. The
 primitive may display referenced case findings without making their inspection part of its scored
-response. The loader resolves anatomy maps, levels, model targets, finding anchors, directed
-waypoint edges, finding clue references and typed image assets. Unknown types are retained with a
-warning so development playback can render the unsupported fallback. Every lesson primitive and
-challenge item passes through the same parser and semantic validation. Primitive definitions
-default timeout credit to `none`; `anatomy_locate` opts into `committed_progress` so its evaluator
-can retain weighted completed-level credit on expiry.
+response. `image_hotspot` assess mode may opt into pan/zoom, distance-falloff scoring, a comparison
+image and an answer label; omitted options retain the original static binary behavior. The loader
+resolves anatomy maps, levels, model targets, finding anchors, directed waypoint edges, finding clue
+references and typed image assets. Unknown types are retained with a warning so development playback
+can render the unsupported fallback. Every lesson primitive and challenge item passes through the
+same parser and semantic validation. Primitive definitions default timeout credit to `none`;
+`anatomy_locate` opts into `committed_progress` so its evaluator can retain weighted completed-level
+credit on expiry.
 
 ### DICOM primitive content
 
@@ -266,7 +270,8 @@ target modes use answer completion.
 ## Asset manifest
 
 Asset types are `image`, `video`, `audio`, `dicom`, `document`, `text` and `model`.
-Every asset may include strict provenance with `sourceUrl`, `licence` and `author`. DICOM
+Every asset may include strict provenance with `sourceUrl`, `licence`, `author`, optional
+`title` and optional `licenceUrl`. DICOM
 entries require slice count, matrix, pixel spacing, slice thickness and calibration metadata.
 Standard non-DICOM entries may include `mimeType` and positive integer `width` and `height`.
 Asset-manifest version `0.2` requires `offlineAvailable` and exact `sizeBytes` for every entry.

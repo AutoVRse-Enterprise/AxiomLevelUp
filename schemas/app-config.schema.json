@@ -4128,6 +4128,26 @@
               "default": "Target region",
               "type": "string",
               "minLength": 1
+            },
+            "credits": {
+              "default": "Credits",
+              "type": "string",
+              "minLength": 1
+            },
+            "creditsDescription": {
+              "default": "Sources and licences for media in this run.",
+              "type": "string",
+              "minLength": 1
+            },
+            "source": {
+              "default": "Source",
+              "type": "string",
+              "minLength": 1
+            },
+            "licence": {
+              "default": "Licence",
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
@@ -4217,7 +4237,11 @@
             "returnToFinding",
             "findingRevealPrompt",
             "findingMarkerLabel",
-            "findingTargetLabel"
+            "findingTargetLabel",
+            "credits",
+            "creditsDescription",
+            "source",
+            "licence"
           ],
           "additionalProperties": false
         },

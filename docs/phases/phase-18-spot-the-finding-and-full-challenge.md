@@ -153,8 +153,10 @@ feedback lines and format names are authored independently and reviewed against 
     an expanded-interstitium round as the third quality image round. The optional 3D variant is not
     needed.
 
-- [ ] **P18-T04 — Credits sheet**
-  - Provenance-driven credits for the active run's assets.
+- [x] **P18-T04 — Credits sheet**
+  - Added provenance title/licence links, a pure run-asset collector across answer variants,
+    exploration, clues and anatomy models, and an accessible Credits sheet on the result page.
+  - The same shared sheet is ready for the Phase 19 You page.
 
 - [ ] **P18-T05 — Respiratory Challenge assembly**
   - Author the game document, narrative intros, feedback lines and per-difficulty overrides; all

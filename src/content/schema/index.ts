@@ -1065,6 +1065,8 @@ const provenanceSchema = z.strictObject({
   sourceUrl: z.url(),
   licence: z.string().trim().min(1),
   author: z.string().trim().min(1),
+  title: z.string().trim().min(1).optional(),
+  licenceUrl: z.url().optional(),
 })
 const boundsSchema = z
   .strictObject({

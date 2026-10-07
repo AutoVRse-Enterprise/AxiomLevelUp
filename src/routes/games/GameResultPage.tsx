@@ -1,8 +1,10 @@
 import { useParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
+import { CreditsSheet } from '@/components/game/CreditsSheet'
 import { GameSummaryCard } from '@/components/game/GameSummaryCard'
 import { ErrorState } from '@/components/feedback/ErrorState'
+import { collectRunCredits } from '@/engines/games/credits'
 import { selectResultMessage, summarizeRun } from '@/engines/games/results'
 import { useLearnerStore } from '@/state/learnerStore'
 
@@ -32,6 +34,10 @@ export function GameResultPage() {
   const bestRoundTitle = summary.bestRound
     ? (registry.roundById.get(summary.bestRound.roundId)?.title ?? '')
     : ''
+  const credits = collectRunCredits(
+    found.record.roundResults.map(({ roundId }) => roundId),
+    registry,
+  )
   return (
     <section className="mx-auto max-w-4xl py-10">
       <GameSummaryCard
@@ -41,6 +47,9 @@ export function GameResultPage() {
         message={message}
         summary={summary}
       />
+      <div className="mt-5 flex justify-center">
+        <CreditsSheet copy={config.copy} credits={credits} />
+      </div>
     </section>
   )
 }

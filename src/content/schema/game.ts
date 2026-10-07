@@ -255,6 +255,12 @@ export const gameConfigSchema = z.strictObject({
       ),
       findingMarkerLabel: nonEmptyStringSchema.default('Your marker'),
       findingTargetLabel: nonEmptyStringSchema.default('Target region'),
+      credits: nonEmptyStringSchema.default('Credits'),
+      creditsDescription: nonEmptyStringSchema.default(
+        'Sources and licences for media in this run.',
+      ),
+      source: nonEmptyStringSchema.default('Source'),
+      licence: nonEmptyStringSchema.default('Licence'),
     })
     .optional(),
   player: z

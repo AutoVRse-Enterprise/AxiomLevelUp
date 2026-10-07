@@ -13,8 +13,10 @@
       "height": 713,
       "sha256": "5eee2878582b10c61c2c34ea9c7c08d35137b07328b324a83cf9537113f897b4",
       "provenance": {
+        "title": "Asthma bronchiole histology",
         "sourceUrl": "https://commons.wikimedia.org/wiki/File:Asthma_.jpg",
         "licence": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
         "author": "Yale Rosen"
       }
     },
@@ -30,8 +32,10 @@
       "height": 1136,
       "sha256": "d47ee273128d719538eb8ebbd417408777499db33c6002467b1c7a44208125ce",
       "provenance": {
+        "title": "Emphysema histopathology",
         "sourceUrl": "https://commons.wikimedia.org/wiki/File:Histopathology_of_emphysema.jpg",
         "licence": "CC0 1.0 Universal Public Domain Dedication",
+        "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
         "author": "Mikael Häggström, M.D."
       }
     },
@@ -47,8 +51,10 @@
       "height": 1334,
       "sha256": "4f872870a175398ec39fb0d197631fae86fa55782034925269839ac42e5d8a0e",
       "provenance": {
+        "title": "Lung tissue illustration",
         "sourceUrl": "https://commons.wikimedia.org/wiki/File:2311_Lung_Tissue.jpg",
         "licence": "Creative Commons Attribution 3.0 Unported",
+        "licenceUrl": "https://creativecommons.org/licenses/by/3.0/",
         "author": "OpenStax College"
       }
     },
@@ -64,8 +70,10 @@
       "height": 1200,
       "sha256": "cdf573a4ffac399cc1ab91e3f967287930c58ac1765ed1d0bff979c9f684e7e4",
       "provenance": {
+        "title": "Usual interstitial pneumonia histology",
         "sourceUrl": "https://commons.wikimedia.org/wiki/File:UIP_(Usual_interstitial_pneumonia)_6.jpg",
         "licence": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
         "author": "Yale Rosen"
       }
     },
@@ -79,8 +87,10 @@
       "mimeType": "audio/mp4",
       "sha256": "99757864118206c83d09a1954bea5704096d572a66aa334854aa1f919313a259",
       "provenance": {
+        "title": "Wheeze recording",
         "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wheeze2O.ogg",
         "licence": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
         "author": "James Heilman, MD"
       }
     },
@@ -117,8 +127,10 @@
         ]
       },
       "provenance": {
+        "title": "BodyParts3D respiratory model",
         "sourceUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",
         "licence": "Creative Commons Attribution 4.0 International",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
         "author": "BodyParts3D, © The Database Center for Life Science"
       }
     }

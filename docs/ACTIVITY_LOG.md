@@ -4027,3 +4027,16 @@ README.md`; `git diff --check`.
   use zoomable distance assessment and neutral alt text. The approved image is 1600 × 1200,
   SHA-256 `cdf573a4ffac399cc1ab91e3f967287930c58ac1765ed1d0bff979c9f684e7e4`.
 - **Follow-ups:** Add provenance-driven Credits for the assets used by each run.
+
+### [2026-10-07 18:45] P18-T04 - Add provenance-driven run credits
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Extended optional asset provenance with display titles and licence URLs, authored
+  complete sanofi attribution metadata, added a pure selector for all assets referenced by active
+  rounds and added an accessible Credits sheet to the result page.
+- **Files changed:** asset/game schemas and sanofi configuration; game credits selector/test;
+  Credits sheet; result route; phase/activity docs.
+- **Commands run:** Prettier; TypeScript; focused Vitest and ESLint; content validation.
+- **Result/verification:** Credits are deduplicated across answer variants, clues, exploration and
+  anatomy models; the sheet exposes source and licence links. Two focused tests pass.
+- **Follow-ups:** Mount the shared sheet on the You page when Phase 19 adds that route.

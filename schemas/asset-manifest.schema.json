@@ -47,6 +47,14 @@
                   "author": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "licenceUrl": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 },
                 "required": [
@@ -136,6 +144,14 @@
                   "author": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "licenceUrl": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 },
                 "required": [
@@ -260,6 +276,14 @@
                   "author": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "licenceUrl": {
+                    "type": "string",
+                    "format": "uri"
                   }
                 },
                 "required": [
