@@ -10,6 +10,7 @@ import { useAsset } from '@/content/useAssetUrl'
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { isNormalizedPoint } from '@/primitives/definitions/imageHitTesting'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
+import { PanZoomImage } from '@/primitives/shared/PanZoomImage'
 import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import { clamp, screenToNormalized } from '@/primitives/shared/panZoomMath'
 import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
@@ -84,7 +85,7 @@ export function ImageHotspotPrimitive({
     )
   }
 
-  const handleAssessmentKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleAssessmentKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (readOnly || primitive.content.mode !== 'assess') return
     if (event.key === 'Enter') {
       if (selectedPoint) onSubmit(selectedPoint)
@@ -128,6 +129,7 @@ export function ImageHotspotPrimitive({
 
   const assessMode = primitive.content.mode === 'assess'
   const assessmentContent = primitive.content.mode === 'assess' ? primitive.content : null
+  const zoomEnabled = assessmentContent?.zoom?.enabled === true
   const targetIds =
     assessmentContent && mode === 'review' && review?.revealAnswer
       ? new Set(assessmentContent.targetRegionIds)
@@ -177,25 +179,62 @@ export function ImageHotspotPrimitive({
             ? { aspectRatio: `${asset.width} / ${asset.height}` }
             : undefined
         }
-        role={assessMode ? 'button' : 'group'}
+        role={assessMode && !zoomEnabled ? 'button' : 'group'}
         aria-label={
           assessMode
             ? 'Image location selector. Use arrow keys to move the marker, Shift plus arrow for larger steps, and Enter to submit.'
             : 'Image hotspots'
         }
-        tabIndex={assessMode && !readOnly ? 0 : undefined}
-        onClick={assessMode ? handleAssessmentClick : undefined}
-        onKeyDown={assessMode ? handleAssessmentKeyDown : undefined}
+        tabIndex={assessMode && !zoomEnabled && !readOnly ? 0 : undefined}
+        onClick={assessMode && !zoomEnabled ? handleAssessmentClick : undefined}
+        onKeyDown={assessMode && !zoomEnabled ? handleAssessmentKeyDown : undefined}
       >
-        <img
-          className="block w-full"
-          src={asset.path}
-          alt={primitive.content.alt}
-          draggable={false}
-        />
-        {targetIds.size ? (
-          <ImageRegionOverlay regions={primitive.content.regions} visibleRegionIds={targetIds} />
-        ) : null}
+        {zoomEnabled ? (
+          <PanZoomImage
+            alt={primitive.content.alt}
+            className="h-full min-h-64 rounded-none"
+            focusPoint={responsePoint}
+            height={asset.height}
+            keyboardMode="external"
+            maxZoom={assessmentContent.zoom?.maxScale ?? 4}
+            onKeyDown={handleAssessmentKeyDown}
+            onTap={readOnly ? undefined : updatePoint}
+            overlay={
+              <>
+                {targetIds.size ? (
+                  <ImageRegionOverlay
+                    regions={primitive.content.regions}
+                    visibleRegionIds={targetIds}
+                  />
+                ) : null}
+                {responsePoint ? (
+                  <LocationMarker
+                    point={responsePoint}
+                    label="Selected location"
+                    status={markerStatus}
+                  />
+                ) : null}
+              </>
+            }
+            src={asset.path}
+            width={asset.width}
+          />
+        ) : (
+          <>
+            <img
+              className="block w-full"
+              src={asset.path}
+              alt={primitive.content.alt}
+              draggable={false}
+            />
+            {targetIds.size ? (
+              <ImageRegionOverlay
+                regions={primitive.content.regions}
+                visibleRegionIds={targetIds}
+              />
+            ) : null}
+          </>
+        )}
         {!assessMode
           ? primitive.content.regions.map((region) => {
               const center = regionCenter(region)
@@ -220,7 +259,7 @@ export function ImageHotspotPrimitive({
               )
             })
           : null}
-        {responsePoint ? (
+        {responsePoint && !zoomEnabled ? (
           <LocationMarker point={responsePoint} label="Selected location" status={markerStatus} />
         ) : null}
       </div>

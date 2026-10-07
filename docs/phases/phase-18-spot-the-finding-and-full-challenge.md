@@ -133,8 +133,11 @@ feedback lines and format names are authored independently and reviewed against 
     the 120–240-second window. Challenge and Expert retain 40 / 60 / 30 / 45 and
     30 / 45 / 25 / 35 seconds respectively.
 
-- [ ] **P18-T01 — Zoomable hotspot assessment**
-  - Schema, component and keyboard changes; existing image primitive tests pass unchanged.
+- [x] **P18-T01 — Zoomable hotspot assessment**
+  - Added default-off assess-only zoom and answer labels, transform-aware tap placement, drag
+    suppression, keyboard marker movement plus image zoom, focus-point panning and
+    presentation-driven zoom labels.
+  - Existing non-zoom hotspot behavior remains unchanged; 14 focused image primitive tests pass.
 
 - [ ] **P18-T02 — Tap precision and comparison reference**
   - Pure distance evaluator, compare option, reveal overlay and table-driven tests.

@@ -3971,3 +3971,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** ADR-110 and ADR-111 are accepted; Warm-up now plans to 235 seconds
   including reveal allowances, within the configured 120–240-second window.
 - **Follow-ups:** Add zoomable hotspot assessment without changing default behavior.
+
+### [2026-10-07 17:20] P18-T01 - Add zoomable hotspot assessment
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added optional zoom and answer-label fields to assess hotspots, transform-aware tap
+  placement with drag suppression, marker-focused panning, keyboard marker movement alongside
+  +/- zoom, and presentation-driven zoom controls.
+- **Files changed:** image hotspot and game schemas; hotspot, pan/zoom and presentation
+  components; sanofi game copy; focused tests; phase and activity docs.
+- **Commands run:** Prettier; focused image primitive Vitest; focused ESLint; TypeScript;
+  `npm run validate:content`.
+- **Result/verification:** 14 focused tests pass; both content roots validate with zero warnings;
+  the additions are optional and existing static hotspots retain their current path.
+- **Follow-ups:** Add fractional tap precision, comparison and finding reveal.

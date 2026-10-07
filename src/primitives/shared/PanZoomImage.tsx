@@ -1,8 +1,19 @@
 import { Minus, Plus, RotateCcw } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type KeyboardEventHandler,
+  type ReactNode,
+} from 'react'
 
 import { IconButton } from '@/components/ui'
 import { cn } from '@/lib/cn'
+import type { NormalizedPoint } from '@/content/schema/primitives'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
+import { screenToNormalized } from '@/primitives/shared/panZoomMath'
 import { usePanZoom } from '@/primitives/shared/usePanZoom'
 
 interface PanZoomImageProps {
@@ -14,6 +25,10 @@ interface PanZoomImageProps {
   overlay?: ReactNode
   className?: string
   dark?: boolean
+  onTap?: (point: NormalizedPoint) => void
+  focusPoint?: NormalizedPoint | null
+  keyboardMode?: 'pan' | 'external'
+  onKeyDown?: KeyboardEventHandler<HTMLButtonElement>
 }
 
 function fittedSize(
@@ -35,13 +50,32 @@ export function PanZoomImage({
   overlay,
   className,
   dark = false,
+  onTap,
+  focusPoint,
+  keyboardMode = 'pan',
+  onKeyDown,
 }: PanZoomImageProps) {
+  const { labels } = usePresentation()
   const viewportRef = useRef<HTMLDivElement>(null)
   const [viewport, setViewport] = useState({ width: 1, height: 1 })
   const [naturalRatio, setNaturalRatio] = useState<number | null>(null)
   const aspectRatio = width && height ? width / height : (naturalRatio ?? 4 / 3)
   const content = useMemo(() => fittedSize(viewport, aspectRatio), [aspectRatio, viewport])
-  const panZoom = usePanZoom({ viewport, content, maxScale: maxZoom })
+  const panZoom = usePanZoom({
+    viewport,
+    content,
+    maxScale: maxZoom,
+    onTap: onTap
+      ? (point, transform) =>
+          onTap(
+            screenToNormalized(
+              point,
+              { left: 0, top: 0, width: content.width, height: content.height },
+              transform,
+            ),
+          )
+      : undefined,
+  })
 
   useEffect(() => {
     const element = viewportRef.current
@@ -63,6 +97,10 @@ export function PanZoomImage({
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    if (focusPoint) panZoom.ensureVisible(focusPoint)
+  }, [focusPoint, panZoom])
+
   const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const panStep = event.shiftKey ? 80 : 24
     switch (event.key) {
@@ -75,22 +113,31 @@ export function PanZoomImage({
         panZoom.zoomTo(panZoom.transform.scale / 1.25)
         break
       case 'ArrowLeft':
+        if (keyboardMode === 'external') break
         panZoom.panBy(panStep, 0)
         break
       case 'ArrowRight':
+        if (keyboardMode === 'external') break
         panZoom.panBy(-panStep, 0)
         break
       case 'ArrowUp':
+        if (keyboardMode === 'external') break
         panZoom.panBy(0, panStep)
         break
       case 'ArrowDown':
+        if (keyboardMode === 'external') break
         panZoom.panBy(0, -panStep)
         break
       case '0':
         panZoom.reset()
         break
       default:
+        onKeyDown?.(event)
         return
+    }
+    if (keyboardMode === 'external' && event.key.startsWith('Arrow')) {
+      onKeyDown?.(event)
+      return
     }
     event.preventDefault()
   }
@@ -107,7 +154,7 @@ export function PanZoomImage({
       <button
         type="button"
         className="absolute inset-0 cursor-grab overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-[-2px] active:cursor-grabbing"
-        aria-label="Interactive image viewer. Use plus and minus to zoom, arrow keys to pan, and zero to reset."
+        aria-label={labels.imageViewerHint}
         onKeyDown={handleKeyDown}
         {...panZoom.handlers}
         style={{ touchAction: 'none' }}
@@ -142,32 +189,32 @@ export function PanZoomImage({
           dark ? 'border-white/25 bg-neutral-950/85' : 'border-neutral-300 bg-white/90',
         )}
         role="toolbar"
-        aria-label="Image zoom controls"
+        aria-label={labels.imageZoomControls}
         onPointerDown={(event) => event.stopPropagation()}
       >
         <IconButton
           className={dark ? 'text-white hover:bg-white/10' : undefined}
-          label="Zoom out"
+          label={labels.zoomOut}
           icon={<Minus aria-hidden="true" />}
           disabled={panZoom.transform.scale <= 1}
           onClick={() => panZoom.zoomTo(panZoom.transform.scale / 1.25)}
         />
         <IconButton
           className={dark ? 'text-white hover:bg-white/10' : undefined}
-          label="Zoom in"
+          label={labels.zoomIn}
           icon={<Plus aria-hidden="true" />}
           disabled={panZoom.transform.scale >= maxZoom}
           onClick={() => panZoom.zoomTo(panZoom.transform.scale * 1.25)}
         />
         <IconButton
           className={dark ? 'text-white hover:bg-white/10' : undefined}
-          label="Reset image view"
+          label={labels.resetImageView}
           icon={<RotateCcw aria-hidden="true" />}
           onClick={panZoom.reset}
         />
       </div>
       <output className="sr-only" aria-live="polite">
-        Zoom {Math.round(panZoom.transform.scale * 100)}%
+        {labels.zoomLevel(Math.round(panZoom.transform.scale * 100))}
       </output>
     </div>
   )

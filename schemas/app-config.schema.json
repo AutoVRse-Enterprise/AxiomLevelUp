@@ -4073,6 +4073,36 @@
             "keyTakeaway": {
               "type": "string",
               "minLength": 1
+            },
+            "zoomIn": {
+              "default": "Zoom in",
+              "type": "string",
+              "minLength": 1
+            },
+            "zoomOut": {
+              "default": "Zoom out",
+              "type": "string",
+              "minLength": 1
+            },
+            "resetImageView": {
+              "default": "Reset image view",
+              "type": "string",
+              "minLength": 1
+            },
+            "imageZoomControls": {
+              "default": "Image zoom controls",
+              "type": "string",
+              "minLength": 1
+            },
+            "imageViewerHint": {
+              "default": "Interactive image viewer. Use plus and minus to zoom, arrow keys to move the marker, and zero to reset.",
+              "type": "string",
+              "minLength": 1
+            },
+            "zoomLevel": {
+              "default": "Zoom {percent}%",
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
@@ -4151,7 +4181,13 @@
             "expandedDataTable",
             "showDataTable",
             "hideDataTable",
-            "keyTakeaway"
+            "keyTakeaway",
+            "zoomIn",
+            "zoomOut",
+            "resetImageView",
+            "imageZoomControls",
+            "imageViewerHint",
+            "zoomLevel"
           ],
           "additionalProperties": false
         },

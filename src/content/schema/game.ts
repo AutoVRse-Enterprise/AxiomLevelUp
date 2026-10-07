@@ -240,6 +240,14 @@ export const gameConfigSchema = z.strictObject({
       showDataTable: nonEmptyStringSchema,
       hideDataTable: nonEmptyStringSchema,
       keyTakeaway: nonEmptyStringSchema,
+      zoomIn: nonEmptyStringSchema.default('Zoom in'),
+      zoomOut: nonEmptyStringSchema.default('Zoom out'),
+      resetImageView: nonEmptyStringSchema.default('Reset image view'),
+      imageZoomControls: nonEmptyStringSchema.default('Image zoom controls'),
+      imageViewerHint: nonEmptyStringSchema.default(
+        'Interactive image viewer. Use plus and minus to zoom, arrow keys to move the marker, and zero to reset.',
+      ),
+      zoomLevel: nonEmptyStringSchema.default('Zoom {percent}%'),
     })
     .optional(),
   player: z

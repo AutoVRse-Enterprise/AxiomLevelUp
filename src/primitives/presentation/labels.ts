@@ -33,6 +33,10 @@ export interface PresentationLabels {
   anatomyInteractionHint: string
   zoomIn: string
   zoomOut: string
+  resetImageView: string
+  imageZoomControls: string
+  imageViewerHint: string
+  zoomLevel: (percent: number) => string
   movesLeft: (count: number) => string
 }
 
@@ -68,6 +72,11 @@ export const defaultPresentationLabels: PresentationLabels = {
   anatomyInteractionHint: 'Drag to rotate. Tap a branch or use the buttons.',
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom out',
+  resetImageView: 'Reset image view',
+  imageZoomControls: 'Image zoom controls',
+  imageViewerHint:
+    'Interactive image viewer. Use plus and minus to zoom, arrow keys to pan, and zero to reset.',
+  zoomLevel: (percent) => `Zoom ${percent}%`,
   movesLeft: (count) => `Moves left: ${count}`,
 }
 

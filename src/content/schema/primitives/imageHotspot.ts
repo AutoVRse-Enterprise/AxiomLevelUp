@@ -21,8 +21,15 @@ const assessContentSchema = z.strictObject({
   ...commonContent,
   mode: z.literal('assess'),
   prompt: z.string().min(1),
+  answerLabel: z.string().min(1).optional(),
   targetRegionIds: z.array(idSchema).min(1),
   explanation: z.string().min(1),
+  zoom: z
+    .strictObject({
+      enabled: z.boolean(),
+      maxScale: z.number().min(1).max(8),
+    })
+    .optional(),
 })
 
 export const imageHotspotPrimitiveSchema = primitiveBaseSchema

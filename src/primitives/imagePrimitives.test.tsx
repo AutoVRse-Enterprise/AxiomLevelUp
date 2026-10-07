@@ -9,6 +9,7 @@ import {
   primitiveContentSchemas,
   zoomableImagePrimitiveSchema,
 } from '@/content/schema/primitives'
+import type { NormalizedPoint } from '@/content/schema/primitives'
 import { ImageComparePrimitive } from '@/primitives/components/ImageComparePrimitive'
 import { ImageHotspotPrimitive } from '@/primitives/components/ImageHotspotPrimitive'
 import { ImagePrimitive } from '@/primitives/components/ImagePrimitive'
@@ -181,6 +182,24 @@ describe('image primitive schemas', () => {
         completion: { mode: 'explored', count: 1 },
       }).success,
     ).toBe(false)
+    expect(
+      imageHotspotPrimitiveSchema.safeParse({
+        ...exploreHotspot,
+        content: {
+          ...exploreHotspot.content,
+          zoom: { enabled: true, maxScale: 4 },
+        },
+      }).success,
+    ).toBe(false)
+    expect(
+      imageHotspotPrimitiveSchema.safeParse({
+        ...assessHotspot,
+        content: {
+          ...assessHotspot.content,
+          zoom: { enabled: true, maxScale: 9 },
+        },
+      }).success,
+    ).toBe(false)
   })
 
   it('reports every image asset with the required manifest type', () => {
@@ -344,6 +363,59 @@ describe('image primitive components', () => {
     expect(props.onDraftChange).toHaveBeenLastCalledWith({ x: 0.27, y: 0.35 })
     fireEvent.keyDown(selector, { key: 'Enter' })
     expect(props.onSubmit).toHaveBeenCalledWith({ x: 0.27, y: 0.35 })
+  })
+
+  it('maps zoomed taps to image coordinates and keeps drags from placing a marker', async () => {
+    const bounds = {
+      x: 0,
+      y: 0,
+      left: 0,
+      top: 0,
+      right: 200,
+      bottom: 100,
+      width: 200,
+      height: 100,
+      toJSON: () => ({}),
+    }
+    const rect = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(bounds)
+    const props = callbacks()
+    const zoomed = imageHotspotPrimitiveSchema.parse({
+      ...assessHotspot,
+      content: {
+        ...assessHotspot.content,
+        answerLabel: 'Target',
+        zoom: { enabled: true, maxScale: 4 },
+      },
+    })
+    render(
+      <ImageHotspotPrimitive
+        primitive={zoomed}
+        attempt={0}
+        mode="interactive"
+        draft={null}
+        {...props}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zoom in' }))
+    const viewer = screen.getByRole('button', { name: /Interactive image viewer/ })
+    fireEvent.pointerDown(viewer, { pointerId: 1, button: 0, clientX: 58.33, clientY: 18.75 })
+    fireEvent.pointerUp(viewer, { pointerId: 1, button: 0, clientX: 58.33, clientY: 18.75 })
+    const point = props.onDraftChange.mock.lastCall?.[0] as NormalizedPoint
+    expect(point.x).toBeCloseTo(0.25, 1)
+    expect(point.y).toBeCloseTo(0.25, 1)
+
+    props.onDraftChange.mockClear()
+    fireEvent.pointerDown(viewer, { pointerId: 2, button: 0, clientX: 60, clientY: 20 })
+    fireEvent.pointerMove(viewer, { pointerId: 2, clientX: 90, clientY: 20 })
+    fireEvent.pointerUp(viewer, { pointerId: 2, button: 0, clientX: 90, clientY: 20 })
+    expect(props.onDraftChange).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(viewer, { key: 'ArrowRight' })
+    expect(props.onDraftChange).toHaveBeenCalled()
+    fireEvent.keyDown(viewer, { key: 'Enter' })
+    expect(props.onSubmit).toHaveBeenCalled()
+    rect.mockRestore()
   })
 
   it('reveals assessment targets only when review policy allows it', () => {

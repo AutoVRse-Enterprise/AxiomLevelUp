@@ -382,7 +382,13 @@
       "expandedDataTable": "Expanded evidence table",
       "showDataTable": "Show data table",
       "hideDataTable": "Hide data table",
-      "keyTakeaway": "Key takeaway"
+      "keyTakeaway": "Key takeaway",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "resetImageView": "Reset image view",
+      "imageZoomControls": "Image zoom controls",
+      "imageViewerHint": "Interactive image viewer. Use plus and minus to zoom, arrow keys to move the marker, and zero to reset.",
+      "zoomLevel": "Zoom {percent}%"
     },
     "player": {
       "introAutoAdvanceMs": 1200,
