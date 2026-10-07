@@ -16,7 +16,7 @@
   "difficulties": ["warmup", "challenge", "expert"],
   "defaultDifficulty": "challenge",
   "durationWindowSeconds": {
-    "min": 45,
+    "min": 40,
     "max": 90
   }
 }

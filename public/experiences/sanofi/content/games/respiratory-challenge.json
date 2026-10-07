@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "0.1",
+  "gameVersion": "1",
+  "id": "respiratory-challenge",
+  "title": "Respiratory Challenge",
+  "tagline": "Orient, investigate and make the clinical call.",
+  "organSystem": "respiratory",
+  "estimatedSeconds": 195,
+  "slots": [
+    {
+      "id": "orient",
+      "pool": ["airway-drop-look"],
+      "pick": 1
+    },
+    {
+      "id": "navigate",
+      "pool": ["airway-explore-lower", "airway-explore-upper"],
+      "pick": 1
+    },
+    {
+      "id": "inspect",
+      "pool": ["histology-mucus-spot"],
+      "pick": 1
+    },
+    {
+      "id": "interpret",
+      "pool": ["clinical-call-t2"],
+      "pick": 1
+    }
+  ],
+  "difficulties": ["warmup", "challenge", "expert"],
+  "defaultDifficulty": "challenge",
+  "durationWindowSeconds": {
+    "min": 120,
+    "max": 240
+  }
+}

@@ -4,8 +4,8 @@
   "id": "clinical-call-t2",
   "title": "Make the call",
   "mechanic": "clinical_call",
-  "intro": "Bring the symptom pattern and supporting evidence together.",
-  "timeLimitSeconds": 60,
+  "intro": "Put the airway, tissue and clinical evidence together. What is going on?",
+  "timeLimitSeconds": 45,
   "primitive": {
     "id": "clinical-call-t2-answer",
     "type": "multiple_choice",
@@ -158,7 +158,8 @@
     "answerTemplate": "Correct answer: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 75 },
-    "expert": { "timeLimitSeconds": 45 }
+    "warmup": { "timeLimitSeconds": 55 },
+    "challenge": { "timeLimitSeconds": 45 },
+    "expert": { "timeLimitSeconds": 35 }
   }
 }

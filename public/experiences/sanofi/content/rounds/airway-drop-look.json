@@ -5,8 +5,8 @@
   "title": "Where are you?",
   "mechanic": "spatial_look",
   "anatomyMapId": "respiratory-game-map",
-  "intro": "A marker shows an unknown airway point. Use the lung shape and branch position to place it.",
-  "timeLimitSeconds": 45,
+  "intro": "A marker shows where you have been dropped. Use the lung shape and branch position to orient yourself.",
+  "timeLimitSeconds": 40,
   "drop": {
     "pools": {
       "warmup": ["trachea-mid", "carina", "right-main-airway", "left-main-airway"],
@@ -80,8 +80,8 @@
     "answerTemplate": "Correct answer: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 60, "orientationLabels": "patient" },
-    "challenge": { "timeLimitSeconds": 45, "orientationLabels": "hidden" },
+    "warmup": { "timeLimitSeconds": 50, "orientationLabels": "patient" },
+    "challenge": { "timeLimitSeconds": 40, "orientationLabels": "hidden" },
     "expert": { "timeLimitSeconds": 30, "orientationLabels": "hidden" }
   }
 }

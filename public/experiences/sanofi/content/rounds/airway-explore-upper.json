@@ -5,8 +5,8 @@
   "title": "Find your way: upper airway",
   "mechanic": "spatial_explore",
   "anatomyMapId": "respiratory-game-map",
-  "intro": "Explore the nearby airway branches. When you are ready, pin the lobe and choose its segment.",
-  "timeLimitSeconds": 75,
+  "intro": "Trace the nearby branches, then pin the marked airway's lobe and segment.",
+  "timeLimitSeconds": 60,
   "drop": {
     "pools": {
       "warmup": ["right-upper-apical-airway", "right-upper-anterior-airway", "left-upper-apicoposterior-airway", "left-upper-anterior-airway"],
@@ -49,8 +49,8 @@
     "answerTemplate": "Actual location: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 90, "maxMoves": 5, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
-    "challenge": { "timeLimitSeconds": 75, "maxMoves": 3, "maxHopsFromEntry": 2, "orientationLabels": "hidden" },
-    "expert": { "timeLimitSeconds": 55, "maxMoves": 2, "maxHopsFromEntry": 1, "orientationLabels": "hidden" }
+    "warmup": { "timeLimitSeconds": 70, "maxMoves": 5, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
+    "challenge": { "timeLimitSeconds": 60, "maxMoves": 3, "maxHopsFromEntry": 2, "orientationLabels": "hidden" },
+    "expert": { "timeLimitSeconds": 45, "maxMoves": 2, "maxHopsFromEntry": 1, "orientationLabels": "hidden" }
   }
 }

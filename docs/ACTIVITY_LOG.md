@@ -4040,3 +4040,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** Credits are deduplicated across answer variants, clues, exploration and
   anatomy models; the sheet exposes source and licence links. Two focused tests pass.
 - **Follow-ups:** Mount the shared sheet on the You page when Phase 19 adds that route.
+
+### [2026-10-07 19:05] P18-T05 - Assemble the Respiratory Challenge
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the four-slot Respiratory Challenge, revised spatial and clinical intros to
+  match the implemented interactions, applied the confirmed per-difficulty timing budget, and
+  narrowed fixture timing windows after the production timing changes.
+- **Files changed:** `public/experiences/sanofi/content/games/respiratory-challenge.json`; sanofi
+  content manifest; four production round documents; two fixture game documents; phase/activity
+  docs.
+- **Commands run:** Prettier; content validation; focused game planning and validation Vitest.
+- **Result/verification:** Sanofi validates 8 rounds and 4 games with zero warnings; planned
+  full-challenge durations including reveals are 235 / 195 / 155 seconds.
+- **Follow-ups:** Compose Anatomy Hunt and Spot the Finding and publish the configured format list.

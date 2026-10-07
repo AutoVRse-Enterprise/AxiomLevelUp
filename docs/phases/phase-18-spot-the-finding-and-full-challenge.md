@@ -158,9 +158,11 @@ feedback lines and format names are authored independently and reviewed against 
     exploration, clues and anatomy models, and an accessible Credits sheet on the result page.
   - The same shared sheet is ready for the Phase 19 You page.
 
-- [ ] **P18-T05 — Respiratory Challenge assembly**
-  - Author the game document, narrative intros, feedback lines and per-difficulty overrides; all
-    three difficulties validate and play.
+- [x] **P18-T05 — Respiratory Challenge assembly**
+  - Authored the four-slot game and coherent narrative intros, with per-difficulty limits of
+    235 seconds for Warm-up, 195 for Challenge and 155 for Expert including reveal allowances.
+  - The mucus round is fixed in the connected patient thread; Expert uses its `similar` option
+    set. All game content validates with zero warnings.
 
 - [ ] **P18-T06 — Additional formats**
   - Author Anatomy Hunt and Spot the Finding game documents and the Clinical Mystery preview.

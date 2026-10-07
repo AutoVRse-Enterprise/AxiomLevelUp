@@ -17,7 +17,8 @@
   "games": [
     "games/fixture-two-round.json",
     "games/fixture-one-round.json",
-    "games/fixture-spatial.json"
+    "games/fixture-spatial.json",
+    "games/respiratory-challenge.json"
   ],
   "seeds": {
     "fresh": "seeds/fresh.json"

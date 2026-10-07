@@ -20,5 +20,5 @@
   ],
   "difficulties": ["warmup", "challenge", "expert"],
   "defaultDifficulty": "challenge",
-  "durationWindowSeconds": { "min": 90, "max": 240 }
+  "durationWindowSeconds": { "min": 85, "max": 240 }
 }
