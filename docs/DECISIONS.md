@@ -1989,7 +1989,7 @@ file and content root, not new shared code. Details: `docs/phases/phase-14-multi
 
 ## ADR-106: Games are a new content type over shared primitives
 
-**Status:** Proposed (confirm in P15-T00)
+**Status:** Accepted
 
 **Context:** The Medical Challenge needs timed, scored, replayable, shareable rounds with
 difficulty, clue costs, seeded challenge links and a per-game leaderboard. Courses, lessons and
@@ -2002,6 +2002,13 @@ links, leaderboard, progress), typed `game_*` learner events through the existin
 learner state v9 game history and a separate `game-session` store. Rounds reuse existing
 primitives and the anatomy viewer through default-off capability options rather than new
 renderers. All scoring, timing, difficulty, messages and copy live in configuration.
+
+The accepted Phase 15 contract keeps the four planned mechanics. It uses anatomy-map level IDs
+for organ-agnostic proximity, ratio-based result-message rules, versioned game documents and
+challenge payloads, and a per-game timing window. The content layer owns the declarative mechanic
+constraints so validation does not import an engine. Rounds may provide a separate exploration
+primitive and option-set variants for later spatial and expert play. Game events do not award XP;
+the run reducer records explicit pauses; and all three configured difficulties are playable.
 
 **Consequences:** One engine supports many formats composed purely from content, which is the
 PRD's reusability claim. Existing course, lesson and case contracts are unaffected. The cost is a

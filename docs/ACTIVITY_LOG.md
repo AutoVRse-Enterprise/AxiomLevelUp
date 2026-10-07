@@ -3489,3 +3489,16 @@ README.md`; `git diff --check`.
   4181 and 4182 are free. Browser tabs are unlocked with device emulation cleared. Generated
   evidence churn is restored and only intended closeout documentation remains.
 - **Follow-ups:** Begin Phase 15 at P15-T00.
+
+### [2026-10-07 09:25] P15-T00 - Confirm the game-domain decisions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Accepted ADR-106, confirmed that all three difficulties are playable, recorded the
+  approved contract refinements and marked Phase 15 active.
+- **Files changed:** `docs/DECISIONS.md`;
+  `docs/phases/phase-15-game-contract-and-engine.md`; `docs/ROADMAP.md`;
+  `docs/ACTIVITY_LOG.md`.
+- **Commands run:** `git status --short`; `git log -5 --oneline`.
+- **Result/verification:** The working tree was clean before Phase 15; there were no pending Phase
+  14 edits to commit. The new game domain is accepted as a first-class content type.
+- **Follow-ups:** Add strict round/game schemas and registry loading in P15-T01.

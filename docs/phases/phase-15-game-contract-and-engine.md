@@ -1,6 +1,6 @@
 # Phase 15: Game contract and engine
 
-**Status:** Planned
+**Status:** Active
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phase 14.
 
@@ -226,9 +226,14 @@ untouched.
 
 ## Checklist
 
-- [ ] **P15-T00 — Decisions**
+- [x] **P15-T00 — Decisions**
   - Confirm ADR-106 (game runtime as a new content type). Confirm open question 3 (difficulty
     playability).
+  - Accepted 2026-10-07. All three difficulties are playable. Implementation refinements:
+    proximity is keyed by anatomy-map level, message rules use ratios, games and links carry a
+    game version, game events award no XP, declarative mechanic constraints live in the content
+    layer, rounds support exploration and option-set variants, games can declare a duration
+    window, and the session reducer records pauses.
 
 - [ ] **P15-T01 — Round and game schemas**
   - Add `src/content/schema/game.ts` (round, game, slot, drop, feedback, overrides).

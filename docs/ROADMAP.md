@@ -19,7 +19,7 @@ start with `README.md`.
 | 12    | Case Lab depth and polish      | Complete | Case depth, whole-product demo gaps and all assigned audit findings are technically closed |
 | 13    | Client demo readiness          | Active   | The guided Case Lab passes functional, browser and unaided trainee usability gates         |
 | 14    | Multi-experience foundation    | Complete | `VITE_EXPERIENCE` selects default or sanofi; default is provably unchanged                 |
-| 15    | Game contract and engine       | Planned  | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
+| 15    | Game contract and engine       | Active   | Rounds and games validate; pure seeded engine scores, links and ranks runs                 |
 | 16    | Game player and clinical round | Planned  | A two-round game plays end to end with timer, clues, reveal and results                    |
 | 17    | Spatial rounds                 | Planned  | Look-around and limited-move rounds score proximity and read clearly on a phone            |
 | 18    | Spot the finding and challenge | Planned  | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
