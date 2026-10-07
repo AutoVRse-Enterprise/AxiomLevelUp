@@ -49,8 +49,8 @@ procedural `volume` with `shape: "ellipsoid"`, a model-space `center`, positive 
 XYZ Euler `rotation` in radians. Existing mesh-only structures retain their original shape. Every
 structure below the first level has a parent on a prior level. Waypoints declare position, look-at
 target, outgoing waypoint IDs and an optional positive radius used by procedural lumen rendering.
-Anatomy primitive start views select overview, marker, waypoint or endoscopic mode, while
-`navigation` selects `orbit`, `flythrough` or `both`.
+Anatomy primitive start views select overview, marker, waypoint, waypoint-marker or endoscopic
+mode, while `navigation` selects `orbit`, `flythrough`, `both` or endoscopic `look`.
 
 Semantic validation enforces unique level, structure and waypoint IDs, model-asset typing, parent
 and level references, prepared mesh-name references, resolved waypoint edges, acyclic waypoint
@@ -78,6 +78,10 @@ controller creates and disposes these pickable ellipsoids generically, shows the
 currently selectable level, includes them in framing/highlighting/test projection and keeps their
 nearest mesh parent as context.
 
+`product.anatomy3d.lumen` also owns default-off FOV zoom, keyboard look and depth/branch-rim cues;
+`comparisonStyles` owns independent guess and actual highlight materials. Experience configuration
+must opt into these capabilities, so existing anatomy presentation remains unchanged.
+
 ## Case Lab configuration
 
 The optional `caseLab` app-config section becomes required by semantic validation whenever the
@@ -90,17 +94,18 @@ and attempt-history limit. Every configured case ID and clue category used by a 
 
 `manifest.json` also carries `rounds` and `games` path arrays. A strict round document wraps
 one scored primitive, optional exploration and clue primitives, feedback, timing, drop pools and
-per-difficulty overrides. A strict game document provides a version, ordered slots of round pools,
-playable difficulty IDs and an optional duration window. The registry exposes `roundById` and
-`gameById`.
+per-difficulty overrides. Spatial mechanics require an `anatomy_explore` scene plus an
+`anatomy_locate` answer; presentation selects a drawer or scene-replacement answer surface. A
+strict game document provides a version, ordered slots of round pools, playable difficulty IDs and
+an optional duration window. The registry exposes `roundById` and `gameById`.
 
 The optional `games` app-config block owns difficulty presets, score and speed-bonus rules,
 anatomy-level proximity, timing windows, ratio-based result messages, player copy, formats,
-leaderboard rows, expert runs and bounded history. When game documents exist this configuration is
-required. Semantic validation enforces the four mechanic templates, strict primitive content,
-drop answers, clue policy, option-set identity, references, placeholders, answer leakage and
-per-difficulty timing. Challenge links are versioned and checksummed for accidental corruption;
-they are not signed or tamper-proof.
+leaderboard rows, expert runs, bounded history and viewer-failure Retry/Skip policy. When game
+documents exist this configuration is required. Semantic validation enforces the four mechanic
+templates, strict primitive content, complete and reachable spatial drop answers, clue policy,
+option-set identity, references, placeholders, answer leakage and per-difficulty timing. Challenge
+links are versioned and checksummed for accidental corruption; they are not signed or tamper-proof.
 
 ## Primitive registry
 
@@ -176,16 +181,19 @@ The canonical registry contains 29 strict primitive types: 25 standard types and
 - `dicom_measure`
 
 The four DICOM types require a typed DICOM series asset and strict mode-specific content.
-`anatomy_explore` resolves a configured anatomy map and its model asset, and may
-require configured structures, waypoints and case findings to be inspected.
-`anatomy_locate` adds ordered model, image-region and choice levels, optional positive weights and
-stable level-keyed responses; it may display referenced case findings without making their
-inspection part of its scored response. The loader resolves anatomy maps, levels, model targets,
-finding anchors, directed waypoint edges, finding clue references and typed image assets. Unknown
-types are retained with a warning so development playback can render the unsupported fallback.
-Every lesson primitive and challenge item passes through the same parser and semantic validation.
-Primitive definitions default timeout credit to `none`; `anatomy_locate` opts into
-`committed_progress` so its evaluator can retain weighted completed-level credit on expiry.
+`anatomy_explore` resolves a configured anatomy map and its model asset, and may require configured
+structures, waypoints and case findings to be inspected. Its optional movement block sets a move
+budget, maximum hop distance from entry and whether revisiting a waypoint is free.
+`anatomy_locate` adds ordered model, image-region, static choice and `structure_choice` levels,
+optional positive weights and stable level-keyed responses. A `structure_choice` names a previous
+`parentLevelId` and derives options from structures at its own level parented to that selection. The
+primitive may display referenced case findings without making their inspection part of its scored
+response. The loader resolves anatomy maps, levels, model targets, finding anchors, directed
+waypoint edges, finding clue references and typed image assets. Unknown types are retained with a
+warning so development playback can render the unsupported fallback. Every lesson primitive and
+challenge item passes through the same parser and semantic validation. Primitive definitions
+default timeout credit to `none`; `anatomy_locate` opts into `committed_progress` so its evaluator
+can retain weighted completed-level credit on expiry.
 
 ### DICOM primitive content
 

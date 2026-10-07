@@ -79,6 +79,27 @@ describe('useAnatomyViewer', () => {
     expect(mocked.controller.dispose).toHaveBeenCalledOnce()
   })
 
+  it('keeps the controller when an equivalent start view object is recreated', async () => {
+    const element = document.createElement('div')
+    const { result, rerender } = renderHook(
+      ({ waypointId }) =>
+        useAnatomyViewer({
+          element,
+          modelUrl: '/model.glb',
+          map,
+          config,
+          startView: { mode: 'endoscopic', waypointId },
+        }),
+      { initialProps: { waypointId: 'entry-waypoint' } },
+    )
+
+    await waitFor(() => expect(result.current.state.status).toBe('ready'))
+    rerender({ waypointId: 'entry-waypoint' })
+
+    expect(mocked.createAnatomyController).toHaveBeenCalledOnce()
+    expect(mocked.controller.dispose).not.toHaveBeenCalled()
+  })
+
   it('reports load failures without requiring WebGL', async () => {
     const element = document.createElement('div')
     const onFailed = vi.fn()

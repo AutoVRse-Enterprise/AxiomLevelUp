@@ -472,8 +472,23 @@ describe('AnatomyViewer', () => {
     )
 
     expect(screen.queryByText('Current landmark:')).not.toBeInTheDocument()
+    expect(screen.queryByText('Choose from list')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Back to Previous branch' }))
     expect(screen.getByRole('status')).toHaveTextContent('You are now in Previous branch.')
+  })
+
+  it('keeps keyboard structure choices available while navigation labels are concealed', () => {
+    render(
+      <AnatomyViewer
+        config={config}
+        hideLocationLabels
+        map={map}
+        modelUrl="/model.glb"
+        selectableLevelIds={['structure']}
+      />,
+    )
+
+    expect(screen.getByText('Choose from list')).toBeVisible()
   })
 
   it('toggles between airway and outside views at the current waypoint', async () => {

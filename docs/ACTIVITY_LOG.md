@@ -3938,3 +3938,22 @@ README.md`; `git diff --check`.
 - **Result/verification:** TypeScript and both content roots pass; failure Retry/Skip, skipped
   reducer/results and model lease paths are covered without changing default content.
 - **Follow-ups:** Add the spatial Playwright matrix, run full gates and close Phase 17 docs.
+
+### [2026-10-07 16:50] P17-T10 - Close spatial rounds
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added desktop and phone spatial completion journeys, projected-canvas picking and
+  viewer-failure Skip coverage. The browser gate exposed and corrected controller remounts from
+  equivalent reconstructed start views and restored keyboard structure choices while navigation
+  labels remain concealed. Updated architecture, schema, roadmap, programme, QA and handoff docs.
+- **Files changed:** `e2e/sanofi/spatial.spec.ts`; anatomy viewer/hook and focused tests;
+  `docs/{ARCHITECTURE,CONTENT_SCHEMA,ROADMAP,MEDICAL_CHALLENGE_PLAN,HANDOFF}.md`;
+  `docs/phases/phase-17-spatial-rounds.md`; `docs/qa/phase-17-regression.md`; activity log.
+- **Commands run:** Prettier; focused Vitest and Playwright iterations; `npm run check`;
+  `npm run test:e2e:sanofi`; serial `npx playwright test --workers=1`; default-content and
+  regression-evidence diffs.
+- **Result/verification:** 104 Vitest files / 626 tests pass; both content roots validate with zero
+  warnings; builds, budgets and default-build isolation pass. Sanofi Playwright passes 12 tests
+  with 2 intentional project skips; default Playwright passes 53 with 3 intentional skips. Default
+  content and all eight existing golden images remain unchanged.
+- **Follow-ups:** Begin Phase 18 spot-the-finding and complete four-round challenge work.

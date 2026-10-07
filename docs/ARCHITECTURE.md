@@ -210,23 +210,27 @@ seeded anatomy drop points. The plan includes the game version so persisted sess
 links cannot silently resume against changed content.
 
 The game engine is framework-free. Primitive evaluators provide ordinary answer accuracy; spatial
-mechanics compare answer paths through the configured anatomy-map hierarchy. Scoring converts
-accuracy to configured base points, adds the first eligible speed tier and subtracts paid clue
-costs with a zero floor. Result messages match ratios so the same rules work for games of different
-lengths.
+look rounds use weighted localisation dimensions, while spatial exploration compares only the
+asked hierarchy levels and their ancestors. Scoring converts accuracy to configured base points,
+adds the first eligible speed tier and subtracts paid clue costs with a zero floor. Result messages
+match ratios so the same rules work for games of different lengths.
 
 The separate `game-session` Zustand store persists only an active run under the existing
 experience-scoped IndexedDB prefix. Its pure reducer accepts explicit IDs, timestamps and elapsed
-time, including pause records; it never reads clocks or emits events. Typed `game_*` events are the
-only aggregate-state input. Challenge tokens encode the game ID/version, difficulty, seed, sender
-and target score as checksummed base64url. The checksum detects corruption, not malicious edits.
+time, including pause records, the spatial explore/answer step, exploration drafts and zero-point
+skips; it never reads clocks or emits events. Typed `game_*` events are the only aggregate-state
+input. Challenge tokens encode the game ID/version, difficulty, seed, sender and target score as
+checksummed base64url. The checksum detects corruption, not malicious edits.
 
 The shared player under `src/player/game/` owns the UI lifecycle
 `intro → playing → locked → reveal → final`. It renders the planned primitive through
 `PrimitiveRenderer`, supplies a game presentation context, checkpoints active elapsed time for
 resume and sends every state transition through the pure reducer. Free and purchased clues render
-inline; only paid-clue confirmation and document backgrounding pause the clock. The sanofi
-experience alone registers `/play/:gameId` and `/results/:runId`.
+inline. Spatial rounds compose an anatomy scene with a drawer or replacement localisation surface,
+and exploration retains its movement draft when the learner returns from the answer. Configured
+viewer failures pause the clock and offer remount Retry or a persisted zero-point Skip. Only
+paid-clue confirmation, configured viewer failure and document backgrounding pause the clock. The
+sanofi experience alone registers `/play/:gameId` and `/results/:runId`.
 
 ## Delivery and presentation runtime
 
@@ -267,7 +271,8 @@ Strict anatomy primitives resolve a validated anatomy map and a hash-versioned G
 shared viewer dynamically imports `src/anatomy3d/three/createAnatomyController.ts`, the only
 production module permitted to import Three.js. Per-instance controllers reuse a
 reference-counted model cache, cap device pixel ratio, support orbit/pan/zoom and raycast picking,
-and release scenes and renderer resources after the last viewer unmounts.
+and release scenes and renderer resources after the last viewer unmounts. Spatial game runs
+prefetch cache leases without eagerly importing Three.js in the ordinary application shell.
 
 Anatomy maps keep the runtime organ-agnostic: ordered hierarchy levels bind structures to prepared
 mesh names, while an acyclic waypoint graph drives reversible authored endoscopic travel. Picking
@@ -276,9 +281,12 @@ specificity and stable ID. Case-scoped finding contracts configure narrowing, oc
 region geometry through a typed context; findings may be anchored to a structure or directed
 waypoint edge and can be required exploration observations.
 
-`anatomy_explore` records configured structures, waypoints and finding inspections;
-`anatomy_locate` combines model, image-region and choice levels into weighted fractional credit. A
-secondary structured button list provides equivalent keyboard selection, and reduced motion uses
+`anatomy_explore` records configured structures, waypoints and finding inspections. Optional
+movement contracts bound the reachable graph and move budget, with persisted free backtracking.
+`anatomy_locate` combines model, image-region, static choice and parent-scoped structure-choice
+levels into weighted fractional credit. Look-only navigation, clamped FOV zoom, waypoint markers,
+default-off lumen cues and independent comparison highlights remain generic viewer capabilities.
+A secondary structured button list provides equivalent keyboard selection, and reduced motion uses
 camera cuts. Viewer interactions are emitted as typed learner events; primitives do not mutate case
 or reward state. The endoscopic lumen and findings are illustrative authored geometry, not
 patient-derived or anatomically validated reconstruction.

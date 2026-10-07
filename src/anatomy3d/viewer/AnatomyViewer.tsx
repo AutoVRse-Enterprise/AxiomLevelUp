@@ -734,7 +734,7 @@ export function AnatomyViewer({
               </ul>
             </details>
           ) : null}
-          {!lookOnly && !hideLocationLabels ? (
+          {!lookOnly && (!hideLocationLabels || Boolean(selectableLevelIds?.length)) ? (
             <details
               className="rounded-lg border border-clinical-700 bg-clinical-900"
               open={failed || listOpen}

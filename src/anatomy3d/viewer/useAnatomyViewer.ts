@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { AnatomyMap } from '@/content/schema/anatomyMap'
 import type { AppConfig } from '@/content/schema'
@@ -53,6 +53,27 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
     onLoaded: options.onLoaded,
     onFailed: options.onFailed,
   })
+  const startViewMode = options.startView?.mode ?? 'overview'
+  const startViewTarget =
+    options.startView && 'structureId' in options.startView
+      ? options.startView.structureId
+      : options.startView && 'waypointId' in options.startView
+        ? options.startView.waypointId
+        : null
+  const stableStartView = useMemo<AnatomyStartView>(() => {
+    if (startViewMode === 'marker' && startViewTarget) {
+      return { mode: startViewMode, structureId: startViewTarget }
+    }
+    if (
+      startViewTarget &&
+      (startViewMode === 'waypoint' ||
+        startViewMode === 'waypoint_marker' ||
+        startViewMode === 'endoscopic')
+    ) {
+      return { mode: startViewMode, waypointId: startViewTarget }
+    }
+    return { mode: 'overview' }
+  }, [startViewMode, startViewTarget])
 
   useEffect(() => {
     callbacks.current = {
@@ -104,7 +125,7 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
           nextController.dispose()
           return
         }
-        nextController.setStartView(options.startView ?? { mode: 'overview' })
+        nextController.setStartView(stableStartView)
         const warning =
           result.triangleCount > options.config.maxTriangleCountWarning
             ? `This model contains ${result.triangleCount.toLocaleString()} triangles and may render slowly on this device.`
@@ -131,14 +152,7 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
       active = false
       nextController?.dispose()
     }
-  }, [
-    options.config,
-    options.element,
-    options.map,
-    options.modelUrl,
-    options.startView,
-    retryToken,
-  ])
+  }, [options.config, options.element, options.map, options.modelUrl, stableStartView, retryToken])
 
   const retry = useCallback(() => {
     setState(loadingState())

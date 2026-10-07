@@ -144,3 +144,10 @@ inline free and paid clinical clues, scored reveals, final results, exit/resume/
 and event-driven game effects. A real multimodal clinical-call round and one/two-round fixtures
 complete on desktop and 375 × 812 Chromium. Phase 17 is next; it adds the two spatial airway
 rounds.
+
+Phase 17 closed on 2026-10-07 with a marker-based spatial-look round, two bounded endoscopic
+exploration rounds, weighted and hierarchy-proximity scoring, dynamic lobe-child segment choices,
+pin-versus-actual reveal, failure Retry/Skip and model prefetch. The deterministic spatial fixture
+completes through visible and keyboard controls on desktop and 375 × 812 Chromium while default
+content and all eight existing golden images remain unchanged. Phase 18 is next; it adds the
+spot-the-finding round and complete four-round challenge.

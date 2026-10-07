@@ -1,6 +1,6 @@
 # Phase 17: Spatial rounds
 
-**Status:** Active
+**Status:** Complete (2026-10-07)
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phases 15 and 16. P17-T01 may run
 any time after Phase 14.
@@ -32,16 +32,16 @@ cases behave exactly as today.
 
 ## Gaps
 
-| Gap                                                                                       | Resolution in this phase                                   |
-| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| No zoom inside the airway                                                                 | Field-of-view zoom with clamps, pinch, wheel and buttons    |
-| Travel controls always offered in endoscopic mode                                         | `navigation: 'look'` hides travel and breadcrumbs           |
-| Fixed Left/Right overlay is a strong give-away for a side question                        | Configurable orientation overlay (`patient` / `hidden`)     |
-| No movement budget                                                                        | `movement: { maxMoves, maxHopsFromEntry, allowBacktrack }`  |
-| `answerFrom: 'entry'` depends on the case reasoning context                               | Neutral `AnatomyEntryContext` provided by case and game     |
-| Few waypoints carry `answerIds`; no side/region/airway-level dimensions                   | Game anatomy map with full answer dimensions                |
-| No pin-versus-actual reveal                                                               | Two-style highlight and camera framing of both structures   |
-| Inside views may not be legible enough to infer location                                  | P17-T01 spike and visual cue upgrades                       |
+| Gap                                                                     | Resolution in this phase                                   |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| No zoom inside the airway                                               | Field-of-view zoom with clamps, pinch, wheel and buttons   |
+| Travel controls always offered in endoscopic mode                       | `navigation: 'look'` hides travel and breadcrumbs          |
+| Fixed Left/Right overlay is a strong give-away for a side question      | Configurable orientation overlay (`patient` / `hidden`)    |
+| No movement budget                                                      | `movement: { maxMoves, maxHopsFromEntry, allowBacktrack }` |
+| `answerFrom: 'entry'` depends on the case reasoning context             | Neutral `AnatomyEntryContext` provided by case and game    |
+| Few waypoints carry `answerIds`; no side/region/airway-level dimensions | Game anatomy map with full answer dimensions               |
+| No pin-versus-actual reveal                                             | Two-style highlight and camera framing of both structures  |
+| Inside views may not be legible enough to infer location                | P17-T01 spike and visual cue upgrades                      |
 
 ## Design
 
@@ -99,11 +99,11 @@ openings ahead, lumen radius, wall colour and fog distance. Record findings and 
 
 ### Drop pools and difficulty
 
-| Difficulty | Round 1 pool                          | Round 2 pool and movement                         | Other changes                                   |
-| ---------- | ------------------------------------- | ------------------------------------------------- | ----------------------------------------------- |
-| Warm-up    | Trachea, carina, main bronchi         | Segmental entries, 5 moves, 2 hops                | Longer time; orientation overlay shown           |
-| Challenge  | Lobar airways                         | Segmental entries, 3 moves, 2 hops                | Default timing                                   |
-| Expert     | Segmental airways                     | Segmental entries, 2 moves, 1 hop                 | Shorter time; similar options; overlay hidden    |
+| Difficulty | Round 1 pool                  | Round 2 pool and movement          | Other changes                                 |
+| ---------- | ----------------------------- | ---------------------------------- | --------------------------------------------- |
+| Warm-up    | Trachea, carina, main bronchi | Segmental entries, 5 moves, 2 hops | Longer time; orientation overlay shown        |
+| Challenge  | Lobar airways                 | Segmental entries, 3 moves, 2 hops | Default timing                                |
+| Expert     | Segmental airways             | Segmental entries, 2 moves, 1 hop  | Shorter time; similar options; overlay hidden |
 
 Every candidate is validated: it exists, it has every required answer dimension, it is reachable
 under the movement rule and its correct options exist in the round's level choices.
@@ -174,11 +174,14 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
     zero-point Skip. Skipped outcomes persist through learner events and result history. Spatial
     model leases are prefetched for the run; the existing persisted anatomy hint uses game copy.
 
-- [ ] **P17-T10 — Tests and closeout**
+- [x] **P17-T10 — Tests and closeout**
   - Viewer and primitive tests; sanofi Playwright specs completing Rounds 1 and 2 through visible
     controls (no anatomy test bridge) on desktop and 375 × 812, plus a bridge-based renderer check
     for picking.
   - `npm run check` passes; default regression gate passes; architecture and schema docs updated.
+  - Closed 2026-10-07: 104 Vitest files / 626 tests, 12 sanofi Playwright passes with 2
+    project-specific skips, and 53 default Playwright passes with 3 intentional skips. Default
+    content and all eight existing golden images remain unchanged.
 
 ## Exit criteria
 
