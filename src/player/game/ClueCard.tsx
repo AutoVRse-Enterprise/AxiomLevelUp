@@ -8,7 +8,6 @@ import type { PrimitiveInteraction } from '@/primitives/types'
 export function ClueCard({
   clue,
   available,
-  paid,
   cost,
   revealLabel,
   onReveal,
@@ -16,13 +15,12 @@ export function ClueCard({
 }: {
   clue: GameClue
   available: boolean
-  paid: boolean
   cost: number
   revealLabel: string
   onReveal: () => void
   onInteract: (interaction: PrimitiveInteraction) => void
 }) {
-  const [open, setOpen] = useState(!paid)
+  const [open, setOpen] = useState(available)
   if (!available) {
     return (
       <button

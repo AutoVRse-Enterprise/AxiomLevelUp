@@ -10,7 +10,8 @@ import { clearEventSubscribersForTests, emitEvent } from '@/events/bus'
 import { usePreferencesStore } from '@/state/preferences'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
-const config = appConfigSchema.parse(makeValidContentBundle().appConfig).product.presentation.haptics
+const config = appConfigSchema.parse(makeValidContentBundle().appConfig).product.presentation
+  .haptics
 
 afterEach(() => {
   stopHapticEffectsForTests()
@@ -51,5 +52,25 @@ describe('haptic effects', () => {
     emitEvent({ event: 'badge_unlocked', badgeId: 'first-step' })
 
     expect(vibrate).not.toHaveBeenCalled()
+  })
+
+  it('maps a correct game round to the game pattern', () => {
+    const vibrate = vi.fn()
+    vi.stubGlobal('navigator', { ...navigator, vibrate })
+    initializeHapticEffects(config)
+
+    emitEvent({
+      event: 'game_round_answered',
+      runId: 'run-1',
+      roundId: 'round-1',
+      accuracy: 1,
+      correct: true,
+      points: 1_000,
+      speedBonus: 0,
+      elapsedMs: 5_000,
+      timedOut: false,
+    })
+
+    expect(vibrate).toHaveBeenCalledWith(config.gameRoundCorrect)
   })
 })

@@ -244,7 +244,22 @@
       "roundLabel": "Round",
       "cluesLabel": "Clues",
       "gameUnavailableTitle": "Game unavailable",
-      "resultUnavailableTitle": "Result unavailable"
+      "resultUnavailableTitle": "Result unavailable",
+      "loadingAudio": "Loading sound",
+      "retryAudio": "Retry sound",
+      "audioUnavailable": "Sound unavailable",
+      "transcript": "Transcript",
+      "loadingImage": "Loading image",
+      "retryImage": "Retry image",
+      "imageUnavailable": "Image unavailable",
+      "expandImage": "Expand image",
+      "hideAnnotations": "Hide annotations",
+      "showAnnotations": "Show annotations",
+      "expandTable": "Expand table",
+      "expandedDataTable": "Expanded evidence table",
+      "showDataTable": "Show data table",
+      "hideDataTable": "Hide data table",
+      "keyTakeaway": "Key takeaway"
     },
     "player": {
       "introAutoAdvanceMs": 1200,

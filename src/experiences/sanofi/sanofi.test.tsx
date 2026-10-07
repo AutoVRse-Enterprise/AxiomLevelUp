@@ -49,11 +49,11 @@ describe('sanofi stub experience', () => {
     expect(registry.seed.learner.name).toBe('You')
   })
 
-  it('registers only Home and the shared not-found route', () => {
+  it('registers Home, game play, result and the shared not-found route', () => {
     const paths = createSanofiRoutes().flatMap(
       ({ children }) => children?.map(({ index, path }) => (index ? '/' : path)) ?? [],
     )
-    expect(paths).toEqual(['/', '*'])
+    expect(paths).toEqual(['/', 'results/:runId', '*', 'play/:gameId'])
   })
 
   it('contains no client name or LMS vocabulary in player-visible copy', () => {

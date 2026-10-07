@@ -6,6 +6,7 @@ import {
   clueCost,
   resolveRoundAccuracy,
   resolveSpeedBonus,
+  resolveSpeedBonusTier,
   scoreRound,
 } from '@/engines/games/scoring'
 
@@ -71,6 +72,15 @@ const clinicalRound = roundDocumentSchema.parse({
 })
 
 describe('game scoring', () => {
+  it('returns the configured label for the earned speed tier', () => {
+    expect(
+      resolveSpeedBonusTier(
+        { accuracy: 1, elapsedMs: 10_000, timeLimitSeconds: 40, timedOut: false, enabled: true },
+        scoring,
+      ),
+    ).toEqual({ points: 150, label: 'Lightning bonus' })
+  })
+
   it('scores the worked 0.85 accuracy example at 40% of the time limit', () => {
     expect(
       scoreRound(

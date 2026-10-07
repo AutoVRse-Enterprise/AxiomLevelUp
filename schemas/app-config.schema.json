@@ -3750,6 +3750,66 @@
             "resultUnavailableTitle": {
               "type": "string",
               "minLength": 1
+            },
+            "loadingAudio": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryAudio": {
+              "type": "string",
+              "minLength": 1
+            },
+            "audioUnavailable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transcript": {
+              "type": "string",
+              "minLength": 1
+            },
+            "loadingImage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryImage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "imageUnavailable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expandImage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hideAnnotations": {
+              "type": "string",
+              "minLength": 1
+            },
+            "showAnnotations": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expandTable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expandedDataTable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "showDataTable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hideDataTable": {
+              "type": "string",
+              "minLength": 1
+            },
+            "keyTakeaway": {
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
@@ -3798,7 +3858,22 @@
             "roundLabel",
             "cluesLabel",
             "gameUnavailableTitle",
-            "resultUnavailableTitle"
+            "resultUnavailableTitle",
+            "loadingAudio",
+            "retryAudio",
+            "audioUnavailable",
+            "transcript",
+            "loadingImage",
+            "retryImage",
+            "imageUnavailable",
+            "expandImage",
+            "hideAnnotations",
+            "showAnnotations",
+            "expandTable",
+            "expandedDataTable",
+            "showDataTable",
+            "hideDataTable",
+            "keyTakeaway"
           ],
           "additionalProperties": false
         },

@@ -170,4 +170,17 @@ describe('game session reducer', () => {
     expect(final.phase).toBe('final')
     expect(final.completedAt).toBeNull()
   })
+
+  it('checkpoints elapsed play time for a fair resume', () => {
+    const playing = reduce(
+      createGameSession(plan),
+      { type: 'start', runId: 'run-checkpoint', at: 'start' },
+      { type: 'roundStarted', at: 'round-start' },
+    )
+    const checkpointed = gameSessionReducer(playing, { type: 'checkpoint', elapsedMs: 12_345 })
+    expect(checkpointed.rounds[0]?.elapsedCheckpointMs).toBe(12_345)
+    expect(gameSessionReducer(checkpointed, { type: 'checkpoint', elapsedMs: -1 })).toBe(
+      checkpointed,
+    )
+  })
 })

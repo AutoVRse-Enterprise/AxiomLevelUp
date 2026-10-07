@@ -1,13 +1,17 @@
 import { render } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { ContentContext } from '@/app/contentContext'
 import { createAppRoutes } from '@/app/router'
 import { validateContentBundle } from '@/content/loader'
 import { makeValidContentBundle } from '@/test/contentFixtures'
+import { setClockForTests } from '@/lib/clock'
 
 const registry = validateContentBundle(makeValidContentBundle())
+
+beforeEach(() => setClockForTests('2026-10-07T09:00:00'))
+afterEach(() => setClockForTests(null))
 
 function serializeRoutes(routes: RouteObject[]) {
   return routes.map((route, group) => ({

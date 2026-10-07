@@ -46,7 +46,6 @@ export function ClueTray({
               key={`${clue.id}:${available}`}
               onInteract={(interaction) => onInteract(clue.id, interaction)}
               onReveal={() => setPending(clue.id)}
-              paid={paid}
               revealLabel={copy.revealClue}
             />
           )
