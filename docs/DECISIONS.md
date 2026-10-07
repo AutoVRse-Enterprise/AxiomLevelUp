@@ -2050,3 +2050,39 @@ region, and configured game haptic/confetti moments.
 **Consequences:** Resume is fair and deterministic, paid clue cost is disclosed before purchase,
 and lesson/case strings remain unchanged under the default presentation context. The session and
 presentation schemas gain backward-compatible defaulted fields.
+
+## ADR-109: Spatial rounds compose a scene and a location answer
+
+**Status:** Accepted
+
+**Context:** The two spatial game mechanics reuse the anatomy runtime but need different scoring
+and presentation from cases. Round 1 asks independent side, region and airway-level dimensions
+while the existing proximity model stops at the first hierarchy mismatch. Round 2 needs bounded
+exploration followed by a lobe pin and a segment choice whose valid options depend on that pin.
+The current game player renders one primitive and does not pass the seeded drop, movement budget
+or anatomy map into the spatial lifecycle.
+
+**Decision:** Compose both spatial mechanics from an `anatomy_explore` scene and an
+`anatomy_locate` answer with `answerFrom: "entry"`. Round 1 keeps the scene visible behind a bottom
+answer drawer, uses look-only navigation and scores configured per-dimension weights through the
+primitive evaluator. Round 2 replaces the scene with a lobe-pick answer, derives a generic
+structure-choice list from the selected parent structure and scores only the requested structural
+levels through hierarchy proximity. A Back to airway action preserves the movement state.
+
+Add default-off shared viewer capabilities for look-only navigation, field-of-view zoom,
+orientation-label concealment, bounded movement and two-style comparison reveals. Represent
+movement as `{ maxMoves, maxHopsFromEntry, freeBacktrack }`; when `freeBacktrack` is true, returning
+to an already visited waypoint does not spend a move. The game player supplies a neutral
+`AnatomyEntryContext` containing the seeded drop and concealment settings; case flows provide the
+same context without changing their behavior. Model/viewer failure may produce an explicit skipped
+round with zero points rather than an incorrect answer.
+
+Round 1 includes Midline and Central answer values so proximal airway drops remain complete.
+Round 2 drop pools contain segmental waypoints, because a lobar waypoint has no single correct
+segment. A dedicated sanofi anatomy map reuses the shared lung model while carrying the extra
+game dimensions and neutral labels.
+
+**Consequences:** Spatial behavior remains content-driven and reusable by another organ map.
+Default lessons and cases retain their existing controls, copy, content and visual baselines.
+Spatial result records gain a skipped flag and exploration checkpoint, and content authors must
+provide coherent answer paths and reachable drop pools for every difficulty.

@@ -1,6 +1,6 @@
 # Phase 17: Spatial rounds
 
-**Status:** Planned
+**Status:** Active
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phases 15 and 16. P17-T01 may run
 any time after Phase 14.
@@ -101,8 +101,8 @@ openings ahead, lumen radius, wall colour and fog distance. Record findings and 
 
 | Difficulty | Round 1 pool                          | Round 2 pool and movement                         | Other changes                                   |
 | ---------- | ------------------------------------- | ------------------------------------------------- | ----------------------------------------------- |
-| Warm-up    | Trachea, carina, main bronchi         | Lobar entries, 5 moves, 2 hops                    | Longer time; orientation overlay shown           |
-| Challenge  | Lobar airways                         | Lobar/segmental entries, 3 moves, 2 hops          | Default timing                                   |
+| Warm-up    | Trachea, carina, main bronchi         | Segmental entries, 5 moves, 2 hops                | Longer time; orientation overlay shown           |
+| Challenge  | Lobar airways                         | Segmental entries, 3 moves, 2 hops                | Default timing                                   |
 | Expert     | Segmental airways                     | Segmental entries, 2 moves, 1 hop                 | Shorter time; similar options; overlay hidden    |
 
 Every candidate is validated: it exists, it has every required answer dimension, it is reachable
@@ -125,9 +125,12 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
 
 ## Checklist
 
-- [ ] **P17-T00 — Decisions**
-  - Record ADR-108: generic look navigation, movement budget and proximity reveal as default-off
+- [x] **P17-T00 — Decisions**
+  - Record ADR-109: generic look navigation, movement budget and proximity reveal as default-off
     viewer capabilities.
+  - Accepted 2026-10-07. Round 1 uses per-dimension weighted evaluator scoring. Round 2 derives
+    segment choices from the selected lobe and scopes proximity to the requested structural
+    levels. Both mechanics compose an exploration scene with a localisation answer.
 
 - [ ] **P17-T01 — Spatial legibility spike**
   - Build the isolated spike, evaluate six waypoints at both viewports, record cue findings and the

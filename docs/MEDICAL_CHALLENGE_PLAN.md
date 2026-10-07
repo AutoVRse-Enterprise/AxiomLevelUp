@@ -172,8 +172,8 @@ different primitive. Copy below is illustrative; final copy is authored in Phase
 
 | Round | Player-facing title | Mechanic          | Shared primitive(s)                        | Interaction                                       | Answer                                          | Precision source                |
 | ----- | ------------------- | ----------------- | ------------------------------------------ | ------------------------------------------------- | ----------------------------------------------- | ------------------------------- |
-| 1     | Where are you?      | `spatial_look`    | `anatomy_locate` (look navigation)         | Look around and zoom from a seeded drop point     | Side, region and airway level                   | Per-dimension weights           |
-| 2     | Find your way       | `spatial_explore` | `anatomy_explore` + `anatomy_locate` (pin) | Up to N moves in a small branch network, then pin | Tap the lobe on the 3D lung, choose the segment | Hierarchy proximity             |
+| 1     | Where are you?      | `spatial_look`    | `anatomy_explore` + `anatomy_locate`       | Look around and zoom from a seeded drop point     | Side, region and airway level                   | Weighted answer dimensions      |
+| 2     | Find your way       | `spatial_explore` | `anatomy_explore` + `anatomy_locate` (pin) | Up to N moves in a small branch network, then pin | Tap the lobe, choose one of its child segments  | Scoped hierarchy proximity      |
 | 3     | Spot the finding    | `spot_finding`    | `image_hotspot` (zoomable assess)          | Pinch/zoom/pan a histology image and tap          | The mucus-obstructed lumen                      | Region hit or distance fall-off |
 | 4     | Make the call       | `clinical_call`   | `multiple_choice` + clue primitives        | Review free clues, optionally buy more            | Most plausible interpretation from four options | Correctness and clue cost       |
 

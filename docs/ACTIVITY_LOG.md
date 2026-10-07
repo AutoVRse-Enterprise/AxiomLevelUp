@@ -3792,3 +3792,15 @@ README.md`; `git diff --check`.
   warnings; both builds and budgets pass; default Playwright passes 53 with 3 intentional skips;
   sanofi Playwright passes 8; all eight default goldens remain unchanged.
 - **Follow-ups:** Begin Phase 17 spatial rounds at P17-T00.
+
+### [2026-10-07 13:15] P17-T00 - Accept spatial-round decisions
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Activated Phase 17 and recorded the scene-plus-answer composition, weighted Round 1
+  scoring, dynamic child-segment choice, scoped Round 2 proximity, movement and skip policies.
+- **Files changed:** `docs/DECISIONS.md`; `docs/phases/phase-17-spatial-rounds.md`;
+  `docs/MEDICAL_CHALLENGE_PLAN.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** None.
+- **Result/verification:** ADR-109 is accepted and the phase plan now reflects segmental Round 2
+  drops and the confirmed scoring model.
+- **Follow-ups:** Run the six-waypoint spatial legibility spike.
