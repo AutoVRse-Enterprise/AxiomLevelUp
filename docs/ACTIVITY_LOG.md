@@ -3518,3 +3518,15 @@ README.md`; `git diff --check`.
 - **Result/verification:** TypeScript passes; 63 focused tests pass; ten JSON Schema documents are
   generated, including `round.schema.json` and `game.schema.json`.
 - **Follow-ups:** Add the four declarative and runtime mechanic templates.
+
+### [2026-10-07 09:55] P15-T02 - Add game mechanic templates
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added content-layer constraints and pure runtime policy for `spatial_look`,
+  `spatial_explore`, `spot_finding` and `clinical_call`.
+- **Files changed:** `src/content/gameMechanics.ts`; `src/engines/games/mechanics.ts`;
+  `src/engines/games/mechanics.test.ts`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Prettier; focused Vitest; `npm run typecheck`.
+- **Result/verification:** Six mechanic tests and TypeScript pass, including primitive-type,
+  entry-answer, exploration and clue-policy enforcement.
+- **Follow-ups:** Populate and validate the full games application configuration.
