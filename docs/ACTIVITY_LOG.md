@@ -4011,3 +4011,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** 25 focused tests pass and both content roots validate with zero
   warnings. Region authoring UI is guarded by `import.meta.env.DEV`.
 - **Follow-ups:** Source and confirm a third licensed histology image, then author all three rounds.
+
+### [2026-10-07 18:25] P18-T03 - Author the finding round library
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Evaluated three licensed image candidates, rejected an answer-labelled goblet-cell
+  image, obtained user approval for an unlabelled usual interstitial pneumonia micrograph, stored
+  and hashed the original, and authored mucus, emphysema-destruction and expanded-interstitium
+  rounds with normalized target regions.
+- **Files changed:** `public/assets/images/cases/uip-fibroblastic-focus.jpg`; sanofi asset manifest,
+  content manifest and three round documents; asset hash CLI; phase/activity docs.
+- **Commands run:** Wikimedia Commons metadata/image checks; `npm run assets:hash -- ...`; Prettier;
+  content validation; focused asset, content and image primitive Vitest.
+- **Result/verification:** Sanofi validates 8 rounds with zero warnings; all three finding rounds
+  use zoomable distance assessment and neutral alt text. The approved image is 1600 × 1200,
+  SHA-256 `cdf573a4ffac399cc1ab91e3f967287930c58ac1765ed1d0bff979c9f684e7e4`.
+- **Follow-ups:** Add provenance-driven Credits for the assets used by each run.

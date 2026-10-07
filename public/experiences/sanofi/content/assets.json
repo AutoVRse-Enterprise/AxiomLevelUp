@@ -53,6 +53,23 @@
       }
     },
     {
+      "assetId": "uip-fibroblastic-focus-image",
+      "path": "/assets/images/cases/uip-fibroblastic-focus.jpg",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 705816,
+      "mimeType": "image/jpeg",
+      "width": 1600,
+      "height": 1200,
+      "sha256": "cdf573a4ffac399cc1ab91e3f967287930c58ac1765ed1d0bff979c9f684e7e4",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:UIP_(Usual_interstitial_pneumonia)_6.jpg",
+        "licence": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+        "author": "Yale Rosen"
+      }
+    },
+    {
       "assetId": "wheeze-audio",
       "path": "/assets/media/cases/wheeze.m4a",
       "type": "audio",
@@ -88,8 +105,16 @@
       ],
       "triangleCount": 96152,
       "bounds": {
-        "min": [-116.53643205781646, -177.86728333124444, 1014.5900268554688],
-        "max": [125.42874481626566, -20.311649119184203, 1395.43994140625]
+        "min": [
+          -116.53643205781646,
+          -177.86728333124444,
+          1014.5900268554688
+        ],
+        "max": [
+          125.42874481626566,
+          -20.311649119184203,
+          1395.43994140625
+        ]
       },
       "provenance": {
         "sourceUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",

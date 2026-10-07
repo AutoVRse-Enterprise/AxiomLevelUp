@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "histology-fibrosis-spot",
+  "title": "Spot the finding: remodelled tissue",
+  "mechanic": "spot_finding",
+  "intro": "This lung specimen shows a third pattern. Locate the most conspicuous remodelling.",
+  "timeLimitSeconds": 30,
+  "primitive": {
+    "id": "histology-fibrosis-spot-answer",
+    "type": "image_hotspot",
+    "content": {
+      "mode": "assess",
+      "assetId": "uip-fibroblastic-focus-image",
+      "alt": "Lung micrograph with irregular pale air spaces and broad areas of densely stained interstitial tissue.",
+      "prompt": "Tap the area where thickened tissue most clearly replaces delicate alveolar walls.",
+      "answerLabel": "Expanded fibrotic interstitium",
+      "regions": [
+        {
+          "id": "fibrotic-interstitium",
+          "label": "Target region",
+          "shape": "polygon",
+          "points": [
+            { "x": 0.02, "y": 0.54 },
+            { "x": 0.18, "y": 0.45 },
+            { "x": 0.34, "y": 0.54 },
+            { "x": 0.48, "y": 0.67 },
+            { "x": 0.4, "y": 0.9 },
+            { "x": 0.19, "y": 0.99 },
+            { "x": 0.02, "y": 0.91 }
+          ]
+        },
+        {
+          "id": "open-airspace",
+          "label": "Open air space",
+          "shape": "circle",
+          "x": 0.72,
+          "y": 0.23,
+          "radius": 0.1
+        }
+      ],
+      "targetRegionIds": ["fibrotic-interstitium"],
+      "explanation": "The broad lower-left interstitium is expanded by cellular connective tissue rather than a delicate alveolar septum.",
+      "zoom": { "enabled": true, "maxScale": 4 },
+      "precision": { "mode": "distance", "falloffRadius": 0.1 }
+    },
+    "completion": { "mode": "answer" }
+  },
+  "feedback": {
+    "correct": "The expanded cellular interstitium replaces the thin septa expected around open alveoli.",
+    "incorrect": "Compare the broad stained tissue at lower left with the thin walls around the open spaces.",
+    "answerTemplate": "Target finding: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 40 },
+    "challenge": { "timeLimitSeconds": 30 },
+    "expert": { "timeLimitSeconds": 25 }
+  }
+}

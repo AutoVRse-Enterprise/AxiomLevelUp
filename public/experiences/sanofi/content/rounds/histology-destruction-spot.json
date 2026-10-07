@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "histology-destruction-spot",
+  "title": "Spot the finding: lost architecture",
+  "mechanic": "spot_finding",
+  "intro": "A second specimen shows a different pattern of structural damage.",
+  "timeLimitSeconds": 30,
+  "primitive": {
+    "id": "histology-destruction-spot-answer",
+    "type": "image_hotspot",
+    "content": {
+      "mode": "assess",
+      "assetId": "emphysema-histology-image",
+      "alt": "Lung tissue with variably enlarged pale air spaces separated by thin stained walls.",
+      "prompt": "Tap an area showing the clearest loss of normal alveolar architecture.",
+      "answerLabel": "Alveolar septal loss",
+      "regions": [
+        {
+          "id": "destructive-airspace",
+          "label": "Target region",
+          "shape": "polygon",
+          "points": [
+            { "x": 0.39, "y": 0.12 },
+            { "x": 0.58, "y": 0.08 },
+            { "x": 0.75, "y": 0.15 },
+            { "x": 0.82, "y": 0.3 },
+            { "x": 0.75, "y": 0.42 },
+            { "x": 0.58, "y": 0.45 },
+            { "x": 0.43, "y": 0.38 },
+            { "x": 0.34, "y": 0.24 }
+          ]
+        },
+        {
+          "id": "preserved-septa",
+          "label": "Preserved septa",
+          "shape": "rect",
+          "x": 0.02,
+          "y": 0.61,
+          "width": 0.24,
+          "height": 0.2
+        }
+      ],
+      "targetRegionIds": ["destructive-airspace"],
+      "explanation": "The enlarged confluent air space has lost much of the fine septal network seen in preserved lung.",
+      "zoom": { "enabled": true, "maxScale": 4 },
+      "precision": { "mode": "distance", "falloffRadius": 0.1 }
+    },
+    "completion": { "mode": "answer" }
+  },
+  "feedback": {
+    "correct": "The enlarged confluent space shows loss of the delicate walls that normally separate alveoli.",
+    "incorrect": "Look for a broad pale space with fewer intervening septa, not a region with a denser wall network.",
+    "answerTemplate": "Target finding: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 40 },
+    "challenge": { "timeLimitSeconds": 30 },
+    "expert": { "timeLimitSeconds": 25 }
+  }
+}

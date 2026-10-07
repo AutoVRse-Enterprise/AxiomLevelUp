@@ -146,8 +146,12 @@ feedback lines and format names are authored independently and reviewed against 
     asset reference, and added a game reveal with both the learner marker and target outline.
   - Focused image, scoring and reveal coverage passes.
 
-- [ ] **P18-T03 — Region authoring overlay and Round 3 content**
-  - Development-only overlay; author the mucus and destruction rounds; optional 3D variant.
+- [x] **P18-T03 — Region authoring overlay and Round 3 content**
+  - Added the development-only normalized-coordinate overlay and authored mucus and destruction
+    rounds with neutral, non-answer-leaking alt text.
+  - With user approval, added Yale Rosen's CC BY-SA 2.0 usual interstitial pneumonia micrograph and
+    an expanded-interstitium round as the third quality image round. The optional 3D variant is not
+    needed.
 
 - [ ] **P18-T04 — Credits sheet**
   - Provenance-driven credits for the active run's assets.

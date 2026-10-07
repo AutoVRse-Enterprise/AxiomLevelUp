@@ -9,7 +9,10 @@
     "rounds/clinical-call-t2.json",
     "rounds/airway-drop-look.json",
     "rounds/airway-explore-lower.json",
-    "rounds/airway-explore-upper.json"
+    "rounds/airway-explore-upper.json",
+    "rounds/histology-mucus-spot.json",
+    "rounds/histology-destruction-spot.json",
+    "rounds/histology-fibrosis-spot.json"
   ],
   "games": [
     "games/fixture-two-round.json",

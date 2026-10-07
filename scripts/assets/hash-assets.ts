@@ -52,8 +52,10 @@ export async function updateAssetHashes(manifestPath: string, publicRoot: string
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href
 if (isMain) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-  const publicRoot = resolve(root, 'public')
-  const manifestPath = resolve(publicRoot, 'content/assets.json')
+  const publicRoot = resolve(root, process.argv[3] ?? 'public')
+  const manifestPath = resolve(root, process.argv[2] ?? 'public/content/assets.json')
   const manifest = await updateAssetHashes(manifestPath, publicRoot)
-  console.log(`Updated size and SHA-256 metadata for ${manifest.assets.length} assets.`)
+  console.log(
+    `Updated size and SHA-256 metadata for ${manifest.assets.length} assets in ${manifestPath}.`,
+  )
 }
