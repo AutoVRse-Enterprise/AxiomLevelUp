@@ -20,6 +20,9 @@ export function makeGameContentBundle(): ContentBundleInput {
   manifest.games = ['games/fixture.json']
   const appConfig = structuredClone(input.appConfig) as Record<string, unknown>
   appConfig.games = appConfigSchema.parse(sanofiConfig).games
+  if (appConfig.games && typeof appConfig.games === 'object') {
+    ;(appConfig.games as { formats: unknown[] }).formats = []
+  }
   return {
     ...input,
     manifest,

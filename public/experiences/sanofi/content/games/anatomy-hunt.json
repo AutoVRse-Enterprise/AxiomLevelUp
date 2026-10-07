@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "0.1",
+  "gameVersion": "1",
+  "id": "anatomy-hunt",
+  "title": "Anatomy Hunt",
+  "tagline": "Read airway position and branch patterns across three spatial rounds.",
+  "organSystem": "respiratory",
+  "estimatedSeconds": 175,
+  "slots": [
+    {
+      "id": "orient",
+      "pool": ["airway-drop-look"],
+      "pick": 1
+    },
+    {
+      "id": "explore",
+      "pool": ["airway-explore-lower", "airway-explore-upper"],
+      "pick": 2
+    }
+  ],
+  "difficulties": ["warmup", "challenge", "expert"],
+  "defaultDifficulty": "challenge",
+  "durationWindowSeconds": {
+    "min": 120,
+    "max": 240
+  }
+}

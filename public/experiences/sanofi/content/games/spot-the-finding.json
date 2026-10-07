@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "0.1",
+  "gameVersion": "1",
+  "id": "spot-the-finding",
+  "title": "Spot the Finding",
+  "tagline": "Inspect three respiratory specimens and mark the decisive feature.",
+  "organSystem": "respiratory",
+  "estimatedSeconds": 105,
+  "slots": [
+    {
+      "id": "finding",
+      "pool": [
+        "histology-mucus-spot",
+        "histology-destruction-spot",
+        "histology-fibrosis-spot"
+      ],
+      "pick": 3
+    }
+  ],
+  "difficulties": ["warmup", "challenge", "expert"],
+  "defaultDifficulty": "challenge",
+  "durationWindowSeconds": {
+    "min": 60,
+    "max": 180
+  }
+}

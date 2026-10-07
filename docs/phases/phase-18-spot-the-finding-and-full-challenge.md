@@ -164,8 +164,10 @@ feedback lines and format names are authored independently and reviewed against 
   - The mucus round is fixed in the connected patient thread; Expert uses its `similar` option
     set. All game content validates with zero warnings.
 
-- [ ] **P18-T06 — Additional formats**
-  - Author Anatomy Hunt and Spot the Finding game documents and the Clinical Mystery preview.
+- [x] **P18-T06 — Additional formats**
+  - Authored content-only Anatomy Hunt and Spot the Finding games. Quick Challenge, Anatomy Hunt
+    and Spot the Finding are playable formats; Clinical Mystery is a "New soon" preview.
+  - Verified multi-pick slots select distinct rounds and expose stable, unique result-strip keys.
 
 - [ ] **P18-T07 — Plausibility review**
   - Publish the checklist and fix any inconsistency it finds.

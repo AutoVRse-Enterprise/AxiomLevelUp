@@ -4054,3 +4054,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** Sanofi validates 8 rounds and 4 games with zero warnings; planned
   full-challenge durations including reveals are 235 / 195 / 155 seconds.
 - **Follow-ups:** Compose Anatomy Hunt and Spot the Finding and publish the configured format list.
+
+### [2026-10-07 19:20] P18-T06 - Compose reusable game formats
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Authored Anatomy Hunt and Spot the Finding game documents, registered all three
+  playable formats plus the Clinical Mystery preview, repaired a latent format-reference
+  validation ordering bug and made result-strip keys safe for repeated slots.
+- **Files changed:** sanofi game documents, manifest and app config; content loader; planning
+  fixture; game result model/tests; phase/activity docs.
+- **Commands run:** Prettier; content validation; focused seed, plan, result and validation Vitest;
+  TypeScript.
+- **Result/verification:** Sanofi validates 8 rounds and 6 games with zero warnings; multi-pick
+  plans select distinct rounds and result keys remain unique when slot IDs repeat.
+- **Follow-ups:** Complete the internal medical plausibility and licensing review.

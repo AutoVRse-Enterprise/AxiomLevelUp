@@ -403,7 +403,35 @@
       "introAutoAdvanceMs": 1200,
       "lockedHoldMs": 200
     },
-    "formats": [],
+    "formats": [
+      {
+        "id": "quick-challenge",
+        "title": "Quick Challenge",
+        "description": "Four connected rounds spanning airway anatomy, tissue and clinical interpretation.",
+        "gameId": "respiratory-challenge",
+        "status": "playable"
+      },
+      {
+        "id": "anatomy-hunt",
+        "title": "Anatomy Hunt",
+        "description": "Three spatial rounds built from the same airway location library.",
+        "gameId": "anatomy-hunt",
+        "status": "playable"
+      },
+      {
+        "id": "spot-the-finding",
+        "title": "Spot the Finding",
+        "description": "Three zoomable respiratory specimens with precision-based scoring.",
+        "gameId": "spot-the-finding",
+        "status": "playable"
+      },
+      {
+        "id": "clinical-mystery",
+        "title": "Clinical Mystery",
+        "description": "A focused sequence of multimodal clinical calls.",
+        "status": "preview"
+      }
+    ],
     "leaderboard": {
       "entries": [],
       "disclosure": "Demo leaderboard"

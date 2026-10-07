@@ -294,6 +294,20 @@ describe('game run planning', () => {
     expect(second.rounds).not.toEqual(first.rounds)
   })
 
+  it('plans distinct rounds when one reusable slot picks more than once', () => {
+    const rounds = [clinicalRound('call-a'), clinicalRound('call-b'), clinicalRound('call-c')]
+    const planned = planRun({
+      game: game([{ id: 'calls', pool: ['call-a', 'call-b', 'call-c'], pick: 2 }]),
+      registry: registry(rounds),
+      difficultyId: 'warmup',
+      seed: 42,
+    }).rounds
+
+    expect(planned).toHaveLength(2)
+    expect(new Set(planned.map(({ roundId }) => roundId)).size).toBe(2)
+    expect(planned.map(({ slotId }) => slotId)).toEqual(['calls', 'calls'])
+  })
+
   it('applies difficulty values, absolute overrides, clue split, and standard option fallback', () => {
     const round = clinicalRound('call-a')
     const planned = planRun({

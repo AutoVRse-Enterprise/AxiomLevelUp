@@ -517,13 +517,13 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
     ),
   )
 
-  const requireRef = (
+  function requireRef(
     set: ReadonlySet<string>,
     id: string,
     file: string,
     path: string,
     kind: string,
-  ) => {
+  ) {
     if (!set.has(id)) {
       issues.push({
         file,

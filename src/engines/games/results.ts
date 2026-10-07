@@ -30,6 +30,7 @@ export interface GameRunSummary {
 }
 
 export interface RoundStripItem {
+  key: string
   index: number
   slotId: string
   roundId: string
@@ -107,6 +108,7 @@ export const matchResultMessage = selectResultMessage
 
 export function roundStrip(roundResults: readonly GameRoundResult[]): RoundStripItem[] {
   return roundResults.map((round, index) => ({
+    key: `${round.slotId}:${index}:${round.roundId}`,
     index,
     slotId: round.slotId,
     roundId: round.roundId,

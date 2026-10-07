@@ -100,6 +100,7 @@ describe('game results', () => {
   it('builds compact round and reveal view models', () => {
     expect(roundStrip(rounds)).toEqual([
       {
+        key: 'slot-1:0:round-1',
         index: 0,
         slotId: 'slot-1',
         roundId: 'round-1',
@@ -108,6 +109,7 @@ describe('game results', () => {
         points: 900,
       },
       {
+        key: 'slot-2:1:round-2',
         index: 1,
         slotId: 'slot-2',
         roundId: 'round-2',
@@ -116,6 +118,7 @@ describe('game results', () => {
         points: 900,
       },
       {
+        key: 'slot-3:2:round-3',
         index: 2,
         slotId: 'slot-3',
         roundId: 'round-3',
@@ -163,5 +166,11 @@ describe('game results', () => {
         'Right',
       ).outcome,
     ).toBe('skipped')
+  })
+
+  it('keeps round-strip keys unique when a slot picks multiple rounds', () => {
+    const repeatedSlot = rounds.slice(0, 2).map((round) => ({ ...round, slotId: 'finding' }))
+    const keys = roundStrip(repeatedSlot).map(({ key }) => key)
+    expect(new Set(keys).size).toBe(keys.length)
   })
 })

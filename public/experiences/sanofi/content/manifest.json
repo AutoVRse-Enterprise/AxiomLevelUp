@@ -18,7 +18,9 @@
     "games/fixture-two-round.json",
     "games/fixture-one-round.json",
     "games/fixture-spatial.json",
-    "games/respiratory-challenge.json"
+    "games/respiratory-challenge.json",
+    "games/anatomy-hunt.json",
+    "games/spot-the-finding.json"
   ],
   "seeds": {
     "fresh": "seeds/fresh.json"
