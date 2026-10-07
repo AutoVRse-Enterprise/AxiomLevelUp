@@ -6,12 +6,14 @@ import { Button, InlineNotice, LoadingState } from '@/components/ui'
 import type { AudioPrimitive as AudioPrimitiveConfig } from '@/content/schema/primitives'
 import { useAsset, useAssetUrl } from '@/content/useAssetUrl'
 import { calculatePlayedCoverage, crossedCoverageSteps } from '@/primitives/mediaProgress'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 export function AudioPrimitive({
   primitive,
   onInteract,
 }: PrimitiveComponentProps<AudioPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const audioUrl = useAssetUrl(primitive.content.assetId)
   const transcriptAsset = useAsset(primitive.content.transcriptAssetId)
   const reportedCoverage = useRef(0)
@@ -55,7 +57,11 @@ export function AudioPrimitive({
       {audioUrl && mediaState !== 'error' ? (
         <div className="space-y-3">
           {mediaState === 'loading' ? (
-            <LoadingState compact title="Loading audio" message="Preparing audio and transcript." />
+            <LoadingState
+              compact
+              title={labels.loadingAudio}
+              message="Preparing audio and transcript."
+            />
           ) : null}
           {/* An adjacent, authored transcript is the accessible alternative for audio-only media. */}
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
@@ -87,12 +93,12 @@ export function AudioPrimitive({
                 size="sm"
                 variant="secondary"
               >
-                Retry audio
+                {labels.retryAudio}
               </Button>
             ) : null
           }
           message="Use the transcript below while the audio is unavailable."
-          title="Audio unavailable"
+          title={labels.audioUnavailable}
           tone="warning"
         />
       )}
@@ -102,7 +108,9 @@ export function AudioPrimitive({
           if (event.currentTarget.open) onInteract({ name: 'transcript_opened', key: 'transcript' })
         }}
       >
-        <summary className="cursor-pointer font-semibold text-neutral-900">Transcript</summary>
+        <summary className="cursor-pointer font-semibold text-neutral-900">
+          {labels.transcript}
+        </summary>
         <p className="mt-3 whitespace-pre-line text-small text-neutral-700">
           {transcript || 'Transcript unavailable.'}
         </p>

@@ -6,6 +6,7 @@ import { StepActionSlot } from '@/player/StepActionSlot'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { seededShuffle } from '@/primitives/shared/seededShuffle'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 export function MultipleSelectPrimitive({
   primitive,
@@ -18,6 +19,7 @@ export function MultipleSelectPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<MultipleSelectPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const initialResponse = mode === 'review' ? review?.response : draft
   const [selectedIds, setSelectedIds] = useState(
     new Set(
@@ -72,7 +74,7 @@ export function MultipleSelectPrimitive({
               type="submit"
               disabled={selectedIds.size < primitive.content.minSelections || disabled}
             >
-              Check answer
+              {labels.checkAnswer}
             </Button>
           </StepActionSlot>
         </>

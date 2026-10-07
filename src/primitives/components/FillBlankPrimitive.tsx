@@ -5,6 +5,7 @@ import type { FillBlankPrimitive as FillBlankPrimitiveConfig } from '@/content/s
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 function readResponses(
   primitive: FillBlankPrimitiveConfig,
@@ -30,6 +31,7 @@ export function FillBlankPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<FillBlankPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [draftResponses, setDraftResponses] = useState(() => readResponses(primitive, draft))
   const responses = mode === 'review' ? readResponses(primitive, review?.response) : draftResponses
   const readOnly = disabled || mode === 'review'
@@ -126,7 +128,7 @@ export function FillBlankPrimitive({
       {mode === 'interactive' ? (
         <StepActionSlot>
           <Button className="w-full sm:w-auto" type="submit" disabled={!complete || disabled}>
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

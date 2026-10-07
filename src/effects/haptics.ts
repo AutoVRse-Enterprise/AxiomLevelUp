@@ -25,13 +25,15 @@ function handleHapticEvent(event: LearnerEvent, config: HapticConfig) {
   if (!usePreferencesStore.getState().hapticsEnabled || !hapticsSupported()) return
 
   const pattern =
-    event.event === 'question_answered' && event.correct
-      ? config.correctAnswer
-      : event.event === 'badge_unlocked'
-        ? config.badgeUnlocked
-        : event.event === 'challenge_completed'
-          ? config.challengeCompleted
-          : null
+    event.event === 'game_round_answered' && event.correct
+      ? config.gameRoundCorrect
+      : event.event === 'question_answered' && event.correct
+        ? config.correctAnswer
+        : event.event === 'badge_unlocked'
+          ? config.badgeUnlocked
+          : event.event === 'challenge_completed'
+            ? config.challengeCompleted
+            : null
 
   if (!pattern?.length) return
   const now = Date.now()

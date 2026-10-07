@@ -15,6 +15,7 @@ import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 type Selections = Record<string, string>
 
@@ -164,6 +165,7 @@ export function AnatomyLocatePrimitive({
   onInteract,
   onSubmit,
 }: PrimitiveComponentProps<AnatomyLocatePrimitiveContent>) {
+  const { labels } = usePresentation()
   const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
   const caseContext = useCaseReasoningContext()
   const findings = useStepFindings(primitive.id)
@@ -313,7 +315,7 @@ export function AnatomyLocatePrimitive({
     >
       <header>
         <p className="text-caption font-semibold uppercase tracking-wide text-brand-700">
-          Level {levelIndex + 1} of {primitive.content.levels.length}
+          {labels.levelProgress(levelIndex + 1, primitive.content.levels.length)}
         </p>
         <h2 className="mt-1 text-title font-bold text-neutral-950">{primitive.content.prompt}</h2>
       </header>
@@ -326,11 +328,11 @@ export function AnatomyLocatePrimitive({
             variant="secondary"
             onClick={() => setLevelIndex((current) => Math.max(0, current - 1))}
           >
-            Previous level
+            {labels.previousLevel}
           </Button>
           {lastLevel ? (
             <Button disabled={disabled || !selected} type="submit">
-              Commit your localisation
+              {labels.commitLocalisation}
             </Button>
           ) : (
             <Button
@@ -342,7 +344,7 @@ export function AnatomyLocatePrimitive({
                 )
               }
             >
-              Next level
+              {labels.nextLevel}
             </Button>
           )}
         </div>

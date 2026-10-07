@@ -6,12 +6,14 @@ import type { ImagePrimitive as ImagePrimitiveConfig } from '@/content/schema/pr
 import { useAsset } from '@/content/useAssetUrl'
 import { ArtifactOverlay } from '@/primitives/shared/ArtifactOverlay'
 import { PanZoomImage } from '@/primitives/shared/PanZoomImage'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 export function ImagePrimitive({
   primitive,
   onComplete,
 }: PrimitiveComponentProps<ImagePrimitiveConfig>) {
+  const { labels } = usePresentation()
   const asset = useAsset(primitive.content.assetId)
   const [expanded, setExpanded] = useState(false)
   const [showAnnotations, setShowAnnotations] = useState(true)
@@ -62,7 +64,7 @@ export function ImagePrimitive({
               <LoadingState
                 className="absolute inset-0 rounded-none border-0 shadow-none"
                 message="Optimizing the image for this screen."
-                title="Loading image"
+                title={labels.loadingImage}
               />
             ) : null}
           </>
@@ -72,7 +74,7 @@ export function ImagePrimitive({
             role="alert"
           >
             <ImageOff aria-hidden="true" size={28} />
-            <p>Image unavailable</p>
+            <p>{labels.imageUnavailable}</p>
             {asset ? (
               <Button
                 size="sm"
@@ -82,7 +84,7 @@ export function ImagePrimitive({
                   setMediaState('loading')
                 }}
               >
-                Retry image
+                {labels.retryImage}
               </Button>
             ) : null}
           </div>
@@ -97,7 +99,7 @@ export function ImagePrimitive({
             leadingIcon={<Maximize2 aria-hidden="true" />}
             onClick={() => setExpanded(true)}
           >
-            Expand image
+            {labels.expandImage}
           </Button>
           {primitive.content.annotations?.length ? (
             <Button
@@ -107,7 +109,7 @@ export function ImagePrimitive({
               aria-pressed={showAnnotations}
               onClick={() => setShowAnnotations((visible) => !visible)}
             >
-              {showAnnotations ? 'Hide annotations' : 'Show annotations'}
+              {showAnnotations ? labels.hideAnnotations : labels.showAnnotations}
             </Button>
           ) : null}
         </div>

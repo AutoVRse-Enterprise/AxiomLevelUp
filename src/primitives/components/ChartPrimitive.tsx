@@ -15,6 +15,7 @@ import {
   type NumericDomain,
 } from '@/primitives/definitions/chartMath'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 const WIDTH = 720
 const HEIGHT = 420
@@ -325,6 +326,7 @@ export function ChartPrimitive({
   onComplete,
   onInteract,
 }: PrimitiveComponentProps<ChartPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [showTable, setShowTable] = useState(false)
   const titleId = useId()
   const summaryId = useId()
@@ -401,7 +403,7 @@ export function ChartPrimitive({
           onInteract({ name: 'chart_data_table_toggled' })
         }}
       >
-        {showTable ? 'Hide data table' : 'Show data table'}
+        {showTable ? labels.hideDataTable : labels.showDataTable}
       </Button>
       {showTable ? <ChartDataTable content={content} /> : null}
     </figure>

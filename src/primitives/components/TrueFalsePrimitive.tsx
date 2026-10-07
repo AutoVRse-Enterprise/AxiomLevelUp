@@ -5,6 +5,7 @@ import type { TrueFalsePrimitive as TrueFalsePrimitiveConfig } from '@/content/s
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 const options = [
   { id: 'true', label: 'True' },
@@ -21,6 +22,7 @@ export function TrueFalsePrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<TrueFalsePrimitiveConfig>) {
+  const { labels } = usePresentation()
   const initialResponse = mode === 'review' ? review?.response : draft
   const [selected, setSelected] = useState(
     typeof initialResponse === 'boolean' ? String(initialResponse) : '',
@@ -53,7 +55,7 @@ export function TrueFalsePrimitive({
       {mode === 'interactive' ? (
         <StepActionSlot>
           <Button className="w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

@@ -15,6 +15,7 @@ import { AnatomyAssetUnavailableError } from '@/primitives/components/anatomyUti
 import { DicomAssetUnavailableError } from '@/primitives/components/dicomUtils'
 import { UnsupportedPrimitive } from '@/primitives/components/UnsupportedPrimitive'
 import { resolvePrimitiveDefinition } from '@/primitives/definitions'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 class PrimitiveErrorBoundary extends Component<
@@ -39,6 +40,7 @@ class PrimitiveErrorBoundary extends Component<
 }
 
 export function PrimitiveRenderer(props: PrimitiveComponentProps) {
+  const { labels } = usePresentation()
   const resolved = useMemo(() => resolvePrimitiveDefinition(props.primitive), [props.primitive])
   const fallback = <UnsupportedPrimitive {...props} />
   if (!resolved) return fallback
@@ -53,7 +55,7 @@ export function PrimitiveRenderer(props: PrimitiveComponentProps) {
         error instanceof DicomAssetUnavailableError ||
         error instanceof AnatomyAssetUnavailableError ? (
           <ErrorState
-            actionLabel="Continue"
+            actionLabel={labels.continue}
             message={error.message}
             onAction={props.onComplete}
             title={
@@ -65,12 +67,12 @@ export function PrimitiveRenderer(props: PrimitiveComponentProps) {
           />
         ) : (
           <ErrorState
-            actionLabel="Retry activity"
-            message="The activity renderer encountered an unexpected problem. Try again or continue."
+            actionLabel={labels.retryActivity}
+            message={labels.activityLoadErrorMessage}
             onAction={retry}
             onSecondaryAction={props.onComplete}
-            secondaryActionLabel="Continue"
-            title="Activity could not load"
+            secondaryActionLabel={labels.continue}
+            title={labels.activityLoadError}
             titleAs="h2"
           />
         )
@@ -80,8 +82,8 @@ export function PrimitiveRenderer(props: PrimitiveComponentProps) {
         fallback={
           <LoadingState
             className={resolved.definition.layout === 'viewer' ? 'min-h-[55dvh]' : 'min-h-48'}
-            message={`Preparing ${resolved.definition.label.toLowerCase()}.`}
-            title="Loading activity"
+            message={labels.preparing(resolved.definition.label)}
+            title={labels.loadingActivity}
           />
         }
       >

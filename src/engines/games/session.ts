@@ -38,6 +38,7 @@ export interface GameRoundSession {
   draft: unknown
   response: unknown
   elapsedMs: number | null
+  elapsedCheckpointMs?: number
   pausedMs: number
   timedOut: boolean
   result: GameRoundResult | null
@@ -62,6 +63,7 @@ export type GameSessionAction =
   | { type: 'roundStarted'; at: string }
   | { type: 'clueRevealed'; clueId: string }
   | { type: 'draftChanged'; draft: unknown }
+  | { type: 'checkpoint'; elapsedMs: number }
   | { type: 'paused'; elapsedMs: number }
   | { type: 'submitted'; at: string; response: unknown; elapsedMs: number }
   | { type: 'timedOut'; at: string; elapsedMs: number; response?: unknown }
@@ -78,6 +80,7 @@ function createRoundSession(): GameRoundSession {
     draft: null,
     response: null,
     elapsedMs: null,
+    elapsedCheckpointMs: 0,
     pausedMs: 0,
     timedOut: false,
     result: null,
@@ -170,6 +173,13 @@ export function gameSessionReducer(state: GameSession, action: GameSessionAction
       if (state.phase !== 'playing') return state
       return updateCurrentRound(state, (round) => ({ ...round, draft: action.draft }))
 
+    case 'checkpoint':
+      if (state.phase !== 'playing' || !validElapsedMs(action.elapsedMs)) return state
+      return updateCurrentRound(state, (round) => ({
+        ...round,
+        elapsedCheckpointMs: action.elapsedMs,
+      }))
+
     case 'paused':
       if (
         state.phase !== 'playing' ||
@@ -191,6 +201,7 @@ export function gameSessionReducer(state: GameSession, action: GameSessionAction
         submittedAt: action.at,
         response: action.type === 'timedOut' ? (action.response ?? round.draft) : action.response,
         elapsedMs: action.elapsedMs,
+        elapsedCheckpointMs: action.elapsedMs,
         timedOut: action.type === 'timedOut',
       }))
 

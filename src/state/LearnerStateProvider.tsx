@@ -4,6 +4,7 @@ import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { LoadingState } from '@/components/ui'
 import { initializeHapticEffects } from '@/effects/haptics'
+import { initializeGameConfettiEffects } from '@/effects/gameConfetti'
 import { useActivitySessionStore } from '@/engines/learning/sessionStore'
 import { initializeLearningProgressHandlers } from '@/events/handlers'
 import { useLearnerStore } from '@/state/learnerStore'
@@ -24,6 +25,10 @@ export function LearnerStateProvider({
   useEffect(() => {
     initializeLearningProgressHandlers(registry)
     const stopHaptics = initializeHapticEffects(registry.appConfig.product.presentation.haptics)
+    const stopGameConfetti = initializeGameConfettiEffects(
+      registry.appConfig.product.presentation.confetti,
+      registry.appConfig.games,
+    )
     let active = true
     void Promise.all([
       Promise.resolve(useLearnerStore.persist.rehydrate()),
@@ -44,6 +49,7 @@ export function LearnerStateProvider({
     return () => {
       active = false
       stopHaptics()
+      stopGameConfetti()
     }
   }, [registry, seed])
 

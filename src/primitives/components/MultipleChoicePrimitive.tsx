@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui'
 import type { MultipleChoicePrimitive as MultipleChoicePrimitiveConfig } from '@/content/schema/primitives'
 import { StepActionSlot } from '@/player/StepActionSlot'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { seededShuffle } from '@/primitives/shared/seededShuffle'
 import type { PrimitiveComponentProps } from '@/primitives/types'
@@ -18,6 +19,7 @@ export function MultipleChoicePrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<MultipleChoicePrimitiveConfig>) {
+  const { labels } = usePresentation()
   const initialResponse = mode === 'review' ? review?.response : draft
   const [selected, setSelected] = useState(
     typeof initialResponse === 'string' ? initialResponse : '',
@@ -57,7 +59,7 @@ export function MultipleChoicePrimitive({
       {mode === 'interactive' ? (
         <StepActionSlot>
           <Button className="w-full sm:w-auto" type="submit" disabled={!selected || disabled}>
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

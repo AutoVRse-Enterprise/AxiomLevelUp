@@ -6,6 +6,7 @@ import { StepActionSlot } from '@/player/StepActionSlot'
 import { cn } from '@/lib/cn'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 function readMatches(value: unknown): Record<string, string> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
@@ -26,6 +27,7 @@ export function MatchPairsPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<MatchPairsPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [matches, setMatches] = useState(() =>
     readMatches(mode === 'review' ? review?.response : draft),
   )
@@ -160,7 +162,7 @@ export function MatchPairsPrimitive({
             type="submit"
             disabled={Object.keys(matches).length !== primitive.content.left.length || disabled}
           >
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

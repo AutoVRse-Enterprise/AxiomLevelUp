@@ -6,6 +6,7 @@ import { cn } from '@/lib/cn'
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 function readAssignments(value: unknown): Record<string, string> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
@@ -26,6 +27,7 @@ export function ClassificationPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<ClassificationPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [assignments, setAssignments] = useState(() =>
     readAssignments(mode === 'review' ? review?.response : draft),
   )
@@ -147,9 +149,11 @@ export function ClassificationPrimitive({
           <Button
             className="w-full sm:w-auto"
             type="submit"
-            disabled={Object.keys(assignments).length !== primitive.content.items.length || disabled}
+            disabled={
+              Object.keys(assignments).length !== primitive.content.items.length || disabled
+            }
           >
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

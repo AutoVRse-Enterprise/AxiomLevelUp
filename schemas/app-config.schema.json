@@ -890,6 +890,9 @@
                 30,
                 50,
                 30
+              ],
+              "gameRoundCorrect": [
+                15
               ]
             },
             "confetti": {
@@ -897,7 +900,8 @@
                 "three_star_lesson",
                 "challenge_complete"
               ],
-              "particleCount": 80
+              "particleCount": 80,
+              "gameCompleteMinScoreRatio": 0.75
             },
             "xpCountUp": {
               "minimumAmount": 10,
@@ -935,12 +939,25 @@
                     "exclusiveMinimum": 0,
                     "maximum": 1000
                   }
+                },
+                "gameRoundCorrect": {
+                  "default": [
+                    15
+                  ],
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
                 }
               },
               "required": [
                 "correctAnswer",
                 "badgeUnlocked",
-                "challengeCompleted"
+                "challengeCompleted",
+                "gameRoundCorrect"
               ],
               "additionalProperties": false
             },
@@ -948,7 +965,7 @@
               "type": "object",
               "properties": {
                 "moments": {
-                  "maxItems": 4,
+                  "maxItems": 5,
                   "type": "array",
                   "items": {
                     "type": "string",
@@ -956,7 +973,8 @@
                       "three_star_lesson",
                       "challenge_complete",
                       "badge",
-                      "level_up"
+                      "level_up",
+                      "game_complete"
                     ]
                   }
                 },
@@ -964,11 +982,18 @@
                   "type": "integer",
                   "minimum": 0,
                   "maximum": 200
+                },
+                "gameCompleteMinScoreRatio": {
+                  "default": 0.75,
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
                 }
               },
               "required": [
                 "moments",
-                "particleCount"
+                "particleCount",
+                "gameCompleteMinScoreRatio"
               ],
               "additionalProperties": false
             },
@@ -3561,6 +3586,170 @@
             "seeResult": {
               "type": "string",
               "minLength": 1
+            },
+            "skipToRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "loadingRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "roundLoadError": {
+              "type": "string",
+              "minLength": 1
+            },
+            "roundLoadErrorMessage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "continue": {
+              "type": "string",
+              "minLength": 1
+            },
+            "stepProgress": {
+              "type": "string",
+              "minLength": 1
+            },
+            "previousStep": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nextStep": {
+              "type": "string",
+              "minLength": 1
+            },
+            "checkLocation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revealClue": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clueConfirmTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clueConfirmDescription": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cancel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "leaveGame": {
+              "type": "string",
+              "minLength": 1
+            },
+            "keepPlaying": {
+              "type": "string",
+              "minLength": 1
+            },
+            "leaveGameTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "leaveGameDescription": {
+              "type": "string",
+              "minLength": 1
+            },
+            "continueGame": {
+              "type": "string",
+              "minLength": 1
+            },
+            "newGame": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resumeTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resumeDescription": {
+              "type": "string",
+              "minLength": 1
+            },
+            "secondsRemaining": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeUp": {
+              "type": "string",
+              "minLength": 1
+            },
+            "basePoints": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clueCost": {
+              "type": "string",
+              "minLength": 1
+            },
+            "totalScore": {
+              "type": "string",
+              "minLength": 1
+            },
+            "playAgain": {
+              "type": "string",
+              "minLength": 1
+            },
+            "correctCount": {
+              "type": "string",
+              "minLength": 1
+            },
+            "totalTime": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bestRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "difficulty": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resultNotFound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "gameNotFound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "exitGame": {
+              "type": "string",
+              "minLength": 1
+            },
+            "roundProgress": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pointsAbbreviation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "roundLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cluesLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "gameUnavailableTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resultUnavailableTitle": {
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
@@ -3568,7 +3757,72 @@
             "nextRound",
             "correct",
             "incorrect",
-            "seeResult"
+            "seeResult",
+            "skipToRound",
+            "loadingRound",
+            "retryRound",
+            "roundLoadError",
+            "roundLoadErrorMessage",
+            "continue",
+            "stepProgress",
+            "previousStep",
+            "nextStep",
+            "checkLocation",
+            "revealClue",
+            "clueConfirmTitle",
+            "clueConfirmDescription",
+            "cancel",
+            "leaveGame",
+            "keepPlaying",
+            "leaveGameTitle",
+            "leaveGameDescription",
+            "continueGame",
+            "newGame",
+            "resumeTitle",
+            "resumeDescription",
+            "secondsRemaining",
+            "timeUp",
+            "basePoints",
+            "clueCost",
+            "totalScore",
+            "playAgain",
+            "correctCount",
+            "totalTime",
+            "bestRound",
+            "difficulty",
+            "resultNotFound",
+            "gameNotFound",
+            "exitGame",
+            "roundProgress",
+            "pointsAbbreviation",
+            "roundLabel",
+            "cluesLabel",
+            "gameUnavailableTitle",
+            "resultUnavailableTitle"
+          ],
+          "additionalProperties": false
+        },
+        "player": {
+          "default": {
+            "introAutoAdvanceMs": 1200,
+            "lockedHoldMs": 200
+          },
+          "type": "object",
+          "properties": {
+            "introAutoAdvanceMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000
+            },
+            "lockedHoldMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3000
+            }
+          },
+          "required": [
+            "introAutoAdvanceMs",
+            "lockedHoldMs"
           ],
           "additionalProperties": false
         },
@@ -3771,6 +4025,7 @@
         "hub",
         "difficulties",
         "messages",
+        "player",
         "formats",
         "leaderboard",
         "expertRuns",

@@ -558,12 +558,22 @@ export const appConfigSchema = z.object({
           correctAnswer: z.array(z.number().int().positive().max(1000)).max(5),
           badgeUnlocked: z.array(z.number().int().positive().max(1000)).max(5),
           challengeCompleted: z.array(z.number().int().positive().max(1000)).max(5),
+          gameRoundCorrect: z.array(z.number().int().positive().max(1000)).max(5).default([15]),
         }),
         confetti: z.strictObject({
           moments: z
-            .array(z.enum(['three_star_lesson', 'challenge_complete', 'badge', 'level_up']))
-            .max(4),
+            .array(
+              z.enum([
+                'three_star_lesson',
+                'challenge_complete',
+                'badge',
+                'level_up',
+                'game_complete',
+              ]),
+            )
+            .max(5),
           particleCount: z.number().int().min(0).max(200),
+          gameCompleteMinScoreRatio: z.number().min(0).max(1).default(0.75),
         }),
         xpCountUp: z.strictObject({
           minimumAmount: z.number().int().nonnegative(),
@@ -575,10 +585,12 @@ export const appConfigSchema = z.object({
           correctAnswer: [15],
           badgeUnlocked: [25, 40, 25],
           challengeCompleted: [30, 50, 30],
+          gameRoundCorrect: [15],
         },
         confetti: {
           moments: ['three_star_lesson', 'challenge_complete'],
           particleCount: 80,
+          gameCompleteMinScoreRatio: 0.75,
         },
         xpCountUp: {
           minimumAmount: 10,

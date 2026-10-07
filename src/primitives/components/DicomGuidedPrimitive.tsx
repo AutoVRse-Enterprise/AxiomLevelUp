@@ -9,6 +9,7 @@ import type { DicomMeasurement } from '@/imaging/viewer/controller'
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { defaultDicomTools, useDicomPrimitiveContext } from '@/primitives/components/dicomUtils'
 import type { PrimitiveComponentProps, PrimitiveInteraction } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 interface GuidedDraft {
   slice: number
@@ -30,6 +31,7 @@ export function DicomGuidedPrimitive({
   onInteract,
   onSubmit,
 }: PrimitiveComponentProps<DicomGuidedPrimitiveContent>) {
+  const { labels } = usePresentation()
   const { appConfig, asset } = useDicomPrimitiveContext(primitive)
   const saved = draft && typeof draft === 'object' ? (draft as Partial<GuidedDraft>) : undefined
   const [completedStepIds, setCompletedStepIds] = useState(saved?.completedStepIds ?? [])
@@ -152,7 +154,7 @@ export function DicomGuidedPrimitive({
           {!disabled ? (
             <StepActionSlot>
               <Button disabled={!selectedOptionId} onClick={() => onSubmit(selectedOptionId)}>
-                Check answer
+                {labels.checkAnswer}
               </Button>
             </StepActionSlot>
           ) : null}

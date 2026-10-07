@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import type { DataTablePrimitive as DataTablePrimitiveConfig } from '@/content/schema/primitives'
 import { Button } from '@/components/ui'
 import { ArtifactOverlay } from '@/primitives/shared/ArtifactOverlay'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 type TableContent = DataTablePrimitiveConfig['content']
@@ -113,6 +114,7 @@ export function DataTablePrimitive({
   primitive,
   onComplete,
 }: PrimitiveComponentProps<DataTablePrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [expanded, setExpanded] = useState(false)
 
   useEffect(onComplete, [onComplete])
@@ -129,7 +131,7 @@ export function DataTablePrimitive({
           leadingIcon={<Maximize2 className="size-4" aria-hidden="true" />}
           onClick={() => setExpanded(true)}
         >
-          Expand table
+          {labels.expandTable}
         </Button>
       </div>
       <TableView content={primitive.content} />
@@ -137,7 +139,7 @@ export function DataTablePrimitive({
         open={expanded}
         onOpenChange={setExpanded}
         title={primitive.content.caption}
-        description="Expanded data table"
+        description={labels.expandedDataTable}
       >
         <TableView content={primitive.content} expanded />
       </ArtifactOverlay>

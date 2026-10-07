@@ -3,6 +3,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import type { RichTextPrimitive as RichTextPrimitiveConfig } from '@/content/schema/primitives'
 import { useAssetUrl } from '@/content/useAssetUrl'
 import { tokenizeRichText } from '@/primitives/richTextTokenizer'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import type { PrimitiveComponentProps } from '@/primitives/types'
 
 export function RichTextPrimitive({
@@ -10,6 +11,7 @@ export function RichTextPrimitive({
   onComplete,
   onInteract,
 }: PrimitiveComponentProps<RichTextPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const imageUrl = useAssetUrl(primitive.content.imageAssetId)
   const [activeDefinition, setActiveDefinition] = useState<{
     term: string
@@ -72,7 +74,7 @@ export function RichTextPrimitive({
       ) : null}
       {primitive.content.keyTakeaway ? (
         <aside className="rounded-lg border border-brand-200 bg-brand-50 p-4">
-          <p className="text-small font-semibold text-brand-900">Key takeaway</p>
+          <p className="text-small font-semibold text-brand-900">{labels.keyTakeaway}</p>
           <p className="mt-1 text-neutral-800">{primitive.content.keyTakeaway}</p>
         </aside>
       ) : null}

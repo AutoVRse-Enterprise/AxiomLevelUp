@@ -25,6 +25,7 @@ import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import { seededUnsolvedOrder } from '@/primitives/shared/seededShuffle'
 import type { EvaluationResult, PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 type OrderingItem = OrderingPrimitiveConfig['content']['items'][number]
 
@@ -140,6 +141,7 @@ export function OrderingPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<OrderingPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [items, setItems] = useState(() =>
     initialItems(primitive, attempt, mode, mode === 'review' ? review?.response : draft),
   )
@@ -254,7 +256,7 @@ export function OrderingPrimitive({
       {mode === 'interactive' ? (
         <StepActionSlot>
           <Button className="w-full sm:w-auto" type="submit" disabled={disabled}>
-            Check answer
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

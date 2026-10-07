@@ -5,6 +5,7 @@ import type { NumericPrimitive as NumericPrimitiveConfig } from '@/content/schem
 import { StepActionSlot } from '@/player/StepActionSlot'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 
 function answerDescription(primitive: NumericPrimitiveConfig): string {
   const unit = primitive.content.unit ? ` ${primitive.content.unit}` : ''
@@ -29,6 +30,7 @@ export function NumericPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<NumericPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const [draftResponse, setDraftResponse] = useState(typeof draft === 'string' ? draft : '')
   const response =
     mode === 'review'
@@ -88,8 +90,12 @@ export function NumericPrimitive({
 
       {mode === 'interactive' ? (
         <StepActionSlot>
-          <Button className="w-full sm:w-auto" type="submit" disabled={!response.trim() || disabled}>
-            Check answer
+          <Button
+            className="w-full sm:w-auto"
+            type="submit"
+            disabled={!response.trim() || disabled}
+          >
+            {labels.checkAnswer}
           </Button>
         </StepActionSlot>
       ) : null}

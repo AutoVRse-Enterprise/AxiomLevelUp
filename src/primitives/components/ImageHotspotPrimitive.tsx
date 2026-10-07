@@ -14,6 +14,7 @@ import { regionCenter } from '@/primitives/shared/imageRegionMath'
 import { clamp, screenToNormalized } from '@/primitives/shared/panZoomMath'
 import { useImmersiveArtifact } from '@/primitives/shared/useImmersiveArtifact'
 import type { PrimitiveComponentProps } from '@/primitives/types'
+import { usePresentation } from '@/primitives/presentation/PresentationContext'
 import { cn } from '@/lib/cn'
 
 function LocationMarker({
@@ -51,6 +52,7 @@ export function ImageHotspotPrimitive({
   onDraftChange,
   onSubmit,
 }: PrimitiveComponentProps<ImageHotspotPrimitiveConfig>) {
+  const { labels } = usePresentation()
   const asset = useAsset(primitive.content.assetId)
   const [explored, setExplored] = useState(() => new Set<string>())
   const [selectedPoint, setSelectedPoint] = useState<NormalizedPoint | null>(
@@ -244,7 +246,7 @@ export function ImageHotspotPrimitive({
               if (selectedPoint) onSubmit(selectedPoint)
             }}
           >
-            Check location
+            {labels.checkLocation}
           </Button>
         </StepActionSlot>
       ) : null}
