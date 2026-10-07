@@ -749,15 +749,30 @@ export function createAnatomyController({
       roughness: config.lumen.roughness,
       side: THREE.DoubleSide,
     })
+    const branchRimMaterial = new THREE.MeshStandardMaterial({
+      color: config.lumen.cues.branchRimColor,
+      opacity: config.lumen.cues.branchRimOpacity,
+      transparent: config.lumen.cues.branchRimOpacity < 1,
+      roughness: config.lumen.roughness,
+      side: THREE.DoubleSide,
+    })
 
     map.waypoints.forEach((from) => {
       const startRadius = from.radius ?? config.lumen.defaultRadius
+      const depth = Math.max(0, pathToWaypoint(map!, from.id).length - 1)
 
       from.next.forEach((nextId) => {
         const next = map!.waypoints.find(({ id }) => id === nextId)
         if (!next) return
         const endRadius = next.radius ?? config.lumen.defaultRadius
         const curve = waypointCurve(from, next, config.lumen.curveStrength)
+        const connectionMaterial = wallMaterial.clone()
+        if (config.lumen.cues.enabled && config.lumen.cues.depthTintStrength > 0) {
+          connectionMaterial.color.lerp(
+            new THREE.Color(config.lumen.cues.depthTintColor),
+            Math.min(1, depth / 5) * config.lumen.cues.depthTintStrength,
+          )
+        }
         lumen!.add(
           new THREE.Mesh(
             taperedTubeGeometry(
@@ -767,9 +782,27 @@ export function createAnatomyController({
               config.lumen.tubularSegmentsPerConnection,
               config.lumen.radialSegments,
             ),
-            wallMaterial.clone(),
+            connectionMaterial,
           ),
         )
+
+        if (config.lumen.cues.enabled && config.lumen.cues.branchRims) {
+          const rim = new THREE.Mesh(
+            new THREE.TorusGeometry(
+              endRadius * (1 - config.lumen.cues.branchRimTubeRadiusRatio),
+              endRadius * config.lumen.cues.branchRimTubeRadiusRatio,
+              6,
+              20,
+            ),
+            branchRimMaterial.clone(),
+          )
+          rim.position.copy(curve.getPointAt(0.94))
+          rim.quaternion.setFromUnitVectors(
+            new THREE.Vector3(0, 0, 1),
+            curve.getTangentAt(0.94).normalize(),
+          )
+          lumen!.add(rim)
+        }
 
         const ringCount = from.lumen?.ringCount ?? 0
         for (let ringIndex = 1; ringIndex <= ringCount; ringIndex += 1) {
@@ -795,6 +828,7 @@ export function createAnatomyController({
     })
     wallMaterial.dispose()
     ringMaterial.dispose()
+    branchRimMaterial.dispose()
     scene.add(lumen)
   }
 

@@ -146,9 +146,12 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
 - [x] **P17-T03 — Movement budget**
   - Schema, reachable-subgraph filtering, moves-left UI and tests.
 
-- [ ] **P17-T04 — Visual cue upgrades**
+- [x] **P17-T04 — Visual cue upgrades**
   - Implement the cue changes agreed in the spike as configuration-driven lumen styling; verify
     performance at 375 × 812 under SwiftShader.
+  - The no-go fallback removed the need to make inside views carry Round 1. Default-off depth
+    tint and branch-rim cues remain enabled for the sanofi bounded-exploration round. The
+    production controller sustained 59.9 median fps over 120 samples under ANGLE SwiftShader.
 
 - [x] **P17-T05 — Neutral entry context**
   - Introduce `AnatomyEntryContext`; the case player provides it; all case-flow tests pass

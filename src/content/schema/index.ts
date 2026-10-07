@@ -479,6 +479,25 @@ export const appConfigSchema = z.object({
               maxFovDegrees: 64,
               step: 4,
             }),
+          cues: z
+            .strictObject({
+              enabled: z.boolean(),
+              depthTintColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+              depthTintStrength: z.number().min(0).max(1),
+              branchRims: z.boolean(),
+              branchRimColor: z.string().regex(/^#[0-9a-f]{6}$/i),
+              branchRimOpacity: z.number().positive().max(1),
+              branchRimTubeRadiusRatio: z.number().positive().max(0.25),
+            })
+            .default({
+              enabled: false,
+              depthTintColor: '#7f3b46',
+              depthTintStrength: 0.22,
+              branchRims: true,
+              branchRimColor: '#e4a197',
+              branchRimOpacity: 0.48,
+              branchRimTubeRadiusRatio: 0.04,
+            }),
           rings: z.strictObject({
             color: z.string().regex(/^#[0-9a-f]{6}$/i),
             opacity: z.number().positive().max(1),
@@ -577,6 +596,15 @@ export const appConfigSchema = z.object({
             minFovDegrees: 28,
             maxFovDegrees: 64,
             step: 4,
+          },
+          cues: {
+            enabled: false,
+            depthTintColor: '#7f3b46',
+            depthTintStrength: 0.22,
+            branchRims: true,
+            branchRimColor: '#e4a197',
+            branchRimOpacity: 0.48,
+            branchRimTubeRadiusRatio: 0.04,
           },
           rings: {
             color: '#d68b7f',

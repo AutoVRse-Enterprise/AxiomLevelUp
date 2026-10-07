@@ -321,6 +321,15 @@
                 "maxFovDegrees": 64,
                 "step": 4
               },
+              "cues": {
+                "enabled": false,
+                "depthTintColor": "#7f3b46",
+                "depthTintStrength": 0.22,
+                "branchRims": true,
+                "branchRimColor": "#e4a197",
+                "branchRimOpacity": 0.48,
+                "branchRimTubeRadiusRatio": 0.04
+              },
               "rings": {
                 "color": "#d68b7f",
                 "opacity": 0.45,
@@ -876,6 +885,59 @@
                   ],
                   "additionalProperties": false
                 },
+                "cues": {
+                  "default": {
+                    "enabled": false,
+                    "depthTintColor": "#7f3b46",
+                    "depthTintStrength": 0.22,
+                    "branchRims": true,
+                    "branchRimColor": "#e4a197",
+                    "branchRimOpacity": 0.48,
+                    "branchRimTubeRadiusRatio": 0.04
+                  },
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "depthTintColor": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "depthTintStrength": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "branchRims": {
+                      "type": "boolean"
+                    },
+                    "branchRimColor": {
+                      "type": "string",
+                      "pattern": "^#[0-9a-f]{6}$"
+                    },
+                    "branchRimOpacity": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 1
+                    },
+                    "branchRimTubeRadiusRatio": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 0.25
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "depthTintColor",
+                    "depthTintStrength",
+                    "branchRims",
+                    "branchRimColor",
+                    "branchRimOpacity",
+                    "branchRimTubeRadiusRatio"
+                  ],
+                  "additionalProperties": false
+                },
                 "rings": {
                   "type": "object",
                   "properties": {
@@ -926,6 +988,7 @@
                 "fog",
                 "lookAround",
                 "zoom",
+                "cues",
                 "rings"
               ],
               "additionalProperties": false

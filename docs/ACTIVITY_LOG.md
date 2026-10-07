@@ -3879,3 +3879,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** Both content roots validate with zero warnings; 36 focused tests pass;
   the sanofi lung asset is asserted identical to the default model contract.
 - **Follow-ups:** Implement default-off visual cue upgrades for bounded endoscopic exploration.
+
+### [2026-10-07 15:10] P17-T04 - Add bounded-exploration lumen cues
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added default-off depth tint and branch-rim lumen cues, enabled them only in the
+  sanofi product configuration, and added a repeatable production-controller SwiftShader audit.
+- **Files changed:** anatomy product schema/controller; sanofi app config;
+  `src/spikes/spatial-rounds/production*`; `scripts/spatial-cue-audit.ts`;
+  `docs/qa/evidence/phase-17/spatial-cue-performance.json`; tests and docs.
+- **Commands run:** Prettier; schema export; typecheck; content validation; focused Vitest;
+  production cue harness at 375 × 812 under Chromium ANGLE SwiftShader.
+- **Result/verification:** 96,152 model triangles; 59.9 median fps across 120 frame samples under
+  SwiftShader. Default configuration keeps cues and lumen FOV zoom disabled.
+- **Follow-ups:** Integrate Round 1's outside-in marker fallback with the game player.

@@ -1,9 +1,11 @@
 import defaultAssetsDocument from '../../public/content/assets.json'
+import defaultAppConfigDocument from '../../public/content/app-config.json'
 import gameMapDocument from '../../public/experiences/sanofi/content/anatomy/respiratory-game-map.json'
+import sanofiAppConfigDocument from '../../public/experiences/sanofi/content/app-config.json'
 import sanofiAssetsDocument from '../../public/experiences/sanofi/content/assets.json'
 import { describe, expect, it } from 'vitest'
 
-import { anatomyMapSchema, assetManifestSchema } from '@/content/schema'
+import { anatomyMapSchema, appConfigSchema, assetManifestSchema } from '@/content/schema'
 
 describe('respiratory game anatomy map', () => {
   const map = anatomyMapSchema.parse(gameMapDocument)
@@ -32,5 +34,14 @@ describe('respiratory game anatomy map', () => {
         expect(structures.get(answers.segment)?.parentId).toBe(answers.lobe)
       }
     }
+  })
+
+  it('enables lumen cues only for the game experience', () => {
+    expect(
+      appConfigSchema.parse(defaultAppConfigDocument).product.anatomy3d.lumen.cues.enabled,
+    ).toBe(false)
+    expect(
+      appConfigSchema.parse(sanofiAppConfigDocument).product.anatomy3d.lumen.cues.enabled,
+    ).toBe(true)
   })
 })

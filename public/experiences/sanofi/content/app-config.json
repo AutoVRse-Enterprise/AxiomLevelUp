@@ -30,6 +30,110 @@
       "sliceEventDebounceMs": 250,
       "tapMaxMovementPx": 8
     },
+    "anatomy3d": {
+      "pixelRatioCap": 1.5,
+      "maxTriangleCountWarning": 150000,
+      "cameraAnimationDurationMs": 650,
+      "viewEventDebounceMs": 250,
+      "tapMaxMovementPx": 8,
+      "flyThroughEasing": "ease_in_out",
+      "backgroundColor": "#050709",
+      "highlightColor": "#f6c453",
+      "highlightOpacity": 1,
+      "markerColor": "#f97316",
+      "volumeStyles": {
+        "color": "#38bdf8",
+        "opacity": 0.28,
+        "highlightColor": "#f6c453",
+        "highlightOpacity": 0.72,
+        "contextOpacity": 0.16,
+        "emissiveIntensity": 0.08,
+        "highlightEmissiveIntensity": 0.18,
+        "roughness": 0.62,
+        "metalness": 0,
+        "widthSegments": 24,
+        "heightSegments": 16
+      },
+      "volumeValidation": {
+        "ancestorFitTolerance": 0.05,
+        "sameLevelOverlapTolerance": 0.2
+      },
+      "findingStyles": {
+        "lumen_narrowing": {
+          "color": "#f59e0b",
+          "opacity": 0.9,
+          "maxRadiusReduction": 0.65,
+          "axialLengthRadiusMultiplier": 1.8
+        },
+        "lumen_occlusion": {
+          "color": "#d6b36a",
+          "opacity": 0.92,
+          "blobCount": 7,
+          "blobRadiusRatio": 0.42,
+          "spreadRadiusRatio": 0.28
+        },
+        "wall_thickening": {
+          "color": "#ef4444",
+          "opacity": 0.72,
+          "thicknessRadiusRatio": 0.18,
+          "axialLengthRadiusMultiplier": 1.5
+        },
+        "region": {
+          "color": "#f97316",
+          "opacity": 0.3,
+          "scale": 1.01
+        },
+        "pickRadiusRatio": 0.45
+      },
+      "lumen": {
+        "defaultRadius": 0.06,
+        "radialSegments": 20,
+        "tubularSegmentsPerConnection": 12,
+        "color": "#b7675c",
+        "opacity": 1,
+        "roughness": 0.8,
+        "curveStrength": 0.35,
+        "headlight": {
+          "color": "#fff4e8",
+          "intensity": 3.4,
+          "distanceRadiusMultiplier": 14
+        },
+        "fog": {
+          "color": "#3a1118",
+          "nearRadiusMultiplier": 3,
+          "farRadiusMultiplier": 24
+        },
+        "lookAround": {
+          "enabled": true,
+          "degreesPerPixel": 0.12,
+          "maxYawDegrees": 28,
+          "maxPitchDegrees": 18,
+          "keyboardStepDegrees": 4
+        },
+        "zoom": {
+          "enabled": true,
+          "minFovDegrees": 28,
+          "maxFovDegrees": 64,
+          "step": 4
+        },
+        "cues": {
+          "enabled": true,
+          "depthTintColor": "#7f3b46",
+          "depthTintStrength": 0.22,
+          "branchRims": true,
+          "branchRimColor": "#e4a197",
+          "branchRimOpacity": 0.48,
+          "branchRimTubeRadiusRatio": 0.04
+        },
+        "rings": {
+          "color": "#d68b7f",
+          "opacity": 0.55,
+          "tubeRadiusRatio": 0.06,
+          "radialSegments": 8,
+          "tubularSegments": 24
+        }
+      }
+    },
     "offline": {
       "downloadConcurrency": 3,
       "quotaSafetyMarginRatio": 0.1,

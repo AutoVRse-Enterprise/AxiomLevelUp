@@ -144,6 +144,15 @@ export interface AnatomyControllerConfig {
       maxFovDegrees: number
       step: number
     }
+    cues: {
+      enabled: boolean
+      depthTintColor: string
+      depthTintStrength: number
+      branchRims: boolean
+      branchRimColor: string
+      branchRimOpacity: number
+      branchRimTubeRadiusRatio: number
+    }
     rings: {
       color: string
       opacity: number
