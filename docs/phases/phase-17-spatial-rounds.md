@@ -150,7 +150,7 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
   - Implement the cue changes agreed in the spike as configuration-driven lumen styling; verify
     performance at 375 × 812 under SwiftShader.
 
-- [ ] **P17-T05 — Neutral entry context**
+- [x] **P17-T05 — Neutral entry context**
   - Introduce `AnatomyEntryContext`; the case player provides it; all case-flow tests pass
     unchanged.
 

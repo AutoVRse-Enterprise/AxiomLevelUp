@@ -2,6 +2,7 @@ import { Clock3, Info } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { AnatomyFindingProvider } from '@/anatomy3d/viewer/findingContext'
+import { AnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { Chip } from '@/components/ui'
 import type { AnatomyMap, AppConfig, CaseDocument, RecordedOpponent } from '@/content/schema'
 import {
@@ -27,6 +28,7 @@ import {
   updateCaseEvidencePins,
   type CaseEvidenceItem,
 } from '@/engines/cases/evidence'
+import { selectUnknownWaypoint } from '@/engines/cases/entry'
 import { buildCasePlan, stageForStep, type CasePlan } from '@/engines/cases/plan'
 import { normalizeCaseResponse } from '@/engines/cases/responses'
 import { calculateCaseScore } from '@/engines/cases/scoring'
@@ -338,9 +340,7 @@ function CompletionFlow({
   onComplete?: (result: CaseAttemptResult) => void
   onResetProgress: () => void
 }) {
-  const [view, setView] = useState<'results' | 'compare'>(
-    recordedOpponent ? 'compare' : 'results',
-  )
+  const [view, setView] = useState<'results' | 'compare'>(recordedOpponent ? 'compare' : 'results')
   const [evidenceAnchor, setEvidenceAnchor] = useState<string | null>(null)
   const result = useMemo(
     () => buildResult(caseDoc, context.plan as CasePlan, context.session, caseProgress, config),
@@ -431,6 +431,20 @@ export function CasePlayer({
         ? basePlan
         : buildCasePlan(caseDoc, config, { anatomyMap, seed: entrySeed }),
     [anatomyMap, basePlan, caseDoc, config, entrySeed],
+  )
+  const anatomyEntryContext = useMemo(
+    () =>
+      caseDoc.entry.mode === 'unknown_waypoint' && entrySeed !== undefined
+        ? {
+            entryWaypointId: selectUnknownWaypoint(caseDoc.entry, entrySeed) ?? undefined,
+            neutralNavigationLabels: true,
+            hideLocationLabels: true,
+          }
+        : {
+            neutralNavigationLabels: false,
+            hideLocationLabels: false,
+          },
+    [caseDoc.entry, entrySeed],
   )
   const [caseProgress, setCaseProgress] = useState<CaseProgress>(() =>
     normalizeCaseProgress({
@@ -811,198 +825,203 @@ export function CasePlayer({
 
   return (
     <AnatomyFindingProvider findingsByStepId={plan.findingsByStepId}>
-      <CaseReasoningProvider caseDoc={caseDoc} progress={caseProgress}>
-        <ActivityPlayer
-          plan={plan}
-          autoStartOrResume={autoStartOrResume}
-          previousAttempts={previousAttempts}
-          previousBestScore={previousBestScore}
-          continuePath={continuePath}
-          exitPath={exitPath}
-          pauseTiming={pauseTiming}
-          clueContext={{
-            clues: [...plan.clueMap.values()],
-            anatomyMap,
-            onReopenClue: (clueId) => presentClue(clueId, 'remediation'),
-          }}
-          onStarted={(resumed) => {
-            if (!resumed) {
-              attemptNumberRef.current += 1
-            } else {
-              entryHandled.current = true
-              if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
-            }
-            if (!walkthroughSeen) {
-              entryClueAfterWalkthrough.current = !resumed && caseDoc.entry.mode === 'clue_first'
-              setWalkthroughOpen(true)
-            } else if (!resumed) {
-              presentEntryClue()
-            }
-            emitEvent({
-              event: 'case_started',
-              caseId: caseDoc.id,
-              attempt: attemptNumberRef.current,
-              resumed,
-              tier: caseDoc.tier,
-            })
-          }}
-          onAttemptTimed={handleAttempt}
-          onStepBoundary={({ fromStepIndex, toStepIndex }) => {
-            setWorkspaceSegment('task')
-            const from = stageForStep(plan, fromStepIndex)
-            const to = toStepIndex === null ? null : stageForStep(plan, toStepIndex)
-            if (
-              from &&
-              from.stageId !== to?.stageId &&
-              !completedStageIds.current.has(from.stageId)
-            ) {
-              completedStageIds.current.add(from.stageId)
+      <AnatomyEntryContext.Provider value={anatomyEntryContext}>
+        <CaseReasoningProvider caseDoc={caseDoc} progress={caseProgress}>
+          <ActivityPlayer
+            plan={plan}
+            autoStartOrResume={autoStartOrResume}
+            previousAttempts={previousAttempts}
+            previousBestScore={previousBestScore}
+            continuePath={continuePath}
+            exitPath={exitPath}
+            pauseTiming={pauseTiming}
+            clueContext={{
+              clues: [...plan.clueMap.values()],
+              anatomyMap,
+              onReopenClue: (clueId) => presentClue(clueId, 'remediation'),
+            }}
+            onStarted={(resumed) => {
+              if (!resumed) {
+                attemptNumberRef.current += 1
+              } else {
+                entryHandled.current = true
+                if (attemptNumberRef.current === previousAttempts) attemptNumberRef.current += 1
+              }
+              if (!walkthroughSeen) {
+                entryClueAfterWalkthrough.current = !resumed && caseDoc.entry.mode === 'clue_first'
+                setWalkthroughOpen(true)
+              } else if (!resumed) {
+                presentEntryClue()
+              }
               emitEvent({
-                event: 'case_stage_completed',
+                event: 'case_started',
                 caseId: caseDoc.id,
-                stageId: from.stageId,
-                stageIndex: plan.stageBoundaries.findIndex(
-                  ({ stageId }) => stageId === from.stageId,
-                ),
+                attempt: attemptNumberRef.current,
+                resumed,
+                tier: caseDoc.tier,
               })
-            }
-            if (from?.stageId !== to?.stageId) {
-              setCluePresentation({ selectedClueId: null, presenterOpen: false })
-            }
-          }}
-          renderChrome={({ stepIndex, step, session }) => {
-            const stage = stageForStep(plan, stepIndex) ?? plan.stageBoundaries[0]!
-            const stageClues = stage.clueIds.flatMap((id) => {
-              const clue = plan.clueMap.get(id)
-              return clue ? [clue] : []
-            })
-            const stageIndex = plan.stageBoundaries.findIndex(
-              ({ stageId }) => stageId === stage.stageId,
-            )
-            const availableClueIds = [
-              ...new Set(
-                plan.stageBoundaries.slice(0, stageIndex + 1).flatMap(({ clueIds }) => clueIds),
-              ),
-            ]
-            const availableClues = availableClueIds.flatMap((id) => {
-              const clue = plan.clueMap.get(id)
-              return clue ? [clue] : []
-            })
-            const selected = cluePresentation.selectedClueId
-              ? plan.clueMap.get(cluePresentation.selectedClueId)
-              : undefined
-            const visibleClues =
-              selected && !availableClues.some(({ id }) => id === selected.id)
-                ? [...availableClues, selected]
-                : availableClues
-            const entryLocationRevealed =
-              caseDoc.entry.mode !== 'unknown_waypoint' ||
-              plan.steps.some(
-                ({ primitive }) =>
-                  primitive.type === 'anatomy_locate' &&
-                  (primitive.content as { answerFrom?: string }).answerFrom === 'entry' &&
-                  (session.progress[primitive.id]?.attempts ?? 0) > 0,
+            }}
+            onAttemptTimed={handleAttempt}
+            onStepBoundary={({ fromStepIndex, toStepIndex }) => {
+              setWorkspaceSegment('task')
+              const from = stageForStep(plan, fromStepIndex)
+              const to = toStepIndex === null ? null : stageForStep(plan, toStepIndex)
+              if (
+                from &&
+                from.stageId !== to?.stageId &&
+                !completedStageIds.current.has(from.stageId)
+              ) {
+                completedStageIds.current.add(from.stageId)
+                emitEvent({
+                  event: 'case_stage_completed',
+                  caseId: caseDoc.id,
+                  stageId: from.stageId,
+                  stageIndex: plan.stageBoundaries.findIndex(
+                    ({ stageId }) => stageId === from.stageId,
+                  ),
+                })
+              }
+              if (from?.stageId !== to?.stageId) {
+                setCluePresentation({ selectedClueId: null, presenterOpen: false })
+              }
+            }}
+            renderChrome={({ stepIndex, step, session }) => {
+              const stage = stageForStep(plan, stepIndex) ?? plan.stageBoundaries[0]!
+              const stageClues = stage.clueIds.flatMap((id) => {
+                const clue = plan.clueMap.get(id)
+                return clue ? [clue] : []
+              })
+              const stageIndex = plan.stageBoundaries.findIndex(
+                ({ stageId }) => stageId === stage.stageId,
               )
-            const commonClueProps = {
-              clues: visibleClues,
-              caseClueCount: caseDoc.clues.length,
-              availableClueCount: stageClues.length,
-              categoryLabels,
-              openedClueIds: caseProgress.openedClueIds,
-              reviewedClueIds: caseProgress.reviewedClueIds.filter((id) => plan.clueMap.has(id)),
-              selectedClueId: cluePresentation.selectedClueId,
-              presenterOpen: cluePresentation.presenterOpen,
-              labelEssentialClues: plan.tierPreset.labelEssentialClues,
-              relevantClueIds: step.primitive.clueIds,
-              optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
-              optionalClueConfirmationAcknowledged,
-              clueReview: caseLab.clueReview,
-              onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
-              onOpenNoteClue: (clueId: string) => presentClue(clueId, 'remediation'),
-              onReviewClue: markClueReviewed,
-              onOptionalClueConfirmation: () => setOptionalClueConfirmationAcknowledged(true),
-              onPresenterOpenChange: (presenterOpen: boolean) =>
-                setCluePresentation((current) => ({ ...current, presenterOpen })),
-            }
-            return {
-              header: (
-                <div className="space-y-3">
-                  <StageHeader
-                    stages={plan.stageBoundaries}
-                    currentStage={stage}
-                    onShowWalkthrough={showWalkthrough}
-                    clock={
-                      <CaseClock
-                        mode={plan.tierPreset.timing}
-                        maximumMs={
-                          plan.tierPreset.timing === 'countdown' && caseDoc.timing
-                            ? caseDoc.timing.caseMaxSeconds * 1_000
-                            : null
-                        }
-                        paused={pauseTiming}
-                        progress={caseProgress}
-                        onProgress={persistProgress}
-                      />
-                    }
-                  />
-                  <PatientTimeline caseDoc={caseDoc} currentStageIndex={stageIndex} />
-                  <StageBanner stage={stage} />
-                </div>
-              ),
-              taskNotice:
-                step.scored &&
-                !plan.steps.some(
-                  ({ primitive, scored }) =>
-                    scored && (session.progress[primitive.id]?.attempts ?? 0) > 0,
-                ) ? (
-                  <div
-                    className="mb-3 flex gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-small text-brand-950"
-                    role="note"
-                  >
-                    <Info aria-hidden="true" className="mt-0.5 shrink-0" size={17} />
-                    <p>
-                      <strong>Your first answer is scored;</strong> retries are for learning.
-                    </p>
+              const availableClueIds = [
+                ...new Set(
+                  plan.stageBoundaries.slice(0, stageIndex + 1).flatMap(({ clueIds }) => clueIds),
+                ),
+              ]
+              const availableClues = availableClueIds.flatMap((id) => {
+                const clue = plan.clueMap.get(id)
+                return clue ? [clue] : []
+              })
+              const selected = cluePresentation.selectedClueId
+                ? plan.clueMap.get(cluePresentation.selectedClueId)
+                : undefined
+              const visibleClues =
+                selected && !availableClues.some(({ id }) => id === selected.id)
+                  ? [...availableClues, selected]
+                  : availableClues
+              const entryLocationRevealed =
+                caseDoc.entry.mode !== 'unknown_waypoint' ||
+                plan.steps.some(
+                  ({ primitive }) =>
+                    primitive.type === 'anatomy_locate' &&
+                    (primitive.content as { answerFrom?: string }).answerFrom === 'entry' &&
+                    (session.progress[primitive.id]?.attempts ?? 0) > 0,
+                )
+              const commonClueProps = {
+                clues: visibleClues,
+                caseClueCount: caseDoc.clues.length,
+                availableClueCount: stageClues.length,
+                categoryLabels,
+                openedClueIds: caseProgress.openedClueIds,
+                reviewedClueIds: caseProgress.reviewedClueIds.filter((id) => plan.clueMap.has(id)),
+                selectedClueId: cluePresentation.selectedClueId,
+                presenterOpen: cluePresentation.presenterOpen,
+                labelEssentialClues: plan.tierPreset.labelEssentialClues,
+                relevantClueIds: step.primitive.clueIds,
+                optionalClueCost: caseLab.scoring.cluePenalty.perOptionalClue,
+                optionalClueConfirmationAcknowledged,
+                clueReview: caseLab.clueReview,
+                onPresentClue: (clueId: string) => presentClue(clueId, 'browse'),
+                onOpenNoteClue: (clueId: string) => presentClue(clueId, 'remediation'),
+                onReviewClue: markClueReviewed,
+                onOptionalClueConfirmation: () => setOptionalClueConfirmationAcknowledged(true),
+                onPresenterOpenChange: (presenterOpen: boolean) =>
+                  setCluePresentation((current) => ({ ...current, presenterOpen })),
+              }
+              return {
+                header: (
+                  <div className="space-y-3">
+                    <StageHeader
+                      stages={plan.stageBoundaries}
+                      currentStage={stage}
+                      onShowWalkthrough={showWalkthrough}
+                      clock={
+                        <CaseClock
+                          mode={plan.tierPreset.timing}
+                          maximumMs={
+                            plan.tierPreset.timing === 'countdown' && caseDoc.timing
+                              ? caseDoc.timing.caseMaxSeconds * 1_000
+                              : null
+                          }
+                          paused={pauseTiming}
+                          progress={caseProgress}
+                          onProgress={persistProgress}
+                        />
+                      }
+                    />
+                    <PatientTimeline caseDoc={caseDoc} currentStageIndex={stageIndex} />
+                    <StageBanner stage={stage} />
                   </div>
-                ) : null,
-              aside: <ClueBoard {...commonClueProps} variant="panel" />,
-              notes: (
-                <CaseNotes
-                  caseDoc={caseDoc}
-                  progress={caseProgress}
-                  availableClueIds={availableClueIds}
-                  inspectedFindingIds={selectInspectedFindingIds(session)}
-                  currentLocationLabel={
-                    entryLocationRevealed
-                      ? resolveCaseLocationLabel(anatomyMap, caseProgress.evidence.currentLocation)
-                      : 'Hidden until you commit your localisation.'
-                  }
-                  onOpenClue={(clueId) => presentClue(clueId, 'remediation')}
-                  onPinChange={updateEvidencePin}
-                  onHypothesisChange={updateHypothesis}
-                />
-              ),
-              evidenceAnnouncement: `${stageClues.length} evidence ${
-                stageClues.length === 1 ? 'item is' : 'items are'
-              } available in ${stage.title}.`,
-              workspaceSegment,
-              onWorkspaceSegmentChange: setWorkspaceSegment,
-            }
-          }}
-          renderCompletion={(context) => (
-            <CompletionFlow
-              context={context}
-              caseDoc={caseDoc}
-              config={config}
-              caseProgress={caseProgress}
-              attemptHistory={attemptHistory}
-              recordedOpponent={recordedOpponent}
-              onComplete={notifyComplete}
-              onResetProgress={resetProgress}
-            />
-          )}
-        />
-      </CaseReasoningProvider>
+                ),
+                taskNotice:
+                  step.scored &&
+                  !plan.steps.some(
+                    ({ primitive, scored }) =>
+                      scored && (session.progress[primitive.id]?.attempts ?? 0) > 0,
+                  ) ? (
+                    <div
+                      className="mb-3 flex gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-small text-brand-950"
+                      role="note"
+                    >
+                      <Info aria-hidden="true" className="mt-0.5 shrink-0" size={17} />
+                      <p>
+                        <strong>Your first answer is scored;</strong> retries are for learning.
+                      </p>
+                    </div>
+                  ) : null,
+                aside: <ClueBoard {...commonClueProps} variant="panel" />,
+                notes: (
+                  <CaseNotes
+                    caseDoc={caseDoc}
+                    progress={caseProgress}
+                    availableClueIds={availableClueIds}
+                    inspectedFindingIds={selectInspectedFindingIds(session)}
+                    currentLocationLabel={
+                      entryLocationRevealed
+                        ? resolveCaseLocationLabel(
+                            anatomyMap,
+                            caseProgress.evidence.currentLocation,
+                          )
+                        : 'Hidden until you commit your localisation.'
+                    }
+                    onOpenClue={(clueId) => presentClue(clueId, 'remediation')}
+                    onPinChange={updateEvidencePin}
+                    onHypothesisChange={updateHypothesis}
+                  />
+                ),
+                evidenceAnnouncement: `${stageClues.length} evidence ${
+                  stageClues.length === 1 ? 'item is' : 'items are'
+                } available in ${stage.title}.`,
+                workspaceSegment,
+                onWorkspaceSegmentChange: setWorkspaceSegment,
+              }
+            }}
+            renderCompletion={(context) => (
+              <CompletionFlow
+                context={context}
+                caseDoc={caseDoc}
+                config={config}
+                caseProgress={caseProgress}
+                attemptHistory={attemptHistory}
+                recordedOpponent={recordedOpponent}
+                onComplete={notifyComplete}
+                onResetProgress={resetProgress}
+              />
+            )}
+          />
+        </CaseReasoningProvider>
+      </AnatomyEntryContext.Provider>
       <CaseWalkthrough open={walkthroughOpen} onClose={closeWalkthrough} />
     </AnatomyFindingProvider>
   )

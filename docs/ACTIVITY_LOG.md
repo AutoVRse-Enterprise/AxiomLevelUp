@@ -3849,3 +3849,17 @@ README.md`; `git diff --check`.
 - **Result/verification:** Movement helpers and viewer behavior pass unit/component coverage;
   existing anatomy and content tests remain green.
 - **Follow-ups:** Decouple anatomy entry concealment from the case player.
+
+### [2026-10-07 14:25] P17-T05 - Add neutral anatomy entry context
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a shared anatomy entry context and moved neutral-label/location-concealment
+  decisions out of anatomy primitives' direct case dependency. The case player now provides the
+  seeded unknown entry through that neutral boundary.
+- **Files changed:** `src/anatomy3d/viewer/entryContext.ts`;
+  `src/primitives/components/{AnatomyExplorePrimitive,AnatomyLocatePrimitive}.tsx`;
+  `src/player/case/CasePlayer.tsx`; phase/activity docs.
+- **Commands run:** Prettier; focused case-flow and anatomy primitive Vitest.
+- **Result/verification:** 34 focused tests pass; case evidence keeps its case-specific reasoning
+  context while reusable anatomy primitives no longer import it.
+- **Follow-ups:** Author and validate the game-specific respiratory anatomy map.

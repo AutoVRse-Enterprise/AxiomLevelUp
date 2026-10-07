@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
+import { useAnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { useStepFindings } from '@/anatomy3d/viewer/findingContext'
 import type { AnatomyViewState } from '@/anatomy3d/viewer/controller'
 import type { AnatomyExplorePrimitive as AnatomyExplorePrimitiveContent } from '@/content/schema/primitives'
-import { useCaseReasoningContext } from '@/player/case/caseReasoningContext'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
 import type { AnatomyExploreObservation } from '@/primitives/definitions/anatomy'
 import type { PrimitiveComponentProps, PrimitiveInteraction } from '@/primitives/types'
@@ -49,9 +49,9 @@ export function AnatomyExplorePrimitive({
   onInteract,
 }: PrimitiveComponentProps<AnatomyExplorePrimitiveContent>) {
   const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
-  const caseContext = useCaseReasoningContext()
+  const entryContext = useAnatomyEntryContext()
   const findings = useStepFindings(primitive.id)
-  const unknownEntry = caseContext?.caseDoc.entry.mode === 'unknown_waypoint'
+  const unknownEntry = entryContext.neutralNavigationLabels || entryContext.hideLocationLabels
   const [observation, setObservation] = useState(() => initialObservation(draft))
   const observationRef = useRef(observation)
   const sequence = useRef(observation.interactionCount)
@@ -135,8 +135,8 @@ export function AnatomyExplorePrimitive({
       }
       navigation={primitive.content.navigation}
       orientationLabels={primitive.content.orientationLabels}
-      neutralNavigationLabels={unknownEntry}
-      hideLocationLabels={unknownEntry}
+      neutralNavigationLabels={entryContext.neutralNavigationLabels}
+      hideLocationLabels={entryContext.hideLocationLabels}
       prompt={primitive.content.prompt}
       selectedStructureIds={observation.selectedStructureIds}
       startView={

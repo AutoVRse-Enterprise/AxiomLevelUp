@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { AnatomyViewer } from '@/anatomy3d/viewer/AnatomyViewer'
+import { useAnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { useStepFindings } from '@/anatomy3d/viewer/findingContext'
 import { Button } from '@/components/ui'
 import type {
@@ -10,7 +11,6 @@ import type {
 import { useAsset } from '@/content/useAssetUrl'
 import { useAnatomyPrimitiveContext } from '@/primitives/components/anatomyUtils'
 import { StepActionSlot } from '@/player/StepActionSlot'
-import { useCaseReasoningContext } from '@/player/case/caseReasoningContext'
 import { ChoiceList } from '@/primitives/shared/ChoiceList'
 import { ImageRegionOverlay } from '@/primitives/shared/ImageRegionOverlay'
 import { ReviewMark } from '@/primitives/shared/ReviewMark'
@@ -167,7 +167,7 @@ export function AnatomyLocatePrimitive({
 }: PrimitiveComponentProps<AnatomyLocatePrimitiveContent>) {
   const { labels } = usePresentation()
   const { appConfig, map, modelUrl } = useAnatomyPrimitiveContext(primitive)
-  const caseContext = useCaseReasoningContext()
+  const entryContext = useAnatomyEntryContext()
   const findings = useStepFindings(primitive.id)
   const initial = readSelections(mode === 'review' ? review?.response : draft)
   const [selections, setSelections] = useState<Selections>(initial)
@@ -180,7 +180,7 @@ export function AnatomyLocatePrimitive({
   const readOnly = disabled || mode === 'review'
   const unknownEntry =
     primitive.content.answerFrom === 'entry' &&
-    caseContext?.caseDoc.entry.mode === 'unknown_waypoint'
+    (entryContext.neutralNavigationLabels || entryContext.hideLocationLabels)
 
   const select = (level: AnatomyLocateLevel, selectionId: string) => {
     if (readOnly) return
@@ -221,8 +221,12 @@ export function AnatomyLocatePrimitive({
             }
             navigation={primitive.content.navigation}
             orientationLabels={primitive.content.orientationLabels}
-            neutralNavigationLabels={unknownEntry && mode === 'interactive'}
-            hideLocationLabels={unknownEntry && mode === 'interactive'}
+            neutralNavigationLabels={
+              unknownEntry && mode === 'interactive' && entryContext.neutralNavigationLabels
+            }
+            hideLocationLabels={
+              unknownEntry && mode === 'interactive' && entryContext.hideLocationLabels
+            }
             prompt={levelLabel}
             selectableLevelIds={[level.levelId]}
             selectedStructureIds={
