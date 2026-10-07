@@ -165,7 +165,7 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
   - Following the P17-T01 no-go, the scene uses the documented outside-in waypoint marker with
     orbit/zoom rather than an ambiguous inside-airway drop.
 
-- [ ] **P17-T08 — Round 2 content, pin drop and reveal**
+- [x] **P17-T08 — Round 2 content, pin drop and reveal**
   - Author at least two `spatial_explore` rounds; implement the pin-versus-actual reveal.
 
 - [ ] **P17-T09 — Failure policy and mobile drawer**

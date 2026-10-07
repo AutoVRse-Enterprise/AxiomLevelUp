@@ -327,6 +327,44 @@ describe('game run planning', () => {
     expect(planned.paidClueIds).toEqual(['image'])
   })
 
+  it('applies spatial exploration drop and difficulty movement overrides', () => {
+    const baseRound = spatialRound('explore')
+    const exploreRound = roundDocumentSchema.parse({
+      ...baseRound,
+      mechanic: 'spatial_explore',
+      explore: {
+        id: 'scene',
+        type: 'anatomy_explore',
+        content: {
+          anatomyMapId: 'airway-map',
+          prompt: 'Explore.',
+          navigation: 'flythrough',
+          startView: { mode: 'endoscopic', waypointId: 'left-drop' },
+          movement: { maxMoves: 5, maxHopsFromEntry: 2, freeBacktrack: true },
+        },
+      },
+      difficulty: {
+        expert: {
+          maxMoves: 1,
+          maxHopsFromEntry: 1,
+          orientationLabels: 'hidden',
+        },
+      },
+    })
+    const planned = planRun({
+      game: game([{ id: 'location', pool: ['explore'], pick: 1 }]),
+      registry: registry([exploreRound]),
+      difficultyId: 'expert',
+      seed: 2,
+    }).rounds[0]!
+
+    expect(planned.explore?.content).toMatchObject({
+      startView: { mode: 'endoscopic', waypointId: planned.dropWaypointId },
+      movement: { maxMoves: 1, maxHopsFromEntry: 1, freeBacktrack: true },
+      orientationLabels: 'hidden',
+    })
+  })
+
   it('rejects unknown difficulties, maps, and drop waypoints with useful errors', () => {
     const selectedGame = game([{ id: 'location', pool: ['spatial'], pick: 1 }])
     expect(() =>

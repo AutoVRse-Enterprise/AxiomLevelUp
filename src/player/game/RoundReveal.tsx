@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 
 import { announcePresentation } from '@/components/feedback/PresentationAnnouncer'
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
@@ -18,6 +18,7 @@ export function RoundReveal({
   lastRound,
   onNext,
   answerDimensions = [],
+  children,
 }: {
   view: RoundRevealViewModel
   total: number
@@ -26,6 +27,7 @@ export function RoundReveal({
   lastRound: boolean
   onNext: () => void
   answerDimensions?: readonly AnswerDimensionLabel[]
+  children?: ReactNode
 }) {
   const heading = useRef<HTMLHeadingElement>(null)
   const outcome = view.outcome === 'correct' ? copy.correct : copy.incorrect
@@ -55,6 +57,7 @@ export function RoundReveal({
             ))}
           </dl>
         ) : null}
+        {children}
         <dl className="mt-6 grid gap-2 border-t pt-5">
           <div className="flex justify-between">
             <dt>{copy.basePoints}</dt>

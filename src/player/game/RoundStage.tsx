@@ -12,6 +12,8 @@ export function RoundStage({
   roundSession,
   copy,
   onDraftChange,
+  onExploreDraftChange,
+  onRoundStepChange,
   onSubmit,
   onClueReveal,
   onConfirmOpenChange,
@@ -23,6 +25,8 @@ export function RoundStage({
   roundSession: GameRoundSession
   copy: NonNullable<GameConfig['copy']>
   onDraftChange: (draft: unknown) => void
+  onExploreDraftChange: (draft: unknown) => void
+  onRoundStepChange: (step: 'explore' | 'answer') => void
   onSubmit: (response: unknown) => void
   onClueReveal: (clueId: string) => void
   onConfirmOpenChange: (open: boolean) => void
@@ -39,8 +43,10 @@ export function RoundStage({
         copy={copy}
         disabled={disabled}
         onDraftChange={onDraftChange}
+        onExploreDraftChange={onExploreDraftChange}
         onInteract={onInteract}
         onSubmit={onSubmit}
+        onRoundStepChange={onRoundStepChange}
         plannedRound={plannedRound}
         round={round}
         roundSession={roundSession}

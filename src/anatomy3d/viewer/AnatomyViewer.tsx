@@ -37,6 +37,10 @@ export interface AnatomyViewerProps {
   disabled?: boolean
   startView?: AnatomyStartView
   selectedStructureIds?: readonly string[]
+  comparison?: {
+    guessStructureIds: readonly string[]
+    actualStructureIds: readonly string[]
+  }
   selectableLevelIds?: readonly string[]
   markerStructureId?: string | null
   findings?: readonly CaseFinding[]
@@ -67,6 +71,7 @@ export function AnatomyViewer({
   disabled = false,
   startView,
   selectedStructureIds,
+  comparison,
   selectableLevelIds,
   markerStructureId,
   findings = [],
@@ -131,11 +136,26 @@ export function AnatomyViewer({
   })
 
   useEffect(() => {
+    if (comparison) {
+      controller?.highlightGroups([
+        { ids: comparison.guessStructureIds, style: config.comparisonStyles.guess },
+        { ids: comparison.actualStructureIds, style: config.comparisonStyles.actual },
+      ])
+      return
+    }
     controller?.highlight(selection, {
       color: config.highlightColor,
       opacity: config.highlightOpacity,
     })
-  }, [config.highlightColor, config.highlightOpacity, controller, selection])
+  }, [
+    comparison,
+    config.comparisonStyles.actual,
+    config.comparisonStyles.guess,
+    config.highlightColor,
+    config.highlightOpacity,
+    controller,
+    selection,
+  ])
 
   useEffect(() => {
     if (startView?.mode === 'waypoint_marker') {
@@ -168,6 +188,14 @@ export function AnatomyViewer({
     // The IDs are derived from this stable level key and the validated anatomy map.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controller, map, motion, selectableLevelKey, state.status])
+
+  useEffect(() => {
+    if (!controller || state.status !== 'ready' || !comparison) return
+    controller.frameStructures(
+      [...comparison.guessStructureIds, ...comparison.actualStructureIds],
+      { animate: motion === 'full' },
+    )
+  }, [comparison, controller, motion, state.status])
 
   useEffect(() => {
     if (import.meta.env.VITE_E2E !== 'true' || !controller) return

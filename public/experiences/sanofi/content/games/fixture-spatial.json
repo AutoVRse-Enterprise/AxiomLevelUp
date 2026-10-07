@@ -5,15 +5,20 @@
   "title": "Spatial Challenge Fixture",
   "tagline": "Look, locate and lock in.",
   "organSystem": "respiratory",
-  "estimatedSeconds": 60,
+  "estimatedSeconds": 150,
   "slots": [
     {
       "id": "look",
       "pool": ["airway-drop-look"],
       "pick": 1
+    },
+    {
+      "id": "explore",
+      "pool": ["airway-explore-lower", "airway-explore-upper"],
+      "pick": 1
     }
   ],
   "difficulties": ["warmup", "challenge", "expert"],
   "defaultDifficulty": "challenge",
-  "durationWindowSeconds": { "min": 30, "max": 120 }
+  "durationWindowSeconds": { "min": 90, "max": 240 }
 }

@@ -36,6 +36,8 @@ export interface GameRoundSession {
   revealedAt: string | null
   revealedClueIds: string[]
   draft: unknown
+  exploreDraft?: unknown
+  roundStep?: 'explore' | 'answer'
   response: unknown
   elapsedMs: number | null
   elapsedCheckpointMs?: number
@@ -63,6 +65,8 @@ export type GameSessionAction =
   | { type: 'roundStarted'; at: string }
   | { type: 'clueRevealed'; clueId: string }
   | { type: 'draftChanged'; draft: unknown }
+  | { type: 'exploreDraftChanged'; draft: unknown }
+  | { type: 'roundStepChanged'; step: 'explore' | 'answer' }
   | { type: 'checkpoint'; elapsedMs: number }
   | { type: 'paused'; elapsedMs: number }
   | { type: 'submitted'; at: string; response: unknown; elapsedMs: number }
@@ -78,6 +82,8 @@ function createRoundSession(): GameRoundSession {
     revealedAt: null,
     revealedClueIds: [],
     draft: null,
+    exploreDraft: null,
+    roundStep: 'explore',
     response: null,
     elapsedMs: null,
     elapsedCheckpointMs: 0,
@@ -172,6 +178,14 @@ export function gameSessionReducer(state: GameSession, action: GameSessionAction
     case 'draftChanged':
       if (state.phase !== 'playing') return state
       return updateCurrentRound(state, (round) => ({ ...round, draft: action.draft }))
+
+    case 'exploreDraftChanged':
+      if (state.phase !== 'playing') return state
+      return updateCurrentRound(state, (round) => ({ ...round, exploreDraft: action.draft }))
+
+    case 'roundStepChanged':
+      if (state.phase !== 'playing') return state
+      return updateCurrentRound(state, (round) => ({ ...round, roundStep: action.step }))
 
     case 'checkpoint':
       if (state.phase !== 'playing' || !validElapsedMs(action.elapsedMs)) return state

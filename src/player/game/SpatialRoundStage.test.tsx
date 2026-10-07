@@ -28,19 +28,22 @@ const copy = {
   openAnswerDrawer: 'I know where I am',
   answerDrawerTitle: 'Choose your location',
   backToScene: 'Back to view',
+  backToAirway: 'Back to airway',
 } as NonNullable<GameConfig['copy']>
 
 describe('SpatialRoundStage', () => {
-  it('keeps the scene mounted while opening and submitting the answer drawer', async () => {
+  it('requests the answer step while keeping the scene mounted', async () => {
     const user = userEvent.setup()
-    const onSubmit = vi.fn()
+    const onRoundStepChange = vi.fn()
     render(
       <SpatialRoundStage
         copy={copy}
         disabled={false}
         onDraftChange={vi.fn()}
+        onExploreDraftChange={vi.fn()}
         onInteract={vi.fn()}
-        onSubmit={onSubmit}
+        onRoundStepChange={onRoundStepChange}
+        onSubmit={vi.fn()}
         plannedRound={
           {
             primitive: { id: 'answer', type: 'anatomy_locate', content: {} },
@@ -48,15 +51,47 @@ describe('SpatialRoundStage', () => {
           } as unknown as PlannedRound
         }
         round={{ title: 'Where are you?' } as RoundDocument}
-        roundSession={{ draft: null } as GameRoundSession}
+        roundSession={{ draft: null, exploreDraft: null, roundStep: 'explore' } as GameRoundSession}
       />,
     )
 
     expect(screen.getByTestId('scene')).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'I know where I am' }))
-    expect(screen.getByTestId('scene')).toBeVisible()
-    expect(screen.getByLabelText('Choose your location')).toBeVisible()
-    await user.click(screen.getByRole('button', { name: 'Submit answer' }))
-    expect(onSubmit).toHaveBeenCalledWith({ side: 'right' })
+    expect(onRoundStepChange).toHaveBeenCalledWith('answer')
+  })
+
+  it('replaces the airway scene with the pin answer and can return without losing draft', async () => {
+    const user = userEvent.setup()
+    const onRoundStepChange = vi.fn()
+    render(
+      <SpatialRoundStage
+        copy={copy}
+        disabled={false}
+        onDraftChange={vi.fn()}
+        onExploreDraftChange={vi.fn()}
+        onInteract={vi.fn()}
+        onRoundStepChange={onRoundStepChange}
+        onSubmit={vi.fn()}
+        plannedRound={
+          {
+            primitive: { id: 'answer', type: 'anatomy_locate', content: {} },
+            explore: { id: 'scene', type: 'anatomy_explore', content: {} },
+          } as unknown as PlannedRound
+        }
+        round={{ title: 'Find your way', mechanic: 'spatial_explore' } as RoundDocument}
+        roundSession={
+          {
+            draft: null,
+            exploreDraft: { movesUsed: 2 },
+            roundStep: 'answer',
+          } as GameRoundSession
+        }
+      />,
+    )
+
+    expect(screen.queryByTestId('scene')).not.toBeInTheDocument()
+    expect(screen.getByTestId('answer')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Back to airway' }))
+    expect(onRoundStepChange).toHaveBeenCalledWith('explore')
   })
 })

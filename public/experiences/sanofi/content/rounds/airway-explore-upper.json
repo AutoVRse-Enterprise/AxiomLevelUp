@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "airway-explore-upper",
+  "title": "Find your way: upper airway",
+  "mechanic": "spatial_explore",
+  "anatomyMapId": "respiratory-game-map",
+  "intro": "Explore the nearby airway branches. When you are ready, pin the lobe and choose its segment.",
+  "timeLimitSeconds": 75,
+  "drop": {
+    "pools": {
+      "warmup": ["right-upper-apical-airway", "right-upper-anterior-airway", "left-upper-apicoposterior-airway", "left-upper-anterior-airway"],
+      "challenge": ["right-upper-apical-airway", "right-upper-anterior-airway", "left-upper-apicoposterior-airway", "left-upper-anterior-airway"],
+      "expert": ["right-upper-apical-airway", "left-upper-apicoposterior-airway"]
+    }
+  },
+  "explore": {
+    "id": "upper-airway-scene",
+    "type": "anatomy_explore",
+    "content": {
+      "anatomyMapId": "respiratory-game-map",
+      "prompt": "Use the nearby branch pattern to orient yourself.",
+      "startView": { "mode": "endoscopic", "waypointId": "right-upper-apical-airway" },
+      "navigation": "flythrough",
+      "orientationLabels": "patient",
+      "movement": { "maxMoves": 5, "maxHopsFromEntry": 2, "freeBacktrack": true }
+    },
+    "completion": { "mode": "minimum_interactions", "count": 1 }
+  },
+  "primitive": {
+    "id": "upper-airway-pin",
+    "type": "anatomy_locate",
+    "content": {
+      "anatomyMapId": "respiratory-game-map",
+      "prompt": "Pin the lobe, then choose its segment.",
+      "answerFrom": "entry",
+      "navigation": "orbit",
+      "levels": [
+        { "levelId": "lobe", "input": "model", "weight": 0.55, "targetStructureId": "right-upper-lobe" },
+        { "levelId": "segment", "input": "structure_choice", "parentLevelId": "lobe", "weight": 0.45, "targetStructureId": "right-upper-apical-segment" }
+      ],
+      "explanation": "Upper-airway orientation comes from the upward course and the apical or anterior branch direction."
+    },
+    "completion": { "mode": "answer" }
+  },
+  "feedback": {
+    "correct": "The upward airway course and branch direction were the key clues.",
+    "incorrect": "Use the upper-lobe course first, then compare the apical and anterior branch direction.",
+    "answerTemplate": "Actual location: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 90, "maxMoves": 5, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
+    "challenge": { "timeLimitSeconds": 75, "maxMoves": 3, "maxHopsFromEntry": 2, "orientationLabels": "hidden" },
+    "expert": { "timeLimitSeconds": 55, "maxMoves": 2, "maxHopsFromEntry": 1, "orientationLabels": "hidden" }
+  }
+}

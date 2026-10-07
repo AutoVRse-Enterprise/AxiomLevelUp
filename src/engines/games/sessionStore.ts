@@ -29,7 +29,16 @@ export const useGameSessionStore = create<GameSessionStore>()(
           sessionMatchesGame(current, gameId, gameVersion) &&
           isIncompleteGameSession(current)
         ) {
-          return current
+          const normalized = {
+            ...current,
+            rounds: current.rounds.map((round) => ({
+              ...round,
+              roundStep: round.roundStep ?? ('explore' as const),
+              exploreDraft: round.exploreDraft ?? null,
+            })),
+          }
+          if (normalized !== current) set({ session: normalized })
+          return normalized
         }
         if (current) set({ session: null })
         return null

@@ -3908,3 +3908,17 @@ README.md`; `git diff --check`.
   labels, opens the location answer surface without unmounting the scene and validates with zero
   content warnings.
 - **Follow-ups:** Add persisted explore/answer steps, pin selection and comparison reveal.
+
+### [2026-10-07 16:00] P17-T08 - Deliver bounded exploration and pin reveal
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added persisted explore/answer steps and exploration drafts, authored upper/lower
+  bounded-airway rounds, wired difficulty movement overrides, and implemented lobe pin plus
+  dynamic child-segment choice. Added independent guess/actual highlight groups, joint camera
+  framing and a comparison reveal.
+- **Files changed:** game session/store/planner/player; anatomy viewer/controller; `PinReveal` and
+  spatial-stage tests; two sanofi exploration rounds, fixture/manifest/copy; schemas and docs.
+- **Commands run:** Prettier; schema export; typecheck; content validation; focused Vitest.
+- **Result/verification:** Five sanofi rounds and three games validate with zero warnings;
+  movement draft/step, comparison framing and pin reveal have focused coverage.
+- **Follow-ups:** Add viewer failure Retry/Skip, skipped result semantics, hint and prefetch.

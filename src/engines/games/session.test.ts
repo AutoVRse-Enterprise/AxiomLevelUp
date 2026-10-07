@@ -183,4 +183,30 @@ describe('game session reducer', () => {
       checkpointed,
     )
   })
+
+  it('checkpoints the spatial scene draft and answer transition', () => {
+    const playing = reduce(
+      createGameSession(plan),
+      { type: 'start', runId: 'run-spatial', at: 'start' },
+      { type: 'roundStarted', at: 'round-start' },
+      {
+        type: 'exploreDraftChanged',
+        draft: {
+          currentWaypointId: 'branch-b',
+          visitedWaypointIds: ['entry', 'branch-b'],
+          movesUsed: 1,
+        },
+      },
+      { type: 'roundStepChanged', step: 'answer' },
+    )
+
+    expect(playing.rounds[0]).toMatchObject({
+      roundStep: 'answer',
+      exploreDraft: {
+        currentWaypointId: 'branch-b',
+        visitedWaypointIds: ['entry', 'branch-b'],
+        movesUsed: 1,
+      },
+    })
+  })
 })

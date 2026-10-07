@@ -7,6 +7,7 @@ import { isVolumeStructure, type AnatomyMap } from '@/content/schema/anatomyMap'
 import type { CaseFinding } from '@/content/schema/case'
 import type {
   AnatomyControllerConfig,
+  AnatomyHighlightGroup,
   AnatomyHighlightStyle,
   AnatomyLoadResult,
   AnatomyProjectedScreenPoint,
@@ -237,11 +238,7 @@ export function createAnatomyController({
   const findingObjects = new Map<string, THREE.Group>()
   const volumeObjects = new Map<string, THREE.Mesh>()
   let selectableLevelIds: readonly string[] | undefined
-  let highlightedStructureIds: readonly string[] = []
-  let highlightStyle: AnatomyHighlightStyle = {
-    color: config.highlightColor,
-    opacity: config.highlightOpacity,
-  }
+  let highlightGroups: readonly AnatomyHighlightGroup[] = []
   let overviewPosition = new THREE.Vector3(0, 0, 5)
   let overviewTarget = new THREE.Vector3()
   let overviewNear = camera.near
@@ -471,32 +468,34 @@ export function createAnatomyController({
       })
     }
 
-    highlightedStructureIds.forEach((id) => {
-      meshForStructure(id).forEach((mesh) => {
-        materialsOf(mesh).forEach((material) => {
-          const candidate = material as THREE.Material & {
-            color?: THREE.Color
-            emissive?: THREE.Color
-          }
-          if (candidate.emissive) candidate.emissive.set(highlightStyle.color)
-          else candidate.color?.set(highlightStyle.color)
-          material.opacity =
-            highlightStyle.opacity ?? materialStates.get(material)?.opacity ?? material.opacity
+    highlightGroups.forEach(({ ids, style }) =>
+      ids.forEach((id) => {
+        meshForStructure(id).forEach((mesh) => {
+          materialsOf(mesh).forEach((material) => {
+            const candidate = material as THREE.Material & {
+              color?: THREE.Color
+              emissive?: THREE.Color
+            }
+            if (candidate.emissive) candidate.emissive.set(style.color)
+            else candidate.color?.set(style.color)
+            material.opacity =
+              style.opacity ?? materialStates.get(material)?.opacity ?? material.opacity
+            material.transparent = material.opacity < 1
+            material.needsUpdate = true
+          })
+        })
+        volumeForStructure(id).forEach((volume) => {
+          const material = volume.material as THREE.MeshStandardMaterial
+          material.color.set(style.color)
+          material.emissive
+            .set(style.color)
+            .multiplyScalar(config.volumeStyles.highlightEmissiveIntensity)
+          material.opacity = style.opacity ?? config.volumeStyles.highlightOpacity
           material.transparent = material.opacity < 1
           material.needsUpdate = true
         })
-      })
-      volumeForStructure(id).forEach((volume) => {
-        const material = volume.material as THREE.MeshStandardMaterial
-        material.color.set(config.volumeStyles.highlightColor)
-        material.emissive
-          .set(config.volumeStyles.highlightColor)
-          .multiplyScalar(config.volumeStyles.highlightEmissiveIntensity)
-        material.opacity = config.volumeStyles.highlightOpacity
-        material.transparent = config.volumeStyles.highlightOpacity < 1
-        material.needsUpdate = true
-      })
-    })
+      }),
+    )
   }
 
   const buildVolumes = () => {
@@ -961,8 +960,12 @@ export function createAnatomyController({
     },
 
     highlight(structureIds, style: AnatomyHighlightStyle) {
-      highlightedStructureIds = [...structureIds]
-      highlightStyle = style
+      highlightGroups = [{ ids: [...structureIds], style }]
+      applyStructureAppearance()
+    },
+
+    highlightGroups(groups) {
+      highlightGroups = groups.map(({ ids, style }) => ({ ids: [...ids], style: { ...style } }))
       applyStructureAppearance()
     },
 

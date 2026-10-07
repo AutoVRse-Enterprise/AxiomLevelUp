@@ -3822,6 +3822,22 @@
               "type": "string",
               "minLength": 1
             },
+            "backToAirway": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pinGuessLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pinActualLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pinRevealPrompt": {
+              "type": "string",
+              "minLength": 1
+            },
             "revealClue": {
               "type": "string",
               "minLength": 1
@@ -4026,6 +4042,10 @@
             "openAnswerDrawer",
             "answerDrawerTitle",
             "backToScene",
+            "backToAirway",
+            "pinGuessLabel",
+            "pinActualLabel",
+            "pinRevealPrompt",
             "revealClue",
             "clueConfirmTitle",
             "clueConfirmDescription",

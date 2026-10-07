@@ -15,6 +15,11 @@ export interface AnatomyHighlightStyle {
   opacity?: number
 }
 
+export interface AnatomyHighlightGroup {
+  ids: readonly string[]
+  style: AnatomyHighlightStyle
+}
+
 export interface AnatomyLoadResult {
   meshNames: readonly string[]
   triangleCount: number
@@ -179,6 +184,7 @@ export interface AnatomyViewerController {
   pick(clientX: number, clientY: number, selectableLevelIds?: readonly string[]): string | null
   pickFinding(clientX: number, clientY: number): string | null
   highlight(structureIds: readonly string[], style: AnatomyHighlightStyle): void
+  highlightGroups(groups: readonly AnatomyHighlightGroup[]): void
   setMarker(structureId: string | null): void
   setWaypointMarker(waypointId: string | null): void
   setFindings(findings: readonly CaseFinding[]): void

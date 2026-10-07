@@ -16,6 +16,7 @@ const mocked = vi.hoisted(() => ({
     pick: vi.fn(),
     pickFinding: vi.fn(),
     highlight: vi.fn(),
+    highlightGroups: vi.fn(),
     setMarker: vi.fn(),
     setWaypointMarker: vi.fn(),
     setFindings: vi.fn(),
@@ -324,6 +325,29 @@ describe('AnatomyViewer', () => {
     expect(mocked.controller.frameStructures).toHaveBeenCalledWith(['target-structure'], {
       animate: false,
     })
+  })
+
+  it('highlights and frames comparison groups with independent styles', () => {
+    render(
+      <AnatomyViewer
+        comparison={{
+          guessStructureIds: ['target-structure'],
+          actualStructureIds: ['secondary-structure'],
+        }}
+        config={config}
+        map={map}
+        modelUrl="/model.glb"
+      />,
+    )
+
+    expect(mocked.controller.highlightGroups).toHaveBeenCalledWith([
+      { ids: ['target-structure'], style: config.comparisonStyles.guess },
+      { ids: ['secondary-structure'], style: config.comparisonStyles.actual },
+    ])
+    expect(mocked.controller.frameStructures).toHaveBeenCalledWith(
+      ['target-structure', 'secondary-structure'],
+      { animate: false },
+    )
   })
 
   it('preserves the marker authored by a marker start view', () => {

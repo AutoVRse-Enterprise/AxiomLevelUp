@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { Button } from '@/components/ui'
 import type { GameConfig, RoundDocument } from '@/content/schema/game'
 import type { PlannedRound } from '@/engines/games/plan'
@@ -17,8 +15,10 @@ export function SpatialRoundStage({
   copy,
   disabled,
   onDraftChange,
+  onExploreDraftChange,
   onInteract,
   onSubmit,
+  onRoundStepChange,
 }: {
   round: RoundDocument
   plannedRound: PlannedRound
@@ -26,41 +26,45 @@ export function SpatialRoundStage({
   copy: GameCopy
   disabled: boolean
   onDraftChange: (draft: unknown) => void
+  onExploreDraftChange: (draft: unknown) => void
   onInteract: (
     primitiveId: string,
     primitiveType: string,
     interaction: PrimitiveInteraction,
   ) => void
   onSubmit: (response: unknown) => void
+  onRoundStepChange: (step: 'explore' | 'answer') => void
 }) {
-  const [answerOpen, setAnswerOpen] = useState(false)
-  const [exploreDraft, setExploreDraft] = useState<unknown>(null)
   if (!plannedRound.explore) return null
+  const answerOpen = (roundSession.roundStep ?? 'explore') === 'answer'
+  const replaceScene = round.mechanic === 'spatial_explore'
 
   return (
     <div
       aria-disabled={disabled}
       className={`relative pb-28 pt-4 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
     >
-      <section className="overflow-hidden rounded-2xl bg-white text-neutral-950 shadow-overlay">
-        <PrimitiveRenderer
-          attempt={1}
-          disabled={disabled}
-          draft={exploreDraft}
-          mode="interactive"
-          onComplete={() => undefined}
-          onDraftChange={setExploreDraft}
-          onInteract={(interaction) =>
-            onInteract(plannedRound.explore!.id, plannedRound.explore!.type, interaction)
-          }
-          onSubmit={() => undefined}
-          primitive={plannedRound.explore}
-        />
-      </section>
+      {!answerOpen || !replaceScene ? (
+        <section className="overflow-hidden rounded-2xl bg-white text-neutral-950 shadow-overlay">
+          <PrimitiveRenderer
+            attempt={1}
+            disabled={disabled}
+            draft={roundSession.exploreDraft ?? null}
+            mode="interactive"
+            onComplete={() => undefined}
+            onDraftChange={onExploreDraftChange}
+            onInteract={(interaction) =>
+              onInteract(plannedRound.explore!.id, plannedRound.explore!.type, interaction)
+            }
+            onSubmit={() => undefined}
+            primitive={plannedRound.explore}
+          />
+        </section>
+      ) : null}
 
       {!answerOpen ? (
         <StepActionSlot>
-          <Button className="w-full sm:w-auto" onClick={() => setAnswerOpen(true)}>
+          <Button className="w-full sm:w-auto" onClick={() => onRoundStepChange('answer')}>
             {copy.openAnswerDrawer}
           </Button>
         </StepActionSlot>
@@ -70,8 +74,8 @@ export function SpatialRoundStage({
           className="fixed inset-x-0 bottom-0 z-20 max-h-[72dvh] overflow-y-auto rounded-t-2xl bg-white px-4 pb-28 pt-4 text-neutral-950 shadow-overlay md:static md:mt-4 md:max-h-none md:rounded-2xl md:p-6"
         >
           <div className="mb-3 flex justify-end">
-            <Button size="sm" variant="secondary" onClick={() => setAnswerOpen(false)}>
-              {copy.backToScene}
+            <Button size="sm" variant="secondary" onClick={() => onRoundStepChange('explore')}>
+              {replaceScene ? copy.backToAirway : copy.backToScene}
             </Button>
           </div>
           <PrimitiveRenderer

@@ -15,6 +15,7 @@ import { GameExitDialog } from '@/player/game/GameExitDialog'
 import { GameFinal } from '@/player/game/GameFinal'
 import { GameResumePrompt } from '@/player/game/GameResumePrompt'
 import { GameTopBar } from '@/player/game/GameTopBar'
+import { PinReveal } from '@/player/game/PinReveal'
 import { RoundIntro } from '@/player/game/RoundIntro'
 import { RoundReveal } from '@/player/game/RoundReveal'
 import { RoundStage } from '@/player/game/RoundStage'
@@ -237,8 +238,10 @@ function GameRun({
                   setConfirmOpen(open)
                 }}
                 onDraftChange={(draft) => dispatch({ type: 'draftChanged', draft })}
+                onExploreDraftChange={(draft) => dispatch({ type: 'exploreDraftChanged', draft })}
                 onInteract={run.interact}
                 onSubmit={(response) => run.submit(response, clock.getElapsedMs())}
+                onRoundStepChange={(step) => dispatch({ type: 'roundStepChanged', step })}
                 plannedRound={plannedRound}
                 round={round}
                 roundSession={roundSession}
@@ -253,7 +256,17 @@ function GameRun({
                 speedBonusLabel={speedTier?.label ?? null}
                 total={total}
                 view={reveal}
-              />
+              >
+                {round.mechanic === 'spatial_explore' && round.anatomyMapId ? (
+                  <PinReveal
+                    config={registry.appConfig.product.anatomy3d}
+                    copy={copy}
+                    map={registry.anatomyMapById.get(round.anatomyMapId)!}
+                    plannedRound={plannedRound}
+                    response={roundSession.response}
+                  />
+                ) : null}
+              </RoundReveal>
             ) : null}
             {session.phase === 'final' || session.phase === 'complete' ? (
               <GameFinal
