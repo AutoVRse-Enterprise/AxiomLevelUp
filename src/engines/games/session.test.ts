@@ -209,4 +209,38 @@ describe('game session reducer', () => {
       },
     })
   })
+
+  it('records a skipped round as a zero-point reveal', () => {
+    const playing = reduce(
+      createGameSession(plan),
+      { type: 'start', runId: 'run-skip', at: 'start' },
+      { type: 'roundStarted', at: 'round-start' },
+    )
+    const locked = gameSessionReducer(playing, {
+      type: 'skipped',
+      at: 'skip',
+      elapsedMs: 5_000,
+    })
+    const revealed = gameSessionReducer(locked, {
+      type: 'revealed',
+      at: 'reveal',
+      result: {
+        accuracy: 0,
+        correct: false,
+        points: 0,
+        basePoints: 0,
+        speedBonus: 0,
+        clueCost: 0,
+        skipped: true,
+      },
+    })
+
+    expect(revealed.phase).toBe('reveal')
+    expect(revealed.rounds[0]).toMatchObject({
+      skipped: true,
+      timedOut: false,
+      response: null,
+      result: { skipped: true, points: 0 },
+    })
+  })
 })

@@ -143,4 +143,25 @@ describe('game results', () => {
       breakdown: { basePoints: 900, speedBonus: 0, clueCost: 0 },
     })
   })
+
+  it('presents skipped rounds without treating them as incorrect answers', () => {
+    const skipped = {
+      ...rounds[0]!,
+      correct: false,
+      skipped: true,
+      points: 0,
+    }
+    expect(roundStrip([skipped])[0]?.outcome).toBe('skipped')
+    expect(
+      revealViewModel(
+        skipped,
+        {
+          correct: 'Correct.',
+          incorrect: 'Incorrect.',
+          answerTemplate: 'Correct answer: {answer}.',
+        },
+        'Right',
+      ).outcome,
+    ).toBe('skipped')
+  })
 })

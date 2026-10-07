@@ -14,6 +14,9 @@ export function RoundStage({
   onDraftChange,
   onExploreDraftChange,
   onRoundStepChange,
+  onFailureChange,
+  onSkip,
+  allowSkip,
   onSubmit,
   onClueReveal,
   onConfirmOpenChange,
@@ -27,6 +30,9 @@ export function RoundStage({
   onDraftChange: (draft: unknown) => void
   onExploreDraftChange: (draft: unknown) => void
   onRoundStepChange: (step: 'explore' | 'answer') => void
+  onFailureChange: (failed: boolean) => void
+  onSkip: () => void
+  allowSkip: boolean
   onSubmit: (response: unknown) => void
   onClueReveal: (clueId: string) => void
   onConfirmOpenChange: (open: boolean) => void
@@ -42,9 +48,12 @@ export function RoundStage({
       <SpatialRoundStage
         copy={copy}
         disabled={disabled}
+        allowSkip={allowSkip}
         onDraftChange={onDraftChange}
         onExploreDraftChange={onExploreDraftChange}
         onInteract={onInteract}
+        onFailureChange={onFailureChange}
+        onSkip={onSkip}
         onSubmit={onSubmit}
         onRoundStepChange={onRoundStepChange}
         plannedRound={plannedRound}

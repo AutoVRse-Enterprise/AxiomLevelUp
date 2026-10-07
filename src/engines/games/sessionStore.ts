@@ -35,6 +35,7 @@ export const useGameSessionStore = create<GameSessionStore>()(
               ...round,
               roundStep: round.roundStep ?? ('explore' as const),
               exploreDraft: round.exploreDraft ?? null,
+              skipped: round.skipped ?? false,
             })),
           }
           if (normalized !== current) set({ session: normalized })

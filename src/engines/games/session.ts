@@ -28,6 +28,7 @@ export interface GameRoundResult {
   basePoints: number
   speedBonus: number
   clueCost: number
+  skipped?: boolean
 }
 
 export interface GameRoundSession {
@@ -43,6 +44,7 @@ export interface GameRoundSession {
   elapsedCheckpointMs?: number
   pausedMs: number
   timedOut: boolean
+  skipped: boolean
   result: GameRoundResult | null
 }
 
@@ -71,6 +73,7 @@ export type GameSessionAction =
   | { type: 'paused'; elapsedMs: number }
   | { type: 'submitted'; at: string; response: unknown; elapsedMs: number }
   | { type: 'timedOut'; at: string; elapsedMs: number; response?: unknown }
+  | { type: 'skipped'; at: string; elapsedMs: number }
   | { type: 'revealed'; at: string; result: GameRoundResult }
   | { type: 'next' }
   | { type: 'complete'; at: string }
@@ -89,6 +92,7 @@ function createRoundSession(): GameRoundSession {
     elapsedCheckpointMs: 0,
     pausedMs: 0,
     timedOut: false,
+    skipped: false,
     result: null,
   }
 }
@@ -209,14 +213,21 @@ export function gameSessionReducer(state: GameSession, action: GameSessionAction
 
     case 'submitted':
     case 'timedOut':
+    case 'skipped':
       if (state.phase !== 'playing' || !validElapsedMs(action.elapsedMs)) return state
       return updateCurrentRound({ ...state, phase: 'locked' }, (round) => ({
         ...round,
         submittedAt: action.at,
-        response: action.type === 'timedOut' ? (action.response ?? round.draft) : action.response,
+        response:
+          action.type === 'skipped'
+            ? null
+            : action.type === 'timedOut'
+              ? (action.response ?? round.draft)
+              : action.response,
         elapsedMs: action.elapsedMs,
         elapsedCheckpointMs: action.elapsedMs,
         timedOut: action.type === 'timedOut',
+        skipped: action.type === 'skipped',
       }))
 
     case 'revealed':

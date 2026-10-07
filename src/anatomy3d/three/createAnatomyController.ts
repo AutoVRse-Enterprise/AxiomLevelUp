@@ -76,6 +76,11 @@ async function acquireModel(url: string) {
   )
 }
 
+export async function prefetchAnatomyModel(url: string): Promise<() => void> {
+  const lease = await acquireModel(url)
+  return () => lease.release()
+}
+
 function cloneModel(source: THREE.Group) {
   const clone = source.clone(true)
   clone.traverse((object) => {

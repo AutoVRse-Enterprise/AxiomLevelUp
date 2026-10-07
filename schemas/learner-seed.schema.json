@@ -1351,6 +1351,10 @@
                       },
                       "timedOut": {
                         "type": "boolean"
+                      },
+                      "skipped": {
+                        "default": false,
+                        "type": "boolean"
                       }
                     },
                     "required": [
@@ -1364,7 +1368,8 @@
                       "speedBonus",
                       "clueCost",
                       "elapsedMs",
-                      "timedOut"
+                      "timedOut",
+                      "skipped"
                     ],
                     "additionalProperties": false
                   }

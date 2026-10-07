@@ -168,8 +168,11 @@ device" state with **Skip round**. A skipped round scores zero, is labelled as s
 - [x] **P17-T08 — Round 2 content, pin drop and reveal**
   - Author at least two `spatial_explore` rounds; implement the pin-versus-actual reveal.
 
-- [ ] **P17-T09 — Failure policy and mobile drawer**
+- [x] **P17-T09 — Failure policy and mobile drawer**
   - Skip-round path, answer drawer and one-time hint.
+  - Viewer failures pause the round clock when configured and offer remount Retry plus an optional
+    zero-point Skip. Skipped outcomes persist through learner events and result history. Spatial
+    model leases are prefetched for the run; the existing persisted anatomy hint uses game copy.
 
 - [ ] **P17-T10 — Tests and closeout**
   - Viewer and primitive tests; sanofi Playwright specs completing Rounds 1 and 2 through visible

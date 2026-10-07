@@ -533,7 +533,7 @@ export function AnatomyViewer({
           ) : null}
           {movement && effectiveMovementState ? (
             <p className="text-small font-semibold" role="status">
-              Moves left: {Math.max(0, movement.maxMoves - effectiveMovementState.movesUsed)}
+              {labels.movesLeft(Math.max(0, movement.maxMoves - effectiveMovementState.movesUsed))}
             </p>
           ) : null}
           {anatomyDebugEnabled ? (

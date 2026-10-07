@@ -156,6 +156,12 @@ export const gameConfigSchema = z.strictObject({
     })
     .optional(),
   messages: z.array(gameMessageRuleSchema).default([]),
+  failurePolicy: z
+    .strictObject({
+      allowSkip: z.boolean(),
+      pauseClockOnFailure: z.boolean(),
+    })
+    .default({ allowSkip: true, pauseClockOnFailure: true }),
   copy: z
     .strictObject({
       lockIn: nonEmptyStringSchema,
@@ -180,6 +186,14 @@ export const gameConfigSchema = z.strictObject({
       pinGuessLabel: nonEmptyStringSchema,
       pinActualLabel: nonEmptyStringSchema,
       pinRevealPrompt: nonEmptyStringSchema,
+      viewUnavailableTitle: nonEmptyStringSchema,
+      viewUnavailableMessage: nonEmptyStringSchema,
+      retryView: nonEmptyStringSchema,
+      skipRound: nonEmptyStringSchema,
+      skipped: nonEmptyStringSchema,
+      skippedRoundMessage: nonEmptyStringSchema,
+      movesLeft: nonEmptyStringSchema,
+      spatialHint: nonEmptyStringSchema,
       revealClue: nonEmptyStringSchema,
       clueConfirmTitle: nonEmptyStringSchema,
       clueConfirmDescription: nonEmptyStringSchema,

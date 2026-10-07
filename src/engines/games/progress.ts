@@ -28,7 +28,12 @@ export function applyGameProgressEvent(
     total: event.total,
     correctCount: event.correctCount,
     durationSeconds: event.durationSeconds,
-    roundResults: structuredClone(event.roundResults),
+    roundResults: structuredClone(
+      event.roundResults.map((result) => ({
+        ...result,
+        skipped: result.skipped ?? false,
+      })),
+    ),
     ...(event.challengeToken ? { challengeToken: event.challengeToken } : {}),
     completedAt: event.occurredAt,
   }

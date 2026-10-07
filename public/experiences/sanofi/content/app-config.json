@@ -302,6 +302,10 @@
         "text": "Good run. Ready for a rematch?"
       }
     ],
+    "failurePolicy": {
+      "allowSkip": true,
+      "pauseClockOnFailure": true
+    },
     "copy": {
       "lockIn": "Lock in",
       "nextRound": "Next round",
@@ -325,6 +329,14 @@
       "pinGuessLabel": "Your pin",
       "pinActualLabel": "Actual location",
       "pinRevealPrompt": "Compare your pin with the actual location.",
+      "viewUnavailableTitle": "3D view unavailable",
+      "viewUnavailableMessage": "The spatial view could not start on this device.",
+      "retryView": "Retry view",
+      "skipRound": "Skip round",
+      "skipped": "Skipped",
+      "skippedRoundMessage": "This round was skipped and scored zero points.",
+      "movesLeft": "Moves left: {count}",
+      "spatialHint": "Look for branch direction, airway depth and nearby junctions.",
       "revealClue": "Reveal · −{cost}",
       "clueConfirmTitle": "Reveal this clue?",
       "clueConfirmDescription": "This clue costs {cost} points.",

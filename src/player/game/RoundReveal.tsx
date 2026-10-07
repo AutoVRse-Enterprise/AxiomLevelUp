@@ -30,7 +30,12 @@ export function RoundReveal({
   children?: ReactNode
 }) {
   const heading = useRef<HTMLHeadingElement>(null)
-  const outcome = view.outcome === 'correct' ? copy.correct : copy.incorrect
+  const outcome =
+    view.outcome === 'skipped'
+      ? copy.skipped
+      : view.outcome === 'correct'
+        ? copy.correct
+        : copy.incorrect
   useEffect(() => {
     heading.current?.focus()
     announcePresentation(outcome)
@@ -44,7 +49,9 @@ export function RoundReveal({
         {view.outcome === 'incorrect' ? (
           <p className="mt-3 font-semibold">{view.answerLine}</p>
         ) : null}
-        <p className="mt-2 text-neutral-700">{view.feedbackSentence}</p>
+        <p className="mt-2 text-neutral-700">
+          {view.outcome === 'skipped' ? copy.skippedRoundMessage : view.feedbackSentence}
+        </p>
         {answerDimensions.length ? (
           <dl className="mt-4 grid gap-2 rounded-xl bg-neutral-50 p-4 sm:grid-cols-3">
             {answerDimensions.map(({ levelId, label }) => (

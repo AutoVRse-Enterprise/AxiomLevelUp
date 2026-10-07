@@ -10,6 +10,7 @@ export interface GameRoundResult {
   basePoints?: number
   speedBonus?: number
   clueCost?: number
+  skipped?: boolean
 }
 
 export interface BestRoundResult {
@@ -33,12 +34,12 @@ export interface RoundStripItem {
   slotId: string
   roundId: string
   mechanic: GameMechanic
-  outcome: 'correct' | 'incorrect'
+  outcome: 'correct' | 'incorrect' | 'skipped'
   points: number
 }
 
 export interface RoundRevealViewModel {
-  outcome: 'correct' | 'incorrect'
+  outcome: 'correct' | 'incorrect' | 'skipped'
   answerLine: string
   feedbackSentence: string
   points: number
@@ -110,21 +111,21 @@ export function roundStrip(roundResults: readonly GameRoundResult[]): RoundStrip
     slotId: round.slotId,
     roundId: round.roundId,
     mechanic: round.mechanic,
-    outcome: round.correct ? 'correct' : 'incorrect',
+    outcome: round.skipped ? 'skipped' : round.correct ? 'correct' : 'incorrect',
     points: round.points,
   }))
 }
 
 export function revealViewModel(
   result: Pick<GameRoundResult, 'correct' | 'points'> &
-    Partial<Pick<GameRoundResult, 'basePoints' | 'speedBonus' | 'clueCost'>>,
+    Partial<Pick<GameRoundResult, 'basePoints' | 'speedBonus' | 'clueCost' | 'skipped'>>,
   feedback: RoundDocument['feedback'],
   answerLabel: string,
 ): RoundRevealViewModel {
   return {
-    outcome: result.correct ? 'correct' : 'incorrect',
+    outcome: result.skipped ? 'skipped' : result.correct ? 'correct' : 'incorrect',
     answerLine: feedback.answerTemplate.replaceAll('{answer}', answerLabel),
-    feedbackSentence: result.correct ? feedback.correct : feedback.incorrect,
+    feedbackSentence: result.skipped ? '' : result.correct ? feedback.correct : feedback.incorrect,
     points: result.points,
     breakdown: {
       basePoints: result.basePoints ?? result.points,

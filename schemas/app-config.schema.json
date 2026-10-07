@@ -3747,6 +3747,26 @@
             "additionalProperties": false
           }
         },
+        "failurePolicy": {
+          "default": {
+            "allowSkip": true,
+            "pauseClockOnFailure": true
+          },
+          "type": "object",
+          "properties": {
+            "allowSkip": {
+              "type": "boolean"
+            },
+            "pauseClockOnFailure": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "allowSkip",
+            "pauseClockOnFailure"
+          ],
+          "additionalProperties": false
+        },
         "copy": {
           "type": "object",
           "properties": {
@@ -3835,6 +3855,38 @@
               "minLength": 1
             },
             "pinRevealPrompt": {
+              "type": "string",
+              "minLength": 1
+            },
+            "viewUnavailableTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "viewUnavailableMessage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryView": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skipRound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skipped": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skippedRoundMessage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "movesLeft": {
+              "type": "string",
+              "minLength": 1
+            },
+            "spatialHint": {
               "type": "string",
               "minLength": 1
             },
@@ -4046,6 +4098,14 @@
             "pinGuessLabel",
             "pinActualLabel",
             "pinRevealPrompt",
+            "viewUnavailableTitle",
+            "viewUnavailableMessage",
+            "retryView",
+            "skipRound",
+            "skipped",
+            "skippedRoundMessage",
+            "movesLeft",
+            "spatialHint",
             "revealClue",
             "clueConfirmTitle",
             "clueConfirmDescription",
@@ -4318,6 +4378,7 @@
         "hub",
         "difficulties",
         "messages",
+        "failurePolicy",
         "player",
         "formats",
         "leaderboard",

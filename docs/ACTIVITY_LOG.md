@@ -3922,3 +3922,19 @@ README.md`; `git diff --check`.
 - **Result/verification:** Five sanofi rounds and three games validate with zero warnings;
   movement draft/step, comparison framing and pin reveal have focused coverage.
 - **Follow-ups:** Add viewer failure Retry/Skip, skipped result semantics, hint and prefetch.
+
+### [2026-10-07 16:25] P17-T09 - Add spatial failure recovery
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added configurable viewer-failure clock pausing, remount Retry and optional zero-point
+  Skip. Propagated skipped outcomes through sessions, learner events, persisted run records,
+  result strips and reveals. Reused the persisted one-time anatomy hint with game copy and
+  prefetched reference-counted spatial model leases at run start.
+- **Files changed:** game/app schemas and sanofi config; anatomy controller/viewer; game
+  session/progress/results/events/player integration; presentation labels; generated schemas;
+  focused tests and phase/activity docs.
+- **Commands run:** Prettier; `npm run schema:export`; `npm run typecheck`;
+  `npm run validate:content`; focused Vitest.
+- **Result/verification:** TypeScript and both content roots pass; failure Retry/Skip, skipped
+  reducer/results and model lease paths are covered without changing default content.
+- **Follow-ups:** Add the spatial Playwright matrix, run full gates and close Phase 17 docs.

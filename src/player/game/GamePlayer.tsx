@@ -90,6 +90,21 @@ function GameRun({
   const pauseStartedAt = useRef<number | null>(null)
   const run = useGameRun({ game, registry, difficultyId, seed, resumedSession })
   const { session, plan, dispatch } = run
+  const spatialModelUrls = useMemo(
+    () => [
+      ...new Set(
+        plan.rounds.flatMap((planned) => {
+          const plannedDocument = registry.roundById.get(planned.roundId)
+          const map = plannedDocument?.anatomyMapId
+            ? registry.anatomyMapById.get(plannedDocument.anatomyMapId)
+            : undefined
+          const asset = map ? registry.assetById.get(map.modelAssetId) : undefined
+          return asset?.type === 'model' ? [asset.path] : []
+        }),
+      ),
+    ],
+    [plan.rounds, registry.anatomyMapById, registry.assetById, registry.roundById],
+  )
   const plannedRound = plan.rounds[session.roundIndex]
   const round = plannedRound ? registry.roundById.get(plannedRound.roundId) : undefined
   const roundSession = session.rounds[session.roundIndex]
@@ -98,6 +113,25 @@ function GameRun({
   useEffect(() => {
     if (session.phase === 'ready') run.start()
   }, [run, session.phase])
+
+  useEffect(() => {
+    if (spatialModelUrls.length === 0) return
+    let cancelled = false
+    const releases: Array<() => void> = []
+    void import('@/anatomy3d/three/createAnatomyController').then(
+      async ({ prefetchAnatomyModel }) => {
+        for (const url of spatialModelUrls) {
+          const release = await prefetchAnatomyModel(url)
+          if (cancelled) release()
+          else releases.push(release)
+        }
+      },
+    )
+    return () => {
+      cancelled = true
+      releases.forEach((release) => release())
+    }
+  }, [spatialModelUrls])
 
   const checkpoint = useCallback(
     (elapsedMs: number) => dispatch({ type: 'checkpoint', elapsedMs }),
@@ -157,6 +191,8 @@ function GameRun({
       showDataTable: copy.showDataTable,
       hideDataTable: copy.hideDataTable,
       keyTakeaway: copy.keyTakeaway,
+      movesLeft: (count) => copy.movesLeft.replace('{count}', String(count)),
+      anatomyInteractionHint: copy.spatialHint,
     }),
     [copy],
   )
@@ -224,6 +260,7 @@ function GameRun({
             ) : null}
             {session.phase === 'playing' || session.phase === 'locked' ? (
               <RoundStage
+                allowSkip={config.failurePolicy.allowSkip}
                 copy={copy}
                 disabled={session.phase === 'locked'}
                 onClueReveal={run.revealClue}
@@ -240,6 +277,21 @@ function GameRun({
                 onDraftChange={(draft) => dispatch({ type: 'draftChanged', draft })}
                 onExploreDraftChange={(draft) => dispatch({ type: 'exploreDraftChanged', draft })}
                 onInteract={run.interact}
+                onFailureChange={(failed) => {
+                  if (!config.failurePolicy.pauseClockOnFailure) return
+                  if (failed) {
+                    checkpoint(clock.getElapsedMs())
+                    pauseStartedAt.current = Date.now()
+                  } else if (pauseStartedAt.current !== null) {
+                    dispatch({ type: 'paused', elapsedMs: Date.now() - pauseStartedAt.current })
+                    pauseStartedAt.current = null
+                  }
+                  setConfirmOpen(failed)
+                }}
+                onSkip={() => {
+                  setConfirmOpen(false)
+                  run.skip(clock.getElapsedMs())
+                }}
                 onSubmit={(response) => run.submit(response, clock.getElapsedMs())}
                 onRoundStepChange={(step) => dispatch({ type: 'roundStepChanged', step })}
                 plannedRound={plannedRound}
@@ -257,7 +309,9 @@ function GameRun({
                 total={total}
                 view={reveal}
               >
-                {round.mechanic === 'spatial_explore' && round.anatomyMapId ? (
+                {round.mechanic === 'spatial_explore' &&
+                round.anatomyMapId &&
+                !roundSession.result?.skipped ? (
                   <PinReveal
                     config={registry.appConfig.product.anatomy3d}
                     copy={copy}

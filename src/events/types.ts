@@ -22,6 +22,7 @@ export interface GameEventRoundResult {
   clueCost: number
   elapsedMs: number
   timedOut: boolean
+  skipped?: boolean
 }
 
 export interface CaseEventStepResult {
@@ -124,6 +125,7 @@ export interface EventPayloads {
     speedBonus: number
     elapsedMs: number
     timedOut: boolean
+    skipped?: boolean
   }
   game_completed: {
     runId: string

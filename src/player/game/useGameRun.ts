@@ -150,6 +150,7 @@ export function useGameRun({
           speedBonus: result.speedBonus,
           elapsedMs,
           timedOut,
+          skipped: false,
         })
       }, config.player.lockedHoldMs)
     },
@@ -167,6 +168,45 @@ export function useGameRun({
     ],
   )
 
+  const skip = useCallback(
+    (elapsedMs: number) => {
+      const planned = plan.rounds[session.roundIndex]
+      if (!planned || !session.runId) return
+      dispatch({ type: 'skipped', at: new Date().toISOString(), elapsedMs })
+      const result = {
+        accuracy: 0,
+        correct: false,
+        points: 0,
+        basePoints: 0,
+        speedBonus: 0,
+        clueCost: 0,
+        skipped: true,
+      }
+      window.setTimeout(() => {
+        setSession((current) =>
+          gameSessionReducer(current, {
+            type: 'revealed',
+            at: new Date().toISOString(),
+            result,
+          }),
+        )
+        emitEvent({
+          event: 'game_round_answered',
+          runId: session.runId!,
+          roundId: planned.roundId,
+          accuracy: 0,
+          correct: false,
+          points: 0,
+          speedBonus: 0,
+          elapsedMs,
+          timedOut: false,
+          skipped: true,
+        })
+      }, config.player.lockedHoldMs)
+    },
+    [config.player.lockedHoldMs, dispatch, plan.rounds, session.roundIndex, session.runId],
+  )
+
   const roundResults = useCallback(
     (source: GameSession): GameEventRoundResult[] =>
       source.rounds.flatMap((roundSession, index) => {
@@ -179,6 +219,7 @@ export function useGameRun({
             roundId: planned.roundId,
             mechanic: planned.mechanic,
             ...result,
+            skipped: Boolean(result.skipped),
             elapsedMs: roundSession.elapsedMs,
             timedOut: roundSession.timedOut,
           },
@@ -250,6 +291,7 @@ export function useGameRun({
     startRound,
     submit: (response: unknown, elapsedMs: number) => lock(response, elapsedMs, false),
     timeout: (response: unknown, elapsedMs: number) => lock(response, elapsedMs, true),
+    skip,
     next,
     revealClue,
     interact,

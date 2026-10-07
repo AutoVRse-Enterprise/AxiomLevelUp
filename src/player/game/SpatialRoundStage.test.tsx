@@ -11,12 +11,21 @@ vi.mock('@/primitives/registry', () => ({
   PrimitiveRenderer: ({
     primitive,
     onSubmit,
+    onInteract,
   }: {
     primitive: { id: string }
     onSubmit: (response: unknown) => void
+    onInteract: (interaction: { name: string; reason: string }) => void
   }) => (
     <div data-testid={primitive.id}>
       {primitive.id}
+      {primitive.id === 'scene' ? (
+        <button
+          onClick={() => onInteract({ name: 'anatomy_viewer_failed', reason: 'context lost' })}
+        >
+          Fail viewer
+        </button>
+      ) : null}
       {primitive.id === 'answer' ? (
         <button onClick={() => onSubmit({ side: 'right' })}>Submit answer</button>
       ) : null}
@@ -29,6 +38,10 @@ const copy = {
   answerDrawerTitle: 'Choose your location',
   backToScene: 'Back to view',
   backToAirway: 'Back to airway',
+  viewUnavailableTitle: '3D view unavailable',
+  viewUnavailableMessage: 'The view could not start.',
+  retryView: 'Retry view',
+  skipRound: 'Skip round',
 } as NonNullable<GameConfig['copy']>
 
 describe('SpatialRoundStage', () => {
@@ -37,12 +50,15 @@ describe('SpatialRoundStage', () => {
     const onRoundStepChange = vi.fn()
     render(
       <SpatialRoundStage
+        allowSkip
         copy={copy}
         disabled={false}
         onDraftChange={vi.fn()}
         onExploreDraftChange={vi.fn()}
+        onFailureChange={vi.fn()}
         onInteract={vi.fn()}
         onRoundStepChange={onRoundStepChange}
+        onSkip={vi.fn()}
         onSubmit={vi.fn()}
         plannedRound={
           {
@@ -65,12 +81,15 @@ describe('SpatialRoundStage', () => {
     const onRoundStepChange = vi.fn()
     render(
       <SpatialRoundStage
+        allowSkip
         copy={copy}
         disabled={false}
         onDraftChange={vi.fn()}
         onExploreDraftChange={vi.fn()}
+        onFailureChange={vi.fn()}
         onInteract={vi.fn()}
         onRoundStepChange={onRoundStepChange}
+        onSkip={vi.fn()}
         onSubmit={vi.fn()}
         plannedRound={
           {
@@ -93,5 +112,39 @@ describe('SpatialRoundStage', () => {
     expect(screen.getByTestId('answer')).toBeVisible()
     await user.click(screen.getByRole('button', { name: 'Back to airway' }))
     expect(onRoundStepChange).toHaveBeenCalledWith('explore')
+  })
+
+  it('offers retry and skip when the viewer fails', async () => {
+    const user = userEvent.setup()
+    const onFailureChange = vi.fn()
+    const onSkip = vi.fn()
+    render(
+      <SpatialRoundStage
+        allowSkip
+        copy={copy}
+        disabled={false}
+        onDraftChange={vi.fn()}
+        onExploreDraftChange={vi.fn()}
+        onFailureChange={onFailureChange}
+        onInteract={vi.fn()}
+        onRoundStepChange={vi.fn()}
+        onSkip={onSkip}
+        onSubmit={vi.fn()}
+        plannedRound={
+          {
+            primitive: { id: 'answer', type: 'anatomy_locate', content: {} },
+            explore: { id: 'scene', type: 'anatomy_explore', content: {} },
+          } as unknown as PlannedRound
+        }
+        round={{ title: 'Find your way', mechanic: 'spatial_explore' } as RoundDocument}
+        roundSession={{ draft: null, exploreDraft: null, roundStep: 'explore' } as GameRoundSession}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Fail viewer' }))
+    expect(onFailureChange).toHaveBeenCalledWith(true)
+    expect(screen.getByText('3D view unavailable')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Skip round' }))
+    expect(onSkip).toHaveBeenCalled()
   })
 })

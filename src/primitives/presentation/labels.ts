@@ -33,6 +33,7 @@ export interface PresentationLabels {
   anatomyInteractionHint: string
   zoomIn: string
   zoomOut: string
+  movesLeft: (count: number) => string
 }
 
 export const defaultPresentationLabels: PresentationLabels = {
@@ -67,6 +68,7 @@ export const defaultPresentationLabels: PresentationLabels = {
   anatomyInteractionHint: 'Drag to rotate. Tap a branch or use the buttons.',
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom out',
+  movesLeft: (count) => `Moves left: ${count}`,
 }
 
 export const PresentationContext = createContext<{

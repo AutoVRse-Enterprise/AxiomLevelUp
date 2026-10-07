@@ -964,6 +964,7 @@ export const gameRunRecordSchema = z.strictObject({
       clueCost: z.number().int().nonnegative(),
       elapsedMs: z.number().nonnegative(),
       timedOut: z.boolean(),
+      skipped: z.boolean().default(false),
     }),
   ),
   challengeToken: z.string().min(1).optional(),

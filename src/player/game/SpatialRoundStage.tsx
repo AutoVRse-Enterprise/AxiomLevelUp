@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { Button } from '@/components/ui'
 import type { GameConfig, RoundDocument } from '@/content/schema/game'
 import type { PlannedRound } from '@/engines/games/plan'
@@ -19,6 +21,9 @@ export function SpatialRoundStage({
   onInteract,
   onSubmit,
   onRoundStepChange,
+  onFailureChange,
+  onSkip,
+  allowSkip,
 }: {
   round: RoundDocument
   plannedRound: PlannedRound
@@ -34,7 +39,12 @@ export function SpatialRoundStage({
   ) => void
   onSubmit: (response: unknown) => void
   onRoundStepChange: (step: 'explore' | 'answer') => void
+  onFailureChange: (failed: boolean) => void
+  onSkip: () => void
+  allowSkip: boolean
 }) {
+  const [viewerFailure, setViewerFailure] = useState<string | null>(null)
+  const [viewerRevision, setViewerRevision] = useState(0)
   if (!plannedRound.explore) return null
   const answerOpen = (roundSession.roundStep ?? 'explore') === 'answer'
   const replaceScene = round.mechanic === 'spatial_explore'
@@ -45,20 +55,51 @@ export function SpatialRoundStage({
       className={`relative pb-28 pt-4 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
     >
       {!answerOpen || !replaceScene ? (
-        <section className="overflow-hidden rounded-2xl bg-white text-neutral-950 shadow-overlay">
+        <section className="relative overflow-hidden rounded-2xl bg-white text-neutral-950 shadow-overlay">
           <PrimitiveRenderer
+            key={viewerRevision}
             attempt={1}
             disabled={disabled}
             draft={roundSession.exploreDraft ?? null}
             mode="interactive"
             onComplete={() => undefined}
             onDraftChange={onExploreDraftChange}
-            onInteract={(interaction) =>
+            onInteract={(interaction) => {
+              if (interaction.name === 'anatomy_viewer_failed') {
+                setViewerFailure(
+                  'reason' in interaction ? interaction.reason : copy.viewUnavailableMessage,
+                )
+                onFailureChange(true)
+              }
               onInteract(plannedRound.explore!.id, plannedRound.explore!.type, interaction)
-            }
+            }}
             onSubmit={() => undefined}
             primitive={plannedRound.explore}
           />
+          {viewerFailure ? (
+            <div className="absolute inset-0 z-20 grid place-items-center bg-clinical-950/95 p-6 text-center text-white">
+              <div className="max-w-sm">
+                <h2 className="text-heading font-bold">{copy.viewUnavailableTitle}</h2>
+                <p className="mt-2 text-small text-neutral-300">{copy.viewUnavailableMessage}</p>
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  <Button
+                    onClick={() => {
+                      setViewerFailure(null)
+                      setViewerRevision((value) => value + 1)
+                      onFailureChange(false)
+                    }}
+                  >
+                    {copy.retryView}
+                  </Button>
+                  {allowSkip ? (
+                    <Button variant="secondary" onClick={onSkip}>
+                      {copy.skipRound}
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : null}
         </section>
       ) : null}
 
