@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "clinical-call-t2",
+  "title": "Make the call",
+  "mechanic": "clinical_call",
+  "intro": "Bring the symptom pattern and supporting evidence together.",
+  "timeLimitSeconds": 60,
+  "primitive": {
+    "id": "clinical-call-t2-answer",
+    "type": "multiple_choice",
+    "content": {
+      "prompt": "Which interpretation best explains the combined evidence?",
+      "options": [
+        { "id": "t2-asthma", "label": "Asthma exacerbation with type 2 inflammation" },
+        { "id": "copd", "label": "COPD exacerbation" },
+        { "id": "pneumonia", "label": "Community-acquired pneumonia" },
+        { "id": "vcd", "label": "Vocal cord dysfunction" }
+      ],
+      "correctOptionId": "t2-asthma",
+      "explanation": "Variable symptoms with eosinophilic airway inflammation support the interpretation.",
+      "shuffle": false
+    },
+    "completion": { "mode": "answer" }
+  },
+  "primitiveByOptionSet": {
+    "similar": {
+      "id": "clinical-call-t2-answer",
+      "type": "multiple_choice",
+      "content": {
+        "prompt": "Which interpretation best explains the combined evidence?",
+        "options": [
+          { "id": "t2-asthma", "label": "Asthma exacerbation with type 2 inflammation" },
+          { "id": "non-t2-asthma", "label": "Asthma exacerbation without type 2 inflammation" },
+          { "id": "eosinophilic-copd", "label": "COPD exacerbation with eosinophilia" },
+          { "id": "vcd", "label": "Vocal cord dysfunction with incidental eosinophilia" }
+        ],
+        "correctOptionId": "t2-asthma",
+        "explanation": "Variable symptoms with eosinophilic airway inflammation support the interpretation.",
+        "shuffle": false
+      },
+      "completion": { "mode": "answer" }
+    }
+  },
+  "clues": [
+    {
+      "id": "patient-snapshot",
+      "title": "Patient snapshot",
+      "category": "history",
+      "primitive": {
+        "id": "clinical-call-t2-history",
+        "type": "rich_text",
+        "content": {
+          "body": "A synthetic adult reports episodes of variable wheeze, chest tightness and nocturnal symptoms that fluctuate across the week."
+        }
+      }
+    },
+    {
+      "id": "breath-sound",
+      "title": "Breath sound",
+      "category": "audio",
+      "primitive": {
+        "id": "clinical-call-t2-audio",
+        "type": "audio",
+        "content": {
+          "assetId": "wheeze-audio",
+          "title": "Respiratory sound sample",
+          "description": "A short synthetic case sample.",
+          "transcript": "Repeated musical, high-pitched expiratory sounds are audible."
+        },
+        "assets": ["wheeze-audio"],
+        "completion": { "mode": "media_progress", "threshold": 0.8 }
+      }
+    },
+    {
+      "id": "biomarkers",
+      "title": "Inflammatory markers",
+      "category": "biomarker",
+      "primitive": {
+        "id": "clinical-call-t2-biomarkers",
+        "type": "data_table",
+        "content": {
+          "caption": "Synthetic inflammatory-marker panel",
+          "columns": [
+            { "id": "marker", "label": "Marker" },
+            { "id": "value", "label": "Result" }
+          ],
+          "rows": [
+            {
+              "id": "eosinophils",
+              "cells": [
+                { "columnId": "marker", "value": "Blood eosinophils" },
+                { "columnId": "value", "value": "620 cells/µL" }
+              ]
+            },
+            {
+              "id": "feno",
+              "cells": [
+                { "columnId": "marker", "value": "FeNO" },
+                { "columnId": "value", "value": "58 ppb" }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "histology",
+      "title": "Pathology image",
+      "category": "image",
+      "primitive": {
+        "id": "clinical-call-t2-histology",
+        "type": "image",
+        "content": {
+          "assetId": "asthma-histology-image",
+          "alt": "Histology image of an inflamed bronchiole with mucoid material narrowing the lumen.",
+          "caption": "Reference airway histology."
+        },
+        "assets": ["asthma-histology-image"],
+        "completion": { "mode": "viewed" }
+      }
+    },
+    {
+      "id": "peak-flow",
+      "title": "Peak-flow trend",
+      "category": "trend",
+      "primitive": {
+        "id": "clinical-call-t2-peak-flow",
+        "type": "chart",
+        "content": {
+          "chartType": "line",
+          "title": "Peak expiratory flow trend",
+          "summary": "Peak expiratory flow varies across four readings.",
+          "axes": {
+            "x": { "label": "Reading", "scale": "linear" },
+            "y": { "label": "Peak expiratory flow", "unit": "L/min", "scale": "linear" }
+          },
+          "series": [
+            {
+              "id": "peak-flow",
+              "label": "Peak expiratory flow",
+              "points": [
+                { "id": "one", "x": 1, "y": 410 },
+                { "id": "two", "x": 2, "y": 290 },
+                { "id": "three", "x": 3, "y": 390 },
+                { "id": "four", "x": 4, "y": 270 }
+              ]
+            }
+          ]
+        },
+        "completion": { "mode": "viewed" }
+      }
+    }
+  ],
+  "feedback": {
+    "correct": "The elevated eosinophils and FeNO are the strongest clues to the inflammatory pattern.",
+    "incorrect": "The elevated eosinophils and FeNO are the strongest clues to the inflammatory pattern.",
+    "answerTemplate": "Correct answer: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 75 },
+    "expert": { "timeLimitSeconds": 45 }
+  }
+}

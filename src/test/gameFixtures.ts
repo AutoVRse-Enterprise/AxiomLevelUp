@@ -1,5 +1,5 @@
 import sanofiConfig from '../../public/experiences/sanofi/content/app-config.json'
-import clinicalRound from '../../public/experiences/sanofi/content/rounds/fixture-clinical-call.json'
+import clinicalRound from '../../public/experiences/sanofi/content/rounds/clinical-call-t2.json'
 import warmupRound from '../../public/experiences/sanofi/content/rounds/fixture-warmup-call.json'
 import fixtureGame from '../../public/experiences/sanofi/content/games/fixture-two-round.json'
 

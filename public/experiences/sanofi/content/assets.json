@@ -1,4 +1,37 @@
 {
   "schemaVersion": "0.2",
-  "assets": []
+  "assets": [
+    {
+      "assetId": "asthma-histology-image",
+      "path": "/assets/images/cases/asthma-histology.webp",
+      "type": "image",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 326014,
+      "mimeType": "image/webp",
+      "width": 1063,
+      "height": 713,
+      "sha256": "5eee2878582b10c61c2c34ea9c7c08d35137b07328b324a83cf9537113f897b4",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Asthma_.jpg",
+        "licence": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+        "author": "Yale Rosen"
+      }
+    },
+    {
+      "assetId": "wheeze-audio",
+      "path": "/assets/media/cases/wheeze.m4a",
+      "type": "audio",
+      "offlineRequired": false,
+      "offlineAvailable": true,
+      "sizeBytes": 81749,
+      "mimeType": "audio/mp4",
+      "sha256": "99757864118206c83d09a1954bea5704096d572a66aa334854aa1f919313a259",
+      "provenance": {
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Wheeze2O.ogg",
+        "licence": "Creative Commons Attribution-ShareAlike 3.0 Unported",
+        "author": "James Heilman, MD"
+      }
+    }
+  ]
 }

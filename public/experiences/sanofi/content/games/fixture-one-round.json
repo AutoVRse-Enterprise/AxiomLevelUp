@@ -1,17 +1,12 @@
 {
   "schemaVersion": "0.1",
-  "gameVersion": "2",
-  "id": "fixture-two-round",
-  "title": "Two-round fixture",
-  "tagline": "A compact engine verification run.",
+  "gameVersion": "1",
+  "id": "fixture-one-round",
+  "title": "Clinical call fixture",
+  "tagline": "One clinical decision.",
   "organSystem": "respiratory",
-  "estimatedSeconds": 90,
+  "estimatedSeconds": 75,
   "slots": [
-    {
-      "id": "warmup",
-      "pool": ["fixture-warmup-call"],
-      "pick": 1
-    },
     {
       "id": "clinical",
       "pool": ["clinical-call-t2"],
@@ -21,7 +16,7 @@
   "difficulties": ["warmup", "challenge", "expert"],
   "defaultDifficulty": "challenge",
   "durationWindowSeconds": {
-    "min": 60,
-    "max": 150
+    "min": 45,
+    "max": 90
   }
 }

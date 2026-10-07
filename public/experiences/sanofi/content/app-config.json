@@ -38,6 +38,23 @@
         "minCompletedLessons": 0,
         "dismissCooldownDays": 14
       }
+    },
+    "presentation": {
+      "haptics": {
+        "correctAnswer": [15],
+        "badgeUnlocked": [25, 40, 25],
+        "challengeCompleted": [30, 50, 30],
+        "gameRoundCorrect": [15]
+      },
+      "confetti": {
+        "moments": ["game_complete"],
+        "particleCount": 80,
+        "gameCompleteMinScoreRatio": 0.75
+      },
+      "xpCountUp": {
+        "minimumAmount": 10,
+        "maxDurationMs": 900
+      }
     }
   },
   "gamification": {
@@ -186,7 +203,52 @@
       "nextRound": "Next round",
       "correct": "Correct",
       "incorrect": "Not quite",
-      "seeResult": "See your score"
+      "seeResult": "See your score",
+      "skipToRound": "Skip to round",
+      "loadingRound": "Loading round",
+      "retryRound": "Retry round",
+      "roundLoadError": "Round could not load",
+      "roundLoadErrorMessage": "The round encountered an unexpected problem. Try again or continue.",
+      "continue": "Continue",
+      "stepProgress": "Step {current} of {total}",
+      "previousStep": "Previous step",
+      "nextStep": "Next step",
+      "checkLocation": "Lock in location",
+      "revealClue": "Reveal · −{cost}",
+      "clueConfirmTitle": "Reveal this clue?",
+      "clueConfirmDescription": "This clue costs {cost} points.",
+      "cancel": "Cancel",
+      "leaveGame": "Leave game",
+      "keepPlaying": "Keep playing",
+      "leaveGameTitle": "Leave this game?",
+      "leaveGameDescription": "Your current round is saved. You can continue later.",
+      "continueGame": "Continue game",
+      "newGame": "New game",
+      "resumeTitle": "Game in progress",
+      "resumeDescription": "Continue where you stopped or start a new game.",
+      "secondsRemaining": "{seconds} seconds remaining",
+      "timeUp": "Time is up",
+      "basePoints": "Answer points",
+      "clueCost": "Clue cost",
+      "totalScore": "Total",
+      "playAgain": "Play again",
+      "correctCount": "Correct",
+      "totalTime": "Time",
+      "bestRound": "Best round",
+      "difficulty": "Difficulty",
+      "resultNotFound": "This result is not available.",
+      "gameNotFound": "This game is not available.",
+      "exitGame": "Exit game",
+      "roundProgress": "Round {current} of {total}",
+      "pointsAbbreviation": "pts",
+      "roundLabel": "Round",
+      "cluesLabel": "Clues",
+      "gameUnavailableTitle": "Game unavailable",
+      "resultUnavailableTitle": "Result unavailable"
+    },
+    "player": {
+      "introAutoAdvanceMs": 1200,
+      "lockedHoldMs": 200
     },
     "formats": [],
     "leaderboard": {
