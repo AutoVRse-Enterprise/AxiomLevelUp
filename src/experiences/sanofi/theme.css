@@ -14,4 +14,109 @@ html[data-experience='sanofi'] {
   --color-brand-800: #115e59;
   --color-brand-900: #134e4a;
   --color-brand-950: #042f2e;
+
+  --surface-page: #071317;
+  --surface-card: #10242b;
+  --surface-card-strong: #071b1e;
+  --surface-border: #27434b;
+  --surface-text: #f4f9f8;
+  --surface-muted: #b7ccc8;
+  --surface-subtle: #18343c;
+  --score-accent: #f4c95d;
+  --focus-ring: #5eead4;
+  --page-glow-primary: rgb(20 184 166 / 0.16);
+  --page-glow-secondary: rgb(13 148 136 / 0.08);
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] .shadow-card {
+  border-color: var(--surface-border);
+  background-color: var(--surface-card);
+  color: var(--surface-text);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 18px 45px rgb(0 8 11 / 0.2);
+}
+
+html[data-experience='sanofi'] body {
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] :is(header.sticky, nav.fixed.bottom-0) {
+  border-color: var(--surface-border);
+  background-color: rgb(7 19 23 / 0.92);
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] :is(.text-neutral-950, .text-neutral-900, .text-neutral-800) {
+  color: var(--surface-text) !important;
+}
+
+html[data-experience='sanofi'] :is(.text-neutral-700, .text-neutral-600, .text-neutral-500) {
+  color: var(--surface-muted) !important;
+}
+
+html[data-experience='sanofi'] .shadow-card :is(.text-neutral-500, .text-neutral-600) {
+  color: var(--surface-muted);
+}
+
+html[data-experience='sanofi'] .shadow-card .text-neutral-700 {
+  color: #d6e5e2;
+}
+
+html[data-experience='sanofi'] .shadow-card :is(.bg-neutral-50, .bg-neutral-100) {
+  background-color: var(--surface-subtle);
+}
+
+html[data-experience='sanofi'] span.rounded-full.px-3.font-semibold {
+  background-color: var(--surface-subtle);
+  color: var(--surface-muted);
+}
+
+html[data-experience='sanofi'] .bg-white {
+  background-color: var(--surface-card) !important;
+}
+
+html[data-experience='sanofi'] :is(.text-brand-900, .text-brand-800, .text-brand-700) {
+  color: var(--color-brand-300) !important;
+}
+
+html[data-experience='sanofi'] :is(.bg-brand-50, .bg-brand-100) {
+  background-color: var(--surface-subtle) !important;
+}
+
+html[data-experience='sanofi'] :is(.bg-neutral-50, .bg-neutral-100) {
+  background-color: var(--surface-subtle) !important;
+}
+
+html[data-experience='sanofi'] button.bg-white.text-neutral-800 {
+  border-color: var(--surface-border);
+  background-color: var(--surface-card);
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] button.bg-white.text-neutral-800:hover,
+html[data-experience='sanofi'] button.bg-transparent.text-neutral-700:hover {
+  background-color: var(--surface-subtle);
+}
+
+html[data-experience='sanofi'] button.bg-transparent.text-neutral-700 {
+  color: var(--surface-muted);
+}
+
+html[data-experience='sanofi'] [role='dialog'] {
+  border: 1px solid var(--surface-border);
+  background: var(--surface-card);
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] :is(input, select, textarea) {
+  border-color: var(--surface-border);
+  background-color: #0b1d23;
+  color: var(--surface-text);
+}
+
+html[data-experience='sanofi'] option {
+  background-color: #0b1d23;
+  color: var(--surface-text);
 }

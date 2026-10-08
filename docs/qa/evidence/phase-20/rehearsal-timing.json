@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-07",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "paceFraction": 0.8,
+  "runs": [
+    {
+      "difficulty": "warmup",
+      "limitsSeconds": [50, 70, 40, 55],
+      "intendedActiveSeconds": 172,
+      "persistedDurationSeconds": 176,
+      "revealDwellSeconds": 20,
+      "pacedWallSeconds": 192
+    },
+    {
+      "difficulty": "challenge",
+      "limitsSeconds": [40, 60, 30, 45],
+      "intendedActiveSeconds": 140,
+      "persistedDurationSeconds": 144,
+      "revealDwellSeconds": 20,
+      "pacedWallSeconds": 160
+    },
+    {
+      "difficulty": "expert",
+      "limitsSeconds": [30, 45, 25, 35],
+      "intendedActiveSeconds": 108,
+      "persistedDurationSeconds": 111,
+      "revealDwellSeconds": 20,
+      "pacedWallSeconds": 128
+    }
+  ]
+}

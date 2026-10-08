@@ -3,11 +3,12 @@ import { expect, type Page } from '@playwright/test'
 import type { AnatomyTestSnapshot } from '../../../src/anatomy3d/viewer/controller'
 
 export async function advanceRoundIntro(page: Page) {
-  const intro = page.getByRole('button').filter({ has: page.getByText('Round', { exact: true }) })
-  if (await intro.isVisible()) await intro.click()
+  const start = page.getByRole('button', { name: 'Start round' })
+  await expect(start).toBeVisible({ timeout: 20_000 })
+  await start.click()
 }
 
-export async function startRound(page: Page, expectedControl = 'I know where I am') {
+export async function startRound(page: Page, expectedControl = 'Choose my location') {
   await advanceRoundIntro(page)
   await expect(page.getByRole('button', { name: expectedControl })).toBeVisible({
     timeout: 20_000,
@@ -29,7 +30,7 @@ export async function chooseRadioWithKeyboard(page: Page, name: string) {
 export async function answerLookRound(page: Page) {
   await page.locator('[data-anatomy-viewer]').focus()
   await page.keyboard.press('ArrowLeft')
-  await page.getByRole('button', { name: 'I know where I am' }).click()
+  await page.getByRole('button', { name: 'Choose my location' }).click()
   await chooseRadioWithKeyboard(page, 'Right')
   await page.getByRole('button', { name: 'Next step' }).click()
   await chooseRadioWithKeyboard(page, 'Lower')
@@ -39,19 +40,15 @@ export async function answerLookRound(page: Page) {
   await expect(page.getByRole('button', { name: 'Next round' })).toBeVisible()
 }
 
-export async function chooseFirstListedStructure(page: Page) {
-  const summary = page.getByText('Choose from list', { exact: true })
-  const details = summary.locator('..')
-  if ((await details.getAttribute('open')) === null) await summary.click()
-  await details.getByRole('button').first().click()
-}
-
 export async function answerExploreRound(page: Page, expectedMoves = 5) {
   await expect(page.getByText(`Moves left: ${expectedMoves}`)).toBeVisible()
   await page.getByRole('button', { name: /^Back to / }).click()
   await expect(page.getByText(`Moves left: ${expectedMoves - 1}`)).toBeVisible()
-  await page.getByRole('button', { name: 'I know where I am' }).click()
-  await chooseFirstListedStructure(page)
+  await page.getByRole('button', { name: 'Choose my location' }).click()
+  const lobe = page.getByRole('radio').first()
+  await lobe.focus()
+  await page.keyboard.press('Space')
+  await expect(lobe).toBeChecked()
   await page.getByRole('button', { name: 'Next step' }).click()
   const segment = page.getByRole('radio').first()
   await segment.focus()

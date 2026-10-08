@@ -8,6 +8,10 @@ import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 import { resolveBuildId } from './scripts/build/build-id.ts'
+import {
+  resolveScopedPublicRelease,
+  scopedPublicReleasePlugin,
+} from './scripts/experiences/scoped-public.ts'
 import { getExperienceBuild } from './src/experiences/builds.ts'
 import { resolveExperienceId } from './src/lib/experienceIds.ts'
 
@@ -19,6 +23,8 @@ export default defineConfig(({ mode }) => {
     mode,
   )
   const experience = getExperienceBuild(experienceId)
+  const scopedRelease = resolveScopedPublicRelease(root, experience)
+  const scopedReleasePlugin = scopedPublicReleasePlugin(root, experience, scopedRelease)
   const packageVersion = (
     JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')) as { version: string }
   ).version
@@ -66,7 +72,9 @@ export default defineConfig(({ mode }) => {
         outDir: experience.outDir,
         manifest: experience.pwa,
         injectManifest: {
-          globPatterns: ['**/*.{js,css,html,json,svg,png,ico,woff2}'],
+          globPatterns: scopedRelease?.precachePatterns ?? [
+            '**/*.{js,css,html,json,svg,png,ico,woff2}',
+          ],
           globIgnores: [
             '**/*.dcm',
             '**/*.dicom',
@@ -75,6 +83,7 @@ export default defineConfig(({ mode }) => {
             ...experience.precacheIgnore,
           ],
           maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
+          additionalManifestEntries: scopedRelease?.precacheEntries,
         },
         devOptions: {
           enabled: true,
@@ -82,6 +91,7 @@ export default defineConfig(({ mode }) => {
           resolveTempFolder: () => resolve(root, experience.devPwaTempDir),
         },
       }),
+      ...(scopedReleasePlugin ? [scopedReleasePlugin] : []),
     ],
     server: {
       port: experience.devPort,

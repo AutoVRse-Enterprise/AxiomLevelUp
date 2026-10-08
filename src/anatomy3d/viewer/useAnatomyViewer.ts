@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { AnatomyMap } from '@/content/schema/anatomyMap'
 import type { AppConfig } from '@/content/schema'
@@ -44,6 +44,20 @@ function retryModelUrl(modelUrl: string, retryToken: number) {
   return `${modelUrl}${separator}retry=${retryToken}`
 }
 
+function normaliseStartView(startView?: AnatomyStartView): AnatomyStartView {
+  if (startView?.mode === 'marker') {
+    return { mode: 'marker', structureId: startView.structureId }
+  }
+  if (
+    startView?.mode === 'waypoint' ||
+    startView?.mode === 'waypoint_marker' ||
+    startView?.mode === 'endoscopic'
+  ) {
+    return { mode: startView.mode, waypointId: startView.waypointId }
+  }
+  return { mode: 'overview' }
+}
+
 export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
   const [state, setState] = useState<AnatomyViewerState>(loadingState)
   const [controller, setController] = useState<AnatomyViewerController | null>(null)
@@ -53,27 +67,7 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
     onLoaded: options.onLoaded,
     onFailed: options.onFailed,
   })
-  const startViewMode = options.startView?.mode ?? 'overview'
-  const startViewTarget =
-    options.startView && 'structureId' in options.startView
-      ? options.startView.structureId
-      : options.startView && 'waypointId' in options.startView
-        ? options.startView.waypointId
-        : null
-  const stableStartView = useMemo<AnatomyStartView>(() => {
-    if (startViewMode === 'marker' && startViewTarget) {
-      return { mode: startViewMode, structureId: startViewTarget }
-    }
-    if (
-      startViewTarget &&
-      (startViewMode === 'waypoint' ||
-        startViewMode === 'waypoint_marker' ||
-        startViewMode === 'endoscopic')
-    ) {
-      return { mode: startViewMode, waypointId: startViewTarget }
-    }
-    return { mode: 'overview' }
-  }, [startViewMode, startViewTarget])
+  const startViewRef = useRef(normaliseStartView(options.startView))
 
   useEffect(() => {
     callbacks.current = {
@@ -82,6 +76,10 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
       onFailed: options.onFailed,
     }
   }, [options.onFailed, options.onLoaded, options.onViewChanged])
+
+  useEffect(() => {
+    startViewRef.current = normaliseStartView(options.startView)
+  }, [options.startView])
 
   useEffect(() => {
     if (!options.element) return
@@ -125,7 +123,7 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
           nextController.dispose()
           return
         }
-        nextController.setStartView(stableStartView)
+        nextController.setStartView(startViewRef.current)
         const warning =
           result.triangleCount > options.config.maxTriangleCountWarning
             ? `This model contains ${result.triangleCount.toLocaleString()} triangles and may render slowly on this device.`
@@ -152,7 +150,7 @@ export function useAnatomyViewer(options: UseAnatomyViewerOptions) {
       active = false
       nextController?.dispose()
     }
-  }, [options.config, options.element, options.map, options.modelUrl, stableStartView, retryToken])
+  }, [options.config, options.element, options.map, options.modelUrl, retryToken])
 
   const retry = useCallback(() => {
     setState(loadingState())

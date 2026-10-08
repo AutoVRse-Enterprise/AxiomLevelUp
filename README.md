@@ -19,6 +19,8 @@ The learner can:
 - inspect a configured 3D anatomy model and authored spatial findings;
 - play validated, seeded game rounds through a timed shared player with clues, instant reveals,
   scoring and resume;
+- launch daily and expert runs from a game hub, compare saved results, share deterministic
+  challenge links and browse a clearly disclosed demo leaderboard;
 - complete Foundation, Intermediate and Advanced Case Lab scenarios;
 - gather clues, revise a differential, cite reviewed evidence and commit a conclusion;
 - review a prioritized takeaway and compare reasoning with an authored Model answer;
@@ -101,6 +103,29 @@ npm run preview:sanofi  # http://127.0.0.1:4174
 value that conflicts with `--mode default` or `--mode sanofi` fails immediately. `npm run check`
 validates, builds and budgets both artifacts. The dedicated sanofi browser suite is
 `npm run test:e2e:sanofi`.
+
+## Sanofi demo walkthrough
+
+Allow 5–10 minutes for the full presenter tour or 2–4 minutes for one participant run.
+
+1. Run `npm run build:sanofi`, `npm run verify:sanofi-build` and
+   `npm run preview:sanofi -- --host 127.0.0.1 --port 4174 --strictPort`.
+2. Open `http://127.0.0.1:4174`. Choose a difficulty and **Start a quick challenge**.
+3. Complete the outside-in marker round, guided airway-map exploration, histology finding and
+   compact clinical call. Review the Score and round details.
+4. Select **Challenge a colleague**, then show the challenge landing and comparison in a clean
+   browser context.
+5. Show Leaderboard filters and the visible **Demo leaderboard** disclosure.
+6. Open **You** for best scores, recent games and Credits. Use `/you?presenter=1` only when a
+   Fresh/Returning reset is needed.
+7. Briefly open Anatomy Hunt and Spot the Finding; Clinical Mystery remains **New soon**.
+
+`dist-sanofi/` is a selective artifact containing the Sanofi shell, validated content and its six
+configured media assets—not default courses or DICOM. After the service worker activates and
+controls a reloaded page, the representative four-round challenge is available offline. The
+experience intentionally does not offer an install prompt. Localhost is sufficient for local PWA
+verification; audience/phone handoff requires a real HTTPS deployment and physical-device checks,
+which remain open external gates. See `docs/qa/phase-20-medical-challenge-runbook.md`.
 
 ## Recommended human test
 
@@ -193,19 +218,27 @@ npx playwright test --workers=1
 Install Chromium first with `npx playwright install chromium` if Playwright reports that its
 browser is missing.
 
-The last recorded Phase 15 run passed:
+The Phase 20 closeout gate passed:
 
-- 95 Vitest files and 593 tests;
+- 110 Vitest files and 651 tests;
 - default content validation for 5 courses, 13 lessons, 4 cases and 1 anatomy map, plus sanofi
-  validation for 2 rounds and 1 game, all with zero warnings;
+  validation for 7 rounds and 3 games, all with zero warnings;
 - both production builds and bundle budgets; and
-- 53 Playwright tests, with 3 intentional project skips and no failures, across desktop Chromium
-  and 375 × 812 touch-phone Chromium, plus both sanofi smoke projects.
+- default-build isolation verification;
+- 55 Sanofi Playwright passes with 5 intentional project skips, including 20 visual baselines and
+  one-answer-one-event coverage for live and restored locked rounds;
+- all 53 runnable default Playwright checks green in one serial run, with 3 intentional project
+  skips; seven Phase 13 goldens remain unchanged and the endoscopic finding golden intentionally
+  records the corrected shared lumen wall; and
+- a verified 211-file / 9,174,317-byte Sanofi artifact with SHA-256
+  `539cb54894e0250d93be095e1aba6b06d586da639f0ee5c821878954b7349349`.
 
 ## Current readiness
 
-Implementation and local automated coverage are complete through Phase 15. External client-demo
-approval remains **No-go** because the following evidence has not been supplied:
+Implementation and local automated coverage are complete through the revised Phase 20 scope. The
+selective Sanofi artifact is locally demo-ready, but external audience release remains blocked.
+The independent Case Lab client-demo verdict remains **No-go** because the following evidence has
+not been supplied:
 
 - five qualifying unaided usability sessions;
 - one frozen HTTPS candidate with hosted service-worker and DICOM/CORS preflight; and
@@ -222,4 +255,6 @@ These are external evidence gaps, not hidden automated passes.
 - `docs/phases/phase-13-client-demo-readiness.md` — current implementation checklist.
 - `docs/qa/phase-13-demo-runbook.md` — presenter-led ten-minute demonstration.
 - `docs/qa/phase-13-demo-readiness-verdict.md` — what is and is not approved.
+- `docs/qa/phase-20-medical-challenge-runbook.md` — the 2–10 minute Sanofi operating script.
+- `docs/qa/phase-20-readiness-verdict.md` — local proof, accepted deviation and blocked gates.
 - `docs/HANDOFF.md` — current engineering state and operational gotchas.

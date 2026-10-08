@@ -4,7 +4,7 @@ import { Button } from '@/components/ui'
 import type { GameConfig, RoundDocument } from '@/content/schema/game'
 import type { PlannedRound } from '@/engines/games/plan'
 import type { GameRoundSession } from '@/engines/games/session'
-import { StepActionSlot } from '@/player/StepActionSlot'
+import { StepActionScope, StepActionSlot } from '@/player/StepActionSlot'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import type { PrimitiveInteraction } from '@/primitives/types'
 
@@ -52,7 +52,7 @@ export function SpatialRoundStage({
   return (
     <div
       aria-disabled={disabled}
-      className={`relative pb-28 pt-4 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
+      className={`relative ${answerOpen ? 'pb-28' : 'pb-6'} pt-4 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
     >
       {!answerOpen || !replaceScene ? (
         <section className="relative overflow-hidden rounded-2xl bg-white text-neutral-950 shadow-overlay">
@@ -104,11 +104,13 @@ export function SpatialRoundStage({
       ) : null}
 
       {!answerOpen ? (
-        <StepActionSlot>
-          <Button className="w-full sm:w-auto" onClick={() => onRoundStepChange('answer')}>
-            {copy.openAnswerDrawer}
-          </Button>
-        </StepActionSlot>
+        <StepActionScope placement="inline">
+          <StepActionSlot>
+            <Button className="w-full sm:w-auto" onClick={() => onRoundStepChange('answer')}>
+              {copy.openAnswerDrawer}
+            </Button>
+          </StepActionSlot>
+        </StepActionScope>
       ) : (
         <section
           aria-label={copy.answerDrawerTitle}

@@ -1076,6 +1076,11 @@
               ],
               "gameRoundCorrect": [
                 15
+              ],
+              "gamePersonalBest": [
+                25,
+                35,
+                25
               ]
             },
             "confetti": {
@@ -1134,13 +1139,28 @@
                     "exclusiveMinimum": 0,
                     "maximum": 1000
                   }
+                },
+                "gamePersonalBest": {
+                  "default": [
+                    25,
+                    35,
+                    25
+                  ],
+                  "maxItems": 5,
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  }
                 }
               },
               "required": [
                 "correctAnswer",
                 "badgeUnlocked",
                 "challengeCompleted",
-                "gameRoundCorrect"
+                "gameRoundCorrect",
+                "gamePersonalBest"
               ],
               "additionalProperties": false
             },
@@ -1157,7 +1177,9 @@
                       "challenge_complete",
                       "badge",
                       "level_up",
-                      "game_complete"
+                      "game_complete",
+                      "game_personal_best",
+                      "game_rank_up"
                     ]
                   }
                 },
@@ -3514,13 +3536,476 @@
             "unavailableLabel": {
               "type": "string",
               "minLength": 1
+            },
+            "primaryFormatId": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            },
+            "difficultyLabel": {
+              "default": "Difficulty",
+              "type": "string",
+              "minLength": 1
+            },
+            "bestScoreLabel": {
+              "default": "Best score",
+              "type": "string",
+              "minLength": 1
+            },
+            "continueTitle": {
+              "default": "Continue game",
+              "type": "string",
+              "minLength": 1
+            },
+            "incomingTitle": {
+              "default": "Incoming challenge",
+              "type": "string",
+              "minLength": 1
+            },
+            "incomingTemplate": {
+              "default": "{from} challenged you · Score to beat {score}",
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyTitle": {
+              "default": "Today's challenge",
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyDescription": {
+              "default": "The same challenge for everyone today.",
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyComplete": {
+              "default": "Completed today · {score} points",
+              "type": "string",
+              "minLength": 1
+            },
+            "formatsTitle": {
+              "default": "Game formats",
+              "type": "string",
+              "minLength": 1
+            },
+            "statsTitle": {
+              "default": "Your stats",
+              "type": "string",
+              "minLength": 1
+            },
+            "lastScoreLabel": {
+              "default": "Last score",
+              "type": "string",
+              "minLength": 1
+            },
+            "gamesPlayedLabel": {
+              "default": "Games played",
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyStreakLabel": {
+              "default": "Daily streak",
+              "type": "string",
+              "minLength": 1
+            },
+            "leaderboardTitle": {
+              "default": "Leaderboard",
+              "type": "string",
+              "minLength": 1
+            },
+            "viewLeaderboard": {
+              "default": "View leaderboard",
+              "type": "string",
+              "minLength": 1
+            },
+            "expertsTitle": {
+              "default": "Expert challenges",
+              "type": "string",
+              "minLength": 1
+            },
+            "scoreToBeat": {
+              "default": "Score to beat {score}",
+              "type": "string",
+              "minLength": 1
+            },
+            "recentTitle": {
+              "default": "Recent games",
+              "type": "string",
+              "minLength": 1
+            },
+            "noRecent": {
+              "default": "Your recent games will appear here.",
+              "type": "string",
+              "minLength": 1
+            },
+            "resumeLabel": {
+              "default": "Continue",
+              "type": "string",
+              "minLength": 1
+            },
+            "playLabel": {
+              "default": "Play",
+              "type": "string",
+              "minLength": 1
+            },
+            "previewLabel": {
+              "default": "New soon",
+              "type": "string",
+              "minLength": 1
+            },
+            "roundsTemplate": {
+              "default": "{count} rounds",
+              "type": "string",
+              "minLength": 1
+            },
+            "minutesTemplate": {
+              "default": "{minutes} min",
+              "type": "string",
+              "minLength": 1
             }
           },
           "required": [
             "title",
             "tagline",
             "startLabel",
-            "unavailableLabel"
+            "difficultyLabel",
+            "bestScoreLabel",
+            "continueTitle",
+            "incomingTitle",
+            "incomingTemplate",
+            "dailyTitle",
+            "dailyDescription",
+            "dailyComplete",
+            "formatsTitle",
+            "statsTitle",
+            "lastScoreLabel",
+            "gamesPlayedLabel",
+            "dailyStreakLabel",
+            "leaderboardTitle",
+            "viewLeaderboard",
+            "expertsTitle",
+            "scoreToBeat",
+            "recentTitle",
+            "noRecent",
+            "resumeLabel",
+            "playLabel",
+            "previewLabel",
+            "roundsTemplate",
+            "minutesTemplate"
+          ],
+          "additionalProperties": false
+        },
+        "result": {
+          "type": "object",
+          "properties": {
+            "pointsLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "correctTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "timeTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bestRoundTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "personalBest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "challengeColleague": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tryAgain": {
+              "type": "string",
+              "minLength": 1
+            },
+            "beatYourBest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "leaderboard": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rematch": {
+              "type": "string",
+              "minLength": 1
+            },
+            "challengeBack": {
+              "type": "string",
+              "minLength": 1
+            },
+            "roundDetailsTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "winTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "lossTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "tieTemplate": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "pointsLabel",
+            "correctTemplate",
+            "timeTemplate",
+            "bestRoundTemplate",
+            "personalBest",
+            "challengeColleague",
+            "tryAgain",
+            "beatYourBest",
+            "leaderboard",
+            "rematch",
+            "challengeBack",
+            "roundDetailsTitle",
+            "winTemplate",
+            "lossTemplate",
+            "tieTemplate"
+          ],
+          "additionalProperties": false
+        },
+        "share": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1
+            },
+            "messageTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nativeShare": {
+              "type": "string",
+              "minLength": 1
+            },
+            "copyLink": {
+              "type": "string",
+              "minLength": 1
+            },
+            "copied": {
+              "type": "string",
+              "minLength": 1
+            },
+            "messaging": {
+              "type": "string",
+              "minLength": 1
+            },
+            "email": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fallbackName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nameTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nameDescription": {
+              "type": "string",
+              "minLength": 1
+            },
+            "nameLabel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "saveName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "skipName": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "messageTemplate",
+            "nativeShare",
+            "copyLink",
+            "copied",
+            "messaging",
+            "email",
+            "fallbackName",
+            "nameTitle",
+            "nameDescription",
+            "nameLabel",
+            "saveName",
+            "skipName"
+          ],
+          "additionalProperties": false
+        },
+        "challengeLanding": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "summaryTemplate": {
+              "type": "string",
+              "minLength": 1
+            },
+            "accept": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fallbackTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fallbackMessage": {
+              "type": "string",
+              "minLength": 1
+            },
+            "start": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "title",
+            "summaryTemplate",
+            "accept",
+            "fallbackTitle",
+            "fallbackMessage",
+            "start"
+          ],
+          "additionalProperties": false
+        },
+        "you": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "bestScores": {
+              "type": "string",
+              "minLength": 1
+            },
+            "gamesPlayed": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dailyStreak": {
+              "type": "string",
+              "minLength": 1
+            },
+            "recentGames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "noRecentGames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "displayName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "editName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "saveName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "credits": {
+              "type": "string",
+              "minLength": 1
+            },
+            "presenterTitle": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resetProgress": {
+              "type": "string",
+              "minLength": 1
+            },
+            "seedReturning": {
+              "type": "string",
+              "minLength": 1
+            },
+            "resetComplete": {
+              "type": "string",
+              "minLength": 1
+            },
+            "seedComplete": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "title",
+            "bestScores",
+            "gamesPlayed",
+            "dailyStreak",
+            "recentGames",
+            "noRecentGames",
+            "displayName",
+            "editName",
+            "saveName",
+            "credits",
+            "presenterTitle",
+            "resetProgress",
+            "seedReturning",
+            "resetComplete",
+            "seedComplete"
+          ],
+          "additionalProperties": false
+        },
+        "notice": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false
+        },
+        "daily": {
+          "type": "object",
+          "properties": {
+            "gameId": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            },
+            "difficulty": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9_-]*$"
+            }
+          },
+          "required": [
+            "gameId",
+            "difficulty"
           ],
           "additionalProperties": false
         },
@@ -4299,6 +4784,10 @@
                   "playable",
                   "preview"
                 ]
+              },
+              "statusLabel": {
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": [
@@ -4378,6 +4867,64 @@
             "disclosure": {
               "type": "string",
               "minLength": 1
+            },
+            "copy": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "today": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "week": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "allTime": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "game": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "difficulty": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "yourPosition": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "unranked": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "addName": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "empty": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "title",
+                "today",
+                "week",
+                "allTime",
+                "game",
+                "difficulty",
+                "yourPosition",
+                "unranked",
+                "addName",
+                "empty"
+              ],
+              "additionalProperties": false
             }
           },
           "required": [

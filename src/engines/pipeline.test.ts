@@ -11,7 +11,7 @@ import {
 } from '@/content/schema'
 import { reduceLearnerEvent } from '@/engines/pipeline'
 import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
-import { migrateLearnerState, type LearnerData } from '@/state/learnerStore'
+import { LEARNER_STATE_VERSION, migrateLearnerState, type LearnerData } from '@/state/learnerStore'
 import { makeValidContentBundle } from '@/test/contentFixtures'
 
 const registry = validateContentBundle(makeValidContentBundle())
@@ -590,7 +590,7 @@ describe('learner event pipeline', () => {
     }
 
     const migrated = migrateLearnerState(legacy)
-    expect(migrated.stateVersion).toBe(9)
+    expect(migrated.stateVersion).toBe(LEARNER_STATE_VERSION)
     expect(migrated.gamification.lessonRewards['imaging-orientation']).toEqual({
       completionAwarded: true,
       perfectAwarded: true,

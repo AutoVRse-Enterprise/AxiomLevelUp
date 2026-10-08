@@ -5,7 +5,7 @@
   "title": "Respiratory Challenge",
   "tagline": "Orient, investigate and make the clinical call.",
   "organSystem": "respiratory",
-  "estimatedSeconds": 195,
+  "estimatedSeconds": 240,
   "slots": [
     {
       "id": "orient",
@@ -32,6 +32,6 @@
   "defaultDifficulty": "challenge",
   "durationWindowSeconds": {
     "min": 120,
-    "max": 240
+    "max": 300
   }
 }

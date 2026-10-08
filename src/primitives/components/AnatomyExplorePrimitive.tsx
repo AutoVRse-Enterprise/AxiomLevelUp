@@ -123,7 +123,7 @@ export function AnatomyExplorePrimitive({
       movement={primitive.content.movement}
       movementState={
         primitive.content.movement &&
-        primitive.content.startView.mode === 'endoscopic' &&
+        'waypointId' in primitive.content.startView &&
         observation.currentWaypointId
           ? {
               entryWaypointId: primitive.content.startView.waypointId,

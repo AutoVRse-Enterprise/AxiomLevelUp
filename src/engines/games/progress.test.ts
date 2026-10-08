@@ -39,8 +39,10 @@ describe('game progress', () => {
   it('records a completion once and bounds history', () => {
     const learner = state()
     const config = { ...gamesConfig, historyLimit: 2 }
-    expect(applyGameProgressEvent(learner, completion(), config)).toBe(true)
-    expect(applyGameProgressEvent(learner, completion(), config)).toBe(false)
+    expect(applyGameProgressEvent(learner, completion(), config).map(({ event }) => event)).toEqual(
+      ['game_personal_best', 'game_rank_improved'],
+    )
+    expect(applyGameProgressEvent(learner, completion(), config)).toEqual([])
     applyGameProgressEvent(
       learner,
       completion({ id: 'event-2', runId: 'run-2', total: 900 }),
@@ -62,6 +64,19 @@ describe('game progress', () => {
       'run-3',
     ])
     expect(learner.xp).toEqual({ total: 0, weekly: 0 })
+  })
+
+  it('does not celebrate a zero-score first run as a personal best or rank improvement', () => {
+    const learner = state()
+    const followUps = applyGameProgressEvent(
+      learner,
+      completion({ total: 0, correctCount: 0 }),
+      gamesConfig,
+    )
+
+    expect(followUps).toEqual([])
+    expect(learner.games['fixture-game']?.history[0]?.personalBest).toBe(false)
+    expect(learner.games['fixture-game']?.bestTotal).toBe(0)
   })
 
   it('updates only consecutive daily streaks', () => {
@@ -94,5 +109,36 @@ describe('game progress', () => {
       gamesConfig,
     )
     expect(learner.gameDaily).toEqual({ lastPlayedDate: '2026-10-09', streakDays: 1 })
+  })
+
+  it('stores an incoming challenge and marks it played by token', () => {
+    const learner = state()
+    applyGameProgressEvent(
+      learner,
+      {
+        event: 'game_challenge_opened',
+        id: 'challenge-opened',
+        occurredAt: '2026-10-07T10:00:00.000Z',
+        token: 'challenge-token',
+        gameId: 'fixture-game',
+        fromName: 'Asha',
+        targetScore: 2400,
+      },
+      gamesConfig,
+    )
+    expect(learner.gameChallenges.incoming[0]).toMatchObject({
+      token: 'challenge-token',
+      playedRunId: null,
+    })
+
+    applyGameProgressEvent(
+      learner,
+      completion({
+        mode: 'challenge',
+        challengeToken: 'challenge-token',
+      }),
+      gamesConfig,
+    )
+    expect(learner.gameChallenges.incoming[0]?.playedRunId).toBe('run-1')
   })
 })

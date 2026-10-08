@@ -1,6 +1,6 @@
 # Medical Challenge programme plan (Phases 14–20)
 
-**Status:** Active — Phases 14–18 complete; Phase 19 is next.
+**Status:** Complete — Phases 14–20 are complete within the revised local demo scope.
 
 This document is the programme-level plan for turning the existing Learning Runtime into a
 multi-experience codebase and delivering the mobile-first medical challenge game described in
@@ -211,7 +211,8 @@ P17-T01 spatial-legibility spike may run any time after 14 to de-risk 17 early.
    experiences.
 3. **Default regression gate:** the default Playwright suite (serial) passes and the eight Phase 13
    golden images pass without `--update-snapshots`. A task that needs a default re-baseline stops
-   and asks the user.
+   and asks the user; ADR-115 records the reviewed exception for the shared lumen defect found
+   during the user-authorized no-questions Quick Challenge overhaul.
 4. No new product constants in components: points, timers, labels, messages, difficulty values and
    copy come from validated configuration.
 5. Primitives stay callback-only. Game state changes only through typed events and the game
@@ -232,8 +233,9 @@ P17-T01 spatial-legibility spike may run any time after 14 to de-risk 17 early.
 - **Browser (Playwright):** the existing default suite is unchanged and remains the regression
   proof. A separate `playwright.sanofi.config.ts` runs sanofi specs on desktop 1440 × 900 and
   touch-phone 375 × 812 with SwiftShader, bridge-free where the player would use visible controls.
-- **Visual:** default keeps its eight desktop baselines. Sanofi adds hub, reveal and result baselines
-  on both viewports in Phase 20 because the experience is mobile-first.
+- **Visual:** default keeps eight desktop baselines; ADR-115 replaces the one that encoded the
+  culled lumen defect. Sanofi adds hub, reveal and result baselines on both viewports in Phase 20
+  because the experience is mobile-first.
 - **Human/physical:** physical Android/iPhone checks and hosted HTTPS delivery remain external
   gates, exactly as in Phases 9 and 13; emulation is never reported as device evidence.
 

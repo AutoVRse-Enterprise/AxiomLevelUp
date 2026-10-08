@@ -1,3 +1,5 @@
+import type { GameRunMode } from '@/events/types'
+
 export type GameSessionPhase =
   'ready' | 'intro' | 'playing' | 'locked' | 'reveal' | 'final' | 'complete'
 
@@ -60,6 +62,8 @@ export interface GameSession {
   rounds: GameRoundSession[]
   startedAt: string | null
   completedAt: string | null
+  mode: GameRunMode
+  challengeToken?: string
 }
 
 export type GameSessionAction =
@@ -100,6 +104,7 @@ function createRoundSession(): GameRoundSession {
 export function createGameSession(
   plan: GameSessionPlan | PlannedGameRun,
   plannedGameVersion?: string,
+  context: { mode?: GameRunMode; challengeToken?: string } = {},
 ): GameSession {
   const gameVersion = plan.gameVersion ?? plannedGameVersion
   const difficulty = 'difficulty' in plan ? plan.difficulty : plan.difficultyId
@@ -121,6 +126,8 @@ export function createGameSession(
     rounds: plan.rounds.map(createRoundSession),
     startedAt: null,
     completedAt: null,
+    mode: context.mode ?? 'standard',
+    ...(context.challengeToken ? { challengeToken: context.challengeToken } : {}),
   }
 }
 

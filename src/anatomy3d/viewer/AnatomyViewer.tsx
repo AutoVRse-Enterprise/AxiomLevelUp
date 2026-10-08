@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- The labelled canvas region is keyboard-focusable while its overlay controls remain separate accessible actions. */
+
 import { Expand, Minus, Plus, RotateCcw, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -89,7 +91,8 @@ export function AnatomyViewer({
   const [localSelection, setLocalSelection] = useState<readonly string[]>([])
   const [announcement, setAnnouncement] = useState('')
   const [currentWaypointId, setCurrentWaypointId] = useState<string | null>(
-    startView && 'waypointId' in startView ? startView.waypointId : null,
+    movementState?.currentWaypointId ??
+      (startView && 'waypointId' in startView ? startView.waypointId : null),
   )
   const [endoscopic, setEndoscopic] = useState(startView?.mode === 'endoscopic')
   const [listOpen, setListOpen] = useState(false)
@@ -112,6 +115,8 @@ export function AnatomyViewer({
   const markAnatomyHintSeen = useLearnerStore((learner) => learner.markAnatomyHintSeen)
   const anatomyDebugEnabled =
     import.meta.env.DEV && new URLSearchParams(window.location.search).get('anatomyDebug') === '1'
+  const waypointOverviewId = startView?.mode === 'waypoint_marker' ? startView.waypointId : null
+  const waypointOverview = waypointOverviewId !== null
   const { ref: rootRef, immersive, toggle } = useImmersiveArtifact<HTMLDivElement>()
   const selection = selectedStructureIds ?? localSelection
   const reportViewChanged = useCallback(
@@ -168,6 +173,19 @@ export function AnatomyViewer({
   }, [controller, markerStructureId, startView])
 
   useEffect(() => {
+    if (
+      !controller ||
+      state.status !== 'ready' ||
+      !waypointOverviewId ||
+      !movementState?.currentWaypointId ||
+      movementState.currentWaypointId === waypointOverviewId
+    ) {
+      return
+    }
+    controller.setWaypointContext(movementState.currentWaypointId)
+  }, [controller, movementState?.currentWaypointId, state.status, waypointOverviewId])
+
+  useEffect(() => {
     controller?.setFindings(findings)
   }, [controller, findings])
 
@@ -183,11 +201,11 @@ export function AnatomyViewer({
   }, [controller, selectableLevelKey])
 
   useEffect(() => {
-    if (!controller || state.status !== 'ready' || endoscopicRef.current) return
+    if (!controller || state.status !== 'ready' || endoscopicRef.current || waypointOverview) return
     controller.frameStructures(selectableStructureIds, { animate: motion === 'full' })
     // The IDs are derived from this stable level key and the validated anatomy map.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [controller, map, motion, selectableLevelKey, state.status])
+  }, [controller, map, motion, selectableLevelKey, state.status, waypointOverview])
 
   useEffect(() => {
     if (!controller || state.status !== 'ready' || !comparison) return
@@ -290,7 +308,8 @@ export function AnatomyViewer({
     }
     const waypoint = map.waypoints.find(({ id }) => id === waypointId)
     const destinationLabel = waypoint ? waypointLabel(waypoint) : waypointId
-    controller?.travelTo(waypointId, { animate: motion === 'full' })
+    if (waypointOverview) controller?.setWaypointContext(waypointId)
+    else controller?.travelTo(waypointId, { animate: motion === 'full' })
     setCurrentWaypointId(waypointId)
     setArrivalMessage(`You are now in ${destinationLabel}.`)
     setAnnouncement(`You are now in ${destinationLabel}.`)
@@ -323,6 +342,11 @@ export function AnatomyViewer({
   const breadcrumb = (controller?.waypointPath() ?? (currentWaypointId ? [currentWaypointId] : []))
     .map((id) => map.waypoints.find((waypoint) => waypoint.id === id))
     .filter((waypoint): waypoint is AnatomyMap['waypoints'][number] => Boolean(waypoint))
+  const compactControls =
+    (navigation === 'orbit' || lookOnly) &&
+    !movement &&
+    findings.length === 0 &&
+    !selectableLevelIds?.length
 
   return (
     <div
@@ -353,8 +377,10 @@ export function AnatomyViewer({
 
       <div
         className={cn(
-          'min-h-0 md:grid md:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]',
-          immersive && 'flex flex-1 flex-col md:grid',
+          'min-h-0',
+          !compactControls && 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]',
+          immersive && 'flex flex-1 flex-col',
+          immersive && !compactControls && 'md:grid',
         )}
       >
         <div
@@ -364,7 +390,7 @@ export function AnatomyViewer({
             immersive && 'min-h-0 flex-1 md:h-full',
             disabled && 'pointer-events-none',
           )}
-          role="button"
+          role="region"
           onContextMenu={(event) => event.preventDefault()}
           onPointerCancel={() => {
             pointerStart.current = null
@@ -452,19 +478,6 @@ export function AnatomyViewer({
           tabIndex={0}
         >
           <div className="absolute inset-0" ref={setElement} />
-          {!anatomyHintSeen && !disabled ? (
-            <div className="absolute right-3 bottom-3 left-3 z-20 flex items-start justify-between gap-3 rounded-lg border border-brand-300 bg-clinical-900/95 p-3 shadow-overlay">
-              <p className="text-small text-white">{labels.anatomyInteractionHint}</p>
-              <button
-                aria-label="Dismiss anatomy interaction hint"
-                className="shrink-0 rounded p-1 text-neutral-200 hover:bg-clinical-700 focus-visible:outline-2 focus-visible:outline-brand-300"
-                type="button"
-                onClick={markAnatomyHintSeen}
-              >
-                <X aria-hidden="true" size={18} />
-              </button>
-            </div>
-          ) : null}
           {endoscopic && orientationLabels === 'patient' ? (
             <>
               <span className="pointer-events-none absolute left-3 top-1/2 rounded bg-black/60 px-2 py-1 text-caption font-bold uppercase tracking-wide">
@@ -474,6 +487,43 @@ export function AnatomyViewer({
                 Right
               </span>
             </>
+          ) : null}
+          {waypointOverview && orientationLabels === 'patient' ? (
+            <>
+              <span className="pointer-events-none absolute left-3 top-1/2 rounded bg-black/70 px-2 py-1 text-caption font-bold uppercase tracking-wide">
+                Patient left
+              </span>
+              <span className="pointer-events-none absolute right-3 top-1/2 rounded bg-black/70 px-2 py-1 text-caption font-bold uppercase tracking-wide">
+                Patient right
+              </span>
+              <span className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 rounded bg-black/70 px-2 py-1 text-caption font-bold uppercase tracking-wide">
+                Upper
+              </span>
+              <span className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 rounded bg-black/70 px-2 py-1 text-caption font-bold uppercase tracking-wide">
+                Lower
+              </span>
+            </>
+          ) : null}
+          {waypointOverview ? (
+            <div className="pointer-events-none absolute top-3 left-3 z-20 flex flex-wrap gap-2 text-caption font-semibold">
+              <span className="rounded bg-black/75 px-2 py-1">
+                <span
+                  aria-hidden="true"
+                  className="mr-1.5 inline-block size-2 rounded-full"
+                  style={{ backgroundColor: config.markerColor }}
+                />
+                Drop point
+              </span>
+              {currentWaypointId !== entryWaypointId ? (
+                <span className="rounded bg-black/75 px-2 py-1">
+                  <span
+                    aria-hidden="true"
+                    className="mr-1.5 inline-block size-2 rounded-full bg-info-400"
+                  />
+                  Current position
+                </span>
+              ) : null}
+            </div>
           ) : null}
           {endoscopic && config.lumen.zoom.enabled ? (
             <div
@@ -517,7 +567,26 @@ export function AnatomyViewer({
             </div>
           ) : null}
         </div>
-        <footer className="space-y-3 border-t border-clinical-700 p-3 sm:p-4 md:max-h-[min(65dvh,42rem)] md:overflow-y-auto md:border-t-0 md:border-l">
+        <footer
+          className={cn(
+            'space-y-3 border-t border-clinical-700 p-3 sm:p-4',
+            !compactControls &&
+              'md:max-h-[min(65dvh,42rem)] md:overflow-y-auto md:border-t-0 md:border-l',
+          )}
+        >
+          {!anatomyHintSeen && !disabled ? (
+            <div className="flex items-start justify-between gap-3 rounded-lg border border-brand-300 bg-clinical-900 p-3">
+              <p className="text-small text-white">{labels.anatomyInteractionHint}</p>
+              <button
+                aria-label="Dismiss anatomy interaction hint"
+                className="shrink-0 rounded p-1 text-neutral-200 hover:bg-clinical-700 focus-visible:outline-2 focus-visible:outline-brand-300"
+                type="button"
+                onClick={markAnatomyHintSeen}
+              >
+                <X aria-hidden="true" size={18} />
+              </button>
+            </div>
+          ) : null}
           {state.warning ? (
             <p className="text-small text-warning-200" role="status">
               {state.warning}
@@ -626,10 +695,22 @@ export function AnatomyViewer({
                 size="sm"
                 variant="secondary"
                 onClick={() => {
-                  if (startView) controller?.setStartView(startView)
-                  else controller?.resetView()
+                  if (startView) {
+                    controller?.setStartView(startView)
+                    if (
+                      waypointOverview &&
+                      movementState?.currentWaypointId &&
+                      movementState.currentWaypointId !== waypointOverviewId
+                    ) {
+                      controller?.setWaypointContext(movementState.currentWaypointId)
+                    }
+                  } else controller?.resetView()
                   setCurrentWaypointId(
-                    startView && 'waypointId' in startView ? startView.waypointId : null,
+                    waypointOverview && movementState?.currentWaypointId
+                      ? movementState.currentWaypointId
+                      : startView && 'waypointId' in startView
+                        ? startView.waypointId
+                        : null,
                   )
                   setArrivalMessage(null)
                   const nextEndoscopic = startView?.mode === 'endoscopic'
@@ -639,7 +720,7 @@ export function AnatomyViewer({
               >
                 Reset
               </Button>
-              {currentWaypointId && navigation === 'both' ? (
+              {currentWaypointId && navigation === 'both' && !waypointOverview ? (
                 <div aria-label="View mode" className="flex gap-1" role="group">
                   <Button
                     aria-pressed={!endoscopic}
@@ -671,7 +752,7 @@ export function AnatomyViewer({
               ) : null}
             </div>
           ) : null}
-          {parentWaypoint && !lookOnly ? (
+          {parentWaypoint && !lookOnly && navigation !== 'orbit' ? (
             <div>
               <p className="mb-2 text-caption font-semibold uppercase tracking-wide text-neutral-300">
                 Back to parent

@@ -31,4 +31,5 @@ export const defaultBuild = {
   devPwaTempDir: 'dev-dist',
   contentDir: 'public/content',
   precacheIgnore: ['experiences/**'],
+  releaseStaticPaths: null,
 } satisfies ExperienceBuildMetadata

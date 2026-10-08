@@ -5,8 +5,8 @@
   "title": "Find your way: lower airway",
   "mechanic": "spatial_explore",
   "anatomyMapId": "respiratory-game-map",
-  "intro": "Trace the nearby branches, then pin the marked airway's lobe and segment.",
-  "timeLimitSeconds": 60,
+  "intro": "Start at the orange drop point. Move back toward the central airway, compare nearby branches, then identify the original lobe and segment.",
+  "timeLimitSeconds": 80,
   "drop": {
     "pools": {
       "warmup": ["right-lower-superior-airway", "right-lower-posterior-airway", "left-lower-superior-airway", "left-lower-posterior-airway"],
@@ -19,9 +19,9 @@
     "type": "anatomy_explore",
     "content": {
       "anatomyMapId": "respiratory-game-map",
-      "prompt": "Use the nearby branch pattern to orient yourself.",
-      "startView": { "mode": "endoscopic", "waypointId": "right-lower-superior-airway" },
-      "navigation": "flythrough",
+      "prompt": "The orange beacon stays at your drop point. Use Back and branch buttons to trace its path on the visible airway map.",
+      "startView": { "mode": "waypoint_marker", "waypointId": "right-lower-superior-airway" },
+      "navigation": "both",
       "orientationLabels": "patient",
       "movement": { "maxMoves": 5, "maxHopsFromEntry": 2, "freeBacktrack": true }
     },
@@ -32,25 +32,37 @@
     "type": "anatomy_locate",
     "content": {
       "anatomyMapId": "respiratory-game-map",
-      "prompt": "Pin the lobe, then choose its segment.",
+      "prompt": "Choose the drop point's lobe, then its segment.",
       "answerFrom": "entry",
       "navigation": "orbit",
       "levels": [
-        { "levelId": "lobe", "input": "model", "weight": 0.55, "targetStructureId": "right-lower-lobe" },
+        {
+          "levelId": "lobe",
+          "input": "choice",
+          "weight": 0.55,
+          "options": [
+            { "id": "right-upper-lobe", "label": "Right upper lobe" },
+            { "id": "right-middle-lobe", "label": "Right middle lobe" },
+            { "id": "right-lower-lobe", "label": "Right lower lobe" },
+            { "id": "left-upper-lobe", "label": "Left upper lobe" },
+            { "id": "left-lower-lobe", "label": "Left lower lobe" }
+          ],
+          "correctOptionId": "right-lower-lobe"
+        },
         { "levelId": "segment", "input": "structure_choice", "parentLevelId": "lobe", "weight": 0.45, "targetStructureId": "right-lower-superior-segment" }
       ],
-      "explanation": "Lower-airway orientation comes from the downward course and the nearby superior or posterior branch."
+      "explanation": "Lower-airway orientation comes from the downward path and the nearby superior or posterior branch."
     },
     "completion": { "mode": "answer" }
   },
   "feedback": {
-    "correct": "The downward airway course and neighboring branch were the key clues.",
-    "incorrect": "Use the lower-lobe course first, then compare the superior and posterior branch direction.",
+    "correct": "The downward airway path and neighboring branch were the key clues.",
+    "incorrect": "Use the lower-lobe path first, then compare the superior and posterior branch direction.",
     "answerTemplate": "Actual location: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 70, "maxMoves": 5, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
-    "challenge": { "timeLimitSeconds": 60, "maxMoves": 3, "maxHopsFromEntry": 2, "orientationLabels": "hidden" },
-    "expert": { "timeLimitSeconds": 45, "maxMoves": 2, "maxHopsFromEntry": 1, "orientationLabels": "hidden" }
+    "warmup": { "timeLimitSeconds": 80, "maxMoves": 5, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
+    "challenge": { "timeLimitSeconds": 80, "maxMoves": 4, "maxHopsFromEntry": 2, "orientationLabels": "patient" },
+    "expert": { "timeLimitSeconds": 65, "maxMoves": 3, "maxHopsFromEntry": 1, "orientationLabels": "hidden" }
   }
 }

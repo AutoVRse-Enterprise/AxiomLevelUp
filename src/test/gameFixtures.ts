@@ -1,7 +1,7 @@
 import sanofiConfig from '../../public/experiences/sanofi/content/app-config.json'
 import clinicalRound from '../../public/experiences/sanofi/content/rounds/clinical-call-t2.json'
-import warmupRound from '../../public/experiences/sanofi/content/rounds/fixture-warmup-call.json'
-import fixtureGame from '../../public/experiences/sanofi/content/games/fixture-two-round.json'
+import fixtureGame from '../../e2e/sanofi/fixtures/fixture-two-round.json'
+import warmupRound from '../../e2e/sanofi/fixtures/fixture-warmup-call.json'
 
 import { appConfigSchema, gameDocumentSchema, roundDocumentSchema } from '@/content/schema'
 import type { ContentBundleInput } from '@/content/loader'
@@ -21,7 +21,18 @@ export function makeGameContentBundle(): ContentBundleInput {
   const appConfig = structuredClone(input.appConfig) as Record<string, unknown>
   appConfig.games = appConfigSchema.parse(sanofiConfig).games
   if (appConfig.games && typeof appConfig.games === 'object') {
-    ;(appConfig.games as { formats: unknown[] }).formats = []
+    const games = appConfig.games as {
+      formats: unknown[]
+      leaderboard: { entries: unknown[] }
+      expertRuns: unknown[]
+      daily?: unknown
+      hub: { primaryFormatId?: string }
+    }
+    games.formats = []
+    games.leaderboard.entries = []
+    games.expertRuns = []
+    delete games.daily
+    delete games.hub.primaryFormatId
   }
   return {
     ...input,

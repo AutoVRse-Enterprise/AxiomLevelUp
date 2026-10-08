@@ -14,10 +14,11 @@ test('boots the isolated game hub with clean metadata, storage and copy', async 
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Respiratory Challenge' })).toBeVisible()
   await expect(page.getByText('Autovrse LevelUp')).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Start a quick challenge' })).toBeDisabled()
+  await expect(page.getByRole('link', { name: 'Start a quick challenge' })).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('data-experience', 'sanofi')
-  await expect(page.locator('nav.fixed.bottom-0')).toHaveCount(0)
+  await expect(page.locator('nav.fixed.bottom-0')).toHaveCount(1)
   await expect(page.getByLabel('Learner status')).toHaveCount(0)
+  await expect(page.getByLabel('Best score 0')).toBeVisible()
   await expect(page.getByText('Install Learning App')).toHaveCount(0)
 
   const manifest = await page.request.get('/manifest.webmanifest')

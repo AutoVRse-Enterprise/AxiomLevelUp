@@ -21,7 +21,11 @@
       "retryByDefault": false,
       "revealAnswer": "always",
       "mediaCompletionThreshold": 0.9,
-      "timerAnnouncements": [60, 30, 10]
+      "timerAnnouncements": [
+        60,
+        30,
+        10
+      ]
     },
     "dicom": {
       "prefetchRadius": 8,
@@ -145,13 +149,34 @@
     },
     "presentation": {
       "haptics": {
-        "correctAnswer": [15],
-        "badgeUnlocked": [25, 40, 25],
-        "challengeCompleted": [30, 50, 30],
-        "gameRoundCorrect": [15]
+        "correctAnswer": [
+          15
+        ],
+        "badgeUnlocked": [
+          25,
+          40,
+          25
+        ],
+        "challengeCompleted": [
+          30,
+          50,
+          30
+        ],
+        "gameRoundCorrect": [
+          15
+        ],
+        "gamePersonalBest": [
+          25,
+          35,
+          25
+        ]
       },
       "confetti": {
-        "moments": ["game_complete"],
+        "moments": [
+          "game_complete",
+          "game_personal_best",
+          "game_rank_up"
+        ],
         "particleCount": 80,
         "gameCompleteMinScoreRatio": 0.75
       },
@@ -210,7 +235,32 @@
       "title": "Respiratory Challenge",
       "tagline": "Read the evidence. Make the call.",
       "startLabel": "Start a quick challenge",
-      "unavailableLabel": "Coming soon"
+      "unavailableLabel": "Coming soon",
+      "primaryFormatId": "quick-challenge",
+      "difficultyLabel": "Difficulty",
+      "bestScoreLabel": "Best score",
+      "continueTitle": "Continue game",
+      "incomingTitle": "Incoming challenge",
+      "incomingTemplate": "{from} challenged you ? Score to beat {score}",
+      "dailyTitle": "Today's challenge",
+      "dailyDescription": "One seeded run. Keep your daily streak moving.",
+      "dailyComplete": "Completed today ? {score} points",
+      "formatsTitle": "Choose a format",
+      "statsTitle": "Your stats",
+      "lastScoreLabel": "Last score",
+      "gamesPlayedLabel": "Games played",
+      "dailyStreakLabel": "Daily streak",
+      "leaderboardTitle": "Leaderboard",
+      "viewLeaderboard": "View leaderboard",
+      "expertsTitle": "Expert challenges",
+      "scoreToBeat": "Score to beat {score}",
+      "recentTitle": "Recent games",
+      "noRecent": "Your recent games will appear here.",
+      "resumeLabel": "Continue",
+      "playLabel": "Play",
+      "previewLabel": "New soon",
+      "roundsTemplate": "{count} rounds",
+      "minutesTemplate": "{minutes} min"
     },
     "difficulties": [
       {
@@ -280,6 +330,18 @@
     "messages": [
       {
         "when": {
+          "maxCorrectRatio": 0
+        },
+        "text": "That was a tough run. Use the round reviews, then try again."
+      },
+      {
+        "when": {
+          "maxCorrectRatio": 0.49
+        },
+        "text": "The round reviews show what to look for next."
+      },
+      {
+        "when": {
           "minCorrectRatio": 1
         },
         "text": "Sharp eye. Strong finish."
@@ -317,16 +379,16 @@
       "retryRound": "Retry round",
       "roundLoadError": "Round could not load",
       "roundLoadErrorMessage": "The round encountered an unexpected problem. Try again or continue.",
-      "continue": "Continue",
+      "continue": "Start round",
       "stepProgress": "Step {current} of {total}",
       "previousStep": "Previous step",
       "nextStep": "Next step",
       "checkLocation": "Lock in location",
-      "openAnswerDrawer": "I know where I am",
+      "openAnswerDrawer": "Choose my location",
       "answerDrawerTitle": "Choose your location",
       "backToScene": "Back to view",
-      "backToAirway": "Back to airway",
-      "pinGuessLabel": "Your pin",
+      "backToAirway": "Back to branch map",
+      "pinGuessLabel": "Your answer",
       "pinActualLabel": "Actual location",
       "pinRevealPrompt": "Compare your pin with the actual location.",
       "viewUnavailableTitle": "3D view unavailable",
@@ -336,7 +398,7 @@
       "skipped": "Skipped",
       "skippedRoundMessage": "This round was skipped and scored zero points.",
       "movesLeft": "Moves left: {count}",
-      "spatialHint": "Look for branch direction, airway depth and nearby junctions.",
+      "spatialHint": "The orange beacon is the drop point. Drag to rotate; use the bright branch map and orientation labels.",
       "revealClue": "Reveal · −{cost}",
       "clueConfirmTitle": "Reveal this clue?",
       "clueConfirmDescription": "This clue costs {cost} points.",
@@ -400,7 +462,7 @@
       "licence": "Licence"
     },
     "player": {
-      "introAutoAdvanceMs": 1200,
+      "introAutoAdvanceMs": 0,
       "lockedHoldMs": 200
     },
     "formats": [
@@ -409,40 +471,2340 @@
         "title": "Quick Challenge",
         "description": "Four connected rounds spanning airway anatomy, tissue and clinical interpretation.",
         "gameId": "respiratory-challenge",
-        "status": "playable"
+        "status": "playable",
+        "statusLabel": "Play now"
       },
       {
         "id": "anatomy-hunt",
         "title": "Anatomy Hunt",
         "description": "Three spatial rounds built from the same airway location library.",
         "gameId": "anatomy-hunt",
-        "status": "playable"
+        "status": "playable",
+        "statusLabel": "Play now"
       },
       {
         "id": "spot-the-finding",
         "title": "Spot the Finding",
         "description": "Three zoomable respiratory specimens with precision-based scoring.",
         "gameId": "spot-the-finding",
-        "status": "playable"
+        "status": "playable",
+        "statusLabel": "Play now"
       },
       {
         "id": "clinical-mystery",
         "title": "Clinical Mystery",
         "description": "A focused sequence of multimodal clinical calls.",
-        "status": "preview"
+        "status": "preview",
+        "statusLabel": "New soon"
       }
     ],
     "leaderboard": {
-      "entries": [],
-      "disclosure": "Demo leaderboard"
+      "entries": [
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 3720
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3810
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3900
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 3575
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3665
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3755
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 3430
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3520
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3610
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 3285
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3375
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3465
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 3140
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3230
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3320
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2995
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 3085
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3175
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2850
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2940
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 3030
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2705
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2795
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2885
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 3685
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3775
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3865
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 3540
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3630
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3720
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 3395
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3485
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3575
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 3250
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3340
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3430
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 3105
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3195
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3285
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2960
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 3050
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 3140
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2815
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2905
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2995
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2670
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2760
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2850
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 3650
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3740
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3830
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 3505
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3595
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3685
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 3360
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3450
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3540
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 3215
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3305
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3395
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 3070
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3160
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3250
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2925
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 3015
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 3105
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2780
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2870
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2960
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2635
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2725
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "respiratory-challenge",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2815
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2720
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2810
+        },
+        {
+          "id": "leila-r",
+          "name": "Leila R.",
+          "specialty": "Radiology",
+          "country": "United Arab Emirates",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2900
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2575
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2665
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2755
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2430
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2520
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2610
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2285
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2375
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2465
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2140
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2230
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2320
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1995
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2085
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2175
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1850
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 1940
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2030
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1705
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 1795
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 1885
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2685
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2775
+        },
+        {
+          "id": "noah-k",
+          "name": "Noah K.",
+          "specialty": "Emergency medicine",
+          "country": "Canada",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2865
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2540
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2630
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2720
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2395
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2485
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2575
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2250
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2340
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2430
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2105
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2195
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2285
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1960
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2050
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2140
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1815
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 1905
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 1995
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1670
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 1760
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 1850
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2650
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2740
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2830
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2505
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2595
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2685
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2360
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2450
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2540
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2215
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2305
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2395
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2070
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2160
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2250
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1925
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2015
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2105
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1780
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 1870
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 1960
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1635
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 1725
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "anatomy-hunt",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 1815
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2720
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2810
+        },
+        {
+          "id": "sora-p",
+          "name": "Sora P.",
+          "specialty": "Pathology",
+          "country": "South Korea",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2900
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2575
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2665
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2755
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2430
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2520
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2610
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2285
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2375
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2465
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 2140
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2230
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2320
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1995
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 2085
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2175
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1850
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 1940
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 2030
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "today",
+          "score": 1705
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "week",
+          "score": 1795
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "warmup",
+          "period": "all_time",
+          "score": 1885
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2685
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2775
+        },
+        {
+          "id": "imani-d",
+          "name": "Imani D.",
+          "specialty": "Primary care",
+          "country": "Kenya",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2865
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2540
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2630
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2720
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2395
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2485
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2575
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2250
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2340
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2430
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 2105
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2195
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2285
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1960
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 2050
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 2140
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1815
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 1905
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 1995
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "today",
+          "score": 1670
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "week",
+          "score": 1760
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "challenge",
+          "period": "all_time",
+          "score": 1850
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2650
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2740
+        },
+        {
+          "id": "tomas-v",
+          "name": "Tomas V.",
+          "specialty": "Thoracic surgery",
+          "country": "Chile",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2830
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2505
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2595
+        },
+        {
+          "id": "mei-c",
+          "name": "Mei C.",
+          "specialty": "Pulmonology",
+          "country": "Singapore",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2685
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2360
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2450
+        },
+        {
+          "id": "olivia-b",
+          "name": "Olivia B.",
+          "specialty": "Critical care",
+          "country": "Australia",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2540
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2215
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2305
+        },
+        {
+          "id": "yusuf-a",
+          "name": "Yusuf A.",
+          "specialty": "Family medicine",
+          "country": "Jordan",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2395
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 2070
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2160
+        },
+        {
+          "id": "ines-m",
+          "name": "Ines M.",
+          "specialty": "Allergy medicine",
+          "country": "Portugal",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2250
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1925
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 2015
+        },
+        {
+          "id": "dev-s",
+          "name": "Dev S.",
+          "specialty": "Clinical research",
+          "country": "India",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 2105
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1780
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 1870
+        },
+        {
+          "id": "asha-n",
+          "name": "Asha N.",
+          "specialty": "Respiratory medicine",
+          "country": "United Kingdom",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 1960
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "today",
+          "score": 1635
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "week",
+          "score": 1725
+        },
+        {
+          "id": "marco-l",
+          "name": "Marco L.",
+          "specialty": "Internal medicine",
+          "country": "Italy",
+          "gameId": "spot-the-finding",
+          "difficulty": "expert",
+          "period": "all_time",
+          "score": 1815
+        }
+      ],
+      "disclosure": "Demo leaderboard",
+      "copy": {
+        "title": "Leaderboard",
+        "today": "Today",
+        "week": "This week",
+        "allTime": "All time",
+        "game": "Game",
+        "difficulty": "Difficulty",
+        "yourPosition": "Your position",
+        "unranked": "Unranked",
+        "addName": "Add your name",
+        "empty": "No scores in this view yet."
+      }
     },
-    "expertRuns": [],
-    "historyLimit": 20
+    "expertRuns": [
+      {
+        "id": "expert-respiratory",
+        "title": "Beat the respiratory specialist",
+        "persona": {
+          "name": "Dr Rowan Hale",
+          "role": "Respiratory specialist",
+          "initials": "RH"
+        },
+        "gameId": "respiratory-challenge",
+        "difficulty": "expert",
+        "seed": 19031,
+        "targetScore": 3350
+      },
+      {
+        "id": "expert-anatomy",
+        "title": "Beat the airway anatomist",
+        "persona": {
+          "name": "Dr Mina Sol",
+          "role": "Airway anatomist",
+          "initials": "MS"
+        },
+        "gameId": "anatomy-hunt",
+        "difficulty": "expert",
+        "seed": 29041,
+        "targetScore": 2460
+      },
+      {
+        "id": "expert-finding",
+        "title": "Beat the tissue specialist",
+        "persona": {
+          "name": "Dr Eli Voss",
+          "role": "Tissue specialist",
+          "initials": "EV"
+        },
+        "gameId": "spot-the-finding",
+        "difficulty": "expert",
+        "seed": 39051,
+        "targetScore": 2520
+      }
+    ],
+    "historyLimit": 20,
+    "result": {
+      "pointsLabel": "points",
+      "correctTemplate": "{correct} / {total} correct",
+      "timeTemplate": "{seconds} sec total",
+      "bestRoundTemplate": "Best round: {score}",
+      "personalBest": "New personal best",
+      "challengeColleague": "Challenge a colleague",
+      "tryAgain": "Try again",
+      "beatYourBest": "Beat your best",
+      "leaderboard": "Leaderboard",
+      "rematch": "Rematch",
+      "challengeBack": "Challenge back",
+      "roundDetailsTitle": "Round details",
+      "winTemplate": "You beat {name} by {margin}",
+      "lossTemplate": "{margin} short of {name}",
+      "tieTemplate": "You matched {name}"
+    },
+    "share": {
+      "title": "Challenge a colleague",
+      "description": "Send the same rounds, difficulty and clock.",
+      "messageTemplate": "I scored {score} on the {gameTitle}. Think you can beat me?",
+      "nativeShare": "Share",
+      "copyLink": "Copy link",
+      "copied": "Link copied",
+      "messaging": "Messaging",
+      "email": "Email",
+      "fallbackName": "A colleague",
+      "nameTitle": "Add your name?",
+      "nameDescription": "Your name will appear in the challenge link. You can skip this.",
+      "nameLabel": "Display name",
+      "saveName": "Save and continue",
+      "skipName": "Skip for now"
+    },
+    "challengeLanding": {
+      "title": "Challenge received",
+      "summaryTemplate": "{from} scored {score} on the {gameTitle} ({difficulty}). Same rounds, same clock.",
+      "accept": "Accept challenge",
+      "fallbackTitle": "This challenge is no longer available",
+      "fallbackMessage": "Start a fresh quick challenge instead.",
+      "start": "Start a quick challenge"
+    },
+    "you": {
+      "title": "You",
+      "bestScores": "Best scores",
+      "gamesPlayed": "Games played",
+      "dailyStreak": "Daily streak",
+      "recentGames": "Recent games",
+      "noRecentGames": "Complete a game to build your history.",
+      "displayName": "Display name",
+      "editName": "Edit name",
+      "saveName": "Save name",
+      "credits": "Media credits",
+      "presenterTitle": "Presenter controls",
+      "resetProgress": "Reset progress",
+      "seedReturning": "Seed returning player",
+      "resetComplete": "Progress reset.",
+      "seedComplete": "Returning-player history ready."
+    },
+    "notice": {
+      "text": "Synthetic cases for demonstration. Not clinical guidance."
+    },
+    "daily": {
+      "gameId": "respiratory-challenge",
+      "difficulty": "challenge"
+    }
   },
   "leaderboard": {
     "scope": "global",
     "period": "weekly",
     "simulated": true,
     "entries": []
+  },
+  "demo": {
+    "enabled": true,
+    "defaultProfile": "fresh",
+    "profiles": [
+      {
+        "id": "fresh",
+        "label": "Fresh player",
+        "description": "Clear scores and start from the beginning.",
+        "seedProfile": "fresh"
+      },
+      {
+        "id": "returning",
+        "label": "Returning player",
+        "description": "Restore a believable challenge history.",
+        "seedProfile": "advanced"
+      }
+    ]
   }
 }

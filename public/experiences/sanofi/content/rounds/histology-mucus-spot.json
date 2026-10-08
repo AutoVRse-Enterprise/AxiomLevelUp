@@ -4,8 +4,8 @@
   "id": "histology-mucus-spot",
   "title": "Spot the finding: obstructed airway",
   "mechanic": "spot_finding",
-  "intro": "Here is tissue from that airway. Identify the feature driving the obstruction.",
-  "timeLimitSeconds": 30,
+  "intro": "Inspect the tissue section for material occupying an airway lumen. Tap the feature, then lock in your location.",
+  "timeLimitSeconds": 50,
   "primitive": {
     "id": "histology-mucus-spot-answer",
     "type": "image_hotspot",
@@ -13,7 +13,7 @@
       "mode": "assess",
       "assetId": "asthma-histology-image",
       "alt": "Bronchiole cross-section with an irregular narrowed lumen and inflamed surrounding tissue.",
-      "prompt": "Tap the feature most likely to obstruct airflow.",
+      "prompt": "Tap the material occupying an airway lumen, then lock in.",
       "answerLabel": "Luminal mucus",
       "regions": [
         {
@@ -73,7 +73,7 @@
         "mode": "assess",
         "assetId": "asthma-histology-image",
         "alt": "Bronchiole cross-section with an irregular narrowed lumen and inflamed surrounding tissue.",
-        "prompt": "Tap the feature most likely to obstruct airflow.",
+        "prompt": "Tap the material occupying an airway lumen, then lock in.",
         "answerLabel": "Luminal mucus",
         "regions": [
           {
@@ -127,8 +127,8 @@
     "answerTemplate": "Target finding: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 40 },
-    "challenge": { "timeLimitSeconds": 30 },
-    "expert": { "timeLimitSeconds": 25 }
+    "warmup": { "timeLimitSeconds": 55 },
+    "challenge": { "timeLimitSeconds": 50 },
+    "expert": { "timeLimitSeconds": 40 }
   }
 }

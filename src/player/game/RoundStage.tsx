@@ -3,6 +3,7 @@ import type { PlannedRound } from '@/engines/games/plan'
 import type { GameRoundSession } from '@/engines/games/session'
 import { ClueTray } from '@/player/game/ClueTray'
 import { SpatialRoundStage } from '@/player/game/SpatialRoundStage'
+import { StepActionScope } from '@/player/StepActionSlot'
 import { PrimitiveRenderer } from '@/primitives/registry'
 import type { PrimitiveInteraction } from '@/primitives/types'
 
@@ -62,12 +63,13 @@ export function RoundStage({
       />
     )
   }
+  const clinical = round.mechanic === 'clinical_call'
   return (
     <div
       aria-disabled={disabled}
-      className={`grid gap-6 pb-28 pt-6 md:grid-cols-[minmax(16rem,0.8fr)_minmax(22rem,1.2fr)] md:pb-6 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
+      className={`${clinical ? 'grid gap-6 md:grid-cols-[minmax(16rem,0.8fr)_minmax(22rem,1.2fr)]' : 'mx-auto max-w-4xl'} pb-28 pt-6 md:pb-6 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
     >
-      {round.mechanic === 'clinical_call' ? (
+      {clinical ? (
         <ClueTray
           copy={copy}
           onConfirmOpenChange={onConfirmOpenChange}
@@ -80,24 +82,24 @@ export function RoundStage({
           revealedClueIds={roundSession.revealedClueIds}
           round={round}
         />
-      ) : (
-        <div />
-      )}
-      <section className="rounded-2xl bg-white p-5 text-neutral-950 shadow-overlay sm:p-7">
-        <PrimitiveRenderer
-          attempt={1}
-          disabled={disabled}
-          draft={roundSession.draft}
-          mode="interactive"
-          onComplete={() => undefined}
-          onDraftChange={onDraftChange}
-          onInteract={(interaction) =>
-            onInteract(plannedRound.primitive.id, plannedRound.primitive.type, interaction)
-          }
-          onSubmit={onSubmit}
-          primitive={plannedRound.primitive}
-        />
-      </section>
+      ) : null}
+      <StepActionScope placement={clinical ? 'inline' : 'game'}>
+        <section className="rounded-2xl bg-white p-5 text-neutral-950 shadow-overlay sm:p-7">
+          <PrimitiveRenderer
+            attempt={1}
+            disabled={disabled}
+            draft={roundSession.draft}
+            mode="interactive"
+            onComplete={() => undefined}
+            onDraftChange={onDraftChange}
+            onInteract={(interaction) =>
+              onInteract(plannedRound.primitive.id, plannedRound.primitive.type, interaction)
+            }
+            onSubmit={onSubmit}
+            primitive={plannedRound.primitive}
+          />
+        </section>
+      </StepActionScope>
     </div>
   )
 }

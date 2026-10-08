@@ -4,6 +4,10 @@ export {
   celebrateVariants,
   fadeVariants,
   motionTransition,
+  resultItemVariants,
+  resultSequenceVariants,
+  revealVariants,
   riseVariants,
+  roundTransitionVariants,
   staggerContainer,
 } from './presets'

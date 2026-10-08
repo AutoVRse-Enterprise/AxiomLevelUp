@@ -14,6 +14,8 @@ export function GameTopBar({
   roundProgressLabel,
   pointsLabel,
   timerLabel,
+  scoreToBeat,
+  scoreToBeatLabel,
   onExit,
 }: {
   roundIndex: number
@@ -25,6 +27,8 @@ export function GameTopBar({
   roundProgressLabel: string
   pointsLabel: string
   timerLabel: string
+  scoreToBeat?: number
+  scoreToBeatLabel?: string
   onExit: () => void
 }) {
   return (
@@ -50,6 +54,14 @@ export function GameTopBar({
         </div>
         <div aria-label={`${score} points`} className="min-w-20 text-right font-bold tabular-nums">
           <AnimatedNumber value={score} /> {pointsLabel}
+          {scoreToBeat !== undefined ? (
+            <p className="text-[0.625rem] font-medium text-neutral-300">
+              {(scoreToBeatLabel ?? 'Score to beat {score}').replace(
+                '{score}',
+                String(scoreToBeat),
+              )}
+            </p>
+          ) : null}
         </div>
         <CountdownRing label={timerLabel} seconds={seconds} totalSeconds={totalSeconds} />
       </div>

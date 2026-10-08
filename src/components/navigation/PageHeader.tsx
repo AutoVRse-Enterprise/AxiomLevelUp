@@ -32,6 +32,8 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
     (challengeId ? appConfig.challenges.find(({ id }) => id === challengeId)?.title : undefined)
   const title = entityTitle ?? matchedTitle ?? appConfig.app.name
   const nested = Boolean(courseId || pathwayId || lessonId || challengeId)
+  const CustomHeaderStatus =
+    headerStatus !== 'learner' && headerStatus !== 'none' ? headerStatus : null
 
   useEffect(() => {
     document.title = `${title} · ${appConfig.app.name}`
@@ -88,7 +90,12 @@ export function PageHeader({ immersive = false }: { immersive?: boolean }) {
             ))}
           </nav>
         ) : null}
-        {!immersive && headerStatus === 'learner' ? (
+        {!immersive && CustomHeaderStatus ? (
+          <div className="flex items-center gap-3">
+            <OfflineIndicator />
+            <CustomHeaderStatus />
+          </div>
+        ) : !immersive && headerStatus === 'learner' ? (
           <div
             aria-label="Learner status"
             aria-live="polite"

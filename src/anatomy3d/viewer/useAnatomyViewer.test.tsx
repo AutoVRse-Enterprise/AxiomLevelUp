@@ -79,7 +79,7 @@ describe('useAnatomyViewer', () => {
     expect(mocked.controller.dispose).toHaveBeenCalledOnce()
   })
 
-  it('keeps the controller when an equivalent start view object is recreated', async () => {
+  it('treats start view as initialization and keeps the controller as movement changes it', async () => {
     const element = document.createElement('div')
     const { result, rerender } = renderHook(
       ({ waypointId }) =>
@@ -94,9 +94,15 @@ describe('useAnatomyViewer', () => {
     )
 
     await waitFor(() => expect(result.current.state.status).toBe('ready'))
-    rerender({ waypointId: 'entry-waypoint' })
+    rerender({ waypointId: 'branch-waypoint' })
 
     expect(mocked.createAnatomyController).toHaveBeenCalledOnce()
+    expect(mocked.controller.load).toHaveBeenCalledOnce()
+    expect(mocked.controller.setStartView).toHaveBeenCalledOnce()
+    expect(mocked.controller.setStartView).toHaveBeenCalledWith({
+      mode: 'endoscopic',
+      waypointId: 'entry-waypoint',
+    })
     expect(mocked.controller.dispose).not.toHaveBeenCalled()
   })
 

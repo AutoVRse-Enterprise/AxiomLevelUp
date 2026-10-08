@@ -33,7 +33,9 @@ export function reduceLearnerEvent(
 
   const historyLimit = registry.appConfig.caseLab?.historyLimit
   const caseAttemptAdded = historyLimit ? applyCaseProgressEvent(state, event, historyLimit) : false
-  if (registry.appConfig.games) applyGameProgressEvent(state, event, registry.appConfig.games)
+  const gameFollowUps = registry.appConfig.games
+    ? applyGameProgressEvent(state, event, registry.appConfig.games)
+    : []
 
   const gamificationFollowUps = applyGamificationEvent(state, current, event, registry)
   const masteryFollowUps = applyMasteryEvent(state, event, registry.appConfig.gamification.mastery)
@@ -42,6 +44,11 @@ export function reduceLearnerEvent(
 
   return {
     state,
-    followUps: [...learning.followUps, ...gamificationFollowUps, ...masteryFollowUps],
+    followUps: [
+      ...learning.followUps,
+      ...gameFollowUps,
+      ...gamificationFollowUps,
+      ...masteryFollowUps,
+    ],
   }
 }

@@ -19,6 +19,7 @@ const mocked = vi.hoisted(() => ({
     highlightGroups: vi.fn(),
     setMarker: vi.fn(),
     setWaypointMarker: vi.fn(),
+    setWaypointContext: vi.fn(),
     setFindings: vi.fn(),
     travelTo: vi.fn(),
     availableBranches: vi.fn(),
@@ -370,8 +371,41 @@ describe('AnatomyViewer', () => {
     render(<AnatomyViewer config={config} map={map} modelUrl="/model.glb" startView={startView} />)
 
     expect(mocked.controller.setWaypointMarker).toHaveBeenLastCalledWith('entry-waypoint')
+    expect(mocked.controller.frameStructures).not.toHaveBeenCalled()
+    expect(screen.getByText('Drop point')).toBeVisible()
+    expect(screen.queryByText('Current position')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Reset' }))
     expect(mocked.controller.setStartView).toHaveBeenLastCalledWith(startView)
+  })
+
+  it('moves through a waypoint overview without entering the model interior', async () => {
+    const user = userEvent.setup()
+    const onMovementStateChange = vi.fn()
+    render(
+      <AnatomyViewer
+        config={config}
+        map={map}
+        modelUrl="/model.glb"
+        movement={{ maxMoves: 2, maxHopsFromEntry: 1, freeBacktrack: true }}
+        movementState={{
+          entryWaypointId: 'entry-waypoint',
+          currentWaypointId: 'entry-waypoint',
+          visitedWaypointIds: ['entry-waypoint'],
+          movesUsed: 0,
+        }}
+        navigation="both"
+        orientationLabels="patient"
+        startView={{ mode: 'waypoint_marker', waypointId: 'entry-waypoint' }}
+        onMovementStateChange={onMovementStateChange}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Terminal waypoint' }))
+
+    expect(mocked.controller.setWaypointContext).toHaveBeenCalledWith('terminal-waypoint')
+    expect(mocked.controller.travelTo).not.toHaveBeenCalled()
+    expect(screen.getByText('Current position')).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Airway' })).not.toBeInTheDocument()
   })
 
   it('lets an explicit marker override take precedence over the authored marker', () => {

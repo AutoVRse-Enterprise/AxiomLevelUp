@@ -33,3 +33,32 @@ export const staggerContainer: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 }
+
+export const roundTransitionVariants: Variants = {
+  hidden: { opacity: 0, y: 18, scale: 0.985 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: motionTransition.emphasized,
+  },
+}
+
+export const revealVariants: Variants = {
+  hidden: { opacity: 1, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { ...motionTransition.standard, delay: 0.04 },
+  },
+}
+
+export const resultSequenceVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
+}
+
+export const resultItemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: motionTransition.standard },
+}

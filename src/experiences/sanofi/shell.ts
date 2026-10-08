@@ -1,10 +1,17 @@
-import { Home } from 'lucide-react'
+import { Home, Trophy, UserRound } from 'lucide-react'
 
 import type { ExperienceShellConfig } from '@/app/experienceShell'
+import { BestScoreStatus } from '@/components/game/BestScoreStatus'
+import { SyntheticCaseNotice } from '@/components/game/SyntheticCaseNotice'
 
 export const sanofiExperienceShell: ExperienceShellConfig = {
-  navigation: [{ to: '/', label: 'Play', icon: Home, end: true }],
-  headerStatus: 'none',
+  navigation: [
+    { to: '/', label: 'Play', icon: Home, end: true },
+    { to: '/leaderboard', label: 'Leaderboard', icon: Trophy, end: false },
+    { to: '/you', label: 'You', icon: UserRound, end: false },
+  ],
+  headerStatus: BestScoreStatus,
+  footerNotice: SyntheticCaseNotice,
   installPrompt: false,
   copy: {
     routeLoading: {

@@ -13,6 +13,10 @@ import { sanofiExperienceShell } from '@/experiences/sanofi/shell'
 
 const testAppConfig = structuredClone(appConfig)
 testAppConfig.games.formats = []
+testAppConfig.games.leaderboard.entries = []
+testAppConfig.games.expertRuns = []
+delete (testAppConfig.games as { daily?: unknown }).daily
+delete (testAppConfig.games.hub as { primaryFormatId?: string }).primaryFormatId
 
 const registry = validateContentBundle({
   manifestFile: 'manifest.json',
@@ -37,8 +41,8 @@ function collectStrings(value: unknown): string[] {
   return Object.values(value).flatMap(collectStrings)
 }
 
-describe('sanofi stub experience', () => {
-  it('renders configured app and game names with a disabled action', () => {
+describe('sanofi game experience', () => {
+  it('renders configured app and game names', () => {
     render(
       <ContentContext.Provider value={registry}>
         <HomePage />
@@ -46,17 +50,23 @@ describe('sanofi stub experience', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Respiratory Challenge' })).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Start a quick challenge' })).toBeDisabled()
-    expect(screen.getByText('Coming soon')).toBeVisible()
     expect(registry.appConfig.app.name).toBe('Autovrse LevelUp')
     expect(registry.seed.learner.name).toBe('You')
   })
 
-  it('registers Home, game play, result and the shared not-found route', () => {
+  it('registers hub, social, game play, result and the shared not-found route', () => {
     const paths = createSanofiRoutes().flatMap(
       ({ children }) => children?.map(({ index, path }) => (index ? '/' : path)) ?? [],
     )
-    expect(paths).toEqual(['/', 'results/:runId', '*', 'play/:gameId'])
+    expect(paths).toEqual([
+      '/',
+      'c/:token',
+      'leaderboard',
+      'you',
+      'results/:runId',
+      '*',
+      'play/:gameId',
+    ])
   })
 
   it('contains no client name or LMS vocabulary in player-visible copy', () => {

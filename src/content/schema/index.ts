@@ -631,6 +631,10 @@ export const appConfigSchema = z.object({
           badgeUnlocked: z.array(z.number().int().positive().max(1000)).max(5),
           challengeCompleted: z.array(z.number().int().positive().max(1000)).max(5),
           gameRoundCorrect: z.array(z.number().int().positive().max(1000)).max(5).default([15]),
+          gamePersonalBest: z
+            .array(z.number().int().positive().max(1000))
+            .max(5)
+            .default([25, 35, 25]),
         }),
         confetti: z.strictObject({
           moments: z
@@ -641,6 +645,8 @@ export const appConfigSchema = z.object({
                 'badge',
                 'level_up',
                 'game_complete',
+                'game_personal_best',
+                'game_rank_up',
               ]),
             )
             .max(5),
@@ -658,6 +664,7 @@ export const appConfigSchema = z.object({
           badgeUnlocked: [25, 40, 25],
           challengeCompleted: [30, 50, 30],
           gameRoundCorrect: [15],
+          gamePersonalBest: [25, 35, 25],
         },
         confetti: {
           moments: ['three_star_lesson', 'challenge_complete'],
@@ -968,6 +975,7 @@ export const gameRunRecordSchema = z.strictObject({
     }),
   ),
   challengeToken: z.string().min(1).optional(),
+  personalBest: z.boolean().optional(),
   completedAt: isoDateSchema,
 })
 
@@ -1012,11 +1020,28 @@ export const learnerSeedSchema = z.object({
       streakDays: z.number().int().nonnegative(),
     })
     .default({ lastPlayedDate: null, streakDays: 0 }),
+  gameChallenges: z
+    .strictObject({
+      incoming: z
+        .array(
+          z.strictObject({
+            token: z.string().min(1),
+            from: z.string().trim().min(1),
+            score: z.number().int().nonnegative(),
+            gameId: idSchema,
+            openedAt: isoDateSchema,
+            playedRunId: z.string().min(1).nullable(),
+          }),
+        )
+        .default([]),
+    })
+    .default({ incoming: [] }),
   player: z
     .strictObject({
       displayName: z.string().trim().min(1).nullable(),
+      shareNamePrompted: z.boolean().default(false),
     })
-    .default({ displayName: null }),
+    .default({ displayName: null, shareNamePrompted: false }),
   challenges: z.record(
     idSchema,
     z.object({

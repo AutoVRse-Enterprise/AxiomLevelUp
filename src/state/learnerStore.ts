@@ -7,7 +7,7 @@ import { today } from '@/lib/clock'
 import { idbStorage } from '@/state/persistence/idbStorage'
 import { rebaseSeedDates } from '@/state/seedDates'
 
-export const LEARNER_STATE_VERSION = 9
+export const LEARNER_STATE_VERSION = 10
 
 export type LearnerData = Omit<LearnerSeed, 'schemaVersion'>
 
@@ -20,6 +20,8 @@ interface LearnerStore extends LearnerData {
   resetCaseAttempts: () => void
   markCaseLabWalkthroughSeen: () => void
   markAnatomyHintSeen: () => void
+  setPlayerDisplayName: (displayName: string | null) => void
+  skipShareNamePrompt: () => void
   setStorageError: (message: string | null) => void
 }
 
@@ -65,7 +67,8 @@ const emptyData: LearnerData = {
   caseAttempts: {},
   games: {},
   gameDaily: { lastPlayedDate: null, streakDays: 0 },
-  player: { displayName: null },
+  gameChallenges: { incoming: [] },
+  player: { displayName: null, shareNamePrompted: false },
   challenges: {},
   badges: {},
   mastery: {},
@@ -151,7 +154,11 @@ export function migrateLearnerState(persistedState: unknown): LearnerData {
     ) as LearnerData['caseAttempts'],
     games: state.games ?? {},
     gameDaily: state.gameDaily ?? { lastPlayedDate: null, streakDays: 0 },
-    player: state.player ?? { displayName: null },
+    gameChallenges: state.gameChallenges ?? { incoming: [] },
+    player: {
+      displayName: state.player?.displayName ?? null,
+      shareNamePrompted: state.player?.shareNamePrompted ?? false,
+    },
     gamification,
     stats: {
       ...state.stats,
@@ -187,6 +194,10 @@ export const useLearnerStore = create<LearnerStore>()(
         set((state) => ({ caseLab: { ...state.caseLab, walkthroughSeen: true } })),
       markAnatomyHintSeen: () =>
         set((state) => ({ caseLab: { ...state.caseLab, anatomyHintSeen: true } })),
+      setPlayerDisplayName: (displayName) =>
+        set({ player: { displayName: displayName?.trim() || null, shareNamePrompted: true } }),
+      skipShareNamePrompt: () =>
+        set((state) => ({ player: { ...state.player, shareNamePrompted: true } })),
       setStorageError: (storageError) => set({ storageError }),
     }),
     {
@@ -220,6 +231,7 @@ export function learnerDataSnapshot(state: LearnerStore): LearnerData {
     caseAttempts: state.caseAttempts,
     games: state.games,
     gameDaily: state.gameDaily,
+    gameChallenges: state.gameChallenges,
     player: state.player,
     challenges: state.challenges,
     badges: state.badges,

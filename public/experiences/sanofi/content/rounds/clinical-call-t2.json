@@ -4,8 +4,8 @@
   "id": "clinical-call-t2",
   "title": "Make the call",
   "mechanic": "clinical_call",
-  "intro": "Put the airway, tissue and clinical evidence together. What is going on?",
-  "timeLimitSeconds": 45,
+  "intro": "Review the evidence already available, then decide whether extra clues are worth the point cost before making the clinical call.",
+  "timeLimitSeconds": 70,
   "primitive": {
     "id": "clinical-call-t2-answer",
     "type": "multiple_choice",
@@ -158,8 +158,8 @@
     "answerTemplate": "Correct answer: {answer}."
   },
   "difficulty": {
-    "warmup": { "timeLimitSeconds": 55 },
-    "challenge": { "timeLimitSeconds": 45 },
-    "expert": { "timeLimitSeconds": 35 }
+    "warmup": { "timeLimitSeconds": 75 },
+    "challenge": { "timeLimitSeconds": 70 },
+    "expert": { "timeLimitSeconds": 60 }
   }
 }

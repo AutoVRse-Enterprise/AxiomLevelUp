@@ -2140,3 +2140,128 @@ Phase 19 route exists.
 **Consequences:** Difficulty changes challenge precision and assistance without changing the
 patient's pathology. The primary game stays inside its timing contract. Additional formats need
 content only, and the remaining You-page credits entry is an explicit Phase 19 integration.
+
+## ADR-112: Game entry and social competition stay deterministic and client-only
+
+**Status:** Accepted
+
+**Context:** Phase 19 adds hub, retry, daily, shared-link, rematch and configured expert entry
+points to the same seeded game player. Those entry paths need identical planning, resume and
+result behavior without duplicating route logic. Challenge comparison must survive reload and
+remain available on a saved result, while the application still has no identity, leaderboard or
+sharing backend. The shared shell must support the sanofi navigation and best-score presentation
+without changing the default experience. Open questions 2 and 5 also require explicit decisions
+for leaderboard disclosure and player names.
+
+**Decision:** Use one shared run-context resolver for every game entry mode. It resolves and
+validates the game, difficulty, seed, source mode and optional challenge payload before a run is
+created. Configured expert runs use the existing versioned Phase 15 challenge-token payload and
+codec, including persona, seed and score to beat, instead of introducing a second comparison
+contract. Persist the resolved run mode and validated challenge token with the active session and
+completed result so resume, rematch, challenge-back and comparison do not depend on transient
+navigation state. Every completed run navigates to the canonical `/results/:runId` route.
+
+Personal-best and leaderboard-rank changes emit distinct typed learner events so configured
+effects remain above the game UI. Migrate learner state to v10 with an incoming-challenge record
+that can retain a validated unplayed challenge across navigation, plus the local display name
+used by sharing and the You page. A display name is optional, trimmed and capped at 40 characters;
+blank or skipped names use the configured fallback. Leaderboards always show the visible
+configured disclosure, defaulting to "Demo leaderboard".
+
+Add optional shell slots for the game experience's navigation and header status. The slots are
+additive and their absent defaults preserve the existing default shell and build.
+
+Challenge links remain client-only. Their checksum detects accidental corruption but provides no
+authentication, integrity guarantee or trusted identity. Decoded sender names are subject to the
+same 40-character cap, all displayed values are escaped as ordinary text, and learner-facing copy
+must not claim live, verified or real-time competition.
+
+**Consequences:** All entry surfaces produce the same deterministic run contract, and expert
+comparisons reuse the tested challenge path. Saved results retain enough context for stable
+comparison and sharing, while state migration makes incoming challenges explicit. The social and
+leaderboard experience is intentionally simulated; copied links can be edited or forged and must
+never be treated as authoritative. Shared-shell additions remain backward-compatible.
+
+## ADR-113: Phase 20 ships a scoped offline-capable demo artifact
+
+**Status:** Accepted
+
+**Context:** The Sanofi build currently copies the complete shared `public/` tree, including
+default content, DICOM payloads and internal fixture games. Its service worker precaches the shell
+and content JSON but not every image, audio file and model needed by a complete challenge. Phase
+17 also established that the available model does not support a legible inside-airway first round.
+Phase 20 needs a truthful deployable demo without turning hosted, device or product-performance
+work into unearned evidence.
+
+**Decision:** Treat Phase 17's outside-in marker view as the final Round 1 fallback and state that
+deviation in the readiness verdict. Build `dist-sanofi/` from an allowlisted release set: Sanofi
+content, required identity assets and binaries resolved from its validated asset manifest. Test
+fixtures do not ship. After service-worker activation, one representative four-round Respiratory
+Challenge must complete with the network unavailable; installation prompts remain disabled.
+
+HTTPS hosting, physical Android/iPhone checks and human enjoyment evidence remain external gates.
+Product direction defers Lighthouse, first-round latency and anatomy frame-rate thresholds for this
+demo. Existing bundle budgets continue to guard regression, measurements may be recorded, and no
+performance approval is claimed.
+
+**Consequences:** The release is smaller, does not expose unrelated course or fixture content and
+has a concrete offline-play contract. Build tooling must derive copied and precached media from
+validated configuration rather than respiratory-specific constants. Phase 20 may close its revised
+local scope with external and performance gates plainly blocked.
+
+## ADR-114: Spatial game rounds prioritize perceptible orientation over simulated endoscopy
+
+**Status:** Accepted
+
+**Context:** A participant replay after the Phase 20 closeout exposed failures that render-level
+smoke checks had not captured. The Round 1 drop marker could be effectively sub-pixel at the fitted
+model scale. Round 2 started at a terminal waypoint, hid the outside model and aimed beyond the
+last generated lumen segment, producing a valid WebGL canvas that was visually black. The
+1.2-second intro transition and active countdown compounded both failures by removing instructions
+before a first-time participant could understand them.
+
+**Decision:** Use a dedicated outside-in waypoint-map presentation for both spatial game rounds.
+Frame the authored waypoint graph rather than the complete model, draw depth-independent guide
+tubes, render the drop as an orange beacon with a contrasting halo, and show a separate current
+position after movement. Round 2 navigation stays on this map and no longer offers the simulated
+endoscopic mode. Keep answers as explicit content-driven choices. Sanofi round intros require an
+explicit **Start round** action, and the timer begins only after that action. Increase
+complexity-weighted time limits while widening the game duration window to five minutes; the
+scripted 80%-pace run remains within the two-to-four-minute target.
+
+Also require a positive score before emitting personal-best or rank-improvement events, and clear
+the independently persisted game-session store during presenter resets. On phone, spatial and
+clinical primary actions remain in document flow when a fixed bar would cover movement controls or
+clinical evidence.
+
+**Consequences:** The spatial rounds now communicate a learnable location task on desktop and
+phone, and a loaded canvas can no longer be treated as sufficient evidence of usability. The
+airway guide is deliberately schematic rather than a claim of bronchoscopy realism. Visual
+baselines now cover every active round, while physical-device and clinician validation remain
+open.
+
+## ADR-115: Separate anatomy initialization from movement and repair lumen winding
+
+**Status:** Accepted
+
+**Context:** Follow-up inspection found three lifecycle defects beneath the participant-facing
+symptoms. The game player's locked-session recovery effect also ran after an ordinary live
+submission and could schedule a second reveal event. `AnatomyExplorePrimitive` fed its current
+waypoint back through `startView`, while `useAnatomyViewer` treated that value as a controller
+construction dependency, so movement could dispose and reload the WebGL controller. Finally, the
+procedural lumen wall indices produced inward-facing triangles while the material intentionally
+used `BackSide`; the wall was therefore culled from the camera inside the airway.
+
+**Decision:** Arm locked-round recovery only when the player is mounted from a persisted session
+whose initial phase is `locked`, and replay the persisted submitted, timed-out or skipped outcome
+once. Treat anatomy `startView` as initialization data held outside the controller-construction
+dependency list; movement remains an imperative operation on the existing controller. Generate
+outward-facing lumen wall triangles and retain the `BackSide` material so the interior renders as
+designed. Cover these contracts with hook, pure geometry and two-viewport browser event tests.
+Replace the one default Phase 13 golden that intentionally depicted the previously culled wall.
+
+**Consequences:** One participant answer produces one learner event, restored locked rounds still
+complete, waypoint movement no longer reloads the model, and valid non-terminal endoscopic content
+shows a shaded lumen wall. The Quick Challenge remains on its clearer outside-in branch map because
+a terminal waypoint still has no generated forward segment. Seven default Phase 13 goldens remain
+unchanged; the finding-feedback golden now records this deliberate shared-engine correction.

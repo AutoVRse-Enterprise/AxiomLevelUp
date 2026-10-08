@@ -19,9 +19,9 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 15% -10%, rgb(37 165 143 / 0.13), transparent 34rem),
-    radial-gradient(circle at 90% 10%, rgb(116 88 214 / 0.06), transparent 30rem),
-    var(--color-neutral-50);
+    radial-gradient(circle at 15% -10%, var(--page-glow-primary), transparent 34rem),
+    radial-gradient(circle at 90% 10%, var(--page-glow-secondary), transparent 30rem),
+    var(--surface-page);
 }
 
 ::selection {
@@ -34,7 +34,7 @@ a,
 input,
 select,
 textarea {
-  outline-color: var(--color-brand-600);
+  outline-color: var(--focus-ring);
   outline-offset: 3px;
 }
 

@@ -80,6 +80,19 @@ export function rebaseSeedDates(seed: LearnerSeed, targetDate: string): LearnerS
       attempt.completedAt = shiftTimestamp(attempt.completedAt, days)
     })
   })
+  Object.values(rebased.games).forEach((game) => {
+    if (game.lastPlayedAt) game.lastPlayedAt = shiftTimestamp(game.lastPlayedAt, days)
+    game.history.forEach((record) => {
+      record.completedAt = shiftTimestamp(record.completedAt, days)
+    })
+  })
+  if (rebased.gameDaily.lastPlayedDate) {
+    rebased.gameDaily.lastPlayedDate = shiftDate(rebased.gameDaily.lastPlayedDate, days)
+  }
+  rebased.gameChallenges.incoming = rebased.gameChallenges.incoming.map((challenge) => ({
+    ...challenge,
+    openedAt: shiftTimestamp(challenge.openedAt, days),
+  }))
   Object.values(rebased.badges).forEach((badge) => {
     if (badge.unlockedAt) badge.unlockedAt = shiftTimestamp(badge.unlockedAt, days)
   })

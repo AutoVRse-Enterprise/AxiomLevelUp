@@ -4,6 +4,7 @@ import type { ContentRegistry } from '@/content/loader'
 import type { GameDocument } from '@/content/schema/game'
 import type { AnatomyLocatePrimitive } from '@/content/schema/primitives'
 import { planRun } from '@/engines/games/plan'
+import type { GameRunContext } from '@/engines/games/runContext'
 import { resolveRoundAccuracy, scoreRound } from '@/engines/games/scoring'
 import {
   createGameSession,
@@ -22,19 +23,26 @@ export function useGameRun({
   difficultyId,
   seed,
   resumedSession,
+  runContext,
 }: {
   game: GameDocument
   registry: ContentRegistry
   difficultyId: string
   seed: number
   resumedSession?: GameSession | null
+  runContext: GameRunContext
 }) {
   const plan = useMemo(
     () => planRun({ game, registry, difficultyId, seed }),
     [difficultyId, game, registry, seed],
   )
   const [session, setSession] = useState<GameSession>(
-    () => resumedSession ?? createGameSession(plan),
+    () =>
+      resumedSession ??
+      createGameSession(plan, undefined, {
+        mode: runContext.mode,
+        challengeToken: runContext.challengeToken,
+      }),
   )
   const save = useGameSessionStore((state) => state.save)
   const config = registry.appConfig.games!
@@ -58,9 +66,18 @@ export function useGameRun({
       runId,
       difficulty: session.difficulty,
       seed: session.seed,
-      mode: 'standard',
+      mode: session.mode,
+      ...(session.challengeToken ? { challengeToken: session.challengeToken } : {}),
     })
-  }, [dispatch, game.id, session.difficulty, session.phase, session.seed])
+  }, [
+    dispatch,
+    game.id,
+    session.challengeToken,
+    session.difficulty,
+    session.mode,
+    session.phase,
+    session.seed,
+  ])
 
   const startRound = useCallback(() => {
     const planned = plan.rounds[session.roundIndex]
@@ -239,13 +256,14 @@ export function useGameRun({
         gameId: advanced.gameId,
         difficulty: advanced.difficulty,
         seed: advanced.seed,
-        mode: 'standard',
+        mode: advanced.mode,
         total: results.reduce((sum, result) => sum + result.points, 0),
         correctCount: results.filter(({ correct }) => correct).length,
         durationSeconds: Math.round(
           results.reduce((sum, result) => sum + result.elapsedMs, 0) / 1_000,
         ),
         roundResults: results,
+        ...(advanced.challengeToken ? { challengeToken: advanced.challengeToken } : {}),
       })
       return gameSessionReducer(advanced, { type: 'complete', at: new Date().toISOString() })
     })

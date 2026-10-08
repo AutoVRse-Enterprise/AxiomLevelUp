@@ -14,14 +14,7 @@ interface SheetProps {
   className?: string
 }
 
-export function Sheet({
-  open,
-  onOpenChange,
-  title,
-  description,
-  children,
-  className,
-}: SheetProps) {
+export function Sheet({ open, onOpenChange, title, description, children, className }: SheetProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>

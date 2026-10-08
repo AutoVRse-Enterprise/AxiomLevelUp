@@ -74,6 +74,18 @@
   --shadow-card: 0 1px 2px rgb(11 20 17 / 0.05), 0 8px 24px rgb(11 20 17 / 0.06);
   --shadow-overlay: 0 20px 50px rgb(11 20 17 / 0.24);
 
+  --surface-page: var(--color-neutral-50);
+  --surface-card: var(--color-neutral-0);
+  --surface-card-strong: var(--color-neutral-950);
+  --surface-border: var(--color-neutral-200);
+  --surface-text: var(--color-neutral-900);
+  --surface-muted: var(--color-neutral-600);
+  --surface-subtle: var(--color-neutral-100);
+  --score-accent: var(--color-star);
+  --focus-ring: var(--color-brand-600);
+  --page-glow-primary: rgb(37 165 143 / 0.13);
+  --page-glow-secondary: rgb(116 88 214 / 0.06);
+
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-emphasized: cubic-bezier(0.2, 0.8, 0.2, 1);
   --duration-fast: 150ms;

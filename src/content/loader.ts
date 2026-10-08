@@ -60,6 +60,7 @@ export interface ContentBundleInput {
 }
 
 export interface ContentRegistry {
+  contentBaseUrl?: string
   manifest: ContentManifest
   appConfig: AppConfig
   courses: readonly Course[]
@@ -447,6 +448,7 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         severity: 'error',
       })
     }
+    const formatIds = new Set(appConfig.games.formats.map(({ id }) => id))
     appConfig.games.formats.forEach((format, index) => {
       if (format.status === 'playable' && !format.gameId) {
         issues.push({
@@ -466,6 +468,42 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         )
       }
     })
+    if (appConfig.games.hub.primaryFormatId) {
+      requireRef(
+        formatIds,
+        appConfig.games.hub.primaryFormatId,
+        input.appConfigFile,
+        'games.hub.primaryFormatId',
+        'game format',
+      )
+      const primary = appConfig.games.formats.find(
+        ({ id }) => id === appConfig.games!.hub.primaryFormatId,
+      )
+      if (primary && primary.status !== 'playable') {
+        issues.push({
+          file: input.appConfigFile,
+          path: 'games.hub.primaryFormatId',
+          message: 'The primary game format must be playable.',
+          severity: 'error',
+        })
+      }
+    }
+    if (appConfig.games.daily) {
+      requireRef(
+        gameIds,
+        appConfig.games.daily.gameId,
+        input.appConfigFile,
+        'games.daily.gameId',
+        'game',
+      )
+      requireRef(
+        difficultyIds,
+        appConfig.games.daily.difficulty,
+        input.appConfigFile,
+        'games.daily.difficulty',
+        'game difficulty',
+      )
+    }
     appConfig.games.expertRuns.forEach((run, index) => {
       requireRef(
         gameIds,
@@ -497,6 +535,33 @@ export function validateContentBundle(input: ContentBundleInput): ContentRegistr
         `games.leaderboard.entries.${index}.difficulty`,
         'game difficulty',
       )
+    })
+    const leaderboardGroups = new Map<
+      string,
+      Array<(typeof appConfig.games.leaderboard.entries)[number]>
+    >()
+    appConfig.games.leaderboard.entries.forEach((entry) => {
+      const key = `${entry.id}:${entry.gameId}:${entry.difficulty}`
+      leaderboardGroups.set(key, [...(leaderboardGroups.get(key) ?? []), entry])
+    })
+    leaderboardGroups.forEach((entries) => {
+      const score = (period: 'today' | 'week' | 'all_time') =>
+        entries.find((entry) => entry.period === period)?.score
+      const todayScore = score('today')
+      const weekScore = score('week')
+      const allTimeScore = score('all_time')
+      if (
+        (todayScore !== undefined && weekScore !== undefined && todayScore > weekScore) ||
+        (weekScore !== undefined && allTimeScore !== undefined && weekScore > allTimeScore)
+      ) {
+        warnings.push({
+          file: input.appConfigFile,
+          path: 'games.leaderboard.entries',
+          message:
+            'Leaderboard sample scores should be ordered Today <= This week <= All time for each player, game and difficulty.',
+          severity: 'warning',
+        })
+      }
     })
   }
   assetManifest.assets.forEach((asset, index) => {

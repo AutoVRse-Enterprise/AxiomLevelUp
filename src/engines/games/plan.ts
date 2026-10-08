@@ -139,7 +139,9 @@ function resolvePlannedExplore(
   const startView =
     round.mechanic === 'spatial_look' && explore.content.navigation !== 'look'
       ? ({ mode: 'waypoint_marker', waypointId: dropWaypointId } as const)
-      : ({ mode: 'endoscopic', waypointId: dropWaypointId } as const)
+      : explore.content.startView.mode === 'waypoint_marker'
+        ? ({ mode: 'waypoint_marker', waypointId: dropWaypointId } as const)
+        : ({ mode: 'endoscopic', waypointId: dropWaypointId } as const)
   return {
     ...explore,
     content: {

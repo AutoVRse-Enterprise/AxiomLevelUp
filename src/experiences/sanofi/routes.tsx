@@ -17,6 +17,19 @@ const PlayGamePage = lazy(() =>
 const GameResultPage = lazy(() =>
   import('@/routes/games/GameResultPage').then((module) => ({ default: module.GameResultPage })),
 )
+const ChallengeLandingPage = lazy(() =>
+  import('@/routes/games/ChallengeLandingPage').then((module) => ({
+    default: module.ChallengeLandingPage,
+  })),
+)
+const GameLeaderboardPage = lazy(() =>
+  import('@/routes/games/GameLeaderboardPage').then((module) => ({
+    default: module.GameLeaderboardPage,
+  })),
+)
+const YouPage = lazy(() =>
+  import('@/routes/games/YouPage').then((module) => ({ default: module.YouPage })),
+)
 const lazyPage = createLazyPage(sanofiExperienceShell.copy.routeLoading)
 
 export function createSanofiRoutes(): RouteObject[] {
@@ -26,6 +39,17 @@ export function createSanofiRoutes(): RouteObject[] {
       errorElement: <RouteErrorPage />,
       children: [
         { index: true, element: <HomePage />, handle: { title: 'Play' } },
+        {
+          path: 'c/:token',
+          element: lazyPage(<ChallengeLandingPage />),
+          handle: { title: 'Challenge' },
+        },
+        {
+          path: 'leaderboard',
+          element: lazyPage(<GameLeaderboardPage />),
+          handle: { title: 'Leaderboard' },
+        },
+        { path: 'you', element: lazyPage(<YouPage />), handle: { title: 'You' } },
         {
           path: 'results/:runId',
           element: lazyPage(<GameResultPage />),

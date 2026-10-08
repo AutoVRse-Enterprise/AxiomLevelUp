@@ -3,7 +3,12 @@ import freshSeedData from '../../public/content/seeds/fresh.json'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { learnerSeedSchema } from '@/content/schema'
-import { learnerDataSnapshot, migrateLearnerState, useLearnerStore } from '@/state/learnerStore'
+import {
+  LEARNER_STATE_VERSION,
+  learnerDataSnapshot,
+  migrateLearnerState,
+  useLearnerStore,
+} from '@/state/learnerStore'
 import { idbStorage } from '@/state/persistence/idbStorage'
 
 const advancedSeed = learnerSeedSchema.parse(advancedSeedData)
@@ -93,7 +98,7 @@ describe('learner store persistence', () => {
     expect(useLearnerStore.getState().lessonProgress['primitive-showcase']).toBeUndefined()
   })
 
-  it.each([3, 4, 5, 6, 7, 8])('migrates learner state v%i to v9 defaults', (stateVersion) => {
+  it.each([3, 4, 5, 6, 7, 8])('migrates learner state v%i to current defaults', (stateVersion) => {
     const legacy = structuredClone(freshSeed) as unknown as Record<string, unknown>
     legacy.stateVersion = stateVersion
     delete legacy.caseProgress
@@ -108,7 +113,7 @@ describe('learner store persistence', () => {
 
     const migrated = migrateLearnerState(legacy)
 
-    expect(migrated.stateVersion).toBe(9)
+    expect(migrated.stateVersion).toBe(LEARNER_STATE_VERSION)
     expect(migrated.caseProgress).toEqual({})
     expect(migrated.caseAttempts).toEqual({})
     expect(migrated.gamification.caseRewards).toEqual({})
@@ -123,7 +128,8 @@ describe('learner store persistence', () => {
     expect(migrated.caseLab.anatomyHintSeen).toBe(false)
     expect(migrated.games).toEqual({})
     expect(migrated.gameDaily).toEqual({ lastPlayedDate: null, streakDays: 0 })
-    expect(migrated.player).toEqual({ displayName: null })
+    expect(migrated.player).toEqual({ displayName: null, shareNamePrompted: false })
+    expect(migrated.gameChallenges).toEqual({ incoming: [] })
   })
 
   it('migrates v7 learners with the Case Lab walkthrough unseen', () => {
@@ -163,7 +169,7 @@ describe('learner store persistence', () => {
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['asthma-foundation']![0]!
 
-    expect(migrated.stateVersion).toBe(9)
+    expect(migrated.stateVersion).toBe(LEARNER_STATE_VERSION)
     expect(attempt.resultVersion).toBe(5)
     expect(attempt).not.toHaveProperty('perStepSpeed')
     expect(attempt).not.toHaveProperty('caseSpeed')
@@ -188,7 +194,7 @@ describe('learner store persistence', () => {
     const migrated = migrateLearnerState(legacy)
     const attempt = migrated.caseAttempts['exacerbation-advanced']![0]!
 
-    expect(migrated.stateVersion).toBe(9)
+    expect(migrated.stateVersion).toBe(LEARNER_STATE_VERSION)
     expect(attempt.resultVersion).toBe(6)
     expect(attempt).not.toHaveProperty('speedModel')
     expect(attempt).not.toHaveProperty('reviewedClueIds')

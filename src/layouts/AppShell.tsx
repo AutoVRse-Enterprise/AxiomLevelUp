@@ -9,7 +9,7 @@ import { DeferredCelebrationHost } from '@/components/rewards/DeferredCelebratio
 import { cn } from '@/lib/cn'
 
 export function AppShell() {
-  const { navigation } = useExperienceShell()
+  const { navigation, footerNotice: FooterNotice } = useExperienceShell()
   const hasBottomNavigation = navigation.length > 1
   const columnClass =
     (
@@ -43,6 +43,11 @@ export function AppShell() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 sm:py-8" id="main-content">
         <RouteTransition />
       </main>
+      {FooterNotice ? (
+        <footer className="mx-auto w-full max-w-6xl px-4 pb-4 sm:px-6">
+          <FooterNotice />
+        </footer>
+      ) : null}
       <ScrollRestoration />
       <BuildStamp />
 

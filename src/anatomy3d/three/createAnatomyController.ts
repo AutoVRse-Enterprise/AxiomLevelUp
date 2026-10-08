@@ -19,6 +19,7 @@ import type {
 import { clampAnatomyFov } from '@/anatomy3d/viewer/controller'
 import { resolveStructure } from '@/anatomy3d/viewer/resolveStructure'
 import { deterministicOcclusionBlobs } from '@/anatomy3d/three/findingGeometry'
+import { lumenWallIndices } from '@/anatomy3d/three/lumenGeometry'
 import { ReferenceCountedCache, type CacheLease } from '@/anatomy3d/three/referenceCache'
 
 interface MaterialState {
@@ -153,7 +154,6 @@ function taperedTubeGeometry(
   const frames = curve.computeFrenetFrames(tubularSegments, false)
   const positions: number[] = []
   const uvs: number[] = []
-  const indices: number[] = []
 
   for (let segment = 0; segment <= tubularSegments; segment += 1) {
     const progress = segment / tubularSegments
@@ -169,19 +169,10 @@ function taperedTubeGeometry(
     }
   }
 
-  for (let segment = 0; segment < tubularSegments; segment += 1) {
-    for (let side = 0; side < radialSegments; side += 1) {
-      const row = radialSegments + 1
-      const a = segment * row + side
-      const b = (segment + 1) * row + side
-      indices.push(a, b, a + 1, b, b + 1, a + 1)
-    }
-  }
-
   const geometry = new THREE.BufferGeometry()
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
-  geometry.setIndex(indices)
+  geometry.setIndex(lumenWallIndices(tubularSegments, radialSegments))
   geometry.computeVertexNormals()
   return geometry
 }
@@ -234,7 +225,9 @@ export function createAnatomyController({
   let lease: CacheLease<THREE.Group> | null = null
   let model: THREE.Group | null = null
   let map: AnatomyMap | null = null
-  let marker: THREE.Mesh | null = null
+  let marker: THREE.Group | null = null
+  let currentMarker: THREE.Group | null = null
+  let waypointGuide: THREE.Group | null = null
   let markerId: string | null = null
   let lumen: THREE.Group | null = null
   let findingRoot: THREE.Group | null = null
@@ -246,6 +239,8 @@ export function createAnatomyController({
   let highlightGroups: readonly AnatomyHighlightGroup[] = []
   let overviewPosition = new THREE.Vector3(0, 0, 5)
   let overviewTarget = new THREE.Vector3()
+  let waypointOverviewTarget = new THREE.Vector3()
+  let waypointOverviewRadius = 1
   let overviewNear = camera.near
   let currentWaypointId: string | null = null
   let waypointTrail: string[] = []
@@ -317,6 +312,8 @@ export function createAnatomyController({
       }
     }
     if (controls.enabled) controls.update()
+    marker?.quaternion.copy(camera.quaternion)
+    currentMarker?.quaternion.copy(camera.quaternion)
     renderer.render(scene, camera)
   }
   renderer.setAnimationLoop(render)
@@ -324,10 +321,19 @@ export function createAnatomyController({
   const clearMarker = () => {
     if (marker) {
       scene.remove(marker)
-      marker.geometry.dispose()
-      materialsOf(marker).forEach((material) => material.dispose())
+      disposeGeneratedGroup(marker)
+    }
+    if (currentMarker) {
+      scene.remove(currentMarker)
+      disposeGeneratedGroup(currentMarker)
+    }
+    if (waypointGuide) {
+      scene.remove(waypointGuide)
+      disposeGeneratedGroup(waypointGuide)
     }
     marker = null
+    currentMarker = null
+    waypointGuide = null
     markerId = null
   }
 
@@ -716,6 +722,89 @@ export function createAnatomyController({
     notifyViewChanged()
   }
 
+  const createBeacon = (color: string, radius: number, ringOnly = false) => {
+    const group = new THREE.Group()
+    group.renderOrder = 20
+    if (!ringOnly) {
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(radius, 24, 18),
+        new THREE.MeshBasicMaterial({
+          color,
+          depthTest: false,
+          depthWrite: false,
+        }),
+      )
+      core.renderOrder = 21
+      group.add(core)
+    }
+    const halo = new THREE.Mesh(
+      new THREE.RingGeometry(
+        radius * (ringOnly ? 0.9 : 1.25),
+        radius * (ringOnly ? 1.35 : 1.7),
+        32,
+      ),
+      new THREE.MeshBasicMaterial({
+        color: ringOnly ? color : '#ffffff',
+        depthTest: false,
+        depthWrite: false,
+        opacity: 0.9,
+        side: THREE.DoubleSide,
+        transparent: true,
+      }),
+    )
+    halo.renderOrder = 20
+    group.add(halo)
+    return group
+  }
+
+  const buildWaypointGuide = () => {
+    if (!map || waypointGuide) return
+    waypointGuide = new THREE.Group()
+    waypointGuide.name = 'waypoint-branch-guide'
+    const material = new THREE.MeshBasicMaterial({
+      color: config.volumeStyles.color,
+      depthTest: false,
+      depthWrite: false,
+      opacity: 0.72,
+      transparent: true,
+    })
+    map.waypoints.forEach((from) => {
+      from.next.forEach((nextId) => {
+        const next = map!.waypoints.find(({ id }) => id === nextId)
+        if (!next) return
+        const guideRadius = Math.max(
+          Math.min(
+            from.radius ?? config.lumen.defaultRadius,
+            next.radius ?? config.lumen.defaultRadius,
+          ) * 0.16,
+          waypointOverviewRadius * 0.006,
+        )
+        const segment = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            waypointCurve(from, next, config.lumen.curveStrength),
+            12,
+            guideRadius,
+            8,
+            false,
+          ),
+          material.clone(),
+        )
+        segment.renderOrder = 10
+        waypointGuide!.add(segment)
+      })
+    })
+    material.dispose()
+    scene.add(waypointGuide)
+  }
+
+  const setWaypointOverview = () => {
+    camera.up.set(0, 0, 1)
+    const position = waypointOverviewTarget
+      .clone()
+      .add(new THREE.Vector3(0, waypointOverviewRadius * 2.8, waypointOverviewRadius * 0.08))
+    setCamera(position, waypointOverviewTarget)
+  }
+
   const setEndoscopicEnvironment = (waypoint: AnatomyMap['waypoints'][number]) => {
     const radius = waypoint.radius ?? config.lumen.defaultRadius
     camera.near = Math.max(radius / 100, 0.0001)
@@ -879,6 +968,13 @@ export function createAnatomyController({
       overviewPosition = sphere.center
         .clone()
         .add(new THREE.Vector3(0, radius * 0.15, radius * 2.8))
+      const waypointBounds = new THREE.Box3()
+      anatomyMap.waypoints.forEach((waypoint) => {
+        waypointBounds.expandByPoint(vector(waypoint.position))
+      })
+      const waypointSphere = waypointBounds.getBoundingSphere(new THREE.Sphere())
+      waypointOverviewTarget = waypointSphere.center.clone()
+      waypointOverviewRadius = Math.max(waypointSphere.radius, 0.01)
       camera.near = Math.max(radius / 1_000, 0.001)
       overviewNear = camera.near
       camera.far = Math.max(radius * 20, 100)
@@ -898,6 +994,7 @@ export function createAnatomyController({
         controller.setMarker(view.structureId)
       } else if (view.mode === 'waypoint_marker') {
         controller.resetView()
+        setWaypointOverview()
         controller.setWaypointMarker(view.waypointId)
       } else if (view.mode === 'waypoint') {
         controller.travelTo(view.waypointId, { animate: false })
@@ -982,10 +1079,7 @@ export function createAnatomyController({
       const bounds = new THREE.Box3()
       objects.forEach((object) => bounds.expandByObject(object))
       const sphere = bounds.getBoundingSphere(new THREE.Sphere())
-      marker = new THREE.Mesh(
-        new THREE.SphereGeometry(Math.max(sphere.radius * 0.08, 0.01), 16, 12),
-        new THREE.MeshBasicMaterial({ color: config.markerColor }),
-      )
+      marker = createBeacon(config.markerColor, Math.max(sphere.radius * 0.08, 0.01))
       marker.position.copy(sphere.center)
       scene.add(marker)
       markerId = structureId
@@ -997,13 +1091,36 @@ export function createAnatomyController({
       const waypoint = map?.waypoints.find(({ id }) => id === waypointId)
       if (!waypoint) return
       const radius = waypoint.radius ?? config.lumen.defaultRadius
-      marker = new THREE.Mesh(
-        new THREE.SphereGeometry(Math.max(radius * 0.35, 0.01), 18, 14),
-        new THREE.MeshBasicMaterial({ color: config.markerColor }),
+      buildWaypointGuide()
+      marker = createBeacon(
+        config.markerColor,
+        Math.max(radius * 1.2, waypointOverviewRadius * 0.045, 0.01),
       )
       marker.position.copy(vector(waypoint.position))
       scene.add(marker)
       markerId = waypointId
+      currentWaypointId = waypointId
+      waypointTrail = map ? pathToWaypoint(map, waypointId) : [waypointId]
+      notifyViewChanged()
+    },
+
+    setWaypointContext(waypointId) {
+      const waypoint = map?.waypoints.find(({ id }) => id === waypointId)
+      if (!waypoint) return
+      currentWaypointId = waypointId
+      waypointTrail = map ? pathToWaypoint(map, waypointId) : [waypointId]
+      if (currentMarker) {
+        scene.remove(currentMarker)
+        disposeGeneratedGroup(currentMarker)
+      }
+      const radius = waypoint.radius ?? config.lumen.defaultRadius
+      currentMarker = createBeacon(
+        config.volumeStyles.color,
+        Math.max(radius, waypointOverviewRadius * 0.032, 0.01),
+        true,
+      )
+      currentMarker.position.copy(vector(waypoint.position))
+      scene.add(currentMarker)
     },
 
     setFindings(nextFindings) {
@@ -1024,12 +1141,14 @@ export function createAnatomyController({
         buildLumen()
         if (model) model.visible = false
         if (volumeRoot) volumeRoot.visible = false
+        if (waypointGuide) waypointGuide.visible = false
         controls.enabled = false
         headlight.visible = true
         setEndoscopicEnvironment(waypoint)
       } else {
         clearLumen()
         if (model) model.visible = true
+        if (waypointGuide) waypointGuide.visible = true
         applyStructureAppearance()
         controls.enabled = true
         headlight.visible = false
@@ -1076,6 +1195,7 @@ export function createAnatomyController({
       buildLumen()
       if (model) model.visible = false
       if (volumeRoot) volumeRoot.visible = false
+      if (waypointGuide) waypointGuide.visible = false
       endoscopic = true
       if (waypointId !== currentWaypointId || waypointTrail.length === 0) {
         waypointTrail = pathToWaypoint(map, waypointId)
@@ -1095,6 +1215,7 @@ export function createAnatomyController({
       endoscopic = false
       clearLumen()
       if (model) model.visible = true
+      if (waypointGuide) waypointGuide.visible = true
       applyStructureAppearance()
       controls.enabled = true
       headlight.visible = false
@@ -1182,6 +1303,7 @@ export function createAnatomyController({
       controls.enabled = true
       headlight.visible = false
       scene.fog = null
+      camera.up.set(0, 1, 0)
       camera.near = overviewNear
       camera.fov = DEFAULT_FOV_DEGREES
       camera.updateProjectionMatrix()

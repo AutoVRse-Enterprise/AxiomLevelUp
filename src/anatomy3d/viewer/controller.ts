@@ -187,6 +187,7 @@ export interface AnatomyViewerController {
   highlightGroups(groups: readonly AnatomyHighlightGroup[]): void
   setMarker(structureId: string | null): void
   setWaypointMarker(waypointId: string | null): void
+  setWaypointContext(waypointId: string): void
   setFindings(findings: readonly CaseFinding[]): void
   travelTo(waypointId: string, options?: { animate?: boolean }): void
   availableBranches(): readonly string[]

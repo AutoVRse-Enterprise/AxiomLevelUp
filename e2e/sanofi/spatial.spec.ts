@@ -7,6 +7,13 @@ import {
   dismissSpatialHint,
   startRound,
 } from './helpers/rounds'
+import { installSanofiFixtures } from './helpers/fixtures'
+
+test.use({ serviceWorkers: 'block' })
+
+test.beforeEach(async ({ page }) => {
+  await installSanofiFixtures(page)
+})
 
 test('completes both spatial rounds through visible and keyboard controls', async ({ page }) => {
   test.slow()
@@ -19,10 +26,10 @@ test('completes both spatial rounds through visible and keyboard controls', asyn
   await startRound(page)
   await answerExploreRound(page)
   await page.getByRole('button', { name: 'See your score' }).click()
-  await expect(page.getByRole('button', { name: 'Play again' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible()
 })
 
-test('selects a lobe by picking the rendered canvas', async ({ page }, testInfo) => {
+test('offers explicit lobe choices after spatial exploration', async ({ page }, testInfo) => {
   test.skip(
     testInfo.project.name !== 'desktop-chromium',
     'One renderer picking check is sufficient.',
@@ -34,14 +41,11 @@ test('selects a lobe by picking the rendered canvas', async ({ page }, testInfo)
   await answerLookRound(page)
   await page.getByRole('button', { name: 'Next round' }).click()
   await startRound(page)
-  await page.getByRole('button', { name: 'I know where I am' }).click()
+  await page.getByRole('button', { name: 'Choose my location' }).click()
 
-  const snapshot = await anatomySnapshot(page)
-  const lobe = snapshot.structures.find(
-    ({ id, visible }) => visible && /-(?:upper|middle|lower)-lobe$/.test(id),
-  )
-  expect(lobe).toBeDefined()
-  await page.mouse.click(lobe!.clientX, lobe!.clientY)
+  const lobe = page.getByRole('radio', { name: 'Right upper lobe' })
+  await expect(lobe).toBeVisible()
+  await lobe.click()
   await expect(page.getByRole('button', { name: 'Next step' })).toBeEnabled()
 })
 

@@ -92,7 +92,7 @@ export function PwaPromptHost() {
         </Card>
       ) : null}
 
-      {serviceWorker.offlineReady ? (
+      {installPrompt && serviceWorker.offlineReady ? (
         <Card className="min-w-0 shadow-lg" role="status">
           <h2 className="flex items-center gap-2 font-bold">
             <Wifi aria-hidden="true" size={18} /> Ready to work offline

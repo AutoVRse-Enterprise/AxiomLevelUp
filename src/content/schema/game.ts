@@ -132,13 +132,126 @@ export const gameMessageRuleSchema = z.strictObject({
   text: nonEmptyStringSchema,
 })
 
+const gameHubCopySchema = z.strictObject({
+  title: nonEmptyStringSchema,
+  tagline: nonEmptyStringSchema,
+  startLabel: nonEmptyStringSchema,
+  unavailableLabel: nonEmptyStringSchema.optional(),
+  primaryFormatId: idSchema.optional(),
+  difficultyLabel: nonEmptyStringSchema.default('Difficulty'),
+  bestScoreLabel: nonEmptyStringSchema.default('Best score'),
+  continueTitle: nonEmptyStringSchema.default('Continue game'),
+  incomingTitle: nonEmptyStringSchema.default('Incoming challenge'),
+  incomingTemplate: nonEmptyStringSchema.default('{from} challenged you · Score to beat {score}'),
+  dailyTitle: nonEmptyStringSchema.default("Today's challenge"),
+  dailyDescription: nonEmptyStringSchema.default('The same challenge for everyone today.'),
+  dailyComplete: nonEmptyStringSchema.default('Completed today · {score} points'),
+  formatsTitle: nonEmptyStringSchema.default('Game formats'),
+  statsTitle: nonEmptyStringSchema.default('Your stats'),
+  lastScoreLabel: nonEmptyStringSchema.default('Last score'),
+  gamesPlayedLabel: nonEmptyStringSchema.default('Games played'),
+  dailyStreakLabel: nonEmptyStringSchema.default('Daily streak'),
+  leaderboardTitle: nonEmptyStringSchema.default('Leaderboard'),
+  viewLeaderboard: nonEmptyStringSchema.default('View leaderboard'),
+  expertsTitle: nonEmptyStringSchema.default('Expert challenges'),
+  scoreToBeat: nonEmptyStringSchema.default('Score to beat {score}'),
+  recentTitle: nonEmptyStringSchema.default('Recent games'),
+  noRecent: nonEmptyStringSchema.default('Your recent games will appear here.'),
+  resumeLabel: nonEmptyStringSchema.default('Continue'),
+  playLabel: nonEmptyStringSchema.default('Play'),
+  previewLabel: nonEmptyStringSchema.default('New soon'),
+  roundsTemplate: nonEmptyStringSchema.default('{count} rounds'),
+  minutesTemplate: nonEmptyStringSchema.default('{minutes} min'),
+})
+
+const gameResultCopySchema = z.strictObject({
+  pointsLabel: nonEmptyStringSchema,
+  correctTemplate: nonEmptyStringSchema,
+  timeTemplate: nonEmptyStringSchema,
+  bestRoundTemplate: nonEmptyStringSchema,
+  personalBest: nonEmptyStringSchema,
+  challengeColleague: nonEmptyStringSchema,
+  tryAgain: nonEmptyStringSchema,
+  beatYourBest: nonEmptyStringSchema,
+  leaderboard: nonEmptyStringSchema,
+  rematch: nonEmptyStringSchema,
+  challengeBack: nonEmptyStringSchema,
+  roundDetailsTitle: nonEmptyStringSchema,
+  winTemplate: nonEmptyStringSchema,
+  lossTemplate: nonEmptyStringSchema,
+  tieTemplate: nonEmptyStringSchema,
+})
+
+const gameShareCopySchema = z.strictObject({
+  title: nonEmptyStringSchema,
+  description: nonEmptyStringSchema,
+  messageTemplate: nonEmptyStringSchema,
+  nativeShare: nonEmptyStringSchema,
+  copyLink: nonEmptyStringSchema,
+  copied: nonEmptyStringSchema,
+  messaging: nonEmptyStringSchema,
+  email: nonEmptyStringSchema,
+  fallbackName: nonEmptyStringSchema,
+  nameTitle: nonEmptyStringSchema,
+  nameDescription: nonEmptyStringSchema,
+  nameLabel: nonEmptyStringSchema,
+  saveName: nonEmptyStringSchema,
+  skipName: nonEmptyStringSchema,
+})
+
+const challengeLandingCopySchema = z.strictObject({
+  title: nonEmptyStringSchema,
+  summaryTemplate: nonEmptyStringSchema,
+  accept: nonEmptyStringSchema,
+  fallbackTitle: nonEmptyStringSchema,
+  fallbackMessage: nonEmptyStringSchema,
+  start: nonEmptyStringSchema,
+})
+
+const gameLeaderboardCopySchema = z.strictObject({
+  title: nonEmptyStringSchema,
+  today: nonEmptyStringSchema,
+  week: nonEmptyStringSchema,
+  allTime: nonEmptyStringSchema,
+  game: nonEmptyStringSchema,
+  difficulty: nonEmptyStringSchema,
+  yourPosition: nonEmptyStringSchema,
+  unranked: nonEmptyStringSchema,
+  addName: nonEmptyStringSchema,
+  empty: nonEmptyStringSchema,
+})
+
+const gameYouCopySchema = z.strictObject({
+  title: nonEmptyStringSchema,
+  bestScores: nonEmptyStringSchema,
+  gamesPlayed: nonEmptyStringSchema,
+  dailyStreak: nonEmptyStringSchema,
+  recentGames: nonEmptyStringSchema,
+  noRecentGames: nonEmptyStringSchema,
+  displayName: nonEmptyStringSchema,
+  editName: nonEmptyStringSchema,
+  saveName: nonEmptyStringSchema,
+  credits: nonEmptyStringSchema,
+  presenterTitle: nonEmptyStringSchema,
+  resetProgress: nonEmptyStringSchema,
+  seedReturning: nonEmptyStringSchema,
+  resetComplete: nonEmptyStringSchema,
+  seedComplete: nonEmptyStringSchema,
+})
+
 export const gameConfigSchema = z.strictObject({
-  hub: z.strictObject({
-    title: nonEmptyStringSchema,
-    tagline: nonEmptyStringSchema,
-    startLabel: nonEmptyStringSchema,
-    unavailableLabel: nonEmptyStringSchema,
-  }),
+  hub: gameHubCopySchema,
+  result: gameResultCopySchema.optional(),
+  share: gameShareCopySchema.optional(),
+  challengeLanding: challengeLandingCopySchema.optional(),
+  you: gameYouCopySchema.optional(),
+  notice: z.strictObject({ text: nonEmptyStringSchema }).optional(),
+  daily: z
+    .strictObject({
+      gameId: idSchema,
+      difficulty: idSchema,
+    })
+    .optional(),
   difficulties: z.array(gameDifficultySchema).default([]),
   scoring: gameScoringSchema.optional(),
   timing: z
@@ -277,6 +390,7 @@ export const gameConfigSchema = z.strictObject({
         description: nonEmptyStringSchema,
         gameId: idSchema.optional(),
         status: z.enum(['playable', 'preview']),
+        statusLabel: nonEmptyStringSchema.optional(),
       }),
     )
     .default([]),
@@ -297,6 +411,7 @@ export const gameConfigSchema = z.strictObject({
         )
         .default([]),
       disclosure: nonEmptyStringSchema,
+      copy: gameLeaderboardCopySchema.optional(),
     })
     .default({ entries: [], disclosure: 'Demo leaderboard' }),
   expertRuns: z

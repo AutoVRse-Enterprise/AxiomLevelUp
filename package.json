@@ -23,6 +23,7 @@
     "budget": "tsx scripts/budget/check-bundle.ts",
     "budget:sanofi": "tsx scripts/budget/check-bundle.ts --dist dist-sanofi --config scripts/budget/bundle-budget.sanofi.json",
     "verify:default-build": "tsx scripts/experiences/verify-default-build.ts",
+    "verify:sanofi-build": "tsx scripts/experiences/verify-sanofi-build.ts",
     "validate:content": "tsx scripts/validate-content.ts",
     "schema:export": "tsx scripts/export-json-schema.ts",
     "assets:hash": "tsx scripts/assets/hash-assets.ts",
@@ -34,7 +35,7 @@
     "dicom:preview": "python scripts/dicom/preview-series.py",
     "dicom:verify": "node scripts/dicom/verify-series.mjs",
     "dicom:serve": "node scripts/dicom/serve-series.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run validate:content && npm run build && npm run budget && npm run verify:default-build && npm run build:sanofi && npm run budget:sanofi"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run validate:content && npm run build && npm run budget && npm run verify:default-build && npm run build:sanofi && npm run budget:sanofi && npm run verify:sanofi-build"
   },
   "keywords": [
     "learning",

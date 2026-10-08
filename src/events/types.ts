@@ -141,7 +141,20 @@ export interface EventPayloads {
   }
   game_abandoned: { runId: string; slotIndex: number }
   game_shared: { runId: string; channel: 'native' | 'copy' | 'mock' }
-  game_challenge_opened: { token: string; fromName: string; targetScore: number }
+  game_challenge_opened: {
+    token: string
+    gameId: string
+    fromName: string
+    targetScore: number
+  }
+  game_personal_best: { runId: string; gameId: string; score: number }
+  game_rank_improved: {
+    runId: string
+    gameId: string
+    difficulty: string
+    previousRank: number | null
+    rank: number
+  }
   primitive_viewed: {
     activityKind: EventActivityKind
     activityId: string

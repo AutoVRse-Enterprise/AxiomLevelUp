@@ -63,4 +63,50 @@ describe('game confetti', () => {
       expect.any(Boolean),
     )
   })
+
+  it('does not celebrate a zero-point completion', () => {
+    const config = appConfigSchema.parse(makeGameContentBundle().appConfig)
+    initializeGameConfettiEffects(config.product.presentation.confetti, config.games)
+    emitEvent({
+      event: 'game_completed',
+      runId: 'run-zero',
+      gameId: 'fixture-two-round',
+      difficulty: 'challenge',
+      seed: 1,
+      mode: 'standard',
+      total: 0,
+      correctCount: 0,
+      durationSeconds: 80,
+      roundResults: [
+        {
+          slotId: 'one',
+          roundId: 'one',
+          mechanic: 'clinical_call',
+          accuracy: 0,
+          correct: false,
+          points: 0,
+          basePoints: 0,
+          speedBonus: 0,
+          clueCost: 0,
+          elapsedMs: 40_000,
+          timedOut: true,
+        },
+        {
+          slotId: 'two',
+          roundId: 'two',
+          mechanic: 'clinical_call',
+          accuracy: 0,
+          correct: false,
+          points: 0,
+          basePoints: 0,
+          speedBonus: 0,
+          clueCost: 0,
+          elapsedMs: 40_000,
+          timedOut: true,
+        },
+      ],
+    })
+
+    expect(playConfetti).not.toHaveBeenCalled()
+  })
 })

@@ -1,4 +1,5 @@
 import type { PlannedRound } from '@/engines/games/plan'
+import type { AnatomyMap } from '@/content/schema/anatomyMap'
 import type {
   AnatomyLocatePrimitive,
   ImageHotspotPrimitive,
@@ -7,10 +8,14 @@ import type {
 
 export interface AnswerDimensionLabel {
   levelId: string
+  levelLabel: string
   label: string
 }
 
-export function correctAnswerDimensions(round: PlannedRound): AnswerDimensionLabel[] {
+export function correctAnswerDimensions(
+  round: PlannedRound,
+  anatomyMap?: AnatomyMap,
+): AnswerDimensionLabel[] {
   if (round.primitive.type !== 'anatomy_locate') return []
   const primitive = round.primitive as AnatomyLocatePrimitive
   return primitive.content.levels.map((level) => {
@@ -25,18 +30,21 @@ export function correctAnswerDimensions(round: PlannedRound): AnswerDimensionLab
         ? (level.options.find(({ id }) => id === targetId)?.label ?? targetId)
         : level.input === 'image'
           ? (level.regions.find(({ id }) => id === targetId)?.label ?? targetId)
-          : targetId
-    return { levelId: level.levelId, label }
+          : (anatomyMap?.structures.find(({ id }) => id === targetId)?.label ?? targetId)
+    const levelLabel =
+      anatomyMap?.levels.find(({ id }) => id === level.levelId)?.label ??
+      level.levelId.replaceAll('-', ' ')
+    return { levelId: level.levelId, levelLabel, label }
   })
 }
 
-export function correctAnswerLabel(round: PlannedRound): string {
+export function correctAnswerLabel(round: PlannedRound, anatomyMap?: AnatomyMap): string {
   if (round.primitive.type === 'multiple_choice') {
     const { correctOptionId, options } = (round.primitive as MultipleChoicePrimitive).content
     return options.find(({ id }) => id === correctOptionId)?.label ?? correctOptionId
   }
   if (round.primitive.type === 'anatomy_locate') {
-    return correctAnswerDimensions(round)
+    return correctAnswerDimensions(round, anatomyMap)
       .map(({ label }) => label)
       .join(' · ')
   }

@@ -4105,3 +4105,311 @@ README.md`; `git diff --check`.
   / 112 seconds for Warm-up / Challenge / Expert.
 - **Follow-ups:** Phase 19 owns the game hub, richer result/social surfaces, leaderboard, expert
   runs, You-page Credits and persistent synthetic-case notice.
+
+### [2026-10-07 19:50] P19-T00 - Activate game hub decisions
+
+- **Agent/session:** Cursor documentation subagent
+- **Action:** Activated Phase 19, corrected its decision reference and recorded the shared
+  run-context, persisted comparison context, canonical results, typed milestone events, learner
+  state v10, additive shell and client-only social competition decisions.
+- **Files changed:** `docs/phases/phase-19-game-hub-results-and-social.md`;
+  `docs/DECISIONS.md`; `docs/ACTIVITY_LOG.md`.
+- **Commands run:** Documentation inspection only; no executable commands.
+- **Result/verification:** P19-T00 is complete and ADR-112 resolves leaderboard disclosure,
+  display-name limits, challenge/expert token reuse and non-live competition constraints.
+- **Follow-ups:** Implement P19-T01 through P19-T08 against ADR-112.
+
+### [2026-10-07 20:00] P19-T01 - Add game navigation and shell status
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added Play, Leaderboard and You navigation, a configured best-score header status and
+  a persistent synthetic-case notice through additive shell component slots.
+- **Files changed:** `src/app/experienceShell.ts`; `src/components/navigation/PageHeader.tsx`;
+  `src/layouts/{AppShell,GameLayout}.tsx`; `src/components/game/{BestScoreStatus,SyntheticCaseNotice}.tsx`;
+  `src/experiences/sanofi/{shell,routes}.tsx`.
+- **Commands run:** Prettier; TypeScript; ESLint.
+- **Result/verification:** The default shell contract remains unchanged while sanofi has three-item
+  desktop and phone navigation.
+- **Follow-ups:** Replace the stub homepage with the configured hub.
+
+### [2026-10-07 20:10] P19-T02 - Deliver the configured game hub
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Extended strict game configuration, added game selectors and composed the hub hero,
+  resume/incoming banners, daily run, format cards, stats, leaderboard preview, expert cards and
+  recent history. Added intersection-driven first-round model prefetch with a navigation-safe
+  lease.
+- **Files changed:** game schema/loader/generated schema; sanofi app config; `GameHub.tsx`;
+  `state/selectors/games.ts`; sanofi `HomePage.tsx`; focused fixtures/tests.
+- **Commands run:** Prettier; schema export; TypeScript; ESLint; content validation.
+- **Result/verification:** All three playable formats and the preview are content-driven; both
+  content roots validate with zero warnings.
+- **Follow-ups:** Replace the inline final summary with the durable result route.
+
+### [2026-10-07 20:25] P19-T03 - Add durable competitive results
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added deterministic run-context resolution, persisted mode/token, saved-result
+  routing, animated totals, four result stats, round feedback, opponent comparison and
+  personal-best/rank events with configured effects.
+- **Files changed:** game session/progress/result engines and tests; events/pipeline/effects;
+  player, top bar, play route and result route; learner schema/store v10.
+- **Commands run:** Prettier; TypeScript; ESLint; focused Vitest.
+- **Result/verification:** Standard, daily, challenge and expert context reaches completion records;
+  saved results reopen from learner history.
+- **Follow-ups:** Add share actions and challenge landing.
+
+### [2026-10-07 20:35] P19-T04 - Add challenge sharing and replay
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added share-message/link builders, native/copy/messaging/email actions, the one-time
+  optional display-name prompt, challenge landing and invalid-link fallback, rematch/challenge-back
+  actions and the 40-character sender contract.
+- **Files changed:** `src/engines/games/{links,share,runContext}*`;
+  `src/components/game/{DisplayNamePrompt,ShareChallengeSheet}.tsx`;
+  `src/routes/games/ChallengeLandingPage.tsx`; social tests.
+- **Commands run:** Prettier; TypeScript; ESLint; focused Vitest and Playwright.
+- **Result/verification:** A clean browser context replays identical fixture round IDs and reaches
+  the score comparison.
+- **Follow-ups:** Complete the configured leaderboard.
+
+### [2026-10-07 20:45] P19-T05 - Add game leaderboard
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added period tabs, game/difficulty filters, player merge/highlight/pinning and
+  optional leaderboard name entry. Authored 216 fictional rows spanning every playable
+  format/difficulty/period combination with the required demo disclosure.
+- **Files changed:** `src/routes/games/GameLeaderboardPage.tsx`; sanofi app config; validation.
+- **Commands run:** Prettier; content validation; desktop Playwright filter journey.
+- **Result/verification:** All filter combinations have configured sample data and the player is
+  merged locally without implying a backend.
+- **Follow-ups:** Add daily and expert entry points.
+
+### [2026-10-07 20:55] P19-T06 - Add expert and daily runs
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Configured one expert run per playable format and the daily respiratory run; wired
+  deterministic seeds, score-to-beat display and shared result comparison.
+- **Files changed:** sanofi app config; game hub, run context, top bar and result route.
+- **Commands run:** TypeScript; content validation; production sanofi build.
+- **Result/verification:** Three expert cards and today's seeded run resolve through the normal
+  player and event pipeline.
+- **Follow-ups:** Add the You surface and presenter state controls.
+
+### [2026-10-07 21:05] P19-T07 - Add You and presenter controls
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added bests, total plays, daily streak, last-ten history, display-name editing,
+  all-format Credits and gated presenter reset/returning-player actions. Added a strict returning
+  seed, game-date rebasing and incoming-challenge state in learner state v10.
+- **Files changed:** `src/routes/games/YouPage.tsx`; learner schema/store/seed dates; sanofi
+  manifest and `seeds/returning.json`.
+- **Commands run:** Direct seed-schema validation; TypeScript; focused desktop Playwright.
+- **Result/verification:** Presenter controls are absent by default and both validated profile
+  actions work only with `?presenter=1`.
+- **Follow-ups:** Run complete browser/default gates and close documentation.
+
+### [2026-10-07 21:20] P19-T08 - Close game hub and social phase
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added pure social/run-context tests and the fresh-context Playwright journey, updated
+  existing game-result assertions, resolved a phone-only offline-ready toast collision and
+  published the Phase 19 regression record and handoff.
+- **Files changed:** Phase 19 unit/browser tests; `PwaPromptHost.tsx`; README, architecture,
+  content schema, roadmap, programme status, phase checklist, regression record and handoff.
+- **Commands run:** `npm run schema:export`; repeated focused Vitest/Playwright; `npm run check`;
+  `npm run test:e2e:sanofi`; serial `npx playwright test --workers=1`; focused
+  `--last-failed`; baseline artifact comparison.
+- **Result/verification:** Final `npm run check` passes with 107 files / 643 tests, both zero-warning
+  content roots, builds, budgets and default-build isolation. Sanofi Playwright passes 24 tests
+  with 4 intentional skips. The default serial suite passes 52 tests with 3 intentional skips
+  after one touch-phone DICOM timing flake passes on immediate focused re-run; all tracked evidence
+  images were restored and compare byte-for-byte with HEAD.
+- **Follow-ups:** Phase 20 owns hosted HTTPS, physical-device evidence, final polish and the demo
+  runbook.
+
+### [2026-10-07 22:20] P20-T00 - Activate Phase 20 and freeze scope
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Activated Phase 20, captured the Phase 19 worktree/commit baseline and recorded the
+  accepted outside-in Round 1, Sanofi-only release, representative offline-run contract and
+  deferred performance thresholds.
+- **Files changed:** Phase 20 checklist; roadmap; Medical Challenge programme plan; decisions;
+  handoff; activity log.
+- **Commands run:** `git status --short`; `git rev-parse --short HEAD`; `git diff --stat`.
+- **Result/verification:** Baseline commit is `2d6213d` with the complete uncommitted Phase 19
+  implementation preserved. Phase 20 is Active and external/performance evidence cannot be
+  reported as passed.
+- **Follow-ups:** Implement the scoped artifact and offline challenge before visual baselines.
+
+### [2026-10-07 22:30] P20-T09 - Scope the release and prove offline play
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added experience-scoped public release pruning and verification, removed browser
+  fixtures from production content, corrected model prefetch to use the hash-versioned URL and
+  precached every configured Sanofi game asset. Added an offline full-challenge browser check.
+- **Files changed:** Vite/build metadata and scripts; package scripts; Sanofi manifest; model
+  prefetch callers; browser fixtures/helpers/specs.
+- **Commands run:** Prettier; TypeScript; ESLint; content validation; Sanofi production build;
+  `npm run verify:sanofi-build`; focused desktop Sanofi Playwright.
+- **Result/verification:** Sanofi content validates as 7 rounds / 3 games with zero warnings. The
+  release verifier passes at 211 files / 9,153,146 bytes, with no default content, DICOM or fixture
+  documents. Resume and the complete offline Warm-up challenge pass in Chromium.
+- **Follow-ups:** Apply the visual/motion pass before creating reviewed baselines.
+
+### [2026-10-07 22:45] P20-T01 - Apply the clinical game visual language
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added semantic surface, score, glow and focus tokens; scoped dark clinical cards,
+  sheets, controls, header and navigation to the Sanofi experience; added restrained round,
+  reveal and result motion through the shared lazy Motion boundary.
+- **Files changed:** shared tokens/global styles and UI primitives; Sanofi theme; shell header/nav;
+  game intro, reveal and result surfaces; motion presets.
+- **Commands run:** Prettier; TypeScript; ESLint; focused motion and Sanofi component tests.
+- **Result/verification:** All focused checks pass. Shared defaults retain their original values,
+  reduced-motion policy still collapses non-essential transitions and no experience component fork
+  was introduced.
+- **Follow-ups:** Sweep every route/state for vocabulary and internal identifier leaks.
+
+### [2026-10-07 23:00] P20-T02 - Enforce game vocabulary
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a dedicated static/dynamic route vocabulary sweep, moved fixture documents
+  behind browser interception and resolved authored anatomy level/structure labels before reveal.
+  Replaced anatomically valid but policy-conflicting uses of “course” with “path”.
+- **Files changed:** game answer resolver/tests and reveal/player callers; Sanofi airway round copy;
+  `e2e/sanofi/vocabulary.spec.ts` and fixture support.
+- **Commands run:** Prettier; TypeScript; ESLint; focused Vitest; desktop vocabulary Playwright.
+- **Result/verification:** The static route inventory and the complete challenge/reveal/share flow
+  pass without prohibited LMS terms, the internal experience name, mechanic names or content IDs.
+- **Follow-ups:** Expand accessibility and responsive state coverage on both viewports.
+
+### [2026-10-07 23:25] P20-T03 - Complete accessibility and responsive coverage
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added two-project static-route axe and 200% text checks, a keyboard-only four-round
+  challenge, live-announcement capture, and active/reveal/dialog/result axe checks. Corrected dark
+  theme contrast, replaced a nested button role on the anatomy viewport, focused/announced final
+  results and separated timeout from reveal announcements.
+- **Files changed:** Sanofi theme; anatomy viewer semantics; result and presentation announcers;
+  round clock; `e2e/sanofi/accessibility.spec.ts`.
+- **Commands run:** Repeated focused Playwright; TypeScript; ESLint; IDE diagnostics.
+- **Result/verification:** Phone accessibility matrix passes all three checks; desktop passes all
+  three after eliminating mid-transition contrast scans. Keyboard-only play covers spatial,
+  finding and clinical controls, clue confirmation, result focus and all four mechanics.
+- **Follow-ups:** Add deterministic two-viewport visual baselines and finish the game matrix.
+
+### [2026-10-07 23:45] P20-T05 - Freeze the two-viewport game visuals
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added deterministic reduced-motion visual coverage for hub, intro, accepted
+  outside-in Round 1, correct/incorrect reveals, result and challenge landing. Extended Quick
+  Challenge, Anatomy Hunt and Spot the Finding completion to phone.
+- **Files changed:** `e2e/sanofi/visual.spec.ts`; 14 Windows Chromium baselines;
+  `e2e/sanofi/challenge.spec.ts`.
+- **Commands run:** TypeScript; ESLint; Playwright snapshot creation and no-update replay; focused
+  phone additional-format run.
+- **Result/verification:** All 14 reviewed images pass at 1440×900 and 375×812. The accepted Round 1
+  marker-based outside-in lung view remains explicit in both baselines. Phone completion passes for
+  both additional playable formats.
+- **Follow-ups:** Record a deliberate 2–4 minute rehearsal and publish operational procedures.
+
+### [2026-10-08 00:05] P20-T06 - Record rehearsal and demo operations
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Converted timing capture to an explicit evidence-only gate, recorded all three
+  difficulties, and published presenter, participant handoff, reset, offline, network, WebGL and
+  stale-worker procedures plus blocked hosted/device templates.
+- **Files changed:** challenge timing spec; Phase 20 timing JSON; medical challenge runbook; hosted
+  and physical-device templates.
+- **Commands run:** Explicit `RUN_PHASE20_REHEARSAL=1` desktop Playwright timing run.
+- **Result/verification:** Warm-up 192 s, Challenge 160 s and Expert 128 s paced wall time all meet
+  the 2–4 minute contract. Routine browser runs skip evidence regeneration.
+- **Follow-ups:** Publish architecture/schema/release documentation and the PRD §23 verdict.
+
+### [2026-10-08 00:20] P20-T08 - Publish release documentation and verdict
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added the separate Sanofi walkthrough and accurate offline/install wording; documented
+  selective artifact emission, exact model precaching, production/test separation and learner state
+  v10; published the ten-row PRD §23 evidence verdict.
+- **Files changed:** README; architecture; content schema; Phase 20 readiness verdict/checklist.
+- **Commands run:** Documentation formatting deferred to final regression.
+- **Result/verification:** The verdict distinguishes automated proof, scripted evidence, accepted
+  Round 1 deviation, blocked hosted/device/human gates and deferred performance evidence. It does
+  not infer clinician enjoyment or production approval.
+- **Follow-ups:** Run complete dual gates, capture the final artifact inventory and close handoff.
+
+### [2026-10-08 00:40] P20-T09 - Close Phase 20
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Completed the final static, Sanofi browser and serial default browser gates; corrected
+  two ambiguous vocabulary assertions; restored test-generated default evidence captures; recorded
+  artifact identity and closed the phase checklist, roadmap, verdict and handoff.
+- **Files changed:** `e2e/sanofi/vocabulary.spec.ts`; Phase 20 checklist; README; roadmap; Medical
+  Challenge plan; readiness verdict; handoff; activity log.
+- **Commands run:** focused round-clock/router Vitest; `npm run check`;
+  `npm run test:e2e:sanofi`; focused two-project vocabulary Playwright;
+  `npx playwright test --workers=1`; default golden-image diff; targeted Prettier and IDE
+  diagnostics.
+- **Result/verification:** `npm run check` passes with 108 files / 644 tests, both zero-warning
+  content roots, both builds and budgets, and default-build isolation. Sanofi Playwright passes 49
+  tests with 5 intentional skips, including all 14 visual baselines. Default Playwright passes 53
+  tests with 3 intentional skips; all eight Phase 13 golden images remain byte-identical. The
+  verified Sanofi artifact contains 211 files / 9,157,612 bytes and has SHA-256
+  `cd489c214587137cd82ab8c17074eed889e044809d444f08ef3c80e40c0b6f3a`.
+- **Follow-ups:** Hosted HTTPS, physical Android/iPhone, clinician/scientific review and deferred
+  performance evidence remain external gates.
+
+### [2026-10-08 04:26] P20-T10 - Overhaul Quick Challenge participant UX
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Replayed every Respiratory Challenge stage as a participant at 1440 × 900 and
+  375 × 812; diagnosed nine usability/trust defects; replaced the effectively invisible Round 1
+  target and black terminal-waypoint Round 2 view with a graph-framed outside-in airway map,
+  billboarded beacons and explicit choices; made introductions participant-controlled; relaxed
+  per-round timing; moved phone actions away from evidence and movement controls; and corrected
+  zero-score celebrations and stale presenter-reset sessions.
+- **Files changed:** anatomy Three.js controller/viewer and tests; game planning/progress/effects,
+  player stages and session reset; Sanofi app/game/round content; Sanofi Playwright helpers/specs
+  and 20 desktop/phone visual baselines; ADR-114; Phase 20 checklist/readiness/UX audit; README,
+  roadmap and handoff.
+- **Commands run:** focused Vitest, TypeScript and ESLint checks; `npm run validate:content`;
+  targeted Sanofi game/spatial/accessibility/social Playwright; visual baseline regeneration and
+  no-update replay; `npm run check`; `npm run test:e2e:sanofi`;
+  `npx playwright test --workers=1`; `npx playwright test --last-failed --workers=1`; targeted
+  Prettier and IDE diagnostics.
+- **Result/verification:** `npm run check` passes with 109 files / 650 tests, both content roots at
+  zero warnings, both builds/budgets and default isolation. Sanofi passes 51 checks with 5
+  intentional skips and all 20 baselines. The serial default run passed 52 checks with 3 skips;
+  its single known DICOM drag-coordinate flake passed immediately in exact isolation, so all 53
+  runnable default checks are green and the eight goldens remain unchanged. The Sanofi artifact
+  verifies at 211 files / 9,174,233 bytes, SHA-256
+  `e226f9234d575e079b1811db578f977b0eb749530a0dba855cfd04dd74aa2425`.
+- **Follow-ups:** Validate touch/GPU ergonomics on physical Android and iPhone hardware and obtain
+  clinician/scientific review; both remain external gates.
+
+### [2026-10-08 05:10] P20-T11 - Close diagnostic lifecycle follow-up
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Verified and corrected the remaining diagnostic findings: ordinary submissions no
+  longer trigger persisted-lock recovery and duplicate answer events; restored submitted,
+  timed-out and skipped rounds still resume once; waypoint changes no longer dispose/reload the
+  anatomy controller; and procedural lumen walls now use outward triangle winding with the
+  intended interior-facing material.
+- **Files changed:** `GamePlayer.tsx`; anatomy viewer hook/test; Three.js lumen geometry helper,
+  controller and test; Sanofi game browser spec; one intentional default finding-feedback golden;
+  ADR-115; Phase 20 audit, checklist, readiness, roadmap, README and handoff.
+- **Commands run:** procedural winding diagnostic; focused Vitest; TypeScript; ESLint; IDE
+  diagnostics; focused two-viewport Sanofi game Playwright; default Phase 13 golden check,
+  deliberate one-image rebaseline and no-update replay; `npm run check`;
+  `npm run test:e2e:sanofi`; `npx playwright test --workers=1`; targeted Prettier.
+- **Result/verification:** `npm run check` passes with 110 files / 651 tests, both zero-warning
+  content roots, both builds/budgets and default isolation. Sanofi passes 55 checks with 5
+  intentional skips, including live and restored one-answer-one-event coverage. The default
+  serial suite passes all 53 runnable checks with 3 intentional skips. Seven Phase 13 goldens are
+  unchanged; the endoscopic finding golden now records the corrected shaded lumen instead of the
+  former ring-only black void. The Sanofi artifact verifies at 211 files / 9,174,317 bytes,
+  SHA-256 `539cb54894e0250d93be095e1aba6b06d586da639f0ee5c821878954b7349349`.
+- **Follow-ups:** Physical-device GPU/touch validation and clinician/scientific review remain
+  external gates.

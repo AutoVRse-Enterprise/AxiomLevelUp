@@ -1,6 +1,6 @@
 # Phase 19: Game hub, results, social and competition
 
-**Status:** Planned
+**Status:** Complete
 
 Programme context: `docs/MEDICAL_CHALLENGE_PLAN.md`. Depends on Phase 16; final hub content uses
 Phase 18 formats. Can run in parallel with Phases 17 and 18.
@@ -99,7 +99,7 @@ URL through the existing model cache.
 ## You page
 
 - Best score per format and difficulty, games played, daily streak, last 10 runs with date,
-  difficulty and score (from learner state v9 history), and saved-result links.
+  difficulty and score (from learner state v10 history), and saved-result links.
 - Display name edit.
 - Presenter controls, visible only when `demo.enabled` and the URL has `?presenter=1`: reset local
   progress and seed a "returning player" history. Reuses the existing validated seed replacement
@@ -107,34 +107,34 @@ URL through the existing model cache.
 
 ## Checklist
 
-- [ ] **P19-T00 — Decisions**
-  - Confirm open questions 2 (leaderboard disclosure) and 5 (player name). Record ADR-110 for
+- [x] **P19-T00 — Decisions**
+  - Confirm open questions 2 (leaderboard disclosure) and 5 (player name). Record ADR-112 for
     client-only seeded challenge links.
 
-- [ ] **P19-T01 — Sanofi navigation and header status**
+- [x] **P19-T01 — Sanofi navigation and header status**
   - Three-item navigation and `BestScoreStatus`; default shell unaffected.
 
-- [ ] **P19-T02 — Hub components and homepage**
+- [x] **P19-T02 — Hub components and homepage**
   - Shared hub components and the sanofi homepage composition, including Continue game, daily
     challenge and model prefetch.
 
-- [ ] **P19-T03 — Result page**
+- [x] **P19-T03 — Result page**
   - Full result page replacing the Phase 16 basic summary; saved results at `/results/:runId`.
 
-- [ ] **P19-T04 — Share sheet and challenge links**
+- [x] **P19-T04 — Share sheet and challenge links**
   - Share sheet, native share and copy fallbacks, display-name prompt, challenge landing, rematch
     and challenge-back.
 
-- [ ] **P19-T05 — Leaderboard**
+- [x] **P19-T05 — Leaderboard**
   - Periods, filters, merging, pinning, disclosure and sample content.
 
-- [ ] **P19-T06 — Expert challenges and daily challenge**
+- [x] **P19-T06 — Expert challenges and daily challenge**
   - Configuration, cards and comparison on results.
 
-- [ ] **P19-T07 — You page and presenter controls**
+- [x] **P19-T07 — You page and presenter controls**
   - Stats, history, display name and gated presenter reset/seed.
 
-- [ ] **P19-T08 — Tests and closeout**
+- [x] **P19-T08 — Tests and closeout**
   - Component and route tests; sanofi Playwright: hub → run → result → share link → open link in a
     fresh context → replay identical rounds → comparison; leaderboard filters; presenter reset.
   - `npm run check` passes; default regression gate passes; README and architecture updated.

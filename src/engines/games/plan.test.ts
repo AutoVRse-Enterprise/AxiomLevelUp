@@ -379,6 +379,36 @@ describe('game run planning', () => {
     })
   })
 
+  it('preserves an authored outside-in waypoint overview for spatial exploration', () => {
+    const baseRound = spatialRound('overview-explore')
+    const exploreRound = roundDocumentSchema.parse({
+      ...baseRound,
+      mechanic: 'spatial_explore',
+      explore: {
+        id: 'scene',
+        type: 'anatomy_explore',
+        content: {
+          anatomyMapId: 'airway-map',
+          prompt: 'Trace the visible branch map.',
+          navigation: 'both',
+          startView: { mode: 'waypoint_marker', waypointId: 'left-drop' },
+          movement: { maxMoves: 5, maxHopsFromEntry: 2, freeBacktrack: true },
+        },
+      },
+    })
+    const planned = planRun({
+      game: game([{ id: 'location', pool: ['overview-explore'], pick: 1 }]),
+      registry: registry([exploreRound]),
+      difficultyId: 'warmup',
+      seed: 2,
+    }).rounds[0]!
+
+    expect(planned.explore?.content.startView).toEqual({
+      mode: 'waypoint_marker',
+      waypointId: planned.dropWaypointId,
+    })
+  })
+
   it('rejects unknown difficulties, maps, and drop waypoints with useful errors', () => {
     const selectedGame = game([{ id: 'location', pool: ['spatial'], pick: 1 }])
     expect(() =>

@@ -1378,6 +1378,9 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "personalBest": {
+                  "type": "boolean"
+                },
                 "completedAt": {
                   "type": "string",
                   "format": "date-time",
@@ -1441,9 +1444,74 @@
       ],
       "additionalProperties": false
     },
+    "gameChallenges": {
+      "default": {
+        "incoming": []
+      },
+      "type": "object",
+      "properties": {
+        "incoming": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "string",
+                "minLength": 1
+              },
+              "score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "gameId": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "openedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "playedRunId": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "token",
+              "from",
+              "score",
+              "gameId",
+              "openedAt",
+              "playedRunId"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "incoming"
+      ],
+      "additionalProperties": false
+    },
     "player": {
       "default": {
-        "displayName": null
+        "displayName": null,
+        "shareNamePrompted": false
       },
       "type": "object",
       "properties": {
@@ -1457,10 +1525,15 @@
               "type": "null"
             }
           ]
+        },
+        "shareNamePrompted": {
+          "default": false,
+          "type": "boolean"
         }
       },
       "required": [
-        "displayName"
+        "displayName",
+        "shareNamePrompted"
       ],
       "additionalProperties": false
     },
@@ -2218,6 +2291,7 @@
     "caseAttempts",
     "games",
     "gameDaily",
+    "gameChallenges",
     "player",
     "challenges",
     "badges",

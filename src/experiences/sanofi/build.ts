@@ -35,4 +35,14 @@ export const sanofiBuild = {
   devPwaTempDir: 'dev-dist-sanofi',
   contentDir: 'public/experiences/sanofi/content',
   precacheIgnore: ['content/**'],
+  releaseStaticPaths: [
+    'assets/icons/app-icon.svg',
+    'assets/icons/apple-touch-icon-180x180.png',
+    'assets/icons/favicon.ico',
+    'assets/icons/maskable-icon-512x512.png',
+    'assets/icons/pwa-64x64.png',
+    'assets/icons/pwa-192x192.png',
+    'assets/icons/pwa-512x512.png',
+    'brand/autovrse-logo.svg',
+  ],
 } satisfies ExperienceBuildMetadata

@@ -1,9 +1,11 @@
+import { m } from 'motion/react'
 import { useEffect, useRef, type ReactNode } from 'react'
 
 import { announcePresentation } from '@/components/feedback/PresentationAnnouncer'
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
 import { Button, Card } from '@/components/ui'
 import type { GameConfig } from '@/content/schema/game'
+import { revealVariants } from '@/design/motion'
 import type { AnswerDimensionLabel } from '@/engines/games/answers'
 import type { RoundRevealViewModel } from '@/engines/games/results'
 import { StepActionSlot } from '@/player/StepActionSlot'
@@ -41,7 +43,12 @@ export function RoundReveal({
     announcePresentation(outcome)
   }, [outcome])
   return (
-    <div className="mx-auto max-w-2xl py-8">
+    <m.div
+      animate="visible"
+      className="mx-auto max-w-2xl py-8"
+      initial="hidden"
+      variants={revealVariants}
+    >
       <Card className="border-white/10 bg-white p-6 text-neutral-950 sm:p-8">
         <h1 className="text-heading font-bold" ref={heading} tabIndex={-1}>
           {outcome}
@@ -54,10 +61,10 @@ export function RoundReveal({
         </p>
         {answerDimensions.length ? (
           <dl className="mt-4 grid gap-2 rounded-xl bg-neutral-50 p-4 sm:grid-cols-3">
-            {answerDimensions.map(({ levelId, label }) => (
+            {answerDimensions.map(({ levelId, levelLabel, label }) => (
               <div key={levelId}>
                 <dt className="text-caption font-semibold uppercase tracking-wide text-neutral-500">
-                  {levelId.replaceAll('-', ' ')}
+                  {levelLabel}
                 </dt>
                 <dd className="mt-1 font-semibold">{label}</dd>
               </div>
@@ -92,6 +99,6 @@ export function RoundReveal({
           {lastRound ? copy.seeResult : copy.nextRound}
         </Button>
       </StepActionSlot>
-    </div>
+    </m.div>
   )
 }

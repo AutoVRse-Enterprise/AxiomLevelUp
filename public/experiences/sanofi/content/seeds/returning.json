@@ -1,0 +1,423 @@
+{
+  "schemaVersion": "0.1",
+  "stateVersion": 10,
+  "seedProfile": "advanced",
+  "referenceDate": "2026-10-01",
+  "learner": {
+    "id": "you",
+    "name": "You",
+    "role": "Player"
+  },
+  "xp": {
+    "total": 0,
+    "weekly": 0
+  },
+  "streak": {
+    "currentDays": 0,
+    "lastQualifyingDate": null
+  },
+  "weeklyGoal": {
+    "targetDays": 1,
+    "completedDays": []
+  },
+  "lessonProgress": {},
+  "caseProgress": {},
+  "caseAttempts": {},
+  "challenges": {},
+  "badges": {},
+  "mastery": {},
+  "gamification": {
+    "xpWeekStart": "2026-09-28",
+    "weeklyTargetRewardedWeek": null,
+    "lessonRewards": {},
+    "caseRewards": {},
+    "challengePeriods": {},
+    "counters": {
+      "perfectLessons": 0,
+      "weeklyGoalsMet": 0,
+      "challengeCompletions": {},
+      "firstAttemptCorrect": 0,
+      "firstAttemptCorrectByType": {},
+      "firstAttemptCorrectByConcept": {},
+      "caseCompletions": {},
+      "caseCompletionsByTier": {
+        "foundation": 0,
+        "intermediate": 0,
+        "advanced": 0
+      }
+    },
+    "activeRun": null,
+    "lastQuestionReward": null,
+    "lastActivityResult": null,
+    "celebrations": [],
+    "digitalRewards": []
+  },
+  "stats": {
+    "coursesCompleted": 0,
+    "lessonsCompleted": 0,
+    "challengesCompleted": 0,
+    "casesCompleted": 0,
+    "questionsAnswered": 0,
+    "correctAnswers": 0
+  },
+  "onboarding": {
+    "viewed": false
+  },
+  "caseLab": {
+    "walkthroughSeen": false,
+    "anatomyHintSeen": false
+  },
+  "player": {
+    "displayName": "Alex Morgan",
+    "shareNamePrompted": true
+  },
+  "gameDaily": {
+    "lastPlayedDate": "2026-10-01",
+    "streakDays": 3
+  },
+  "gameChallenges": {
+    "incoming": []
+  },
+  "games": {
+    "respiratory-challenge": {
+      "plays": 2,
+      "bestTotal": 3470,
+      "bestByDifficulty": {
+        "challenge": 3290,
+        "expert": 3470
+      },
+      "lastPlayedAt": "2026-10-01T09:10:00.000Z",
+      "history": [
+        {
+          "resultVersion": 1,
+          "runId": "returning-quick-1",
+          "difficulty": "challenge",
+          "seed": 14011,
+          "mode": "standard",
+          "total": 3290,
+          "correctCount": 4,
+          "durationSeconds": 151,
+          "roundResults": [
+            {
+              "slotId": "round-1",
+              "roundId": "airway-drop-look",
+              "mechanic": "spatial_look",
+              "correct": true,
+              "points": 823,
+              "basePoints": 723,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 37750,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-2",
+              "roundId": "airway-explore-lower",
+              "mechanic": "spatial_explore",
+              "correct": true,
+              "points": 823,
+              "basePoints": 723,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 37750,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-3",
+              "roundId": "histology-mucus-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 822,
+              "basePoints": 722,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 37750,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-4",
+              "roundId": "clinical-call-t2",
+              "mechanic": "clinical_call",
+              "correct": true,
+              "points": 822,
+              "basePoints": 722,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 37750,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            }
+          ],
+          "personalBest": true,
+          "completedAt": "2026-09-27T11:20:00.000Z"
+        },
+        {
+          "resultVersion": 1,
+          "runId": "returning-quick-2",
+          "difficulty": "expert",
+          "seed": 14012,
+          "mode": "daily",
+          "total": 3470,
+          "correctCount": 4,
+          "durationSeconds": 118,
+          "roundResults": [
+            {
+              "slotId": "round-1",
+              "roundId": "airway-drop-look",
+              "mechanic": "spatial_look",
+              "correct": true,
+              "points": 868,
+              "basePoints": 768,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29500,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-2",
+              "roundId": "airway-explore-lower",
+              "mechanic": "spatial_explore",
+              "correct": true,
+              "points": 868,
+              "basePoints": 768,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29500,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-3",
+              "roundId": "histology-mucus-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 867,
+              "basePoints": 767,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29500,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-4",
+              "roundId": "clinical-call-t2",
+              "mechanic": "clinical_call",
+              "correct": true,
+              "points": 867,
+              "basePoints": 767,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29500,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            }
+          ],
+          "personalBest": true,
+          "completedAt": "2026-10-01T09:10:00.000Z"
+        }
+      ]
+    },
+    "anatomy-hunt": {
+      "plays": 1,
+      "bestTotal": 2320,
+      "bestByDifficulty": {
+        "challenge": 2320
+      },
+      "lastPlayedAt": "2026-09-29T15:45:00.000Z",
+      "history": [
+        {
+          "resultVersion": 1,
+          "runId": "returning-anatomy-1",
+          "difficulty": "challenge",
+          "seed": 24011,
+          "mode": "standard",
+          "total": 2320,
+          "correctCount": 2,
+          "durationSeconds": 126,
+          "roundResults": [
+            {
+              "slotId": "round-1",
+              "roundId": "airway-drop-look",
+              "mechanic": "spatial_look",
+              "correct": true,
+              "points": 774,
+              "basePoints": 674,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 42000,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-2",
+              "roundId": "airway-explore-lower",
+              "mechanic": "spatial_explore",
+              "correct": true,
+              "points": 773,
+              "basePoints": 673,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 42000,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-3",
+              "roundId": "airway-explore-upper",
+              "mechanic": "spatial_explore",
+              "correct": false,
+              "points": 773,
+              "basePoints": 673,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 42000,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 0.5
+            }
+          ],
+          "personalBest": true,
+          "completedAt": "2026-09-29T15:45:00.000Z"
+        }
+      ]
+    },
+    "spot-the-finding": {
+      "plays": 2,
+      "bestTotal": 2730,
+      "bestByDifficulty": {
+        "warmup": 2510,
+        "challenge": 2730
+      },
+      "lastPlayedAt": "2026-10-01T13:05:00.000Z",
+      "history": [
+        {
+          "resultVersion": 1,
+          "runId": "returning-finding-1",
+          "difficulty": "warmup",
+          "seed": 34011,
+          "mode": "standard",
+          "total": 2510,
+          "correctCount": 2,
+          "durationSeconds": 104,
+          "roundResults": [
+            {
+              "slotId": "round-1",
+              "roundId": "histology-mucus-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 837,
+              "basePoints": 737,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 34667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-2",
+              "roundId": "histology-destruction-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 837,
+              "basePoints": 737,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 34667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-3",
+              "roundId": "histology-fibrosis-spot",
+              "mechanic": "spot_finding",
+              "correct": false,
+              "points": 836,
+              "basePoints": 736,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 34667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 0.5
+            }
+          ],
+          "personalBest": true,
+          "completedAt": "2026-09-30T08:30:00.000Z"
+        },
+        {
+          "resultVersion": 1,
+          "runId": "returning-finding-2",
+          "difficulty": "challenge",
+          "seed": 34012,
+          "mode": "daily",
+          "total": 2730,
+          "correctCount": 3,
+          "durationSeconds": 89,
+          "roundResults": [
+            {
+              "slotId": "round-1",
+              "roundId": "histology-mucus-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 910,
+              "basePoints": 810,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-2",
+              "roundId": "histology-destruction-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 910,
+              "basePoints": 810,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            },
+            {
+              "slotId": "round-3",
+              "roundId": "histology-fibrosis-spot",
+              "mechanic": "spot_finding",
+              "correct": true,
+              "points": 910,
+              "basePoints": 810,
+              "speedBonus": 100,
+              "clueCost": 0,
+              "elapsedMs": 29667,
+              "timedOut": false,
+              "skipped": false,
+              "accuracy": 1
+            }
+          ],
+          "personalBest": true,
+          "completedAt": "2026-10-01T13:05:00.000Z"
+        }
+      ]
+    }
+  }
+}

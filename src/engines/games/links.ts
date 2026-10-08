@@ -142,6 +142,7 @@ function payloadIsValid(value: unknown): value is ChallengePayload {
     isNonEmptyString(value.d) &&
     isNonNegativeSafeInteger(value.s) &&
     isNonEmptyString(value.f) &&
+    value.f.length <= 40 &&
     isNonNegativeSafeInteger(value.sc)
   )
 }

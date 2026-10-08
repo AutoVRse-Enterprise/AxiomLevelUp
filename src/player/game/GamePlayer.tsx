@@ -5,15 +5,14 @@ import { AnatomyEntryContext } from '@/anatomy3d/viewer/entryContext'
 import { useContent } from '@/app/contentContext'
 import type { GameDocument } from '@/content/schema/game'
 import { correctAnswerDimensions, correctAnswerLabel } from '@/engines/games/answers'
-import { collectRunCredits } from '@/engines/games/credits'
-import { createRunSeed } from '@/engines/games/seed'
+import type { GameRunContext } from '@/engines/games/runContext'
 import { resolveSpeedBonusTier } from '@/engines/games/scoring'
 import type { GameSession } from '@/engines/games/session'
 import { useGameSessionStore } from '@/engines/games/sessionStore'
-import { revealViewModel, selectResultMessage, summarizeRun } from '@/engines/games/results'
+import { revealViewModel } from '@/engines/games/results'
 import { emitEvent } from '@/events/bus'
+import { versionedModelUrl } from '@/pwa/modelCache'
 import { GameExitDialog } from '@/player/game/GameExitDialog'
-import { GameFinal } from '@/player/game/GameFinal'
 import { GameResumePrompt } from '@/player/game/GameResumePrompt'
 import { GameTopBar } from '@/player/game/GameTopBar'
 import { FindingReveal } from '@/player/game/FindingReveal'
@@ -34,11 +33,13 @@ export function GamePlayer({
   difficultyId,
   seed,
   resumable,
+  runContext,
 }: {
   game: GameDocument
   difficultyId: string
   seed: number
   resumable: GameSession | null
+  runContext: GameRunContext
 }) {
   const [choice, setChoice] = useState<GameSession | null | undefined>(resumable ? undefined : null)
   const clear = useGameSessionStore((state) => state.clear)
@@ -67,6 +68,7 @@ export function GamePlayer({
       difficultyId={choice?.difficulty ?? difficultyId}
       game={game}
       resumedSession={choice}
+      runContext={runContext}
       seed={choice?.seed ?? seed}
     />
   )
@@ -77,11 +79,13 @@ function GameRun({
   difficultyId,
   seed,
   resumedSession,
+  runContext,
 }: {
   game: GameDocument
   difficultyId: string
   seed: number
   resumedSession: GameSession | null
+  runContext: GameRunContext
 }) {
   const registry = useContent()
   const config = registry.appConfig.games!
@@ -90,7 +94,7 @@ function GameRun({
   const [exitOpen, setExitOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const pauseStartedAt = useRef<number | null>(null)
-  const run = useGameRun({ game, registry, difficultyId, seed, resumedSession })
+  const run = useGameRun({ game, registry, difficultyId, seed, resumedSession, runContext })
   const { session, plan, dispatch } = run
   const spatialModelUrls = useMemo(
     () => [
@@ -101,28 +105,29 @@ function GameRun({
             ? registry.anatomyMapById.get(plannedDocument.anatomyMapId)
             : undefined
           const asset = map ? registry.assetById.get(map.modelAssetId) : undefined
-          return asset?.type === 'model' ? [asset.path] : []
+          return asset?.type === 'model' ? [versionedModelUrl(asset)] : []
         }),
       ),
     ],
     [plan.rounds, registry.anatomyMapById, registry.assetById, registry.roundById],
   )
-  const credits = useMemo(
-    () =>
-      collectRunCredits(
-        plan.rounds.map(({ roundId }) => roundId),
-        registry,
-      ),
-    [plan.rounds, registry],
-  )
   const plannedRound = plan.rounds[session.roundIndex]
   const round = plannedRound ? registry.roundById.get(plannedRound.roundId) : undefined
+  const answerAnatomyMap = round?.anatomyMapId
+    ? registry.anatomyMapById.get(round.anatomyMapId)
+    : undefined
   const roundSession = session.rounds[session.roundIndex]
-  const resumedLocked = useRef(false)
+  const lockedResumePending = useRef(resumedSession?.phase === 'locked')
 
   useEffect(() => {
     if (session.phase === 'ready') run.start()
   }, [run, session.phase])
+
+  useEffect(() => {
+    if (session.phase === 'complete' && session.runId) {
+      navigate(`/results/${session.runId}`, { replace: true })
+    }
+  }, [navigate, session.phase, session.runId])
 
   useEffect(() => {
     if (spatialModelUrls.length === 0) return
@@ -165,10 +170,11 @@ function GameRun({
   })
 
   useEffect(() => {
-    if (session.phase !== 'locked' || resumedLocked.current || !roundSession) return
-    resumedLocked.current = true
+    if (!lockedResumePending.current || session.phase !== 'locked' || !roundSession) return
+    lockedResumePending.current = false
     const elapsed = roundSession.elapsedMs ?? roundSession.elapsedCheckpointMs ?? 0
-    if (roundSession.timedOut) run.timeout(roundSession.response, elapsed)
+    if (roundSession.skipped) run.skip(elapsed)
+    else if (roundSession.timedOut) run.timeout(roundSession.response, elapsed)
     else run.submit(roundSession.response, elapsed)
   }, [roundSession, run, session.phase])
 
@@ -220,9 +226,12 @@ function GameRun({
 
   const currentResult = roundSession.result
   const reveal = currentResult
-    ? revealViewModel(currentResult, round.feedback, correctAnswerLabel(plannedRound))
+    ? revealViewModel(
+        currentResult,
+        round.feedback,
+        correctAnswerLabel(plannedRound, answerAnatomyMap),
+      )
     : null
-  const difficulty = config.difficulties.find(({ id }) => id === session.difficulty)!
   const speedTier =
     currentResult && config.scoring
       ? resolveSpeedBonusTier(
@@ -236,12 +245,6 @@ function GameRun({
           config.scoring,
         )
       : null
-  const summary = summarizeRun(run.results, session.difficulty)
-  const message = selectResultMessage(config.messages, summary, run.results.at(-1)?.correct ?? null)
-  const bestRoundTitle = summary.bestRound
-    ? (registry.roundById.get(summary.bestRound.roundId)?.title ?? '')
-    : ''
-
   return (
     <PresentationProvider labels={labels} variant="game">
       <AnatomyEntryContext.Provider
@@ -260,6 +263,8 @@ function GameRun({
             roundIndex={session.roundIndex}
             roundProgressLabel={copy.roundProgress}
             score={total}
+            scoreToBeat={runContext.opponent?.score}
+            scoreToBeatLabel={config.hub.scoreToBeat}
             seconds={
               session.phase === 'playing' ? clock.remainingSeconds : plannedRound.timeLimitSeconds
             }
@@ -270,6 +275,7 @@ function GameRun({
             {session.phase === 'intro' ? (
               <RoundIntro
                 autoAdvanceMs={config.player.introAutoAdvanceMs}
+                continueLabel={copy.continue}
                 onContinue={run.startRound}
                 round={plannedRound}
                 roundLabel={copy.roundLabel}
@@ -319,7 +325,7 @@ function GameRun({
             ) : null}
             {session.phase === 'reveal' && reveal ? (
               <RoundReveal
-                answerDimensions={correctAnswerDimensions(plannedRound)}
+                answerDimensions={correctAnswerDimensions(plannedRound, answerAnatomyMap)}
                 copy={copy}
                 lastRound={session.roundIndex === plan.rounds.length - 1}
                 onNext={run.next}
@@ -347,23 +353,6 @@ function GameRun({
                   />
                 ) : null}
               </RoundReveal>
-            ) : null}
-            {session.phase === 'final' || session.phase === 'complete' ? (
-              <GameFinal
-                bestRoundTitle={bestRoundTitle}
-                copy={copy}
-                credits={credits}
-                difficultyLabel={difficulty.label}
-                message={message}
-                onPlayAgain={() => {
-                  useGameSessionStore.getState().clear()
-                  navigate(`?difficulty=${difficulty.id}&seed=${createRunSeed()}`, {
-                    replace: true,
-                  })
-                  window.location.reload()
-                }}
-                summary={summary}
-              />
             ) : null}
           </div>
           <GameExitDialog

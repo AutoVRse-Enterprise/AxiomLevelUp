@@ -75,7 +75,7 @@ read-only ContentRegistry -----> routes -----> activity plan
 identifier set. Committed `.env.default` and `.env.sanofi` files supply the value for matching Vite
 modes; unknown IDs and process-environment/mode conflicts fail before startup. Build metadata is
 plain data under `src/experiences/*/build.ts` and controls ports, output and PWA temp directories,
-HTML/PWA metadata, content hashing and precache exclusions.
+HTML/PWA metadata, content hashing, precache exclusions and an optional release-static allowlist.
 
 Vite maps the static `@experience` alias to exactly one `src/experiences/<id>/index.ts`. `App` and
 the router are the only shared modules permitted to import that alias. An experience definition
@@ -93,6 +93,14 @@ service-worker database and cache names stay literal. A non-default build uses
 `axiom-runtime:<id>:` for browser/IndexedDB keys, `axiom-runtime-<id>-service-worker` for worker
 settings and `<id>-<legacy-cache-name>` for runtime caches. Separate origins remain recommended;
 namespacing is defence in depth for shared-origin hosting.
+
+Default continues to use Vite's unchanged complete `public/` copy. A scoped non-default release
+derives content documents from that experience's production manifest, derives media from its
+validated asset manifest and retains only explicitly required identity assets. After
+inject-manifest generation, the release plugin removes unrelated default content, DICOM and
+unreferenced public files. `verify:sanofi-build` independently rejects those payloads, fixture
+documents, missing media and an oversized artifact. Browser/unit fixtures live outside the
+production content root and are intercepted only by tests.
 
 ## Content loading
 
@@ -115,7 +123,7 @@ startup contract; environments without Worker support retain the direct asynchro
 ## State and events
 
 Components emit typed learner input events. One subscriber queues and reduces them through learning,
-case and game progress, gamification and mastery, commits one learner-state v9 snapshot and
+case and game progress, gamification and mastery, commits one learner-state v10 snapshot and
 publishes informational reward events. The event-history subscriber records a bounded audit trail.
 Output events are not reduced again. Persisted reward ledgers make lesson, case, perfect, daily and
 badge awards idempotent.
@@ -223,22 +231,27 @@ outline without a game-specific primitive implementation.
 
 The separate `game-session` Zustand store persists only an active run under the existing
 experience-scoped IndexedDB prefix. Its pure reducer accepts explicit IDs, timestamps and elapsed
-time, including pause records, the spatial explore/answer step, exploration drafts and zero-point
-skips; it never reads clocks or emits events. Typed `game_*` events are the only aggregate-state
-input. Challenge tokens encode the game ID/version, difficulty, seed, sender and target score as
-checksummed base64url. The checksum detects corruption, not malicious edits.
+time, including pause records, the spatial explore/answer step, exploration drafts, zero-point
+skips, run mode and challenge token; it never reads clocks or emits events. Typed `game_*` events
+are the only aggregate-state input. Learner state v10 stores bounded game history, personal bests,
+daily streak and pending incoming challenges. Challenge tokens encode the game ID/version,
+difficulty, seed, sender and target score as checksummed base64url. The checksum detects
+corruption, not malicious edits.
 
 The shared player under `src/player/game/` owns the UI lifecycle
-`intro → playing → locked → reveal → final`. It renders the planned primitive through
+`intro → playing → locked → reveal → complete`. It renders the planned primitive through
 `PrimitiveRenderer`, supplies a game presentation context, checkpoints active elapsed time for
 resume and sends every state transition through the pure reducer. Free and purchased clues render
 inline. Spatial rounds compose an anatomy scene with a drawer or replacement localisation surface,
 and exploration retains its movement draft when the learner returns from the answer. Configured
 viewer failures pause the clock and offer remount Retry or a persisted zero-point Skip. Only
 paid-clue confirmation, configured viewer failure and document backgrounding pause the clock. The
-sanofi experience alone registers `/play/:gameId` and `/results/:runId`. Result surfaces derive
-credits from each run's primitive, clue, option-set and anatomy-map asset references, then render
-manifest-backed provenance through the shared accessible Credits sheet.
+sanofi experience alone registers `/play/:gameId`, `/results/:runId`, `/c/:token`,
+`/leaderboard` and `/you`. Completion records the result before routing to the durable result
+surface. The hub, result, leaderboard and You routes derive all formats, copy, sample rows, daily
+and expert runs from validated configuration. Shared result surfaces compare challenge and expert
+targets, generate replay links, and derive credits from each run's primitive, clue, option-set and
+anatomy-map asset references.
 
 ## Delivery and presentation runtime
 
@@ -351,6 +364,12 @@ viewing. A fallback `versioned-case-models-v1` CacheFirst strategy accepts only 
 and retains at most four responses for 14 days after the verified package cache is checked. The
 featured-case intro still prefetches its exact validated model URL. A visible reproducible or
 deployment-supplied build ID supports stale-worker diagnosis.
+
+The scoped Sanofi worker additionally precaches every configured game image/audio response and the
+exact `?v=<sha256>` model URL consumed by the viewer, hub prefetch and in-run prefetch. Once that
+worker controls the page, the packaged shell, content and one complete representative challenge do
+not require a network. Installation UI remains disabled for this experience; offline readiness is
+not an assertion that the demo is installed.
 
 Offline route gates use derived lesson or case readiness. Case intro and Learn surfaces expose
 package status, and only a matching ready case fingerprint may launch while offline. Course download

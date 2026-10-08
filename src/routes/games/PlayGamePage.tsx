@@ -1,22 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router'
 
 import { useContent } from '@/app/contentContext'
 import { ErrorState } from '@/components/feedback/ErrorState'
 import { LoadingState } from '@/components/ui'
-import { createRunSeed } from '@/engines/games/seed'
+import { resolveRunContext } from '@/engines/games/runContext'
 import type { GameSession } from '@/engines/games/session'
 import { useGameSessionStore } from '@/engines/games/sessionStore'
 import { emitEvent } from '@/events/bus'
+import { today } from '@/lib/clock'
 import { GamePlayer } from '@/player/game/GamePlayer'
-
-function parseSeed(value: string | null) {
-  if (value === null || !/^\d+$/.test(value)) return createRunSeed()
-  const parsed = Number(value)
-  return Number.isSafeInteger(parsed) && parsed >= 0 && parsed <= 0xffffffff
-    ? parsed >>> 0
-    : createRunSeed()
-}
 
 export function PlayGamePage() {
   const registry = useContent()
@@ -26,21 +19,35 @@ export function PlayGamePage() {
   const [resumable, setResumable] = useState<GameSession | null>(null)
   const game = registry.gameById.get(gameId)
   const copy = registry.appConfig.games?.copy
+  const runContext = useMemo(
+    () => (game ? resolveRunContext({ search, registry, game, localDate: today() }) : null),
+    [game, registry, search],
+  )
 
   useEffect(() => {
-    if (game) emitEvent({ event: 'game_opened', gameId: game.id, source: 'hub' })
-  }, [game])
+    if (game && runContext) {
+      emitEvent({ event: 'game_opened', gameId: game.id, source: runContext.source })
+    }
+  }, [game, runContext])
 
   useEffect(() => {
     void Promise.resolve(useGameSessionStore.persist.rehydrate()).then(() => {
       if (game) {
-        setResumable(useGameSessionStore.getState().loadForGame(game.id, game.gameVersion))
+        const candidate = useGameSessionStore.getState().loadForGame(game.id, game.gameVersion)
+        setResumable(
+          candidate &&
+            runContext &&
+            candidate.mode === runContext.mode &&
+            candidate.challengeToken === runContext.challengeToken
+            ? candidate
+            : null,
+        )
       }
       setHydrated(true)
     })
-  }, [game])
+  }, [game, runContext])
 
-  if (!game || !copy) {
+  if (!game || !copy || !runContext) {
     return (
       <ErrorState
         message={copy?.gameNotFound ?? 'Game not found'}
@@ -49,17 +56,13 @@ export function PlayGamePage() {
     )
   }
   if (!hydrated) return <LoadingState message={copy.loadingRound} title={copy.loadingRound} />
-  const requestedDifficulty = search.get('difficulty')
-  const difficultyId =
-    requestedDifficulty && game.difficulties.includes(requestedDifficulty)
-      ? requestedDifficulty
-      : game.defaultDifficulty
   return (
     <GamePlayer
-      difficultyId={difficultyId}
+      difficultyId={runContext.difficultyId}
       game={game}
+      runContext={runContext}
       resumable={resumable}
-      seed={parseSeed(search.get('seed'))}
+      seed={runContext.seed}
     />
   )
 }

@@ -7,6 +7,9 @@ import { subscribeToEvents } from '@/events/bus'
 const presentationSubscribers = new Set<(message: string) => void>()
 
 export function announcePresentation(message: string) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('presentation-announcement', { detail: message }))
+  }
   presentationSubscribers.forEach((subscriber) => subscriber(message))
 }
 

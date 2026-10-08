@@ -1,14 +1,31 @@
 import type { GameConfig, GameRunRecord } from '@/content/schema'
 import { differenceInLocalDays, localDateFromTimestamp } from '@/engines/gamification/calendar'
-import type { LearnerEvent } from '@/events/types'
+import { selectLeaderboard } from '@/engines/games/leaderboard'
+import type { LearnerEvent, LearnerEventDraft } from '@/events/types'
 import type { LearnerData } from '@/state/learnerStore'
 
 export function applyGameProgressEvent(
   state: LearnerData,
   event: LearnerEvent,
   config: GameConfig,
-): boolean {
-  if (event.event !== 'game_completed') return false
+): LearnerEventDraft[] {
+  if (event.event === 'game_challenge_opened') {
+    if (!state.gameChallenges.incoming.some(({ token }) => token === event.token)) {
+      state.gameChallenges.incoming = [
+        {
+          token: event.token,
+          gameId: event.gameId,
+          from: event.fromName,
+          score: event.targetScore,
+          openedAt: event.occurredAt,
+          playedRunId: null,
+        },
+        ...state.gameChallenges.incoming,
+      ].slice(0, 10)
+    }
+    return []
+  }
+  if (event.event !== 'game_completed') return []
 
   const previous = state.games[event.gameId] ?? {
     plays: 0,
@@ -17,7 +34,22 @@ export function applyGameProgressEvent(
     lastPlayedAt: null,
     history: [],
   }
-  if (previous.history.some(({ runId }) => runId === event.runId)) return false
+  if (previous.history.some(({ runId }) => runId === event.runId)) return []
+  const personalBest = event.total > 0 && event.total > (previous.bestTotal ?? 0)
+  const previousRank = selectLeaderboard({
+    entries: config.leaderboard.entries,
+    playerHistory: previous.history.map((result) => ({
+      gameId: event.gameId,
+      difficulty: result.difficulty,
+      score: result.total,
+      completedAt: result.completedAt,
+    })),
+    gameId: event.gameId,
+    difficulty: event.difficulty,
+    period: 'all_time',
+    visibleWindow: Number.MAX_SAFE_INTEGER,
+    playerName: state.player.displayName,
+  }).playerRank
 
   const record: GameRunRecord = {
     resultVersion: 1,
@@ -35,6 +67,7 @@ export function applyGameProgressEvent(
       })),
     ),
     ...(event.challengeToken ? { challengeToken: event.challengeToken } : {}),
+    personalBest,
     completedAt: event.occurredAt,
   }
 
@@ -64,5 +97,46 @@ export function applyGameProgressEvent(
             : 1,
     }
   }
-  return true
+  if (event.challengeToken) {
+    state.gameChallenges.incoming = state.gameChallenges.incoming.map((challenge) =>
+      challenge.token === event.challengeToken
+        ? { ...challenge, playedRunId: event.runId }
+        : challenge,
+    )
+  }
+
+  const nextRank = selectLeaderboard({
+    entries: config.leaderboard.entries,
+    playerHistory: state.games[event.gameId]!.history.map((result) => ({
+      gameId: event.gameId,
+      difficulty: result.difficulty,
+      score: result.total,
+      completedAt: result.completedAt,
+    })),
+    gameId: event.gameId,
+    difficulty: event.difficulty,
+    period: 'all_time',
+    visibleWindow: Number.MAX_SAFE_INTEGER,
+    playerName: state.player.displayName,
+  }).playerRank
+  const followUps: LearnerEventDraft[] = []
+  if (personalBest) {
+    followUps.push({
+      event: 'game_personal_best',
+      runId: event.runId,
+      gameId: event.gameId,
+      score: event.total,
+    })
+  }
+  if (event.total > 0 && nextRank !== null && (previousRank === null || nextRank < previousRank)) {
+    followUps.push({
+      event: 'game_rank_improved',
+      runId: event.runId,
+      gameId: event.gameId,
+      difficulty: event.difficulty,
+      previousRank,
+      rank: nextRank,
+    })
+  }
+  return followUps
 }

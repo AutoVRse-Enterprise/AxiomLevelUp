@@ -39,6 +39,7 @@ export interface ExperienceBuildMetadata {
   devPwaTempDir: string
   contentDir: string
   precacheIgnore: string[]
+  releaseStaticPaths: string[] | null
 }
 
 export interface ExperienceDefinition {

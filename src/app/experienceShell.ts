@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, type ComponentType } from 'react'
 
 import {
   primaryNavigation,
@@ -23,7 +23,8 @@ export interface ExperienceShellCopy {
 
 export interface ExperienceShellConfig {
   navigation: readonly PrimaryNavigationItem[]
-  headerStatus: 'learner' | 'none'
+  headerStatus: 'learner' | 'none' | ComponentType
+  footerNotice?: ComponentType
   installPrompt: boolean
   copy: ExperienceShellCopy
 }

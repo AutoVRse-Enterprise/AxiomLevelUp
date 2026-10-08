@@ -29,7 +29,9 @@ function deserializeError(error: ContentWorkerFailure['error']) {
 export async function loadRuntimeContent(baseUrl = '/content'): Promise<ContentRegistry> {
   if (typeof Worker === 'undefined') {
     const { loadContent } = await import('@/content/loader')
-    return loadContent(baseUrl)
+    const registry = await loadContent(baseUrl)
+    registry.contentBaseUrl = baseUrl
+    return registry
   }
 
   return new Promise<ContentRegistry>((resolve, reject) => {
@@ -39,6 +41,7 @@ export async function loadRuntimeContent(baseUrl = '/content'): Promise<ContentR
     worker.onmessage = (event: MessageEvent<ContentWorkerResponse>) => {
       finish()
       if (event.data.type === 'success') {
+        event.data.registry.contentBaseUrl = baseUrl
         resolve(event.data.registry)
       } else {
         reject(deserializeError(event.data.error))

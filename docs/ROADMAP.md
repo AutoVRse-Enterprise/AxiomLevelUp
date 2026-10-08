@@ -23,8 +23,8 @@ start with `README.md`.
 | 16    | Game player and clinical round | Complete | A two-round game plays end to end with timer, clues, reveal and results                    |
 | 17    | Spatial rounds                 | Complete | Look-around and limited-move rounds score proximity and read clearly on a phone            |
 | 18    | Spot the finding and challenge | Complete | The four-round Respiratory Challenge completes on every difficulty in 2–4 minutes          |
-| 19    | Game hub, results and social   | Planned  | Hub, results, challenge links, leaderboard, expert runs and You page work end to end       |
-| 20    | Demo polish and readiness      | Planned  | PRD success criteria have evidence; runbook and deployable sanofi build are published      |
+| 19    | Game hub, results and social   | Complete | Hub, results, challenge links, leaderboard, expert runs and You page work end to end       |
+| 20    | Demo polish and readiness      | Complete | PRD success criteria have evidence; runbook and deployable sanofi build are published      |
 
 ## Sequencing note
 
@@ -158,3 +158,27 @@ Hunt and Spot the Finding prove content-only game composition. Clock-paced persi
 176 / 145 / 112 seconds for Warm-up / Challenge / Expert. The final gate passed 105 Vitest files /
 637 tests, 20 Sanofi Playwright tests with 4 intentional skips, and the serial default suite with
 all eight golden snapshots unchanged. Phase 19 is next.
+
+Phase 19 closed on 2026-10-07 with the configured game hub, durable result pages, deterministic
+challenge sharing and fresh-context replay, demo leaderboard filters, daily and expert runs, and a
+You page with history, credits and gated presenter controls. Learner state v10 preserves pending
+challenge metadata and the optional share identity. The closeout gate passed 107 Vitest files /
+643 tests and 24 Sanofi browser checks with 4 intentional project skips; default golden images
+remained unchanged. Phase 20 follows with final visual, accessibility, release and readiness
+evidence.
+
+Phase 20 activated on 2026-10-07. It accepts Phase 17's outside-in marker view as the final Round 1
+fallback, requires a Sanofi-only deployable artifact and one service-worker-backed offline
+challenge, and keeps hosted, physical-device and human evidence as external gates. Product
+direction deferred Lighthouse, first-round latency and frame-rate thresholds; existing bundle
+budgets remain regression checks and performance approval stays open.
+
+Phase 20 closed on 2026-10-08 with a selective 211-file / 9,174,317-byte Sanofi artifact, a
+complete offline challenge, scoped clinical polish, vocabulary and accessibility sweeps, a
+participant-led four-round UX correction, 20 Sanofi visual baselines and a timed 2–4 minute
+rehearsal. Diagnostic follow-up also removed duplicate locked-round events, preserved one WebGL
+controller across movement and corrected shared lumen wall winding. The final gate passed 110
+Vitest files / 651 tests and 55 Sanofi Playwright checks with 5 intentional skips. The default
+suite passed all 53 runnable checks with 3 intentional skips; seven Phase 13 goldens remain
+unchanged and one intentionally records the corrected lumen. Hosted HTTPS, physical devices,
+clinician/scientific review and performance approval remain open external or deferred gates.

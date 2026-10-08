@@ -31,6 +31,7 @@ export const useGameSessionStore = create<GameSessionStore>()(
         ) {
           const normalized = {
             ...current,
+            mode: current.mode ?? ('standard' as const),
             rounds: current.rounds.map((round) => ({
               ...round,
               roundStep: round.roundStep ?? ('explore' as const),
