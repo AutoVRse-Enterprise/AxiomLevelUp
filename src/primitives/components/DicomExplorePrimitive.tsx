@@ -6,6 +6,7 @@ import { DicomViewer } from '@/imaging/viewer/DicomViewer'
 import type { DicomMeasurement } from '@/imaging/viewer/controller'
 import {
   exploreRequirementKeys,
+  parseExploreObservation,
   satisfiedExploreRequirements,
   type DicomObservation,
 } from '@/imaging/requirements'
@@ -29,24 +30,35 @@ export function DicomExplorePrimitive({
   onInteract,
 }: PrimitiveComponentProps<DicomExplorePrimitiveContent>) {
   const { appConfig, asset } = useDicomPrimitiveContext(primitive)
-  const initialDraft =
-    draft && typeof draft === 'object' ? (draft as Partial<DicomObservation>) : undefined
-  const [observation, setObservation] = useState<DicomObservation>({
-    ...initialObservation,
-    slice: initialDraft?.slice ?? primitive.content.initialSlice ?? 1,
-    presetId: initialDraft?.presetId ?? primitive.content.initialPresetId ?? null,
-    activeTool: initialDraft?.activeTool ?? 'scroll',
-    interactionCount: initialDraft?.interactionCount ?? 0,
+  const restored = parseExploreObservation(draft)
+  const [observation, setObservation] = useState<DicomObservation>(() => {
+    const visited = new Set<string>([
+      ...(restored?.visitedPresetIds ?? []),
+      ...(primitive.content.initialPresetId ? [primitive.content.initialPresetId] : []),
+    ])
+    return {
+      ...initialObservation,
+      slice: restored?.slice ?? primitive.content.initialSlice ?? 1,
+      presetId: restored?.presetId ?? primitive.content.initialPresetId ?? null,
+      activeTool: restored?.activeTool ?? 'scroll',
+      interactionCount: restored?.interactionCount ?? 0,
+      visitedPresetIds: visited,
+    }
   })
   const observationRef = useRef(observation)
   const reportedRequirements = useRef(new Set<string>())
 
   const record = (patch: Partial<DicomObservation>, interaction: PrimitiveInteraction) => {
     if (disabled) return
-    const next = {
+    const next: DicomObservation = {
       ...observationRef.current,
       ...patch,
       interactionCount: observationRef.current.interactionCount + 1,
+      visitedPresetIds: new Set([
+        ...(observationRef.current.visitedPresetIds ?? []),
+        ...(patch.visitedPresetIds ?? []),
+        ...(patch.presetId ? [patch.presetId] : []),
+      ]),
     }
     observationRef.current = next
     setObservation(next)
@@ -63,6 +75,7 @@ export function DicomExplorePrimitive({
       presetId: next.presetId,
       activeTool: next.activeTool,
       interactionCount: next.interactionCount,
+      visitedPresetIds: [...(next.visitedPresetIds ?? [])],
     })
   }
 

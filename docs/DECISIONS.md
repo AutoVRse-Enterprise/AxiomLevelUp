@@ -2265,3 +2265,25 @@ complete, waypoint movement no longer reloads the model, and valid non-terminal 
 shows a shaded lumen wall. The Quick Challenge remains on its clearer outside-in branch map because
 a terminal waypoint still has no generated forward segment. Seven default Phase 13 goldens remain
 unchanged; the finding-feedback golden now records this deliberate shared-engine correction.
+
+## ADR-116: Respiratory Challenge adds a hosted CT exploration round
+
+**Status:** Accepted
+
+**Context:** The Sanofi Respiratory Challenge needed the default app's scrollable thoracic CT
+task. That activity is a `dicom_explore` primitive, which the game contract did not allow. The
+series is about 66 MB, while the Sanofi release forbids `assets/dicom/` and caps the artifact at
+20 MB. Adding the round also pushes Warm-up planned time past the original 2–4 minute and
+300-second windows.
+
+**Decision:** Add a `dicom_explore` game mechanic that reuses the existing DICOM viewer and scores
+satisfied exploration requirements, including visited window presets. Author a fifth challenge
+slot between histology and the clinical call. Keep `dicom_explore.scored()` false so the default
+lesson stays an ungraded gate. Ship the thoracic CT manifest and all 125 slices inside the Sanofi
+static output at `/assets/dicom/thoracic-ct/`. Raise the Sanofi artifact cap so that series fits.
+Leave the slices out of the service-worker precache. Raise the Respiratory Challenge duration
+window to 120–400 seconds.
+
+**Consequences:** The connected challenge is five rounds and no longer fits the original 2–4
+minute contract on Warm-up. The Sanofi release grows by the series size, about 66 MB. Default
+Imaging Lab behavior is unchanged.

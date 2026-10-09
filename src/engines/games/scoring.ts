@@ -113,9 +113,10 @@ export function resolveRoundAccuracy(input: RoundAccuracyInput): number {
   const template = mechanicTemplate(input.round.mechanic)
 
   if (template.accuracySource === 'evaluator') {
-    const evaluation = input.timedOut
-      ? evaluatePrimitiveTimeout(input.round.primitive, input.response)
-      : evaluatePrimitive(input.round.primitive, input.response)
+    const evaluation =
+      input.timedOut && template.timeoutPolicy === 'zero'
+        ? evaluatePrimitiveTimeout(input.round.primitive, input.response)
+        : evaluatePrimitive(input.round.primitive, input.response)
     return normalizedAccuracy(evaluation.score)
   }
 

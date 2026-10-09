@@ -962,7 +962,13 @@ export const gameRunRecordSchema = z.strictObject({
     z.strictObject({
       slotId: idSchema,
       roundId: idSchema,
-      mechanic: z.enum(['spatial_look', 'spatial_explore', 'spot_finding', 'clinical_call']),
+      mechanic: z.enum([
+        'spatial_look',
+        'spatial_explore',
+        'spot_finding',
+        'clinical_call',
+        'dicom_explore',
+      ]),
       accuracy: z.number().min(0).max(1),
       correct: z.boolean(),
       points: z.number().int().nonnegative(),

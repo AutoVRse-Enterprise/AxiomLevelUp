@@ -102,22 +102,15 @@ playable difficulty IDs and an optional duration window. The registry exposes `r
 `gameById`.
 
 The optional `games` app-config block owns difficulty presets, score and speed-bonus rules,
-anatomy-level proximity, timing windows, ratio-based result messages, player, hub, result, share,
-challenge-landing, leaderboard and You copy, formats, daily challenge, fictional leaderboard rows,
-expert runs, bounded history and viewer-failure Retry/Skip policy. When game documents exist this
-configuration is required. Semantic validation enforces the four mechanic templates, strict
-primitive content, complete and reachable spatial drop answers, clue policy, option-set identity,
-format/daily/expert references, placeholders, answer leakage and per-difficulty timing. Challenge
+anatomy-level proximity, timing windows, ratio-based result messages, player copy, formats,
+leaderboard rows, expert runs, bounded history and viewer-failure Retry/Skip policy. When game
+documents exist this configuration is required. Semantic validation enforces the four mechanic
+templates, strict primitive content, complete and reachable spatial drop answers, clue policy,
+option-set identity, references, placeholders, answer leakage and per-difficulty timing. Challenge
 links are versioned and checksummed for accidental corruption; they are not signed or tamper-proof.
-Configured formats are either `playable`, with a resolving `gameId`, or `preview`. Result credits
-are selected from manifest provenance for every asset referenced by the run's rounds, answer
-variants, clues and anatomy maps.
-
-Learner state v10 adds pending incoming challenge metadata and a one-time share-name prompt marker
-to the existing game history, daily streak and optional display name. Completed records preserve
-run mode, challenge token and whether the score established a personal best. The seeded
-returning-player profile uses the same strict learner schema and rebases game history timestamps
-with the rest of the profile.
+Configured formats are either `playable`, with a resolving `gameId`, or `preview`. Result
+credits are selected from manifest provenance for every asset referenced by the run's rounds,
+answer variants, clues and anatomy maps.
 
 ## Primitive registry
 
@@ -305,13 +298,6 @@ patient image, clue and stage assets, deduplicate them and fingerprint IDs, hash
 verified package cache is checked before the presentation model cache; shared assets remain until
 their final package reference is removed.
 
-For a scoped experience release, production content is exactly the document graph reachable from
-that experience's manifest plus every public binary declared by its validated asset manifest.
-Browser fixtures are not manifest members and live under `e2e/`; unit fixture composition remains
-under `src/test/`. The Sanofi inject-manifest worker precaches each configured image/audio URL and
-the exact hash-versioned model URL, so its representative challenge is complete after worker
-activation even when the network is unavailable.
-
 The hosted DICOM manifest is independently validated at runtime as schema version `0.2`. It contains
 series identity, transfer syntax, source/slice counts, total bytes, geometry, attribution, presets
 and ordered files with path, byte size and lowercase SHA-256. Hosted geometry must exactly match the
@@ -332,9 +318,8 @@ the engagement and cooldown thresholds for installation prompts.
 
 - Content schema: `0.1`
 - Course documents also include an independent `courseVersion`.
-- Persisted learner state is version 10 and migrates older snapshots. Game state adds bounded
-  per-game run history and bests, a daily streak, pending incoming challenge metadata, a one-time
-  share-name prompt marker and an optional player display name. Legacy case result-v5/v6/v7
-  records remain readable without synthesizing result-v8 detail.
+- Persisted learner state is version 9 and migrates older snapshots. Game state adds bounded
+  per-game run history and bests, a daily streak and an optional player display name. Legacy case result-v5 and
+  result-v6 records remain readable without synthesizing result-v7 detail.
 - In-flight activity sessions are persisted independently at version 5; older supported sessions
   migrate with empty Phase 12 case-workspace placeholders where those facts were not recorded.

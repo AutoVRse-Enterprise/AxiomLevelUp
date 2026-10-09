@@ -133,6 +133,25 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0/",
         "author": "BodyParts3D, © The Database Center for Life Science"
       }
+    },
+    {
+      "assetId": "thoracic-ct-series",
+      "path": "thoracic-ct/manifest.json",
+      "type": "dicom",
+      "offlineRequired": true,
+      "sizeBytes": 65894350,
+      "series": {
+        "sliceCount": 125,
+        "rows": 512,
+        "columns": 512,
+        "pixelSpacingMm": [
+          0.976562,
+          0.976562
+        ],
+        "sliceThicknessMm": 3.75,
+        "calibrated": true
+      },
+      "offlineAvailable": true
     }
   ]
 }

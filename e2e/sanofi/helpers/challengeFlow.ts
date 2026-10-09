@@ -69,6 +69,26 @@ export async function answerChallengeFindingRound(page: Page, keyboard = false) 
   await expect(page.getByText('Compare your marker with the highlighted target.')).toBeVisible()
 }
 
+export async function answerChallengeCtRound(page: Page) {
+  if (!(await page.getByRole('button', { name: 'Lock in', exact: true }).isVisible())) {
+    await startRound(page, 'Lock in')
+  }
+  const viewer = page.locator('[data-dicom-viewer]')
+  await expect(viewer.getByRole('slider', { name: 'Current DICOM slice' })).toBeEnabled({
+    timeout: 30_000,
+  })
+  const slice = viewer.getByRole('slider', { name: 'Current DICOM slice' })
+  await slice.fill('82')
+  await expect(slice).toHaveValue('82')
+  await viewer.getByRole('button', { name: 'Mediastinal', exact: true }).click()
+  await slice.fill('80')
+  await expect(slice).toHaveValue('80')
+  const lockIn = page.getByRole('button', { name: 'Lock in', exact: true })
+  await expect(lockIn).toBeEnabled()
+  await lockIn.click()
+  await expect(page.getByRole('button', { name: 'Next round' })).toBeVisible()
+}
+
 export async function answerChallengeClinicalRound(page: Page) {
   await advanceRoundIntro(page)
   const answer = page.getByRole('radio', {
@@ -94,6 +114,9 @@ export async function completeRespiratoryChallenge(
   await page.getByRole('button', { name: 'Next round' }).click()
 
   await answerChallengeFindingRound(page, keyboardFinding)
+  await page.getByRole('button', { name: 'Next round' }).click()
+
+  await answerChallengeCtRound(page)
   await page.getByRole('button', { name: 'Next round' }).click()
 
   await answerChallengeClinicalRound(page)

@@ -8,6 +8,7 @@ export const gameMechanicSchema = z.enum([
   'spatial_explore',
   'spot_finding',
   'clinical_call',
+  'dicom_explore',
 ])
 
 const nonEmptyStringSchema = z.string().trim().min(1)

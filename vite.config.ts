@@ -12,6 +12,7 @@ import {
   resolveScopedPublicRelease,
   scopedPublicReleasePlugin,
 } from './scripts/experiences/scoped-public.ts'
+import { serveRuntimeDicomPlugin } from './scripts/experiences/serve-runtime-dicom.ts'
 import { getExperienceBuild } from './src/experiences/builds.ts'
 import { resolveExperienceId } from './src/lib/experienceIds.ts'
 
@@ -25,6 +26,7 @@ export default defineConfig(({ mode }) => {
   const experience = getExperienceBuild(experienceId)
   const scopedRelease = resolveScopedPublicRelease(root, experience)
   const scopedReleasePlugin = scopedPublicReleasePlugin(root, experience, scopedRelease)
+  const runtimeDicomPlugin = serveRuntimeDicomPlugin(root, experienceId)
   const packageVersion = (
     JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8')) as { version: string }
   ).version
@@ -92,6 +94,7 @@ export default defineConfig(({ mode }) => {
         },
       }),
       ...(scopedReleasePlugin ? [scopedReleasePlugin] : []),
+      ...(runtimeDicomPlugin ? [runtimeDicomPlugin] : []),
     ],
     server: {
       port: experience.devPort,

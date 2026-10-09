@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs'
-import { relative, resolve, sep } from 'node:path'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 
 import type { Plugin } from 'vite'
 
@@ -43,6 +43,26 @@ function contentPath(contentRoot: string, path: string) {
   return posix(resolve(contentRoot, path))
 }
 
+function dicomReleaseFiles(
+  publicRoot: string,
+  assets: AssetManifest['assets'],
+): string[] {
+  const files: string[] = []
+  for (const asset of assets) {
+    if (asset.type !== 'dicom') continue
+    const manifestRelative = posix(join('assets/dicom', withoutLeadingSlash(asset.path)))
+    const hosted = JSON.parse(readFileSync(resolve(publicRoot, manifestRelative), 'utf8')) as {
+      files?: Array<{ path: string }>
+    }
+    files.push(manifestRelative)
+    const manifestDirectory = dirname(manifestRelative)
+    for (const file of hosted.files ?? []) {
+      files.push(posix(join(manifestDirectory, file.path)))
+    }
+  }
+  return files
+}
+
 export function resolveScopedPublicRelease(
   root: string,
   experience: ExperienceBuildMetadata,
@@ -69,11 +89,13 @@ export function resolveScopedPublicRelease(
   const assetManifest = JSON.parse(
     readFileSync(contentPath(contentRoot, manifest.assetManifest), 'utf8'),
   ) as AssetManifest
-  const assetFiles = assetManifest.assets.map(({ path }) => withoutLeadingSlash(path))
+  const packagedAssets = assetManifest.assets.filter((asset) => asset.type !== 'dicom')
+  const assetFiles = packagedAssets.map(({ path }) => withoutLeadingSlash(path))
   const publicFiles = new Set([
     ...experience.releaseStaticPaths,
     ...contentFiles.map((path) => `${contentPrefix}${posix(path)}`),
     ...assetFiles,
+    ...dicomReleaseFiles(publicRoot, assetManifest.assets),
   ])
 
   for (const file of publicFiles) {
@@ -94,7 +116,7 @@ export function resolveScopedPublicRelease(
       ),
       ...contentFiles.map((path) => `${contentPrefix}${posix(path)}`),
     ],
-    precacheEntries: assetManifest.assets.map((asset) => ({
+    precacheEntries: packagedAssets.map((asset) => ({
       url: asset.type === 'model' && asset.sha256 ? `${asset.path}?v=${asset.sha256}` : asset.path,
       revision: asset.sha256 ?? null,
     })),

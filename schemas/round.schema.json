@@ -25,7 +25,8 @@
         "spatial_look",
         "spatial_explore",
         "spot_finding",
-        "clinical_call"
+        "clinical_call",
+        "dicom_explore"
       ]
     },
     "anatomyMapId": {

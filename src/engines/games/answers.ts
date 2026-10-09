@@ -2,6 +2,7 @@ import type { PlannedRound } from '@/engines/games/plan'
 import type { AnatomyMap } from '@/content/schema/anatomyMap'
 import type {
   AnatomyLocatePrimitive,
+  DicomExplorePrimitive,
   ImageHotspotPrimitive,
   MultipleChoicePrimitive,
 } from '@/content/schema/primitives'
@@ -51,6 +52,14 @@ export function correctAnswerLabel(round: PlannedRound, anatomyMap?: AnatomyMap)
   if (round.primitive.type === 'image_hotspot') {
     const content = (round.primitive as ImageHotspotPrimitive).content
     return content.mode === 'assess' ? (content.answerLabel ?? '') : ''
+  }
+  if (round.primitive.type === 'dicom_explore') {
+    const content = (round.primitive as DicomExplorePrimitive).content
+    const required = content.requirements?.presetIds ?? []
+    if (required.length === 0) return 'Inspect the imaging stack'
+    return required
+      .map((id) => content.presets.find((preset) => preset.id === id)?.label ?? id)
+      .join(' and ')
   }
   return ''
 }

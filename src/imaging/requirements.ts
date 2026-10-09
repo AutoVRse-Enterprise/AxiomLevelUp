@@ -7,6 +7,32 @@ export interface DicomObservation {
   activeTool: string
   interactionCount: number
   acknowledgedStepIds: ReadonlySet<string>
+  visitedPresetIds?: ReadonlySet<string>
+}
+
+export function parseExploreObservation(value: unknown): DicomObservation | null {
+  if (!value || typeof value !== 'object') return null
+  const candidate = value as Partial<DicomObservation> & { visitedPresetIds?: unknown }
+  const slice = candidate.slice
+  const interactionCount = candidate.interactionCount
+  if (typeof slice !== 'number' || !Number.isInteger(slice) || typeof interactionCount !== 'number') {
+    return null
+  }
+  const visited = Array.isArray(candidate.visitedPresetIds)
+    ? candidate.visitedPresetIds.filter((id): id is string => typeof id === 'string')
+    : candidate.visitedPresetIds instanceof Set
+      ? [...candidate.visitedPresetIds].filter((id): id is string => typeof id === 'string')
+      : undefined
+  return {
+    slice,
+    presetId: typeof candidate.presetId === 'string' || candidate.presetId === null
+      ? candidate.presetId
+      : null,
+    activeTool: typeof candidate.activeTool === 'string' ? candidate.activeTool : 'scroll',
+    interactionCount,
+    acknowledgedStepIds: new Set(),
+    ...(visited ? { visitedPresetIds: new Set(visited) } : {}),
+  }
 }
 
 export function exploreRequirementKeys(primitive: DicomExplorePrimitive): string[] {
@@ -19,12 +45,18 @@ export function exploreRequirementKeys(primitive: DicomExplorePrimitive): string
   ]
 }
 
+function visitedPresetIds(observation: DicomObservation): ReadonlySet<string> {
+  if (observation.visitedPresetIds) return observation.visitedPresetIds
+  return observation.presetId ? new Set([observation.presetId]) : new Set()
+}
+
 export function satisfiedExploreRequirements(
   primitive: DicomExplorePrimitive,
   observation: DicomObservation,
 ): string[] {
   const requirements = primitive.content.requirements
   if (!requirements) return []
+  const visited = visitedPresetIds(observation)
   return [
     ...(requirements.minimumInteractions &&
     observation.interactionCount >= requirements.minimumInteractions
@@ -34,9 +66,7 @@ export function satisfiedExploreRequirements(
     isSliceInRange(observation.slice, requirements.visitSliceRange)
       ? ['slice_range']
       : []),
-    ...(requirements.presetIds ?? [])
-      .filter((id) => observation.presetId === id)
-      .map((id) => `preset:${id}`),
+    ...(requirements.presetIds ?? []).filter((id) => visited.has(id)).map((id) => `preset:${id}`),
   ]
 }
 

@@ -40,6 +40,13 @@ export const gameMechanicContentRules = {
     requiresEntryAnswer: false,
     cluePolicy: 'required',
   },
+  dicom_explore: {
+    allowedPrimitiveTypes: ['dicom_explore'],
+    requiresAnatomyMap: false,
+    requiresDrop: false,
+    requiresEntryAnswer: false,
+    cluePolicy: 'none',
+  },
 } as const satisfies Record<GameMechanic, GameMechanicContentRule>
 
 export function contentRuleForMechanic(mechanic: GameMechanic): GameMechanicContentRule {

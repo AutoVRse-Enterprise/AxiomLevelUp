@@ -8,6 +8,7 @@ import type {
   DicomMeasurePrimitive,
 } from '@/content/schema/primitives'
 import {
+  evaluateDicomExplore,
   evaluateDicomMeasurement,
   evaluateDicomRegion,
   evaluateGuidedCheckpoint,
@@ -100,6 +101,29 @@ describe('DICOM pure domain', () => {
       'interactions',
       'preset:mediastinal',
     ])
+    expect(
+      satisfiedExploreRequirements(explore, {
+        ...observation,
+        visitedPresetIds: new Set(['lung', 'mediastinal']),
+      }),
+    ).toEqual(['interactions', 'preset:lung', 'preset:mediastinal'])
+    expect(
+      evaluateDicomExplore(explore, {
+        slice: 81,
+        presetId: 'mediastinal',
+        activeTool: 'scroll',
+        interactionCount: 3,
+        visitedPresetIds: ['lung', 'mediastinal'],
+      }),
+    ).toMatchObject({ score: 1, correct: true })
+    expect(
+      evaluateDicomExplore(explore, {
+        slice: 81,
+        presetId: 'lung',
+        activeTool: 'scroll',
+        interactionCount: 1,
+      }),
+    ).toMatchObject({ score: 1 / 3, correct: false })
     expect(firstIncompleteGuidedStep(guided, observation)).toBe(2)
   })
 

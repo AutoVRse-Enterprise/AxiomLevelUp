@@ -1,7 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 
 import { encodeChallenge } from '../../src/engines/games/links'
-import { answerChallengeFindingRound, answerChallengeLookRound } from './helpers/challengeFlow'
+import {
+  answerChallengeCtRound,
+  answerChallengeFindingRound,
+  answerChallengeLookRound,
+} from './helpers/challengeFlow'
 import { installSanofiFixtures } from './helpers/fixtures'
 import {
   advanceRoundIntro,
@@ -47,7 +51,7 @@ test('visual: round intro', async ({ page }) => {
   await page.goto('/play/respiratory-challenge?difficulty=warmup&seed=2020')
   await expect(page.getByRole('button', { name: 'Start round' })).toBeVisible()
   await page.waitForTimeout(1_500)
-  await expect(page.getByText('Round 1 of 4')).toBeVisible()
+  await expect(page.getByText('Round 1 of 5')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Start round' })).toBeVisible()
   await snapshot(page, 'round-intro')
 })
@@ -83,6 +87,10 @@ test('visual: later quick challenge rounds', async ({ page }) => {
   await startRound(page, 'Lock in location')
   await snapshot(page, 'round-three-active')
   await answerChallengeFindingRound(page)
+  await page.getByRole('button', { name: 'Next round' }).click()
+
+  await startRound(page, 'Lock in')
+  await answerChallengeCtRound(page)
   await page.getByRole('button', { name: 'Next round' }).click()
 
   await advanceRoundIntro(page)

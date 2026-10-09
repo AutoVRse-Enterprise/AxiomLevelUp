@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 import {
   answerChallengeClinicalRound,
+  answerChallengeCtRound,
   answerChallengeFindingRound,
   answerChallengeLookRound,
 } from './helpers/challengeFlow'
@@ -10,7 +11,7 @@ import { answerExploreRound, dismissSpatialHint, startRound } from './helpers/ro
 const forbiddenVocabulary =
   /\b(?:sanofi|course|lesson|learning path|training module|curriculum|learning objective|complete lesson|certification|course progress|continue learning|assessment|pass|fail|grade|learning outcome|course completed|xp)\b/i
 const internalVocabulary =
-  /\b(?:spatial_look|spatial_explore|spot_finding|clinical_call|respiratory-game-map|lung-model|fixture-[a-z0-9-]+|(?:airway|histology)-(?:drop|explore|mucus|destruction|fibrosis)[a-z0-9-]*)\b/i
+  /\b(?:spatial_look|spatial_explore|spot_finding|clinical_call|dicom_explore|respiratory-game-map|lung-model|fixture-[a-z0-9-]+|(?:airway|histology)-(?:drop|explore|mucus|destruction|fibrosis)[a-z0-9-]*|thoracic-ct-scroll)\b/i
 
 async function expectCleanVocabulary(page: Page, state: string) {
   const visibleText = await page.locator('body').innerText()
@@ -48,7 +49,7 @@ test('keeps every static route in the game vocabulary', async ({ page }) => {
 test('keeps active, reveal, result and sharing states in the game vocabulary', async ({ page }) => {
   test.slow()
   await page.goto('/play/respiratory-challenge?difficulty=warmup&seed=2020')
-  await expect(page.getByText(/Round 1 of 4/)).toBeVisible()
+  await expect(page.getByText(/Round 1 of 5/)).toBeVisible()
   await expectCleanVocabulary(page, 'round one intro')
 
   await startRound(page)
@@ -70,8 +71,14 @@ test('keeps active, reveal, result and sharing states in the game vocabulary', a
   await expectCleanVocabulary(page, 'round three reveal')
   await page.getByRole('button', { name: 'Next round' }).click()
 
-  await answerChallengeClinicalRound(page)
+  await startRound(page, 'Lock in')
+  await expectCleanVocabulary(page, 'round four active')
+  await answerChallengeCtRound(page)
   await expectCleanVocabulary(page, 'round four reveal')
+  await page.getByRole('button', { name: 'Next round' }).click()
+
+  await answerChallengeClinicalRound(page)
+  await expectCleanVocabulary(page, 'round five reveal')
   await page.getByRole('button', { name: 'See your score' }).click()
   await expect(page.getByText('points', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible()

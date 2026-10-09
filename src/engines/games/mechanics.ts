@@ -52,6 +52,16 @@ export const gameMechanicTemplates = {
       answerSurface: 'replace',
     },
   },
+  dicom_explore: {
+    accuracySource: 'evaluator',
+    timeoutPolicy: 'evaluate_draft',
+    presentation: {
+      immersive: true,
+      clueTray: false,
+      answerDrawer: false,
+      answerSurface: 'replace',
+    },
+  },
 } as const satisfies Record<GameMechanic, GameMechanicTemplate>
 
 export function mechanicTemplate(mechanic: GameMechanic): GameMechanicTemplate {

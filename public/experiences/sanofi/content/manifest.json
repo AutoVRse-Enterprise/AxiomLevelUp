@@ -13,7 +13,8 @@
     "rounds/airway-explore-upper.json",
     "rounds/histology-mucus-spot.json",
     "rounds/histology-destruction-spot.json",
-    "rounds/histology-fibrosis-spot.json"
+    "rounds/histology-fibrosis-spot.json",
+    "rounds/thoracic-ct-scroll.json"
   ],
   "games": [
     "games/respiratory-challenge.json",

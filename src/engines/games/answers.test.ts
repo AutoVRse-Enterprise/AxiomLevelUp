@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import anatomyMapDocument from '../../../public/experiences/sanofi/content/anatomy/respiratory-game-map.json'
 import roundDocument from '../../../public/experiences/sanofi/content/rounds/airway-drop-look.json'
+import ctRoundDocument from '../../../public/experiences/sanofi/content/rounds/thoracic-ct-scroll.json'
 
 import { anatomyMapSchema } from '@/content/schema/anatomyMap'
 import { roundDocumentSchema } from '@/content/schema/game'
@@ -33,5 +34,23 @@ describe('game answer labels', () => {
     ])
     expect(dimensions.every(({ label }) => !label.includes('-'))).toBe(true)
     expect(correctAnswerLabel(planned, anatomyMap)).not.toMatch(/right-lung|region-|airway-level/)
+  })
+
+  it('names required CT windows from authored presets', () => {
+    const round = roundDocumentSchema.parse(ctRoundDocument)
+    const planned = {
+      slotId: 'image',
+      roundId: round.id,
+      mechanic: round.mechanic,
+      timeLimitSeconds: round.timeLimitSeconds,
+      freeClueIds: [],
+      paidClueIds: [],
+      clueCostPoints: 0,
+      maxMoves: 0,
+      speedBonus: true,
+      primitive: round.primitive,
+    } satisfies PlannedRound
+
+    expect(correctAnswerLabel(planned)).toBe('Lung and Mediastinal')
   })
 })

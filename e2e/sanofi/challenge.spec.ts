@@ -3,7 +3,11 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
 import { expectNoAxeViolations, expectNoDocumentHorizontalOverflow } from '../helpers/accessibility'
-import { answerChallengeLookRound, completeRespiratoryChallenge } from './helpers/challengeFlow'
+import {
+  answerChallengeCtRound,
+  answerChallengeLookRound,
+  completeRespiratoryChallenge,
+} from './helpers/challengeFlow'
 import {
   advanceRoundIntro,
   answerExploreRound,
@@ -85,9 +89,9 @@ test('records paced challenge durations for every difficulty', async ({ page }, 
   }> = []
 
   for (const [difficulty, moves, limits] of [
-    ['warmup', 5, [65, 80, 55, 75]],
-    ['challenge', 4, [60, 80, 50, 70]],
-    ['expert', 3, [50, 65, 40, 60]],
+    ['warmup', 5, [65, 80, 55, 90, 75]],
+    ['challenge', 4, [60, 80, 50, 75, 70]],
+    ['expert', 3, [50, 65, 40, 60, 60]],
   ] as const) {
     await page.goto(`/play/respiratory-challenge?difficulty=${difficulty}&seed=1818`)
 
@@ -114,11 +118,17 @@ test('records paced challenge durations for every difficulty', async ({ page }, 
     await page.clock.fastForward(5_000)
     await page.getByRole('button', { name: 'Next round' }).click()
 
+    await startRound(page, 'Lock in')
+    await page.clock.fastForward(limits[3] * 800)
+    await answerChallengeCtRound(page)
+    await page.clock.fastForward(5_000)
+    await page.getByRole('button', { name: 'Next round' }).click()
+
     await advanceRoundIntro(page)
     await expect(
       page.getByRole('radio', { name: 'Asthma exacerbation with type 2 inflammation' }),
     ).toBeVisible()
-    await page.clock.fastForward(limits[3] * 800)
+    await page.clock.fastForward(limits[4] * 800)
     await page.getByRole('radio', { name: 'Asthma exacerbation with type 2 inflammation' }).click()
     await page.getByRole('button', { name: 'Lock in' }).click()
     await page.clock.fastForward(5_000)
@@ -132,14 +142,14 @@ test('records paced challenge durations for every difficulty', async ({ page }, 
       .innerText()
     const persistedDurationSeconds = Number.parseInt(durationText, 10)
     expect(persistedDurationSeconds).toBeGreaterThanOrEqual(intendedActiveSeconds)
-    expect(persistedDurationSeconds).toBeLessThanOrEqual(intendedActiveSeconds + 20)
+    expect(persistedDurationSeconds).toBeLessThanOrEqual(intendedActiveSeconds + 25)
     evidence.push({
       difficulty,
       limitsSeconds: [...limits],
       intendedActiveSeconds,
       persistedDurationSeconds,
-      revealDwellSeconds: 20,
-      pacedWallSeconds: intendedActiveSeconds + 20,
+      revealDwellSeconds: 25,
+      pacedWallSeconds: intendedActiveSeconds + 25,
     })
   }
 

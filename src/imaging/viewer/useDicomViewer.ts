@@ -38,11 +38,15 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
   const [controller, setController] = useState<DicomViewerController | null>(null)
   const [retryToken, setRetryToken] = useState(0)
   const controllerRef = useRef<DicomViewerController | null>(null)
+  const initialSliceRef = useRef(options.initialSlice)
+  const initialPresetRef = useRef(options.initialPreset)
   const callbacks = useRef({
     onSlice: options.onSlice,
     onWindow: options.onWindow,
     onMeasurement: options.onMeasurement,
   })
+  initialSliceRef.current = options.initialSlice
+  initialPresetRef.current = options.initialPreset
 
   useEffect(() => {
     callbacks.current = {
@@ -55,6 +59,8 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
   useEffect(() => {
     if (!options.element) return
     let active = true
+    const initialSlice = initialSliceRef.current
+    const initialPreset = initialPresetRef.current
 
     void import('@/imaging/cornerstone/createController').then(
       async ({ createCornerstoneController }) => {
@@ -62,8 +68,8 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
           element: options.element!,
           asset: options.asset,
           baseUrl: options.baseUrl,
-          initialSlice: options.initialSlice,
-          initialPreset: options.initialPreset,
+          initialSlice,
+          initialPreset,
           cacheMaxMiB: options.config.cacheMaxMiB,
           prefetchRadius: options.config.prefetchRadius,
           preloadConcurrency: options.config.preloadConcurrency,
@@ -94,8 +100,6 @@ export function useDicomViewer(options: UseDicomViewerOptions) {
     options.config.prefetchRadius,
     options.config.preloadConcurrency,
     options.element,
-    options.initialPreset,
-    options.initialSlice,
     retryToken,
   ])
 

@@ -21,7 +21,7 @@ interface AssetManifest {
 const root = process.cwd()
 const outputRoot = resolve(root, 'dist-sanofi')
 const contentPrefix = 'experiences/sanofi/content'
-const maximumArtifactBytes = 20 * 1024 * 1024
+const maximumArtifactBytes = 90 * 1024 * 1024
 
 function posix(path: string) {
   return path.split(sep).join('/')
@@ -41,7 +41,6 @@ const files = (await listFiles(outputRoot)).sort()
 const forbidden = files.filter(
   (file) =>
     file.startsWith('content/') ||
-    file.startsWith('assets/dicom/') ||
     file.startsWith('experiences/default/') ||
     /(?:^|\/)fixture-[^/]+\.json$/i.test(file),
 )
@@ -73,12 +72,26 @@ const assets = JSON.parse(
   await readFile(resolve(outputRoot, contentPrefix, manifest.assetManifest), 'utf8'),
 ) as AssetManifest
 for (const asset of assets.assets) {
+  if (asset.type === 'dicom') {
+    const manifestFile = `assets/dicom/${asset.path.replace(/^\/+/, '')}`
+    assert.ok(files.includes(manifestFile), `Sanofi release is missing DICOM manifest: ${manifestFile}`)
+    const hosted = JSON.parse(await readFile(resolve(outputRoot, manifestFile), 'utf8')) as {
+      files?: Array<{ path: string }>
+    }
+    const manifestDirectory = manifestFile.slice(0, manifestFile.lastIndexOf('/'))
+    for (const slice of hosted.files ?? []) {
+      const sliceFile = `${manifestDirectory}/${slice.path.replace(/^\/+/, '')}`
+      assert.ok(files.includes(sliceFile), `Sanofi release is missing DICOM slice: ${sliceFile}`)
+    }
+    continue
+  }
   const file = asset.path.replace(/^\/+/, '')
   assert.ok(files.includes(file), `Sanofi release is missing configured asset: ${file}`)
 }
 
 const serviceWorker = await readFile(resolve(outputRoot, 'sw.js'), 'utf8')
 for (const asset of assets.assets) {
+  if (asset.type === 'dicom') continue
   const expected =
     asset.type === 'model' && asset.sha256 ? `${asset.path}?v=${asset.sha256}` : asset.path
   assert.ok(

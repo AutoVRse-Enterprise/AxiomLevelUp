@@ -4413,3 +4413,61 @@ README.md`; `git diff --check`.
   SHA-256 `539cb54894e0250d93be095e1aba6b06d586da639f0ee5c821878954b7349349`.
 - **Follow-ups:** Physical-device GPU/touch validation and clinician/scientific review remain
   external gates.
+
+### [2026-10-08 19:40] Setup - Install npm dependencies
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Installed project dependencies from the lockfile. `node_modules` was missing.
+- **Files changed:** `docs/ACTIVITY_LOG.md` (this entry). `node_modules` created locally.
+- **Commands run:** `npm ci`
+- **Result/verification:** 887 packages added. Engine warnings for `jsdom` and related packages
+  (current Node `v24.13.1`; those packages want `^24.15.0` or newer). `npm audit` reported 16
+  vulnerabilities; lockfile was left unchanged.
+- **Follow-ups:** Optional Node upgrade to 24.15+ if jsdom engine warnings become a problem.
+
+### [2026-10-09 15:20] Sanofi - Add CT exploration round to Respiratory Challenge
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Added a fifth Respiratory Challenge slot that reuses the default thoracic CT
+  `dicom_explore` task. Introduced a `dicom_explore` game mechanic, visited-window scoring and a
+  Lock in stage. Packaged the series in Sanofi content for validation/dev, omitted it from
+  `dist-sanofi`, and served `/assets/dicom/` during Sanofi preview. Recorded ADR-116.
+- **Files changed:** game schema/mechanics/scoring/answers; DICOM explore primitive and
+  evaluation; `DicomExploreRoundStage`; Sanofi round/game/manifest/assets; scoped-public plus
+  preview DICOM middleware; Sanofi e2e helpers/specs; schemas; ADR-116; HANDOFF; this log.
+- **Commands run:** `npx tsc -b`; focused Vitest; `npm run schema:export`; Sanofi content-bundle
+  Vitest; `npm run dev:sanofi`; browser run of warmup seed 2020.
+- **Result/verification:** Typecheck and focused tests passed. Browser: Round 4 of 5 loaded slices
+  81/125, Lock in enabled after Lung and Mediastinal comparison, round scored Correct (1000),
+  result listed five rounds including Inspect the CT stack. Default `validate:content` still fails
+  on unrelated SVG hash mismatches in `public/content/assets.json`.
+- **Follow-ups:** Run `npm run test:e2e:sanofi`; host DICOM for Sanofi preview/PWA offline.
+
+### [2026-10-09 15:17] Sanofi - Pack the thoracic CT slices
+
+- **Agent/session:** Cursor implementation session
+- **Action:** The CT viewer requested `/assets/dicom/thoracic-ct/files/*.dcm`, but those 125 slices
+  only existed under `public/public/`. Copied them into `public/assets/dicom/thoracic-ct/files` and
+  included the manifest plus every slice in the Sanofi static release. Raised the artifact cap to
+  90 MB. Slices stay out of the service-worker precache. Updated ADR-116.
+- **Files changed:** `public/assets/dicom/thoracic-ct/files/*.dcm`; `scripts/experiences/scoped-public.ts`;
+  `scripts/experiences/scoped-public.test.ts`; `scripts/experiences/verify-sanofi-build.ts`;
+  `docs/DECISIONS.md`; this log.
+- **Commands run:** file copy; `npx vitest run scripts/experiences/scoped-public.test.ts`.
+- **Result/verification:** 125 slice files are on the public DICOM path. The scoped release set
+  contains the manifest and all 125 `.dcm` files.
+- **Follow-ups:** Restart `npm run dev:sanofi` and replay the CT round.
+
+### [2026-10-09 15:32] DICOM - Stop viewer reload on scroll
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Scrolling updated the live slice, and that value was passed back as `initialSlice`.
+  The viewer effect treated it as a new study, destroyed Cornerstone, and flashed
+  "Preparing imaging study" until the same stack became ready again. Initial slice and window
+  are now captured only when the viewer is created or retried.
+- **Files changed:** `src/imaging/viewer/useDicomViewer.ts`; `src/imaging/viewer/useDicomViewer.test.tsx`;
+  HANDOFF; this log.
+- **Commands run:** `npx vitest run src/imaging/viewer/useDicomViewer.test.tsx`.
+- **Result/verification:** The hook test passes: changing the reported slice does not create or
+  destroy the controller again.
+- **Follow-ups:** Refresh the CT round and scroll. Uncached slices can still take a moment to decode.

@@ -180,4 +180,60 @@ describe('game scoring', () => {
       }),
     ).toBe(0)
   })
+
+  it('scores DICOM exploration from satisfied window and interaction requirements', () => {
+    const imagingRound = roundDocumentSchema.parse({
+      schemaVersion: '0.1',
+      roundVersion: '1',
+      id: 'ct-scroll',
+      title: 'Inspect the CT stack',
+      mechanic: 'dicom_explore',
+      intro: 'Scroll the stack and compare windows.',
+      timeLimitSeconds: 75,
+      primitive: {
+        id: 'ct-scroll-explore',
+        type: 'dicom_explore',
+        content: {
+          seriesAssetId: 'thoracic-ct-series',
+          prompt: 'Explore the stack and compare lung and mediastinal windows.',
+          presets: [
+            { id: 'lung', label: 'Lung', center: -600, width: 1500 },
+            { id: 'mediastinal', label: 'Mediastinal', center: 40, width: 400 },
+          ],
+          educationalUseOnly: true,
+          requirements: {
+            minimumInteractions: 3,
+            presetIds: ['lung', 'mediastinal'],
+          },
+        },
+        completion: { mode: 'minimum_interactions', count: 3 },
+      },
+      feedback: {
+        correct: 'You compared both windows.',
+        incorrect: 'Open both windows and scroll the stack.',
+        answerTemplate: 'Required windows: {answer}.',
+      },
+    })
+    const complete = {
+      slice: 82,
+      presetId: 'mediastinal',
+      activeTool: 'scroll',
+      interactionCount: 4,
+      visitedPresetIds: ['lung', 'mediastinal'],
+    }
+    expect(
+      resolveRoundAccuracy({
+        round: imagingRound,
+        response: complete,
+        timedOut: false,
+      }),
+    ).toBe(1)
+    expect(
+      resolveRoundAccuracy({
+        round: imagingRound,
+        response: complete,
+        timedOut: true,
+      }),
+    ).toBe(1)
+  })
 })

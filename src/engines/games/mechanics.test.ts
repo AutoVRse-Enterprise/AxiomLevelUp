@@ -19,6 +19,7 @@ const base = {
 
 function round(mechanic: GameMechanic) {
   const spatial = mechanic === 'spatial_look' || mechanic === 'spatial_explore'
+  const imaging = mechanic === 'dicom_explore'
   return roundDocumentSchema.parse({
     ...base,
     mechanic,
@@ -35,7 +36,9 @@ function round(mechanic: GameMechanic) {
           ? 'multiple_choice'
           : mechanic === 'spot_finding'
             ? 'image_hotspot'
-            : 'anatomy_locate',
+            : imaging
+              ? 'dicom_explore'
+              : 'anatomy_locate',
       content: spatial ? { answerFrom: 'entry' } : {},
     },
     clues:
@@ -52,7 +55,13 @@ function round(mechanic: GameMechanic) {
 }
 
 describe('game mechanic templates', () => {
-  it.each(['spatial_look', 'spatial_explore', 'spot_finding', 'clinical_call'] as const)(
+  it.each([
+    'spatial_look',
+    'spatial_explore',
+    'spot_finding',
+    'clinical_call',
+    'dicom_explore',
+  ] as const)(
     'accepts a valid %s round',
     (mechanic) => expect(mechanicContentProblems(round(mechanic))).toEqual([]),
   )

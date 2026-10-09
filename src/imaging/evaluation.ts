@@ -1,11 +1,40 @@
 import type {
+  DicomExplorePrimitive,
   DicomGuidedPrimitive,
   DicomIdentifyRegionPrimitive,
   DicomMeasurePrimitive,
   NormalizedPoint,
 } from '@/content/schema/primitives'
 import { isSliceInRange, pointInRegion } from '@/imaging/geometry'
+import {
+  exploreRequirementKeys,
+  parseExploreObservation,
+  satisfiedExploreRequirements,
+} from '@/imaging/requirements'
 import type { EvaluationResult } from '@/primitives/types'
+
+export function evaluateDicomExplore(
+  primitive: DicomExplorePrimitive,
+  response: unknown,
+): EvaluationResult {
+  const expected = exploreRequirementKeys(primitive)
+  if (expected.length === 0) {
+    return { score: 1, correct: true, explanation: null }
+  }
+  const observation = parseExploreObservation(response)
+  const satisfied = new Set(
+    observation ? satisfiedExploreRequirements(primitive, observation) : [],
+  )
+  const matched = expected.filter((key) => satisfied.has(key)).length
+  return {
+    score: matched / expected.length,
+    correct: matched === expected.length,
+    explanation: null,
+    items: Object.fromEntries(
+      expected.map((key) => [key, satisfied.has(key) ? 'correct' : 'incorrect']),
+    ),
+  }
+}
 
 export interface DicomRegionResponse {
   slice: number

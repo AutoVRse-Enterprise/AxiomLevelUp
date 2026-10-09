@@ -5,6 +5,7 @@ import type {
   DicomMeasurePrimitive,
 } from '@/content/schema/primitives'
 import {
+  evaluateDicomExplore,
   evaluateDicomMeasurement,
   evaluateDicomRegion,
   evaluateGuidedCheckpoint,
@@ -19,6 +20,7 @@ export const dicomExploreDefinition = definePrimitive<DicomExplorePrimitive>({
   layout: 'viewer',
   timerCompatible: false,
   scored: () => false,
+  evaluate: evaluateDicomExplore,
   reviewPrompt: (primitive) => primitive.content.prompt,
   explorableKeys: exploreRequirementKeys,
 })

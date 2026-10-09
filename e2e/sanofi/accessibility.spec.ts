@@ -50,7 +50,7 @@ test('passes axe and 200% text checks on every static route', async ({ page }) =
   await expectVisibleKeyboardFocus(page)
 })
 
-test('completes all four mechanics with keyboard input only', async ({ page }) => {
+test('completes all five mechanics with keyboard input only', async ({ page }) => {
   test.slow()
   await page.clock.install()
   await page.goto('/play/respiratory-challenge?difficulty=warmup&seed=2020')
@@ -91,7 +91,23 @@ test('completes all four mechanics with keyboard input only', async ({ page }) =
   await activate(page, page.getByRole('button', { name: 'Next round' }))
 
   await advanceIntroWithKeyboard(page)
+  const viewer = page.locator('[data-dicom-viewer]')
+  await expect(viewer.getByRole('slider', { name: 'Current DICOM slice' })).toBeEnabled({
+    timeout: 30_000,
+  })
   await expectNoAxeViolations(page, 'keyboard round four active')
+  const viewport = viewer.getByRole('slider', { name: 'DICOM image viewport' })
+  await viewport.focus()
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowRight')
+  await activate(page, viewer.getByRole('button', { name: 'Mediastinal', exact: true }))
+  await page.keyboard.press('ArrowLeft')
+  await activate(page, page.getByRole('button', { name: 'Lock in', exact: true }))
+  await expectNoAxeViolations(page, 'keyboard round four reveal')
+  await activate(page, page.getByRole('button', { name: 'Next round' }))
+
+  await advanceIntroWithKeyboard(page)
+  await expectNoAxeViolations(page, 'keyboard round five active')
   await activate(page, page.getByRole('button', { name: /Pathology image Reveal/ }))
   await expectNoAxeViolations(page, 'paid clue confirmation')
   await activate(page, page.getByRole('button', { name: /Reveal ·/ }).last())
@@ -100,7 +116,7 @@ test('completes all four mechanics with keyboard input only', async ({ page }) =
   })
   await activate(page, clinicalAnswer, 'Space')
   await activate(page, page.getByRole('button', { name: 'Lock in' }))
-  await expectNoAxeViolations(page, 'keyboard round four reveal')
+  await expectNoAxeViolations(page, 'keyboard round five reveal')
   await activate(page, page.getByRole('button', { name: 'See your score' }))
 
   await expect(page).toHaveURL(/\/results\//)

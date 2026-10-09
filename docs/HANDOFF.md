@@ -2,97 +2,55 @@
 
 ## Current phase/task
 
-Phase 20 (demo polish and readiness), including the post-closeout Quick Challenge participant UX
-overhaul, is complete within the revised local demo scope.
+Added a fifth Respiratory Challenge round that reuses the default Imaging Lab scrollable
+thoracic CT exploration in `npm run dev:sanofi`.
 
-Phase 13 remains Active and independent. Its human, HTTPS and physical-device gates remain open;
-the external Case Lab verdict is still No-go.
+Phase 13 remains Active and independent. Its human, HTTPS and physical-device gates remain open.
 
 ## Done
 
-- Produced a selective `dist-sanofi/` release with production fixtures removed, exact versioned
-  model URLs and all configured game media precached.
-- Proved a complete representative challenge after service-worker activation with the browser
-  network disabled.
-- Applied Sanofi-scoped clinical surfaces and reduced-motion-safe round, reveal, score and result
-  transitions without changing default DOM contracts.
-- Added vocabulary/internal-ID, route/state axe, keyboard-only, live-announcement, 200% text,
-  two-viewport game-matrix and deterministic visual coverage.
-- Recorded 128–192 second rehearsals and published the presenter/recovery/hosted/device runbook.
-- Published the PRD §23 readiness verdict and final local release evidence.
-- Replayed all four Respiratory Challenge rounds at 1440 × 900 and 375 × 812, documented eleven
-  participant-facing/lifecycle defects and corrected the spatial, pacing, scoring, reset,
-  phone-action and event-integrity problems.
-- Replaced the imperceptible Round 1 marker and black terminal-waypoint Round 2 camera with a
-  graph-framed outside-in airway map, depth-independent beacons and explicit location choices.
-- Made Sanofi round introductions participant-controlled, relaxed complexity-weighted timers and
-  moved blocking guidance/actions out of the anatomy/evidence viewport.
-- Expanded deterministic Sanofi visual coverage from 14 to 20 images so every active round is
-  represented on desktop and phone.
-- Restricted locked-round recovery to genuinely restored sessions, kept the anatomy controller
-  alive across waypoint movement and corrected the procedural lumen winding. The default
-  finding-feedback golden now shows the intended shaded airway wall instead of a ring-only void.
+- Added a `dicom_explore` game mechanic, requirement scoring (including visited CT windows), and a
+  Lock in stage around the existing DICOM viewer.
+- Authored `thoracic-ct-scroll` and inserted it between histology and the clinical call.
+- Registered `thoracic-ct-series` in Sanofi content and copied all 125 slices into
+  `public/assets/dicom/thoracic-ct/files`. The Sanofi static release keeps that series.
+- Raised the Respiratory Challenge duration window to 120–400 seconds (ADR-116).
+- Confirmed in the browser: Round 4 of 5 loaded the 125-slice stack, Lock in enabled after Lung and
+  Mediastinal comparison, the round scored 1000, and the result listed five rounds.
 
 ## In progress
 
-- No local Quick Challenge implementation work remains.
+- Sanofi Playwright against `preview:sanofi` still needs a live run; DICOM is served only from the
+  workspace during preview, not packaged in the release.
 
 ## Next three steps
 
-1. Deploy the exact verified `dist-sanofi/` artifact to an HTTPS origin and complete hosted
-   preflight.
-2. Run the prepared Android Chrome and iPhone Safari physical-device scripts.
-3. Conduct clinician usability/scientific review and decide whether to commission deferred
-   performance measurement.
+1. Run `npm run test:e2e:sanofi` and update visual goldens if Round 1 of 5 / intro layout shifted.
+2. Host the Sanofi artifact with a reachable DICOM base URL before an offline PWA rehearsal.
+3. Continue HTTPS, physical-device and clinician review gates.
 
 ## Blockers/questions for the user
 
-- No local Phase 20 implementation blockers.
-- Phase 13 blockers remain qualifying participants, HTTPS/production DICOM hosting and physical
-  Android/iPhone access.
-- HTTPS hosting, physical Android/iPhone checks and human enjoyment evidence remain external
-  Phase 20 gates.
-- Performance thresholds are deferred for this demo; existing bundle budgets remain regression
-  checks and performance approval stays open.
+- Hosted Sanofi deployments need DICOM at `/assets/dicom/` or `VITE_DICOM_BASE_URL`.
+- The CT round cannot complete while the Sanofi service worker is offline, because the series is
+  not precached.
+- Default `npm run validate:content` currently fails on unrelated SVG size/hash mismatches in
+  `public/content/assets.json` (CRLF vs declared hashes).
 
 ## Environment notes
 
-- Workspace: `d:\c0nsulting\Autovrse\AxiomLevelUp`; branch `master`.
-- Node/npm/Playwright baseline: 24.19.0 / 11.17.0 / 1.63.0.
-- Browser cache override:
-  `PLAYWRIGHT_BROWSERS_PATH=C:\Users\c0n\AppData\Local\ms-playwright`.
-- Ports: default dev/preview 5173/4173; sanofi dev/preview 5174/4174; default/sanofi Playwright
-  4181/4182.
-- Game routes: `/`, `/play/:gameId`, `/results/:runId`, `/c/:token`, `/leaderboard` and `/you`.
-- Final non-browser gate: 110 Vitest files / 651 tests; both content roots at zero warnings; both
-  builds, budgets and default-build verification pass.
-- Browser gate: Sanofi 55 passed / 5 intentional skips. The default serial run passed all 53
-  runnable checks with 3 intentional skips.
-- Seven default golden images remain unchanged; one was deliberately updated for the corrected
-  lumen wall under ADR-115.
-- Twenty Sanofi visual baselines pass.
-- Verified Sanofi artifact: 211 files / 9,174,317 bytes; SHA-256
-  `539cb54894e0250d93be095e1aba6b06d586da639f0ee5c821878954b7349349`.
-- Phase 20 started from commit `2d6213d` plus the complete uncommitted Phase 19 implementation;
-  preserve that work when preparing commits.
+- Workspace: `d:\Projects\AxiomLevelUp`.
+- Sanofi dev: http://localhost:5174/ (`npm run dev:sanofi`).
+- Browser check used `/play/respiratory-challenge?difficulty=warmup&seed=2020`. Result strip:
+  Inspect the CT stack + 1000.
+- Focused Vitest for mechanic, scoring, answers, DICOM primitives, scoped-public and the Sanofi
+  content bundle passed.
 
 ## Gotchas
 
-- Shared modules must not import `@experience` or concrete experiences.
-- Keep default Home eager and its route/snapshot/golden contracts unchanged.
-- `game-session` uses `skipHydration`; `PlayGamePage` must explicitly rehydrate before selecting a
-  context-matching resumable run.
-- Hero anatomy prefetch leases intentionally survive hub unmount until the first round starts or
-  the grace timeout expires.
-- Learner-visible sanofi copy must not contain the client name or PRD §17 LMS vocabulary.
-- The thoracic CT fixture shows normal anatomy and must not be used for abnormality spotting.
-- Challenge links are checksum-protected client data, not authenticated or tamper-resistant.
-- Leaderboard rows and expert identities are fictional local demonstration data.
-- Presenter controls require both `demo.enabled` and `/you?presenter=1`.
-- Presenter profile changes must rehydrate and clear the separate `game-session` persist store.
-- Playwright SwiftShader proves the WebGL contract, not hardware GPU performance.
-- Spatial game rounds deliberately use the outside-in airway map. Do not restore terminal-waypoint
-  endoscopic starts or claim a photorealistic bronchoscopy view.
-- Sanofi sets `introAutoAdvanceMs` to `0`; the timer must begin only after **Start round**.
-- Treat anatomy `startView` as initialization state; waypoint movement must use the existing
-  controller. Arm locked-round replay only from an initially persisted `locked` session.
+- The thoracic CT slices must stay in `public/assets/dicom/thoracic-ct/files`. The nested
+  `public/public/` tree is not served.
+- `initialSlice` on the DICOM viewer is only the mount value. Feeding the live slice back into it
+  restarts the study and flashes the loading overlay.
+- Do not edit the stray `public/public/` tree.
+- `dicom_explore.scored()` stays false so the default Imaging lesson is not a graded question.

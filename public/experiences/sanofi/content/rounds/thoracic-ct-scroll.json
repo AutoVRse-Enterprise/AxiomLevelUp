@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "0.1",
+  "roundVersion": "1",
+  "id": "thoracic-ct-scroll",
+  "title": "Inspect the CT stack",
+  "mechanic": "dicom_explore",
+  "intro": "Scroll through the thoracic CT stack and compare the lung and mediastinal windows.",
+  "timeLimitSeconds": 75,
+  "primitive": {
+    "id": "thoracic-ct-scroll-explore",
+    "type": "dicom_explore",
+    "content": {
+      "seriesAssetId": "thoracic-ct-series",
+      "prompt": "Explore the stack and compare lung and mediastinal windows.",
+      "presets": [
+        { "id": "lung", "label": "Lung", "center": -600, "width": 1500 },
+        { "id": "mediastinal", "label": "Mediastinal", "center": 40, "width": 400 }
+      ],
+      "initialSlice": 81,
+      "initialPresetId": "lung",
+      "tools": ["scroll", "window", "zoom", "pan"],
+      "educationalUseOnly": true,
+      "requirements": {
+        "minimumInteractions": 3,
+        "presetIds": ["lung", "mediastinal"]
+      }
+    },
+    "assets": ["thoracic-ct-series"],
+    "completion": { "mode": "minimum_interactions", "count": 3 }
+  },
+  "feedback": {
+    "correct": "You compared the lung and mediastinal windows while moving through the stack.",
+    "incorrect": "Scroll the slices and open both the lung and mediastinal windows before you lock in.",
+    "answerTemplate": "Required windows: {answer}."
+  },
+  "difficulty": {
+    "warmup": { "timeLimitSeconds": 90 },
+    "challenge": { "timeLimitSeconds": 75 },
+    "expert": { "timeLimitSeconds": 60 }
+  }
+}

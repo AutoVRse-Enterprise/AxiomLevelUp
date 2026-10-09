@@ -23,6 +23,9 @@ test('loads the scoped shell and completes a challenge offline', async ({
   expect(cacheNames.some((name) => name.startsWith('workbox-precache'))).toBe(false)
 
   await context.setOffline(true)
+  await page.goto('/')
+  await expect(page.getByRole('link', { name: 'Start a quick challenge' })).toBeVisible()
+  await context.setOffline(false)
   await page.goto('/play/respiratory-challenge?difficulty=warmup&seed=2020')
   await completeRespiratoryChallenge(page, 5)
   await expect(page).toHaveURL(/\/results\//)

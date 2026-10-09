@@ -2,6 +2,7 @@ import type { GameConfig, RoundDocument } from '@/content/schema/game'
 import type { PlannedRound } from '@/engines/games/plan'
 import type { GameRoundSession } from '@/engines/games/session'
 import { ClueTray } from '@/player/game/ClueTray'
+import { DicomExploreRoundStage } from '@/player/game/DicomExploreRoundStage'
 import { SpatialRoundStage } from '@/player/game/SpatialRoundStage'
 import { StepActionScope } from '@/player/StepActionSlot'
 import { PrimitiveRenderer } from '@/primitives/registry'
@@ -57,6 +58,20 @@ export function RoundStage({
         onSkip={onSkip}
         onSubmit={onSubmit}
         onRoundStepChange={onRoundStepChange}
+        plannedRound={plannedRound}
+        round={round}
+        roundSession={roundSession}
+      />
+    )
+  }
+  if (round.mechanic === 'dicom_explore') {
+    return (
+      <DicomExploreRoundStage
+        copy={copy}
+        disabled={disabled}
+        onDraftChange={onDraftChange}
+        onInteract={onInteract}
+        onSubmit={onSubmit}
         plannedRound={plannedRound}
         round={round}
         roundSession={roundSession}
