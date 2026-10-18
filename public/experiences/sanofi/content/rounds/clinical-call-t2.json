@@ -65,8 +65,8 @@
         "content": {
           "assetId": "wheeze-audio",
           "title": "Respiratory sound sample",
-          "description": "A short synthetic case sample.",
-          "transcript": "Repeated musical, high-pitched expiratory sounds are audible."
+          "description": "A short breathing sample.",
+          "nonSpeech": true
         },
         "assets": ["wheeze-audio"],
         "completion": { "mode": "media_progress", "threshold": 0.8 }

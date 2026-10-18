@@ -16,6 +16,7 @@ export function AudioPrimitive({
   const { labels } = usePresentation()
   const audioUrl = useAssetUrl(primitive.content.assetId)
   const transcriptAsset = useAsset(primitive.content.transcriptAssetId)
+  const hasTranscript = Boolean(primitive.content.transcript || primitive.content.transcriptAssetId)
   const reportedCoverage = useRef(0)
   const [transcript, setTranscript] = useState(primitive.content.transcript ?? '')
   const [mediaState, setMediaState] = useState<'loading' | 'ready' | 'error'>(
@@ -60,10 +61,10 @@ export function AudioPrimitive({
             <LoadingState
               compact
               title={labels.loadingAudio}
-              message="Preparing audio and transcript."
+              message={hasTranscript ? 'Preparing audio and transcript.' : 'Preparing audio.'}
             />
           ) : null}
-          {/* An adjacent, authored transcript is the accessible alternative for audio-only media. */}
+          {/* Speech audio uses the adjacent transcript; non-speech audio uses its authored description. */}
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <audio
             aria-label={primitive.content.title}
@@ -72,11 +73,13 @@ export function AudioPrimitive({
             key={loadAttempt}
             onCanPlay={() => setMediaState('ready')}
             onError={() => setMediaState('error')}
+            onLoadedData={() => setMediaState('ready')}
+            onPlaying={() => setMediaState('ready')}
             onProgress={reportProgress}
             onTimeUpdate={reportProgress}
-            preload="metadata"
+            preload="auto"
+            src={audioUrl}
           >
-            <source src={audioUrl} type="audio/mp4" />
             Your browser does not support embedded audio.
           </audio>
         </div>
@@ -97,24 +100,32 @@ export function AudioPrimitive({
               </Button>
             ) : null
           }
-          message="Use the transcript below while the audio is unavailable."
+          message={
+            hasTranscript
+              ? 'Use the transcript below while the audio is unavailable.'
+              : 'Retry the sound or use the description above.'
+          }
           title={labels.audioUnavailable}
           tone="warning"
         />
       )}
-      <details
-        className="rounded-lg border border-neutral-200 bg-white p-4"
-        onToggle={(event) => {
-          if (event.currentTarget.open) onInteract({ name: 'transcript_opened', key: 'transcript' })
-        }}
-      >
-        <summary className="cursor-pointer font-semibold text-neutral-900">
-          {labels.transcript}
-        </summary>
-        <p className="mt-3 whitespace-pre-line text-small text-neutral-700">
-          {transcript || 'Transcript unavailable.'}
-        </p>
-      </details>
+      {hasTranscript ? (
+        <details
+          className="rounded-lg border border-neutral-200 bg-white p-4"
+          onToggle={(event) => {
+            if (event.currentTarget.open) {
+              onInteract({ name: 'transcript_opened', key: 'transcript' })
+            }
+          }}
+        >
+          <summary className="cursor-pointer font-semibold text-neutral-900">
+            {labels.transcript}
+          </summary>
+          <p className="mt-3 whitespace-pre-line text-small text-neutral-700">
+            {transcript || 'Transcript unavailable.'}
+          </p>
+        </details>
+      ) : null}
     </section>
   )
 }

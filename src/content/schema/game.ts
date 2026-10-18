@@ -178,6 +178,7 @@ const gameResultCopySchema = z.strictObject({
   rematch: nonEmptyStringSchema,
   challengeBack: nonEmptyStringSchema,
   roundDetailsTitle: nonEmptyStringSchema,
+  backToPlay: nonEmptyStringSchema.default('Back to games'),
   winTemplate: nonEmptyStringSchema,
   lossTemplate: nonEmptyStringSchema,
   tieTemplate: nonEmptyStringSchema,

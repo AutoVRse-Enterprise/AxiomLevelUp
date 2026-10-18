@@ -335,7 +335,7 @@ export function ChartPrimitive({
   useEffect(onComplete, [onComplete])
 
   return (
-    <figure className="space-y-4">
+    <figure className="min-w-0 space-y-4">
       {content.title ? (
         <h3 id={titleId} className="font-semibold text-neutral-950">
           {content.title}
@@ -344,9 +344,9 @@ export function ChartPrimitive({
       <p id={summaryId} className="text-small text-neutral-700">
         {content.summary}
       </p>
-      <div className="overflow-x-auto">
+      <div className="max-w-full overflow-x-auto">
         <svg
-          className="min-w-[40rem]"
+          className="w-full min-w-[40rem] max-w-none"
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
           aria-labelledby={`${content.title ? titleId : ''} ${summaryId}`.trim()}

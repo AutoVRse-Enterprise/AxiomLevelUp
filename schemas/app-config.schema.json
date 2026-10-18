@@ -3745,6 +3745,11 @@
               "type": "string",
               "minLength": 1
             },
+            "backToPlay": {
+              "default": "Back to games",
+              "type": "string",
+              "minLength": 1
+            },
             "winTemplate": {
               "type": "string",
               "minLength": 1
@@ -3771,6 +3776,7 @@
             "rematch",
             "challengeBack",
             "roundDetailsTitle",
+            "backToPlay",
             "winTemplate",
             "lossTemplate",
             "tieTemplate"

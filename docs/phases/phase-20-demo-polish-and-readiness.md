@@ -112,6 +112,9 @@ unchanged.
 - [x] **P20-T11 — Diagnostic lifecycle and lumen follow-up**
   - Prevent duplicate locked-round reveals, keep one anatomy controller through movement and
     correct the shared procedural lumen winding with focused and complete regression evidence.
+- [x] **P20-T12 — Final clinical-call and result UX follow-up**
+  - Remove the non-verbal breath-sound transcript, preload and verify the audio, contain the
+    peak-flow chart within the clue column, and add a configured result-to-hub action.
 
 ## Closeout evidence
 

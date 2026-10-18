@@ -13,10 +13,11 @@ export const audioPrimitiveSchema = primitiveBaseSchema
         description: z.string().min(1).optional(),
         transcript: z.string().min(1).optional(),
         transcriptAssetId: idSchema.optional(),
+        nonSpeech: z.boolean().default(false),
       })
-      .refine((content) => content.transcript || content.transcriptAssetId, {
+      .refine((content) => content.nonSpeech || content.transcript || content.transcriptAssetId, {
         path: ['transcript'],
-        message: 'Audio requires inline transcript text or a transcript asset.',
+        message: 'Speech audio requires inline transcript text or a transcript asset.',
       }),
   })
   .superRefine((primitive, context) => {

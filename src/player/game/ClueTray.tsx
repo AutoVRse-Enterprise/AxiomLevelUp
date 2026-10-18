@@ -34,7 +34,7 @@ export function ClueTray({
 
   return (
     <>
-      <div aria-label={copy.cluesLabel} className="grid gap-3">
+      <div aria-label={copy.cluesLabel} className="grid min-w-0 gap-3">
         {round.clues.map((clue) => {
           const paid = plannedRound.paidClueIds.includes(clue.id)
           const available = !paid || revealedClueIds.includes(clue.id)

@@ -36,7 +36,7 @@ export function ClueCard({
     )
   }
   return (
-    <section className="rounded-xl border border-white/15 bg-white/5 text-white">
+    <section className="min-w-0 overflow-hidden rounded-xl border border-white/15 bg-white/5 text-white">
       <button
         aria-expanded={open}
         className="flex w-full items-center gap-3 p-4 text-left"
@@ -48,7 +48,7 @@ export function ClueCard({
         <ChevronDown aria-hidden="true" className={`size-4 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open ? (
-        <div className="border-t border-white/10 bg-white p-4 text-neutral-950">
+        <div className="min-w-0 border-t border-white/10 bg-white p-4 text-neutral-950">
           <PrimitiveRenderer
             attempt={1}
             draft={null}

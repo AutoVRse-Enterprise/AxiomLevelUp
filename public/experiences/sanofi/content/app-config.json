@@ -2730,6 +2730,7 @@
       "rematch": "Rematch",
       "challengeBack": "Challenge back",
       "roundDetailsTitle": "Round details",
+      "backToPlay": "Back to play",
       "winTemplate": "You beat {name} by {margin}",
       "lossTemplate": "{margin} short of {name}",
       "tieTemplate": "You matched {name}"

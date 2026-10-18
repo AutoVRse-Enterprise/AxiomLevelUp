@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 import { encodeChallenge } from '../../src/engines/games/links'
+import { expectNoDocumentHorizontalOverflow } from '../helpers/accessibility'
 import {
   answerChallengeCtRound,
   answerChallengeFindingRound,
@@ -99,7 +100,30 @@ test('visual: later quick challenge rounds', async ({ page }) => {
       name: 'Asthma exacerbation with type 2 inflammation',
     }),
   ).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByText('Transcript', { exact: true })).toHaveCount(0)
+  const audio = page.locator('audio[aria-label="Respiratory sound sample"]')
+  await expect
+    .poll(() => audio.evaluate((element) => (element as HTMLAudioElement).readyState))
+    .toBeGreaterThanOrEqual(2)
+  expect(
+    await audio.evaluate((element) => (element as HTMLAudioElement).error?.code ?? null),
+  ).toBeNull()
   await snapshot(page, 'round-four-active')
+
+  await page.getByRole('button', { name: /Peak-flow trend Reveal/ }).click()
+  await page
+    .getByRole('button', { name: /Reveal ·/ })
+    .last()
+    .click()
+  await expect(page.getByRole('heading', { name: 'Peak expiratory flow trend' })).toBeVisible()
+  await expectNoDocumentHorizontalOverflow(page, 'round four peak-flow clue')
+  await snapshot(page, 'round-four-peak-flow')
+  await audio.evaluate(async (element) => {
+    const player = element as HTMLAudioElement
+    await player.play()
+    player.pause()
+    player.currentTime = 0
+  })
 })
 
 test('visual: correct reveal', async ({ page }) => {
@@ -127,6 +151,7 @@ test('visual: result', async ({ page }) => {
   await expect(page.getByText('Returning-player history ready.')).toBeVisible()
   await page.goto('/results/returning-quick-1')
   await expect(page.getByRole('heading', { name: /Respiratory Challenge result/ })).toBeAttached()
+  await expect(page.getByRole('button', { name: 'Back to play' })).toBeVisible()
   await snapshot(page, 'result')
 })
 

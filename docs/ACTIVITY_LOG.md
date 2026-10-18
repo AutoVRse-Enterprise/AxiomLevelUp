@@ -4471,3 +4471,24 @@ README.md`; `git diff --check`.
 - **Result/verification:** The hook test passes: changing the reported slice does not create or
   destroy the controller again.
 - **Follow-ups:** Refresh the CT round and scroll. Uncached slices can still take a moment to decode.
+
+### [2026-10-15 20:36] P20-T12 - Fix final clinical call and result UX
+
+- **Agent/session:** Cursor implementation session
+- **Action:** Removed the misleading transcript from the non-verbal breath sample; added explicit
+  non-speech audio authoring, automatic preload and reliable loaded/playing readiness; contained
+  the wide peak-flow chart inside the clinical clue column; and added a configured **Back to
+  play** result CTA.
+- **Files changed:** Audio/game schemas and exports; Sanofi clinical-call and result copy; audio,
+  chart and clinical clue components; result route; Sanofi visual spec and six desktop/phone
+  baselines; Phase 20 checklist; ADR-117; handoff; this log.
+- **Commands run:** `ffprobe`; served-asset header check; `npm run schema:export`;
+  `npm run validate:content`; focused and full Vitest; TypeScript; focused and full ESLint;
+  `npm run build:sanofi`; targeted two-viewport Playwright update and no-update replay; targeted
+  Prettier; IDE diagnostics.
+- **Result/verification:** The asset is valid AAC/M4A (8.46 seconds, mono) and served as
+  `audio/mp4`. Typecheck, zero-warning content validation, 113 Vitest files / 658 tests, Sanofi
+  build, focused ESLint and all four targeted desktop/phone visual checks pass. The browser test
+  loads, decodes and starts the actual audio; peak-flow reveal asserts no document overflow.
+- **Follow-ups:** Full repository ESLint remains blocked by two unrelated existing
+  `react-hooks/refs` findings in `src/imaging/viewer/useDicomViewer.ts`; P20-T12 files are clean.

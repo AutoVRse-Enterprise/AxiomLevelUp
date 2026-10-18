@@ -305,6 +305,39 @@ describe('audio, carousel and PDF components', () => {
     expect(await screen.findByText('Hand-authored transcript.')).toBeVisible()
   })
 
+  it('preloads explicitly non-speech audio without showing a transcript', () => {
+    const handlers = callbacks()
+    const breathingSample = audioPrimitiveSchema.parse({
+      ...base,
+      id: 'breathing-sample',
+      type: 'audio',
+      completion: { mode: 'media_progress' },
+      content: {
+        assetId: 'breathing-file',
+        title: 'Breathing sample',
+        description: 'A short breathing sample.',
+        nonSpeech: true,
+      },
+    })
+
+    render(
+      <AudioPrimitive
+        {...handlers}
+        primitive={breathingSample}
+        attempt={0}
+        mode="interactive"
+        draft={null}
+      />,
+    )
+
+    const element = document.querySelector(
+      'audio[aria-label="Breathing sample"]',
+    ) as HTMLAudioElement
+    expect(element.preload).toBe('auto')
+    expect(element.src).toContain('/assets/breathing-file')
+    expect(screen.queryByText('Transcript')).not.toBeInTheDocument()
+  })
+
   it('supports carousel controls, arrow keys and distinct slide reporting', async () => {
     const user = userEvent.setup()
     const handlers = callbacks()

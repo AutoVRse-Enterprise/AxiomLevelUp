@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleX, SkipForward } from 'lucide-react'
+import { CheckCircle2, CircleX, House, SkipForward } from 'lucide-react'
 import { m } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
@@ -169,6 +169,9 @@ export function GameResultPage() {
       </m.div>
 
       <div className="flex flex-wrap justify-center gap-3">
+        <Button leadingIcon={<House aria-hidden="true" size={18} />} onClick={() => navigate('/')}>
+          {resultCopy.backToPlay}
+        </Button>
         <ShareChallengeSheet
           difficulty={found.record.difficulty}
           gameId={game.id}

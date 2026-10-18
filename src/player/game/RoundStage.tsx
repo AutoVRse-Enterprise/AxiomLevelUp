@@ -82,7 +82,7 @@ export function RoundStage({
   return (
     <div
       aria-disabled={disabled}
-      className={`${clinical ? 'grid gap-6 md:grid-cols-[minmax(16rem,0.8fr)_minmax(22rem,1.2fr)]' : 'mx-auto max-w-4xl'} pb-28 pt-6 md:pb-6 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
+      className={`${clinical ? 'grid min-w-0 gap-6 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]' : 'mx-auto max-w-4xl'} pb-28 pt-6 md:pb-6 ${disabled ? 'pointer-events-none opacity-80' : ''}`}
     >
       {clinical ? (
         <ClueTray

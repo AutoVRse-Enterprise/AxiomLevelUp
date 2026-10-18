@@ -2287,3 +2287,25 @@ window to 120–400 seconds.
 **Consequences:** The connected challenge is five rounds and no longer fits the original 2–4
 minute contract on Warm-up. The Sanofi release grows by the series size, about 66 MB. Default
 Imaging Lab behavior is unchanged.
+
+## ADR-117: Non-speech audio uses description rather than a transcript
+
+**Status:** Accepted
+
+**Context:** The final clinical-call clue is an environmental breath-sound recording, not spoken
+content. Labelling a prose interpretation as its transcript duplicated diagnostic evidence and
+misrepresented what the recording contains. The same clue's wide chart also leaked its intrinsic
+SVG width into the clinical grid, and the result action labels must remain content-configured.
+
+**Decision:** Audio remains transcript-required by default, but authors may explicitly mark a
+recording as `nonSpeech`. Those recordings use the authored title and description as their text
+alternative and do not render a transcript disclosure. Small audio clues preload fully and use
+the media element's direct source URL, with loaded-data and playing events accepted as ready
+signals. Clinical grid tracks and clue wrappers use zero minimum width so wide charts scroll
+inside their clue rather than resizing the page. Add a configured `backToPlay` result action.
+
+**Consequences:** Speech recordings retain the transcript validation contract. The breath sample
+shows only its native audio control and description, starts with its 81 KB source preloaded, and
+has an explicit retry state. Peak-flow evidence remains horizontally inspectable without document
+overflow on desktop or phone. Other experiences can configure result-to-hub copy without a route
+fork.
